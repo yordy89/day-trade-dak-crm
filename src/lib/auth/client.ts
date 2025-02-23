@@ -9,11 +9,11 @@ function generateToken(): string {
 }
 
 const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
+  _id: 'USR-000',
   firstName: 'Sofia',
   lastName: 'Rivers',
   email: 'sofia@devias.io',
+  subscriptions: ['Free'],
 } satisfies User;
 
 export interface SignUpParams {

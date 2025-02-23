@@ -125,7 +125,7 @@ function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pat
   const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
     const { id, ...item } = curr;
 
-    acc.push(<NavItem key={id} pathname={pathname} {...item} />);
+    acc.push(<NavItem id={id} key={id} pathname={pathname} {...item} />);
 
     return acc;
   }, []);

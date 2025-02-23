@@ -31,7 +31,7 @@ export const useLogin = () => {
       const response = await API.post<LoginResponse>('/auth/login', credentials);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       setAuthToken(data.token);
       setUser(data.user);
     },
