@@ -73,6 +73,7 @@ module.exports = {
     "@typescript-eslint/no-confusing-void-expression": "off",
     "@typescript-eslint/prefer-promise-reject-errors": "off",
     "no-console": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
     '@typescript-eslint/restrict-template-expressions': [
       'error',
       {

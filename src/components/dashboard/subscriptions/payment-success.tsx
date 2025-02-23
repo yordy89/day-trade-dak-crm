@@ -20,7 +20,7 @@ export function PaymentSuccess(): React.JSX.Element {
   const maxRetries = 5;
   const retryDelay = 2000;
 
-  const fetchUpdatedUser = async () => {
+  const fetchUpdatedUser = React.useCallback(async () => {
     try {
       console.log(`🔄 Fetching updated user profile (Attempt ${retryCount + 1})...`);
       setIsLoading(true);
@@ -48,11 +48,11 @@ export function PaymentSuccess(): React.JSX.Element {
         setIsLoading(false);
       }
     }
-  };
+  }, [retryCount, maxRetries, retryDelay, subscriptionName, setUser]);
 
   React.useEffect(() => {
     void fetchUpdatedUser();
-  }, []);
+  }, [fetchUpdatedUser]);
 
   return (
     <Box

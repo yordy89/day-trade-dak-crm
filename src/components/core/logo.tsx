@@ -26,8 +26,8 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH }:
   } else {
     url = color === 'light' ? '/assets/logo.svg' : '/assets/logo--dark.svg';
   }
-
-  return <Box alt="logo" component="img" height={height} src={'/assets/logo.png'} width={width} />;
+  console.log(url);
+  return <Box alt="logo" component="img" height={height} src='/assets/logo.png' width={width} />;
 }
 
 export interface DynamicLogoProps {

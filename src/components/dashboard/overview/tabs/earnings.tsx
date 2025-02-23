@@ -26,9 +26,9 @@ export function EarningsSection(): React.JSX.Element {
       </Typography>
 
       {/* DAYS GRID */}
-      <Grid container justifyContent="space-evenly">
-        {earningsCalendar.map((day, index) => (
-          <Grid item key={index} xs={12} sm={6} md={4} lg={2}>
+      <Grid container justifyContent="space-evenly" gap={3}>
+        {earningsCalendar.map((day) => (
+          <Grid item key={day.day} xs={12} sm={6} md={4} lg={2}>
             <Card
               sx={{
                 py: 2,
@@ -54,11 +54,11 @@ export function EarningsSection(): React.JSX.Element {
                   </Typography>
                   <Divider sx={{ my: 1 }} />
                   <Grid container spacing={1}>
-                    {day.beforeOpen?.map((company, idx) => {
+                    {day.beforeOpen?.map((company) => {
                       const isFavorite = favoriteSymbols.includes(company.symbol);
 
                       return (
-                        <Grid item key={idx} xs={12}>
+                        <Grid item key={company.symbol} xs={12}>
                           <Box
                             sx={{
                               display: 'flex',
@@ -99,13 +99,13 @@ export function EarningsSection(): React.JSX.Element {
                   <Divider sx={{ my: 1 }} />
                   <Grid container spacing={1}>
                     {day.afterClose && day.afterClose.length > 0 ? (
-                      day.afterClose.map((company, idx) => {
+                      day.afterClose.map((company) => {
                         const isFavorite = favoriteSymbols.includes(company.symbol);
 
                         return (
                           <Grid
                             item
-                            key={idx}
+                            key={company.symbol}
                             xs={12}
                             style={{
                               backgroundColor: isFavorite ? 'rgba(0, 0, 0, 0.3)' : 'transparent',

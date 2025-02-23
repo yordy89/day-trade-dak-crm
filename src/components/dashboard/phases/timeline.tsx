@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography, Stepper, Step, StepLabel } from '@mui/material';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import API from '@/lib/axios';
 import { useAuthStore } from '@/store/auth-store';
 import { CheckCircle, Circle } from '@phosphor-icons/react';
@@ -40,7 +40,7 @@ export function TradingTimeline(): React.JSX.Element {
     } else {
       setCurrentPhase(user?.tradingPhase);
     }
-  }, []);
+  }, [user]);
 
   // Mutation to send user response to OpenAI and get phase
   const { mutate: analyzeTradingPhase, isPending } = useMutation({
@@ -79,7 +79,7 @@ export function TradingTimeline(): React.JSX.Element {
       </Box>
 
       {/* Current Phase Details */}
-      {currentPhase && (
+      {currentPhase ? (
         <Box sx={{ mt: 4, textAlign: 'left', p: 3, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 3, mx: 'auto', width: '80%' }}>
           <Typography variant="h5" fontWeight="bold" color="primary">
             {tradingPhases[currentPhase - 1]?.title}
@@ -92,14 +92,14 @@ export function TradingTimeline(): React.JSX.Element {
             Steps to Progress:
           </Typography>
           <ul>
-            {tradingPhases[currentPhase - 1]?.steps.map((step, index) => (
-              <li key={index}>
+            {tradingPhases[currentPhase - 1]?.steps.map((step) => (
+              <li key={step}>
                 <Typography variant="body2">{step}</Typography>
               </li>
             ))}
           </ul>
         </Box>
-      )}
+      ): null}
 
       {/* Initial Dialog to Ask for Trading Challenges */}
       <Dialog open={open} onClose={() => setOpen(false)}>

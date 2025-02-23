@@ -160,7 +160,7 @@ export function SignUpForm(): React.JSX.Element {
             )}
           />
           {errors.root ? <Alert severity="error">{errors.root.message}</Alert> : null}
-          {mutationError && <Alert severity="error">{mutationError.message}</Alert>}
+          {mutationError ? <Alert severity="error">{mutationError.message}</Alert> : null}
           <Button disabled={isLoading} type="submit" variant="contained">
             {isLoading ? 'Signing up...' : 'Sign up'}
           </Button>

@@ -1,11 +1,23 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { StockData, useCompanyStore } from '@/store/company-store';
-import { Box, CircularProgress, IconButton, List, ListItem, ListItemText, TextField, Typography, Paper } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { useCompanyStore } from '@/store/company-store';
+import type { StockData } from '@/store/company-store';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Plus } from '@phosphor-icons/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+
 import API from '@/lib/axios';
 
 const API_KEY = 'Z23B66HGDZ65UMPP';
@@ -101,9 +113,9 @@ const CompanySearch: React.FC = () => {
         onFocus={() => setIsFocused(true)} // Keep list open while typing
       />
 
-      {(loading || isFetchingStock) && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
+      {loading || isFetchingStock ? <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} /> : null}
 
-      {isFocused && results.length > 0 && (
+      {isFocused && results.length > 0 ? (
         <Paper sx={{ mt: 1, maxHeight: 300, overflowY: 'auto', boxShadow: 3 }}>
           <List>
             {results.map((company) => {
@@ -128,7 +140,7 @@ const CompanySearch: React.FC = () => {
             })}
           </List>
         </Paper>
-      )}
+      ) : null}
     </Box>
   );
 };

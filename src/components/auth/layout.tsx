@@ -111,8 +111,8 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           </Typography>
           <Box sx={{ display: 'flex', gap: '60px' }}>
             <List sx={{ color: 'white', textAlign: 'left' }}>
-              {features.map((feature, index) => (
-                <ListItem key={index} sx={{ pl: 0 }}>
+              {features.map((feature) => (
+                <ListItem key={feature} sx={{ pl: 0 }}>
                   <ListItemIcon sx={{ minWidth: '32px' }}>
                     <CheckCircle size={20} weight="bold" color="lightgreen" />
                   </ListItemIcon>
@@ -121,8 +121,8 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               ))}
             </List>
             <List sx={{ color: 'white', textAlign: 'left' }}>
-              {features.map((feature, index) => (
-                <ListItem key={index} sx={{ pl: 0 }}>
+              {features.map((feature) => (
+                <ListItem key={feature} sx={{ pl: 0 }}>
                   <ListItemIcon sx={{ minWidth: '32px' }}>
                     <CheckCircle size={20} weight="bold" color="lightgreen" />
                   </ListItemIcon>

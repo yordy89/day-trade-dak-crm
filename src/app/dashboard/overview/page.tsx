@@ -59,7 +59,7 @@ export default function OverviewClient(): React.JSX.Element {
 
             return (
               <Tab
-                key={index}
+                key={tab.label}
                 label={tab.label}
                 value={index} // ✅ Ensures correct tab switching
                 sx={{

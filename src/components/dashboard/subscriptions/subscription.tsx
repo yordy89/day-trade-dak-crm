@@ -77,11 +77,11 @@ export function SubscriptionManager(): React.JSX.Element {
       </Typography>
 
       {/* Show loading spinner when processing */}
-      {processingPlan && (
+      {processingPlan ? (
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           <CircularProgress size={80} />
         </Box>
-      )}
+      ) : null}
 
       {/* Subscription Plans */}
       <Box sx={{ display: 'flex', gap: 3, width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -108,8 +108,8 @@ export function SubscriptionManager(): React.JSX.Element {
               </Typography>
 
               {/* Features List */}
-              {features.map((feature, index) => (
-                <Typography key={index} sx={{ mb: 1 }}>
+              {features.map((feature) => (
+                <Typography key={feature} sx={{ mb: 1 }}>
                   {feature}
                 </Typography>
               ))}

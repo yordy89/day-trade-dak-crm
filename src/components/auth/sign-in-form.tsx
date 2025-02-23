@@ -121,7 +121,7 @@ export function SignInForm(): React.JSX.Element {
             </Link>
           </div>
           {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
-          {isError && <Alert color="error">{error?.message || 'An error occurred.'}</Alert>}
+          {isError ? <Alert color="error">{error?.message || 'An error occurred.'}</Alert> : null}
           <Button disabled={isLoading} type="submit" variant="contained">
             {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>

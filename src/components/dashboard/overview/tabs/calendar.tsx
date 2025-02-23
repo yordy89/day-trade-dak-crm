@@ -31,8 +31,8 @@ export function EconomicCalendar() {
     <Box sx={{ width: '100%', textAlign: 'center', mt: 3 }}>
       {/* Tabs for selecting category */}
       <Tabs value={selectedTab} onChange={(_, newValue) => setSelectedTab(newValue)} centered>
-        {categories.map((category, index) => (
-          <Tab key={index} label={category} />
+        {categories.map((category) => (
+          <Tab key={category} label={category} />
         ))}
       </Tabs>
 
@@ -58,8 +58,8 @@ export function EconomicCalendar() {
                 </TableCell>
               </TableRow>
             ) : (
-              events.map((event: any, index: number) => (
-                <TableRow key={index}>
+              events.map((event: any) => (
+                <TableRow key={event}>
                   <TableCell>{event.time}</TableCell>
                   <TableCell>{event.currency}</TableCell>
                   <TableCell>{'⭐'.repeat(event.importance)}</TableCell>

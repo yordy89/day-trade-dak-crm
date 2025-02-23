@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Company, useCompanyStore } from '@/store/company-store';
+import { useCompanyStore } from '@/store/company-store';
+import type { Company } from '@/store/company-store';
 import { Card, Typography, Box, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import { Trash, Eye } from '@phosphor-icons/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -84,8 +85,7 @@ const CompanyCard: React.FC<{ company: Company }> = ({ company }) => {
           </Typography>
         </Box>
 
-        {/* ACTION OVERLAY (Shown on hover) */}
-        {hovered && (
+        {hovered ? (
           <Box
             sx={{
               position: 'absolute',
@@ -123,7 +123,7 @@ const CompanyCard: React.FC<{ company: Company }> = ({ company }) => {
               <Eye size={24} />
             </IconButton>
           </Box>
-        )}
+        ) : null}
       </Card>
 
       {/* CONFIRMATION DIALOG */}
