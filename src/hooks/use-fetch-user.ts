@@ -1,25 +1,30 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import API from '@/lib/axios';
 import { useAuthStore } from '@/store/auth-store';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+
 import { User } from '@/types/user';
+import API from '@/lib/axios';
 
 export const useFetchUser = () => {
   const setUser = useAuthStore((state) => state.setUser);
-  const logout = useAuthStore((state) => state.logout);
+  const authToken = useAuthStore((state) => state.authToken);
 
-  return useQuery<User, Error>({
+  return useQuery<User>({
     queryKey: ['userSession'],
     queryFn: async (): Promise<User> => {
-      const response = await API.get<User>('/auth/me');
+      if (!authToken) throw new Error('No auth token found');
+      const response = await API.get<User>('/user/profile');
       return response.data;
     },
-    onSuccess: (data: any) => {
-      setUser(data); 
+    onSuccess: (data: User) => {
+      console.log('[useFetchUser] User fetched:', data);
+      setUser(data);
     },
     onError: () => {
-      logout();
+      console.error('Error fetching user session');
     },
+    enabled: Boolean(authToken),
     refetchOnWindowFocus: false,
+    refetchOnMount: true, // ✅ Ensures fresh data on component mount
     retry: 1,
-  } as UseQueryOptions<User, Error>);
+  } as UseQueryOptions<User>);
 };

@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth-store';
 import Alert from '@mui/material/Alert';
 
 import { paths } from '@/paths';
-import { LogLevel, createLogger } from '@/lib/logger';
-import { useAuthStore } from '@/store/auth-store';
+import { createLogger, LogLevel } from '@/lib/logger';
 import { useFetchUser } from '@/hooks/use-fetch-user';
 
 export interface AuthGuardProps {
@@ -14,46 +14,38 @@ export interface AuthGuardProps {
 }
 
 const logger = createLogger({
-  prefix: '[AuthGuard]', 
+  prefix: '[AuthGuard]',
   level: LogLevel.ALL,
 });
 
 export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | null {
+  console.log("[AuthGuard] Rendering...");
   const router = useRouter();
-  const user = useAuthStore((state) => state.user); // Get user from Zustand store
-  const { isLoading, error } = useFetchUser(); // Fetch user session
+  const user = useAuthStore((state) => state.user);
+  const authToken = useAuthStore((state) => state.authToken);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
+  console.log("[AuthGuard] Zustand hydration status:", hasHydrated);
+  const { isLoading, error } = useFetchUser();
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
-
-  const checkPermissions = React.useCallback((): void => {
-    if (isLoading) {
-      return; // Still loading, don't check permissions yet
-    }
-
-    if (error) {
-      setIsChecking(false); // If there's an error, stop checking and show it
-      return;
-    }
-
-    if (!user) {
-      logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
-      router.replace(paths.auth.signIn); // Redirect to sign-in page
-      return;
-    }
-
-    setIsChecking(false); // User is authenticated
-  }, [isLoading, error, user, router]);
-
   React.useEffect(() => {
-    checkPermissions();
-  }, [checkPermissions]);
-
-  if (isChecking || isLoading) {
-    return null; // Render nothing while checking permissions or loading user
+    if (!hasHydrated || isLoading) return;
+  
+    if (!authToken && (!user || error)) {
+      logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
+      router.replace(paths.auth.signIn);
+      return;
+    }
+  
+    setIsChecking(false);
+  }, [isLoading, error, user, authToken, router, hasHydrated]);
+  
+  if (!hasHydrated || isChecking || isLoading) {
+    return null; // Render nothing while Zustand is rehydrating
   }
 
   if (error) {
     return <Alert severity="error">{error.message || 'An error occurred while checking authentication.'}</Alert>;
   }
 
-  return <React.Fragment>{children}</React.Fragment>;
+  return <>{children}</>;
 }

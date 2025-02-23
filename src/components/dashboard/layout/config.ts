@@ -1,11 +1,15 @@
-import type { NavItemConfig } from '@/types/nav';
+import { type NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
+import { SubscriptionPlan } from '@/types/user';
 
 export const navItems = [
-  { key: 'overview', title: 'Overview', href: paths.dashboard.overview, icon: 'chart-pie' },
-  { key: 'customers', title: 'Customers', href: paths.dashboard.customers, icon: 'users' },
-  { key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
-  { key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
-  { key: 'account', title: 'Account', href: paths.dashboard.account, icon: 'user' },
-  { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
+  { id: 'overview', title: 'Overview', href: paths.dashboard.overview, icon: 'chart-pie' },
+  { id: 'companies', title: 'Companies', href: paths.dashboard.companies, icon: 'companies', requiredSubscription: SubscriptionPlan.PRO  },
+  { id: 'calendar', title: 'Calendar', href: paths.dashboard.calendar, icon: 'calendar', requiredSubscription: SubscriptionPlan.PRO },
+  { id: 'phases', title: 'Phases', href: paths.dashboard.phases, icon: 'chart-pie' },
+  // { key: 'customers', title: 'Customers', href: paths.dashboard.customers, icon: 'users' },
+  // { key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
+  { id: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
+  { id: 'account', title: 'Account', href: paths.dashboard.account, icon: 'user' },
+  // { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
 ] satisfies NavItemConfig[];

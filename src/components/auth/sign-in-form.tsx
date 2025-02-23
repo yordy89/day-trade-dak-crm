@@ -29,12 +29,11 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'sofia@devias.io', password: 'Secret1' } satisfies Values;
+const defaultValues = { email: 'yordyat9@gmail.com', password: 'Yordanys123' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
   const setAuthToken = useAuthStore((state) => state.setAuthToken);
-  const setUser = useAuthStore((state) => state.setUser);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const { control, handleSubmit, setError, formState: { errors } } = useForm<Values>({
@@ -49,11 +48,9 @@ export function SignInForm(): React.JSX.Element {
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       login(values, {
-        onSuccess: (data) => {
-          setAuthToken(data.token);
-          setUser(data.user);
-
-          // Redirect after successful login
+        onSuccess: (data: any) => {
+          console.log(data);
+          setAuthToken(data.access_token);
           router.replace(paths.dashboard.overview);
         },
         onError: (err) => {
@@ -61,7 +58,7 @@ export function SignInForm(): React.JSX.Element {
         },
       });
     },
-    [login, setAuthToken, setUser, router, setError]
+    [login, setAuthToken, router, setError]
   );
 
   return (
@@ -130,16 +127,6 @@ export function SignInForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">
-        Use{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
-        </Typography>{' '}
-        with password{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          Secret1
-        </Typography>
-      </Alert>
     </Stack>
   );
 }

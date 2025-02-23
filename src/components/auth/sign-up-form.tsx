@@ -19,7 +19,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
-import { useAuthStore } from '@/store/auth-store';
 import { useMutation } from '@tanstack/react-query';
 import API from '@/lib/axios';
 
@@ -53,8 +52,6 @@ interface SignUpCredentials {
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
-  const setAuthToken = useAuthStore((state) => state.setAuthToken);
-  const setUser = useAuthStore((state) => state.setUser);
 
   const {
     control,
@@ -74,11 +71,8 @@ export function SignUpForm(): React.JSX.Element {
       return response.data; // Assume the API returns { token, user }
     },
     onSuccess: (data) => {
-      setAuthToken(data.token);
-      setUser(data.user);
-
-      // Redirect to dashboard after successful sign-up
-      router.replace(paths.dashboard.overview);
+      console.log('Sign-up successful', data);
+      router.replace(paths.auth.signIn);
     },
     onError: (error) => {
       setError('root', { type: 'server', message: error.message || 'Sign-up failed' });
@@ -172,7 +166,6 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert severity="warning">Created users are not persisted</Alert>
     </Stack>
   );
 }

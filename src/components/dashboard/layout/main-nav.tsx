@@ -16,9 +16,11 @@ import { usePopover } from '@/hooks/use-popover';
 
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
+import { useAuthStore } from '@/store/auth-store';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
+  const user = useAuthStore((state) => state.user);
 
   const userPopover = usePopover<HTMLDivElement>();
 
@@ -28,7 +30,7 @@ export function MainNav(): React.JSX.Element {
         component="header"
         sx={{
           borderBottom: '1px solid var(--mui-palette-divider)',
-          backgroundColor: 'var(--mui-palette-background-paper)',
+          backgroundColor: 'var(--mui-palette-common-black)',
           position: 'sticky',
           top: 0,
           zIndex: 'var(--mui-zIndex-appBar)',
@@ -57,20 +59,20 @@ export function MainNav(): React.JSX.Element {
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
             <Tooltip title="Contacts">
               <IconButton>
-                <UsersIcon />
+                <UsersIcon style={{color: 'var(--mui-palette-common-white)'}}/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Notifications">
               <Badge badgeContent={4} color="success" variant="dot">
                 <IconButton>
-                  <BellIcon />
+                  <BellIcon style={{color: 'var(--mui-palette-common-white)'}}/>
                 </IconButton>
               </Badge>
             </Tooltip>
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={user?.profileImage || "/assets/avatar.png"}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>

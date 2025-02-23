@@ -13,9 +13,10 @@ import { SignOut as SignOutIcon } from '@phosphor-icons/react/dist/ssr/SignOut';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 
 import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
+import { useAuthStore } from '@/store/auth-store';
+import { useMutation } from '@tanstack/react-query';
+import API from '@/lib/axios';
 import { logger } from '@/lib/default-logger';
-import { useUser } from '@/hooks/use-user';
 
 export interface UserPopoverProps {
   anchorEl: Element | null;
@@ -24,29 +25,35 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { checkSession } = useUser();
-
   const router = useRouter();
+  
+  // Get user info and logout function from Zustand store
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
-  const handleSignOut = React.useCallback(async (): Promise<void> => {
-    try {
-      const { error } = await authClient.signOut();
+  // Prevent infinite re-renders by using useCallback for logout
+  const handleLogout = React.useCallback(() => {
+    console.log("[UserPopover] Logging out...");
+    logout();
+    setTimeout(() => {
+      router.replace(paths.auth.signIn); // 🚨 Use replace instead of refresh to prevent infinite renders
+    }, 100); // Small delay ensures Zustand state updates first
+  }, [logout, router]);
+  
 
-      if (error) {
-        logger.error('Sign out error', error);
-        return;
-      }
+  // Sign-out mutation using React Query
+  const { mutate: signOut } = useMutation({
+    mutationFn: async () => {
+      const response = await API.get('/auth/signout');
+      return response.data;
+    },
+    onSuccess: handleLogout, // Call handleLogout safely
+    onError: (error) => {
+      logger.error('Sign out error', error);
+    },
+  });
 
-      // Refresh the auth state
-      await checkSession?.();
-
-      // UserProvider, for this case, will not refresh the router and we need to do it manually
-      router.refresh();
-      // After refresh, AuthGuard will handle the redirect
-    } catch (err) {
-      logger.error('Sign out error', err);
-    }
-  }, [checkSession, router]);
+  const isLoading = false; // We don't need to show loading state here
 
   return (
     <Popover
@@ -57,9 +64,9 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Sofia Rivers</Typography>
+        <Typography variant="subtitle1">{user?.firstName || 'Guest'}</Typography>
         <Typography color="text.secondary" variant="body2">
-          sofia.rivers@devias.io
+          {user?.email || 'guest@example.com'}
         </Typography>
       </Box>
       <Divider />
@@ -76,11 +83,11 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           </ListItemIcon>
           Profile
         </MenuItem>
-        <MenuItem onClick={handleSignOut}>
+        <MenuItem onClick={() => signOut()} disabled={isLoading}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Sign out
+          {isLoading ? 'Signing out...' : 'Sign out'}
         </MenuItem>
       </MenuList>
     </Popover>

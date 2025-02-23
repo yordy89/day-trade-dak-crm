@@ -1,7 +1,22 @@
 export interface User {
-  id: string;
-  name: string;
+  _id?: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  avatarUrl?: string; // Optional fields
+  profileImage?: string;
+  tradingPhase?: number;
+  subscriptions: string[];
   roles?: string[];
+  phone?: string;
+  state?: string;
+  city?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export enum SubscriptionPlan {
+  FREE = 'Free',
+  BASIC = 'Basic',
+  PRO = 'Pro',
+  ENTERPRISE = 'Enterprise',
 }

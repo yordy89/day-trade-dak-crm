@@ -43,6 +43,7 @@ module.exports = {
         ignoreOnInitialization: true,
       },
     ],
+    "react/function-component-definition": 'off',
     'import/newline-after-import': 'error',
     'react/jsx-uses-react': 'error',
     'react/react-in-jsx-scope': 'error',
@@ -71,6 +72,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
     "@typescript-eslint/prefer-promise-reject-errors": "off",
+    "no-console": "off",
     '@typescript-eslint/restrict-template-expressions': [
       'error',
       {

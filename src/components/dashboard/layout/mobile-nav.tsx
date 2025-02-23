@@ -123,9 +123,9 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
 
 function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: string }): React.JSX.Element {
   const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
-    const { key, ...item } = curr;
+    const { id, ...item } = curr;
 
-    acc.push(<NavItem key={key} pathname={pathname} {...item} />);
+    acc.push(<NavItem key={id} pathname={pathname} {...item} />);
 
     return acc;
   }, []);

@@ -97,3 +97,7 @@ export const stormGrey = {
   900: '#212636',
   950: '#121621',
 } satisfies PaletteRange;
+
+export const principal = {
+  50: '#42495a'
+}

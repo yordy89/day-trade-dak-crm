@@ -11,8 +11,10 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
+import API from '@/lib/axios';
+import { useAuthStore } from '@/store/auth-store';
 
 const states = [
   { value: 'alabama', label: 'Alabama' },
@@ -21,13 +23,54 @@ const states = [
   { value: 'los-angeles', label: 'Los Angeles' },
 ] as const;
 
+
 export function AccountDetailsForm(): React.JSX.Element {
+  const user = useAuthStore((state) => state.user); 
+  const [formData, setFormData] = React.useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    state: user?.state || '',
+    city: user?.city || '',
+  });
+
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        state: user.state || '',
+        city: user.city || '',
+      });
+    }
+  }, [user]);
+
+  // 🔹 Differentiating event types for OutlinedInput & Select
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      await API.put('/user/profile', formData);
+      // alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-      }}
-    >
+    <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader subheader="The information can be edited" title="Profile" />
         <Divider />
@@ -36,31 +79,57 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>First name</InputLabel>
-                <OutlinedInput defaultValue="Sofia" label="First name" name="firstName" />
+                <OutlinedInput
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  name="firstName"
+                  label="First name"
+                />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Last name</InputLabel>
-                <OutlinedInput defaultValue="Rivers" label="Last name" name="lastName" />
+                <OutlinedInput
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  name="lastName"
+                  label="Last name"
+                />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Email address</InputLabel>
-                <OutlinedInput defaultValue="sofia@devias.io" label="Email address" name="email" />
+                <OutlinedInput
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  name="email"
+                  label="Email address"
+                />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Phone number</InputLabel>
-                <OutlinedInput label="Phone number" name="phone" type="tel" />
+                <OutlinedInput
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  name="phone"
+                  label="Phone number"
+                  type="tel"
+                />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>State</InputLabel>
-                <Select defaultValue="New York" label="State" name="state" variant="outlined">
+                <Select
+                  value={formData.state}
+                  onChange={handleSelectChange} // Using correct Select handler
+                  name="state"
+                  label="State"
+                >
                   {states.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -72,14 +141,21 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>City</InputLabel>
-                <OutlinedInput label="City" />
+                <OutlinedInput
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  name="city"
+                  label="City"
+                />
               </FormControl>
             </Grid>
           </Grid>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Save details</Button>
+          <Button type="submit" variant="contained">
+            Save details
+          </Button>
         </CardActions>
       </Card>
     </form>

@@ -2,10 +2,9 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/auth-store';
 
 const API = axios.create({
-  baseURL: 'https://your-api.com', // Replace with your API's base URL
+  baseURL: "http://localhost:3000",
 });
 
-// Add an interceptor to include the token in every request
 API.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().authToken;

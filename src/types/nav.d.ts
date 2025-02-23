@@ -1,5 +1,7 @@
+import { SubscriptionPlan } from './user';
+
 export interface NavItemConfig {
-  key: string;
+  id: string;
   title?: string;
   disabled?: boolean;
   external?: boolean;
@@ -12,4 +14,5 @@ export interface NavItemConfig {
   // If you need to match multiple paths,
   // can extend it to accept multiple matchers.
   matcher?: { type: 'startsWith' | 'equals'; href: string };
+  requiredSubscription?: SubscriptionPlan;
 }
