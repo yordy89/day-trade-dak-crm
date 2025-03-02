@@ -9,7 +9,7 @@ import { earningsCalendar } from '@/data/earnings';
 
 import ImageWithFallback from '../image-with-fallback';
 
-const DEFAULT_LOGO = '/assets/logo.png'; // Ensure this path is correct
+const DEFAULT_LOGO = '/assets/fallback_logo.webp'; // Ensure this path is correct
 
 export function EarningsSection(): React.JSX.Element {
   const { companies } = useCompanyStore();
@@ -19,10 +19,10 @@ export function EarningsSection(): React.JSX.Element {
     <Box sx={{ px: 1, textAlign: 'center' }}>
       {/* HEADER */}
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Most Anticipated Earnings Releases
+      📊 Próximos Reportes de Ganancias Más Esperados
       </Typography>
       <Typography variant="h6" color="text.secondary" mb={4}>
-        For the week beginning February 17, 2025
+      Para la semana que comienza el 3 de marzo de 2025
       </Typography>
 
       {/* DAYS GRID */}

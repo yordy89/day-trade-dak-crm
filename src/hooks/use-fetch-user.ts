@@ -17,7 +17,6 @@ export const useFetchUser = () => {
       return response.data;
     },
     onSuccess: (data: User) => {
-      console.log('[useFetchUser] User fetched:', data);
       setUser(data);
     },
     onError: () => {

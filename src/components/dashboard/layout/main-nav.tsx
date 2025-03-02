@@ -1,12 +1,14 @@
 'use client';
 
 import * as React from 'react';
+import { useAuthStore } from '@/store/auth-store';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
@@ -16,7 +18,6 @@ import { usePopover } from '@/hooks/use-popover';
 
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
-import { useAuthStore } from '@/store/auth-store';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
@@ -42,37 +43,66 @@ export function MainNav(): React.JSX.Element {
           sx={{ alignItems: 'center', justifyContent: 'space-between', minHeight: '64px', px: 2 }}
         >
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            <IconButton
+            {/* <IconButton
               onClick={(): void => {
                 setOpenNav(true);
               }}
               sx={{ display: { lg: 'none' } }}
             >
               <ListIcon />
-            </IconButton>
-            <Tooltip title="Search">
+            </IconButton> */}
+            {/* <Tooltip title="Search">
               <IconButton>
                 <MagnifyingGlassIcon />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
           </Stack>
+
+          {/* ✅ Centered Red Message */}
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'error.main', // Red color
+              fontWeight: 'bold',
+              textAlign: 'center',
+              flexGrow: 1, // Ensures it stays centered
+              textShadow: '0 0 10px rgba(255, 0, 0, 0.6)', // Subtle red glow
+              animation: 'fadeIn 2s ease-in-out, blink 1s infinite alternate', // Fade-in + Blink
+              transition: 'transform 0.2s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.05)', // Slight scale-up on hover
+              },
+              '@keyframes fadeIn': {
+                '0%': { opacity: 0 },
+                '100%': { opacity: 1 },
+              },
+              '@keyframes blink': {
+                '0%': { opacity: 1 },
+                '50%': { opacity: 0.8 },
+                '100%': { opacity: 1 },
+              },
+            }}
+          >
+            📢 Próxima Reunión de la FOMC – (18-19) de Marzo 📅
+          </Typography>
+
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            <Tooltip title="Contacts">
+            {/* <Tooltip title="Contacts">
               <IconButton>
                 <UsersIcon style={{color: 'var(--mui-palette-common-white)'}}/>
               </IconButton>
-            </Tooltip>
-            <Tooltip title="Notifications">
+            </Tooltip> */}
+            {/* <Tooltip title="Notifications">
               <Badge badgeContent={4} color="success" variant="dot">
                 <IconButton>
                   <BellIcon style={{color: 'var(--mui-palette-common-white)'}}/>
                 </IconButton>
               </Badge>
-            </Tooltip>
+            </Tooltip> */}
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src={user?.profileImage || "/assets/avatar.png"}
+              src={user?.profileImage || '/assets/profile_fallback.jpg'}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>

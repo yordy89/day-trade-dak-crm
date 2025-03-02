@@ -1,8 +1,12 @@
 export const paths = {
   home: '/',
   auth: { signIn: '/auth/sign-in', signUp: '/auth/sign-up', resetPassword: '/auth/reset-password' },
+  terms: {
+    terms: '/terms/terms-conditions',
+  },
   dashboard: {
     overview: '/dashboard/overview',
+    mentorship: '/dashboard/mentorship',
     companies: '/dashboard/companies',
     calendar: '/dashboard/calendar',
     phases: '/dashboard/phases',

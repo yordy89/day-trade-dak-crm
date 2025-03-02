@@ -33,7 +33,6 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
 
   // Prevent infinite re-renders by using useCallback for logout
   const handleLogout = React.useCallback(() => {
-    console.log("[UserPopover] Logging out...");
     logout();
     setTimeout(() => {
       router.replace(paths.auth.signIn); // 🚨 Use replace instead of refresh to prevent infinite renders
@@ -71,23 +70,23 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       </Box>
       <Divider />
       <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>
-        <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
+        {/* <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
           <ListItemIcon>
             <GearSixIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
           Settings
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
           <ListItemIcon>
             <UserIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Profile
+          Perfil
         </MenuItem>
         <MenuItem onClick={() => signOut()} disabled={isLoading}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          {isLoading ? 'Signing out...' : 'Sign out'}
+          {isLoading ? 'Cerrando sesión...' : 'Cerrar Sesión'}
         </MenuItem>
       </MenuList>
     </Popover>

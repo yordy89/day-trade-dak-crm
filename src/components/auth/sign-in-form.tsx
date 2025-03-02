@@ -3,28 +3,30 @@
 import * as React from 'react';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Link,
+  OutlinedInput,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
-import { useAuthStore } from '@/store/auth-store';
 import { useLogin } from '@/hooks/use-login';
 
 const schema = zod.object({
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(1, { message: 'Password is required' }),
+  email: zod.string().min(1, { message: 'Email es requerido' }).email(),
+  password: zod.string().min(1, { message: 'Contraseña es requerida' }),
 });
 
 type Values = zod.infer<typeof schema>;
@@ -36,25 +38,28 @@ export function SignInForm(): React.JSX.Element {
   const setAuthToken = useAuthStore((state) => state.setAuthToken);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-  const { control, handleSubmit, setError, formState: { errors } } = useForm<Values>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<Values>({
     defaultValues,
     resolver: zodResolver(schema),
   });
 
-  const { mutate: login, isError, error } = useLogin();
-
-  const isLoading = React.useMemo(() => isError, [isError]);
+  const { mutate: login, isError, error, isPending } = useLogin();
 
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       login(values, {
         onSuccess: (data: any) => {
-          console.log(data);
           setAuthToken(data.access_token);
           router.replace(paths.dashboard.overview);
         },
-        onError: (err) => {
-          setError('root', { type: 'server', message: err.message || 'Login failed' });
+        onError: (err: any) => {
+          console.log(err);
+          setError('root', { type: 'server', message: err?.response?.data?.message || 'Error de inicio de sesión' });
         },
       });
     },
@@ -64,11 +69,11 @@ export function SignInForm(): React.JSX.Element {
   return (
     <Stack spacing={4}>
       <Stack spacing={1}>
-        <Typography variant="h4">Sign in</Typography>
+        <Typography variant="h4">Iniciar Sesión</Typography>
         <Typography color="text.secondary" variant="body2">
-          Don&apos;t have an account?{' '}
+          ¿No tienes una cuenta?{' '}
           <Link component={RouterLink} href={paths.auth.signUp} underline="hover" variant="subtitle2">
-            Sign up
+            Regístrate
           </Link>
         </Typography>
       </Stack>
@@ -78,10 +83,10 @@ export function SignInForm(): React.JSX.Element {
             control={control}
             name="email"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.email)}>
-                <InputLabel>Email address</InputLabel>
-                <OutlinedInput {...field} label="Email address" type="email" />
-                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
+              <FormControl fullWidth error={Boolean(errors.email)} variant="outlined">
+                <InputLabel shrink>Email</InputLabel>
+                <OutlinedInput {...field} label="Email" type="email" notched />
+                {errors.email && <FormHelperText>{errors.email.message}</FormHelperText>}
               </FormControl>
             )}
           />
@@ -89,8 +94,8 @@ export function SignInForm(): React.JSX.Element {
             control={control}
             name="password"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.password)}>
-                <InputLabel>Password</InputLabel>
+              <FormControl fullWidth error={Boolean(errors.password)} variant="outlined">
+                <InputLabel shrink>Contraseña</InputLabel>
                 <OutlinedInput
                   {...field}
                   endAdornment={
@@ -98,32 +103,32 @@ export function SignInForm(): React.JSX.Element {
                       <EyeIcon
                         cursor="pointer"
                         fontSize="var(--icon-fontSize-md)"
-                        onClick={(): void => setShowPassword(false)}
+                        onClick={() => setShowPassword(false)}
                       />
                     ) : (
                       <EyeSlashIcon
                         cursor="pointer"
                         fontSize="var(--icon-fontSize-md)"
-                        onClick={(): void => setShowPassword(true)}
+                        onClick={() => setShowPassword(true)}
                       />
                     )
                   }
-                  label="Password"
+                  label="Contraseña"
                   type={showPassword ? 'text' : 'password'}
+                  notched
                 />
-                {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
+                {errors.password && <FormHelperText>{errors.password.message}</FormHelperText>}
               </FormControl>
             )}
           />
-          <div>
+          {/* <div>
             <Link component={RouterLink} href={paths.auth.resetPassword} variant="subtitle2">
-              Forgot password?
+              ¿Olvidaste tu contraseña?
             </Link>
-          </div>
-          {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
-          {isError ? <Alert color="error">{error?.message || 'An error occurred.'}</Alert> : null}
-          <Button disabled={isLoading} type="submit" variant="contained">
-            {isLoading ? 'Signing in...' : 'Sign in'}
+          </div> */}
+          {errors.root && <Alert severity="error">{errors.root.message}</Alert>}
+          <Button disabled={isPending} type="submit" variant="contained">
+            {isPending ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </Button>
         </Stack>
       </form>

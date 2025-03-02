@@ -19,12 +19,10 @@ const logger = createLogger({
 });
 
 export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | null {
-  console.log("[AuthGuard] Rendering...");
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const authToken = useAuthStore((state) => state.authToken);
   const hasHydrated = useAuthStore((state) => state._hasHydrated);
-  console.log("[AuthGuard] Zustand hydration status:", hasHydrated);
   const { isLoading, error } = useFetchUser();
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
   React.useEffect(() => {

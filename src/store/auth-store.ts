@@ -23,7 +23,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       
       setUser: (user) => {
-        console.log("[AuthStore] Updating user:", user);
         set(() => ({ user, isAuthenticated: Boolean(user) }));
       },
 
@@ -32,12 +31,10 @@ export const useAuthStore = create<AuthState>()(
       })),
 
       setAuthToken: (token) => {
-        console.log("[AuthStore] Updating authToken:", token);
         set(() => ({ authToken: token }));
       },
 
       logout: () => {
-        console.log("[AuthStore] Logging out...");
         localStorage.removeItem('auth-storage');
         // set(() => ({
         //   user: null,
@@ -48,7 +45,6 @@ export const useAuthStore = create<AuthState>()(
 
       _hasHydrated: false,
       setHasHydrated: (state) => {
-        console.log("[AuthStore] Hydration complete:", state);
         set(() => ({ _hasHydrated: state }));
       },
     }),

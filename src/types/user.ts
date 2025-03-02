@@ -6,6 +6,8 @@ export interface User {
   profileImage?: string;
   tradingPhase?: number;
   subscriptions: string[];
+  activeSubscriptions?: string[];
+  expiredSubscriptions?: string[];
   roles?: string[];
   phone?: string;
   state?: string;
@@ -19,4 +21,5 @@ export enum SubscriptionPlan {
   BASIC = 'Basic',
   PRO = 'Pro',
   ENTERPRISE = 'Enterprise',
+  MENTORSHIP = 'Mentorship',
 }

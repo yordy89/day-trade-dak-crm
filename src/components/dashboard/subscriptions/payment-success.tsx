@@ -7,6 +7,8 @@ import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { CheckCircle, WarningCircle } from '@phosphor-icons/react';
 
 import API from '@/lib/axios';
+import { mapMembershipName } from '@/lib/memberships';
+import { SubscriptionPlan } from '@/types/user';
 
 export function PaymentSuccess(): React.JSX.Element {
   const router = useRouter();
@@ -14,23 +16,30 @@ export function PaymentSuccess(): React.JSX.Element {
   const subscriptionName = searchParams.get('subscription') || 'your new plan';
 
   const setUser = useAuthStore((state) => state.setUser);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [isError, setIsError] = React.useState(false);
-  const [retryCount, setRetryCount] = React.useState(0);
+  const retryCountRef = React.useRef(0); // Keeps track of retries without triggering re-renders
   const maxRetries = 5;
   const retryDelay = 2000;
 
   const fetchUpdatedUser = React.useCallback(async () => {
+    if (retryCountRef.current >= maxRetries) {
+      console.error('❌ Max retries reached. Subscription update failed.');
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      console.log(`🔄 Fetching updated user profile (Attempt ${retryCount + 1})...`);
-      setIsLoading(true);
+      console.log(`🔄 Fetching updated user profile (Attempt ${retryCountRef.current + 1})...`);
       const response = await API.get('/user/profile');
       console.log('✅ User profile fetched:', response.data);
 
-      if (!response.data.subscriptions.includes(subscriptionName) && retryCount < maxRetries) {
-        setRetryCount((prev) => prev + 1);
+      if (!response.data.subscriptions.includes(subscriptionName)) {
+        retryCountRef.current += 1;
         console.log(`⏳ Subscription not updated yet. Retrying in ${retryDelay / 1000} seconds...`);
-        setTimeout(fetchUpdatedUser, retryDelay);
+
+        setTimeout(() => fetchUpdatedUser(), retryDelay);
         return;
       }
 
@@ -39,20 +48,20 @@ export function PaymentSuccess(): React.JSX.Element {
       setIsError(false);
     } catch (error) {
       console.error('❌ Error fetching user profile:', error);
-      if (retryCount < maxRetries) {
-        setRetryCount((prev) => prev + 1);
+      retryCountRef.current += 1;
+      if (retryCountRef.current < maxRetries) {
         console.log(`🔄 Retrying in ${retryDelay / 1000} seconds...`);
-        setTimeout(fetchUpdatedUser, retryDelay);
+        setTimeout(() => fetchUpdatedUser(), retryDelay);
       } else {
         setIsError(true);
         setIsLoading(false);
       }
     }
-  }, [retryCount, maxRetries, retryDelay, subscriptionName, setUser]);
+  }, [subscriptionName, setUser]);
 
   React.useEffect(() => {
     void fetchUpdatedUser();
-  }, [fetchUpdatedUser]);
+  }, []); // Runs only once when the component mounts
 
   return (
     <Box
@@ -61,13 +70,13 @@ export function PaymentSuccess(): React.JSX.Element {
       {!isError ? (
         <>
           <CheckCircle size={80} weight="fill" color="green" />
-          <Typography variant="h4">Payment Successful!</Typography>
-          <Typography variant="h6">You are now subscribed to {subscriptionName}.</Typography>
+          <Typography variant="h4">¡Pago Exitoso!</Typography>
+          <Typography variant="h6">Ahora estás suscrito a {mapMembershipName(subscriptionName as SubscriptionPlan)}.</Typography>
           {isLoading ? (
             <CircularProgress sx={{ mt: 2 }} />
           ) : (
-            <Button variant="contained" sx={{ mt: 3 }} onClick={() => router.push('/dashboard/overview')}>
-              Go to Dashboard
+            <Button variant="contained" sx={{ mt: 3 }} onClick={() => router.push('/dashboard/mentorship')}>
+              Ir a Mentorías
             </Button>
           )}
         </>
@@ -75,13 +84,13 @@ export function PaymentSuccess(): React.JSX.Element {
         <>
           <WarningCircle size={80} weight="fill" color="red" />
           <Typography variant="h4" color="error">
-            Subscription Update Failed
+            ❌ Error al actualizar la suscripción
           </Typography>
           <Typography variant="h6" color="error">
-            We couldn’t confirm your subscription. Please try again.
+            ❌ No pudimos confirmar tu suscripción. Por favor, inténtalo de nuevo.
           </Typography>
           <Button variant="contained" sx={{ mt: 3 }} onClick={fetchUpdatedUser}>
-            Retry Now
+            🔄 Reintentar ahora
           </Button>
         </>
       )}

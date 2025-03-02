@@ -9,7 +9,7 @@ export default function PlansPage() {
   return (
       <Box sx={{ height: '100vh', width: '100%', p: 3 }}>
         <Typography variant="h4" fontWeight="bold" mb={3}>
-          Plans
+          Planes
         </Typography>
         <SubscriptionManager/>
       </Box>

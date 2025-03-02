@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { Card, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import { Card, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { CheckCircle, TwitterLogo, FacebookLogo, InstagramLogo } from '@phosphor-icons/react';
+import { CheckCircle, FacebookLogo, InstagramLogo, TwitterLogo } from '@phosphor-icons/react';
 
 import { paths } from '@/paths';
 import { DynamicLogo } from '@/components/core/logo';
@@ -15,12 +15,12 @@ export interface LayoutProps {
 }
 
 const features = [
-  'Real-time Market Analysis',
-  'Expert Trading Insights',
-  'Customizable Trading Strategies',
-  'Advanced Risk Management Tools',
-  'Live Market Scanning',
-  'Educational Trading Resources',
+  'Mentorías Exclusivas 🔥',
+  // 'Expert Trading Insights',
+  // 'Customizable Trading Strategies',
+  // 'Advanced Risk Management Tools',
+  // 'Live Market Scanning',
+  // 'Educational Trading Resources',
 ];
 
 export function Layout({ children }: LayoutProps): React.JSX.Element {
@@ -58,13 +58,13 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
         {/* Welcome Message - Center */}
         <Box sx={{ flex: 1, textAlign: 'center' }}>
           <Typography variant="h4" color="white" sx={{ fontWeight: 'bold' }}>
-            Welcome to{' '}
+            Bienvenido a{' '}
             <Box component="span" sx={{ color: 'primary.light' }}>
               Day Trade Dak
             </Box>
           </Typography>
           <Typography variant="subtitle1" color="white">
-            Your go-to platform for expert trading insights and market analysis.
+            Tu plataforma de confianza para análisis de mercado y conocimientos expertos en trading.
           </Typography>
         </Box>
       </Box>
@@ -107,7 +107,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
         {/* Features List Section */}
         <Box>
           <Typography variant="h5" color="white" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Key Features
+            Todo lo que necesitas para tu trading
           </Typography>
           <Box sx={{ display: 'flex', gap: '60px' }}>
             <List sx={{ color: 'white', textAlign: 'left' }}>
@@ -120,7 +120,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
                 </ListItem>
               ))}
             </List>
-            <List sx={{ color: 'white', textAlign: 'left' }}>
+            {/* <List sx={{ color: 'white', textAlign: 'left' }}>
               {features.map((feature) => (
                 <ListItem key={feature} sx={{ pl: 0 }}>
                   <ListItemIcon sx={{ minWidth: '32px' }}>
@@ -129,7 +129,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
                   <ListItemText primary={feature} />
                 </ListItem>
               ))}
-            </List>
+            </List> */}
           </Box>
         </Box>
       </Box>
@@ -163,12 +163,12 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
 
         {/* Disclaimer */}
         <Typography variant="body2" sx={{ fontSize: '12px', opacity: 0.8, mb: 1 }}>
-          © {new Date().getFullYear()} Day Trade Dak. All Rights Reserved.
+          © {new Date().getFullYear()} Day Trade Dak. Todos los derechos reservados.
         </Typography>
         <Typography variant="body2" sx={{ fontSize: '12px', opacity: 0.8 }}>
-          **Disclaimer:** Day Trade Dak is **not** a registered investment, legal, or tax advisor.  
-          All content is for informational purposes only and **should not** be considered financial advice.  
-          Trading involves risk, and past performance does **not** guarantee future results.
+          **Descargo de responsabilidad**: Day Trade Dak no es un asesor de inversiones, legal o fiscal registrado. Todo el
+          contenido es solo para fines informativos y no debe considerarse asesoramiento financiero. El trading implica
+          riesgos, y el rendimiento pasado no garantiza resultados futuros.
         </Typography>
       </Box>
     </Box>

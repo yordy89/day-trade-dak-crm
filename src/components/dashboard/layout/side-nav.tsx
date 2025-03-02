@@ -65,7 +65,7 @@ export function SideNav(): React.JSX.Element {
       {/* Upgrade Now Button at the Bottom */}
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Typography variant="body2" sx={{ color: 'var(--NavItem-color)', mb: 1 }}>
-          Unlock more features with a premium subscription.
+        ¡Suscríbete y accede a herramientas exclusivas para potenciar tu trading!
         </Typography>
         <Button
           component={RouterLink}
@@ -74,7 +74,7 @@ export function SideNav(): React.JSX.Element {
           size="small"
           sx={{ width: '100%' }}
         >
-          Upgrade Now
+          Mejora tu plan ahora
         </Button>
       </Box>
     </Box>

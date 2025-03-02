@@ -34,7 +34,6 @@ export function TradingTimeline(): React.JSX.Element {
   const [currentPhase, setCurrentPhase] = useState<number | null>(6);
 
   useEffect(() => {
-    console.log(user);
     if (user?.tradingPhase === null || user?.tradingPhase === undefined) {
       setOpen(true);
     } else {
@@ -46,11 +45,9 @@ export function TradingTimeline(): React.JSX.Element {
   const { mutate: analyzeTradingPhase, isPending } = useMutation({
     mutationFn: async () => {
       const res = await API.post('/openai/determine-phase', { response });
-      console.log(res);
       return res.data.tradingPhase;
     },
     onSuccess: async (phase) => {
-      console.log(phase);
       setCurrentPhase(phase);
       setPhase(phase);
       setOpen(false);

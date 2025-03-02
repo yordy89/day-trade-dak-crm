@@ -8,7 +8,6 @@ export default async function CompanyDetail({ params }: { params: { symbol: stri
     marketCap: '1B',
     description: 'Company description',
   };
-    console.log(params);
   if (!company) return <CircularProgress sx={{ display: 'block', mx: 'auto', my: 4 }} />;
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { SubscriptionPlan } from "@/types/user";
-import { DashboardSection } from "./dashboard";
-import { EconomicCalendar } from "./calendar";
+// import { DashboardSection } from "./dashboard";
+// import { EconomicCalendar } from "./calendar";
 import { EarningsSection } from "./earnings";
 
 export interface TabConfig {
@@ -11,17 +11,17 @@ export interface TabConfig {
 }
 
 export const overviewTabs: TabConfig[] = [
-  {
-    label: 'Dashboard',
-    component: <DashboardSection />,
-  },
-  {
-    label: 'Calendar',
-    component: <EconomicCalendar />,
-  },
+  // {
+  //   label: 'Dashboard',
+  //   component: <DashboardSection />,
+  // },
+  // {
+  //   label: 'Calendar',
+  //   component: <EconomicCalendar />,
+  // },
   {
     label: 'Earnings',
     component: <EarningsSection />,
-    requiredSubscription: SubscriptionPlan.PRO
+    // requiredSubscription: SubscriptionPlan.PRO
   }
 ];
