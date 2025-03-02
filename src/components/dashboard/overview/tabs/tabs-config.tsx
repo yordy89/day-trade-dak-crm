@@ -1,5 +1,5 @@
 import React from 'react';
-import { SubscriptionPlan } from "@/types/user";
+import type { SubscriptionPlan } from "@/types/user";
 // import { DashboardSection } from "./dashboard";
 // import { EconomicCalendar } from "./calendar";
 import { EarningsSection } from "./earnings";

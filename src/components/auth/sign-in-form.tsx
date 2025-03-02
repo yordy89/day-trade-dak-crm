@@ -31,7 +31,7 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'yordyat9@gmail.com', password: 'Yordanys123' } satisfies Values;
+const defaultValues = { email: '', password: '' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
@@ -48,7 +48,7 @@ export function SignInForm(): React.JSX.Element {
     resolver: zodResolver(schema),
   });
 
-  const { mutate: login, isError, error, isPending } = useLogin();
+  const { mutate: login,isPending } = useLogin();
 
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
@@ -86,7 +86,7 @@ export function SignInForm(): React.JSX.Element {
               <FormControl fullWidth error={Boolean(errors.email)} variant="outlined">
                 <InputLabel shrink>Email</InputLabel>
                 <OutlinedInput {...field} label="Email" type="email" notched />
-                {errors.email && <FormHelperText>{errors.email.message}</FormHelperText>}
+                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
@@ -117,7 +117,7 @@ export function SignInForm(): React.JSX.Element {
                   type={showPassword ? 'text' : 'password'}
                   notched
                 />
-                {errors.password && <FormHelperText>{errors.password.message}</FormHelperText>}
+                {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
@@ -126,7 +126,7 @@ export function SignInForm(): React.JSX.Element {
               ¿Olvidaste tu contraseña?
             </Link>
           </div> */}
-          {errors.root && <Alert severity="error">{errors.root.message}</Alert>}
+          {errors.root ? <Alert severity="error">{errors.root.message}</Alert> : null}
           <Button disabled={isPending} type="submit" variant="contained">
             {isPending ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </Button>

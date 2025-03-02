@@ -60,7 +60,7 @@ export function SignUpForm(): React.JSX.Element {
     formState: { errors },
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
-  const { mutate: signUp, error: mutationError } = useMutation<SignUpResponse, Error, SignUpCredentials>({
+  const { mutate: signUp } = useMutation<SignUpResponse, Error, SignUpCredentials>({
     mutationFn: async (values: SignUpCredentials) => {
       const response = await API.post<SignUpResponse>('/auth/signup', {
         email: values.email,

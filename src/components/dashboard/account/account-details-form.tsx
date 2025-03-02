@@ -172,13 +172,13 @@ export function AccountDetailsForm(): React.JSX.Element {
           </Card>
         </form>
       </Grid>
-      {alert && (
+      {alert ? (
         <Grid item xs={12}>
           <Alert severity={alert.type} onClose={() => setAlert(null)}>
             {alert.message}
           </Alert>
         </Grid>
-      )}
+      ) : null}
       {/* ✅ Password Update Card */}
       <Grid item xs={12}>
         <form onSubmit={handlePasswordSubmit}>

@@ -8,7 +8,7 @@ import { CheckCircle, WarningCircle } from '@phosphor-icons/react';
 
 import API from '@/lib/axios';
 import { mapMembershipName } from '@/lib/memberships';
-import { SubscriptionPlan } from '@/types/user';
+import type { SubscriptionPlan } from '@/types/user';
 
 export function PaymentSuccess(): React.JSX.Element {
   const router = useRouter();
@@ -61,7 +61,7 @@ export function PaymentSuccess(): React.JSX.Element {
 
   React.useEffect(() => {
     void fetchUpdatedUser();
-  }, []); // Runs only once when the component mounts
+  }, [fetchUpdatedUser]); // Runs only once when the component mounts
 
   return (
     <Box
