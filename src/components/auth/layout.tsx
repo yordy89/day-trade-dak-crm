@@ -46,6 +46,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexDirection: { xs: 'column', md: 'row' },
           px: 4,
           mb: 4,
         }}
