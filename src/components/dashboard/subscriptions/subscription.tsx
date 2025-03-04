@@ -17,7 +17,7 @@ const subscriptionPlans = [
   {
     name: SubscriptionPlan.MENTORSHIP,
     title: 'Mentorías',
-    priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX',
+    priceId: 'price_1Qz2KuE0taYR7njR00NmGEJu',
     price: '$14.99/mes',
     features: ['✔ Acceso a mentorías'],
   },
