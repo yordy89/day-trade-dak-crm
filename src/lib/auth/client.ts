@@ -1,6 +1,6 @@
 'use client';
 
-import type { User } from '@/types/user';
+import { Role, type User } from '@/types/user';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -13,6 +13,7 @@ const user = {
   firstName: 'Sofia',
   lastName: 'Rivers',
   email: 'sofia@devias.io',
+  role: Role.USER,
   subscriptions: ['Free'],
 } satisfies User;
 

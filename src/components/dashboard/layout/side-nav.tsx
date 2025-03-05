@@ -18,11 +18,15 @@ import { Logo } from '@/components/core/logo';
 
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
+import { Role } from '@/types/user';
+import { mapMembershipName } from '@/lib/memberships';
 
 export function SideNav(): React.JSX.Element {
   const pathname = usePathname();
 
   const userSubscriptions = useAuthStore((state) => state.user?.subscriptions ?? []);
+  const user = useAuthStore((state) => state.user);
+  const userRole = user?.role || Role.USER ; // Default to 'user' if role is missing
 
   return (
     <Box
@@ -59,7 +63,7 @@ export function SideNav(): React.JSX.Element {
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} />
+        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole}/>
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       {/* Upgrade Now Button at the Bottom */}
@@ -84,9 +88,11 @@ export function SideNav(): React.JSX.Element {
 function NavItemList({
   pathname,
   userSubscriptions,
+  userRole,
 }: {
   pathname: string;
   userSubscriptions: string[];
+  userRole: Role;
 }): React.JSX.Element {
   return (
     <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
@@ -96,6 +102,7 @@ function NavItemList({
           pathname={pathname}
           {...item} // Spreading props (without key)
           userSubscriptions={userSubscriptions}
+          userRole={userRole}
         />
       ))}
     </Stack>
@@ -105,6 +112,7 @@ function NavItemList({
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;
   userSubscriptions: string[];
+  userRole: Role;
 }
 
 function NavItem({
@@ -117,10 +125,11 @@ function NavItem({
   title,
   requiredSubscription,
   userSubscriptions,
+  userRole,
 }: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription);
+  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
 
   const handleClick = (event: React.MouseEvent) => {
     if (isRestricted) {
@@ -131,7 +140,7 @@ function NavItem({
   return (
     <li>
       <Tooltip
-        title={isRestricted ? `This feature requires the ${requiredSubscription} subscription.` : ''}
+        title={isRestricted ? `Esta función requiere la suscripción ${mapMembershipName(requiredSubscription)}.` : ''}
         disableInteractive
       >
         <Box

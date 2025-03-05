@@ -8,7 +8,7 @@ export interface User {
   subscriptions: string[];
   activeSubscriptions?: string[];
   expiredSubscriptions?: string[];
-  roles?: string[];
+  role: Role;
   phone?: string;
   state?: string;
   city?: string;
@@ -22,4 +22,9 @@ export enum SubscriptionPlan {
   PRO = 'Pro',
   ENTERPRISE = 'Enterprise',
   MENTORSHIP = 'Mentorship',
+}
+
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
 }
