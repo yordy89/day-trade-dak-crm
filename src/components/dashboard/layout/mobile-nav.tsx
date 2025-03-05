@@ -19,15 +19,19 @@ import { Logo } from '@/components/core/logo';
 
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
+import { Role } from '@/types/user';
+import { mapMembershipName } from '@/lib/memberships';
 
 export interface MobileNavProps {
-  onClose: () => void; // ✅ Ensure onClose is required
+  onClose: () => void;
   open: boolean;
 }
 
 export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
   const pathname = usePathname();
-  const userSubscriptions = useAuthStore((state) => state.user?.subscriptions ?? []);
+  const user = useAuthStore((state) => state.user);
+  const userSubscriptions = user?.subscriptions ?? [];
+  const userRole = user?.role || Role.USER; // Default to 'user' if role is missing
 
   return (
     <Drawer
@@ -49,12 +53,12 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
           display: 'flex',
           flexDirection: 'column',
           maxWidth: '100%',
-          width: '280px', // Match SideNav width
+          width: '280px',
           zIndex: 'var(--MobileNav-zIndex)',
           '&::-webkit-scrollbar': { display: 'none' },
         },
       }}
-      onClose={onClose} // ✅ Close menu when clicking outside
+      onClose={onClose}
       open={open}
     >
       {/* Logo */}
@@ -69,7 +73,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
 
       {/* Navigation Menu */}
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems, userSubscriptions, onClose })}
+        {renderNavItems({ pathname, items: navItems, userSubscriptions, userRole, onClose })}
       </Box>
 
       {/* Divider */}
@@ -86,7 +90,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
           variant="contained"
           size="small"
           sx={{ width: '100%' }}
-          onClick={onClose} // ✅ Close menu when clicking button
+          onClick={onClose}
         >
           Mejora tu plan ahora
         </Button>
@@ -99,17 +103,26 @@ function renderNavItems({
   items = [],
   pathname,
   userSubscriptions,
+  userRole,
   onClose,
 }: {
   items?: NavItemConfig[];
   pathname: string;
   userSubscriptions: string[];
+  userRole: Role;
   onClose: () => void;
 }): React.JSX.Element {
   return (
     <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
       {items.map((item) => (
-        <NavItem key={item.id} pathname={pathname} {...item} userSubscriptions={userSubscriptions} onClose={onClose} />
+        <NavItem
+          key={item.id}
+          pathname={pathname}
+          {...item}
+          userSubscriptions={userSubscriptions}
+          userRole={userRole}
+          onClose={onClose}
+        />
       ))}
     </Stack>
   );
@@ -118,6 +131,7 @@ function renderNavItems({
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;
   userSubscriptions: string[];
+  userRole: Role;
   onClose: () => void;
 }
 
@@ -131,11 +145,14 @@ function NavItem({
   title,
   requiredSubscription,
   userSubscriptions,
+  userRole,
   onClose,
 }: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription);
+  
+  // ✅ Allow admins to access everything
+  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
 
   const handleClick = (event: React.MouseEvent) => {
     if (isRestricted) {
@@ -148,7 +165,7 @@ function NavItem({
   return (
     <li>
       <Tooltip
-        title={isRestricted ? `Esta función requiere la suscripción ${requiredSubscription}.` : ''}
+        title={isRestricted ? `Esta función requiere la suscripción ${mapMembershipName(requiredSubscription)}.` : ''}
         disableInteractive
       >
         <Box
