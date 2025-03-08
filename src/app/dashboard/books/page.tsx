@@ -20,13 +20,6 @@ export default function TradingBooksPage(): React.JSX.Element {
             title: 'Invertir con confianza: El arte de ganar en el mercado de Valores',
             author: 'Mijail Medina',
             image: '/assets/books/invertir-con-confianza.jpg',
-            link: 'https://www.amazon.com/Invertir-confianza-mercado-valores-Spanish-ebook/dp/B0DZRD4K7C/ref=sr_1_1?crid=1HSLWA4OMM5XZ&dib=eyJ2IjoiMSJ9.ADL4QGcX7ZQ6JRYJYYd0hWXJhSyaHw30LzmAXFoY_lgCbsquOE6Ap67rFWABSdV5tFZ6waulQLHsfuI5eGYvk7sfFvq6y6fZgBalEtDuqkwnuG3EpSrd5_9GzpZ8DURHG2Rz19Tbr02CerHB4dUHLg.9zyjGZMZx3vp5G82R3FxYNgnZV1dVVfspTE4adBk9Xg&dib_tag=se&keywords=invertir+con+confianza&qid=1741470563&sprefix=invertir+con+confianza%2Caps%2C105&sr=8-1',
-            format: 'Kindle',
-          },
-          {
-            title: 'Invertir con confianza: El arte de ganar en el mercado de Valores',
-            author: 'Mijail Medina',
-            image: '/assets/books/invertir-con-confianza.jpg',
             link: 'https://www.amazon.com/Invertir-confianza-mercado-valores-Spanish/dp/B0DZR1J9VX/ref=sr_1_1?crid=1HSLWA4OMM5XZ&dib=eyJ2IjoiMSJ9.ADL4QGcX7ZQ6JRYJYYd0hWXJhSyaHw30LzmAXFoY_lgCbsquOE6Ap67rFWABSdV5tFZ6waulQLHsfuI5eGYvk7sfFvq6y6fZgBalEtDuqkwnuG3EpSrd5_9GzpZ8DURHG2Rz19Tbr02CerHB4dUHLg.9zyjGZMZx3vp5G82R3FxYNgnZV1dVVfspTE4adBk9Xg&dib_tag=se&keywords=invertir+con+confianza&qid=1741470563&sprefix=invertir+con+confianza%2Caps%2C105&sr=8-1',
             format: 'Tapa Dura',
           },
@@ -36,6 +29,13 @@ export default function TradingBooksPage(): React.JSX.Element {
             image: '/assets/books/invertir-con-confianza.jpg',
             link: 'https://www.amazon.com/Invertir-confianza-mercado-valores-Spanish/dp/B0DZRCLTMP/ref=sr_1_1?crid=1HSLWA4OMM5XZ&dib=eyJ2IjoiMSJ9.ADL4QGcX7ZQ6JRYJYYd0hWXJhSyaHw30LzmAXFoY_lgCbsquOE6Ap67rFWABSdV5tFZ6waulQLHsfuI5eGYvk7sfFvq6y6fZgBalEtDuqkwnuG3EpSrd5_9GzpZ8DURHG2Rz19Tbr02CerHB4dUHLg.9zyjGZMZx3vp5G82R3FxYNgnZV1dVVfspTE4adBk9Xg&dib_tag=se&keywords=invertir+con+confianza&qid=1741470563&sprefix=invertir+con+confianza%2Caps%2C105&sr=8-1',
             format: 'Tapa Blanda',
+          },
+          {
+            title: 'Invertir con confianza: El arte de ganar en el mercado de Valores',
+            author: 'Mijail Medina',
+            image: '/assets/books/invertir-con-confianza.jpg',
+            link: 'https://www.amazon.com/Invertir-confianza-mercado-valores-Spanish-ebook/dp/B0DZRD4K7C/ref=sr_1_1?crid=1HSLWA4OMM5XZ&dib=eyJ2IjoiMSJ9.ADL4QGcX7ZQ6JRYJYYd0hWXJhSyaHw30LzmAXFoY_lgCbsquOE6Ap67rFWABSdV5tFZ6waulQLHsfuI5eGYvk7sfFvq6y6fZgBalEtDuqkwnuG3EpSrd5_9GzpZ8DURHG2Rz19Tbr02CerHB4dUHLg.9zyjGZMZx3vp5G82R3FxYNgnZV1dVVfspTE4adBk9Xg&dib_tag=se&keywords=invertir+con+confianza&qid=1741470563&sprefix=invertir+con+confianza%2Caps%2C105&sr=8-1',
+            format: 'Kindle',
           },
         ]}
       />
