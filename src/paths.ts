@@ -7,6 +7,7 @@ export const paths = {
   dashboard: {
     overview: '/dashboard/overview',
     mentorship: '/dashboard/mentorship',
+    books: '/dashboard/books',
     companies: '/dashboard/companies',
     calendar: '/dashboard/calendar',
     phases: '/dashboard/phases',
