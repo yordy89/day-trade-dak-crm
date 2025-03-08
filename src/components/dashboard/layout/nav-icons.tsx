@@ -6,6 +6,7 @@ import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
 import { CalendarCheck, Buildings } from '@phosphor-icons/react';
+import { Book } from '@phosphor-icons/react';
 
 
 export const navIcons = {
@@ -17,4 +18,5 @@ export const navIcons = {
   companies: Buildings,
   user: UserIcon,
   users: UsersIcon,
+  book: Book,
 } as Record<string, Icon>;

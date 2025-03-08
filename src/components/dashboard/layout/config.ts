@@ -5,6 +5,7 @@ import { SubscriptionPlan } from '@/types/user';
 export const navItems = [
   { id: 'overview', title: 'Resumen', href: paths.dashboard.overview, icon: 'chart-pie' },
   { id: 'mentorship', title: 'Mentorías', href: paths.dashboard.mentorship, icon: 'users', requiredSubscription: SubscriptionPlan.MENTORSHIP },
+  { id: 'books', title: 'Libros', href: paths.dashboard.books, icon: 'book' },
   // { id: 'companies', title: 'Companies', href: paths.dashboard.companies, icon: 'companies', requiredSubscription: SubscriptionPlan.PRO  },
   // { id: 'calendar', title: 'Calendar', href: paths.dashboard.calendar, icon: 'calendar', requiredSubscription: SubscriptionPlan.PRO },
   // { id: 'phases', title: 'Phases', href: paths.dashboard.phases, icon: 'chart-pie' },
