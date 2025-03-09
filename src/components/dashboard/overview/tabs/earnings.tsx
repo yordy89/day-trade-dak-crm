@@ -82,7 +82,7 @@ export function EarningsSection(): React.JSX.Element {
                               height={40}
                               fallbackSrc={DEFAULT_LOGO}
                             />
-                            <Typography variant="body2">{company.name}</Typography>
+                            <Typography variant="caption">{company.name}</Typography>
                           </Box>
                           <Divider sx={{ my: 1 }} />
                         </Grid>
@@ -133,7 +133,7 @@ export function EarningsSection(): React.JSX.Element {
                                 height={40}
                                 fallbackSrc={DEFAULT_LOGO}
                               />
-                              <Typography variant="body2">{company.name}</Typography>
+                              <Typography variant="caption">{company.name}</Typography>
                             </Box>
                             <Divider sx={{ my: 1 }} />
                           </Grid>
