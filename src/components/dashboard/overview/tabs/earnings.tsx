@@ -22,7 +22,7 @@ export function EarningsSection(): React.JSX.Element {
       📊 Próximos Reportes de Ganancias Más Esperados
       </Typography>
       <Typography variant="h6" color="text.secondary" mb={4}>
-      Para la semana que comienza el 3 de marzo de 2025
+      Para la semana que comienza el 10 de marzo de 2025
       </Typography>
 
       {/* DAYS GRID */}
