@@ -10,6 +10,8 @@ export const mapMembershipName = (plan: SubscriptionPlan): string => {
       return 'Enterprise';
     case SubscriptionPlan.MENTORSHIP:
         return 'Mentorías';
+    case SubscriptionPlan.CLASS:
+       return 'Clases'
     default:
       return plan;
   }

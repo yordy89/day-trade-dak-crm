@@ -17,9 +17,17 @@ const subscriptionPlans = [
   {
     name: SubscriptionPlan.MENTORSHIP,
     title: 'Mentorías',
-    priceId: 'price_1Qz2KuE0taYR7njR00NmGEJu',
+    priceId: 'price_1Qz2KuE0taYR7njR00NmGEJu', //This is Prod
+    // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX',
     price: '$22.99/mes',
     features: ['✔ Acceso a mentorías'],
+  },
+  {
+    name: SubscriptionPlan.CLASS,
+    title: 'Clases',
+    priceId: 'price_1R5wSRE0taYR7njRd270eE8O',
+    price: '$53.99/mes',
+    features: ['✔ Acceso a las clases diarias'],
   },
 ];
 

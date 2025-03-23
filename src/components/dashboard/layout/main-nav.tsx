@@ -62,7 +62,7 @@ export function MainNav(): React.JSX.Element {
               '@keyframes blink': { '0%': { opacity: 1 }, '50%': { opacity: 0.8 }, '100%': { opacity: 1 } },
             }}
           >
-            📢 Próxima Reunión de la FOMC – (18-19) de Marzo 📅
+            📢 Próxima Reunión de la FOMC – (06-07) de Mayo 📅
           </Typography>
 
           {/* Right Section: Avatar */}
