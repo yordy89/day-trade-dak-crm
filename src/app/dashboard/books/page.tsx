@@ -14,7 +14,7 @@ export default function TradingBooksPage(): React.JSX.Element {
       {/* ✅ Books with Different Formats (Hardcover, Kindle, Paperback) */}
       <TradingBooksList
         title="📚 Trading Paso a Paso"
-        showFormatButtons={true} // Enable special buttons
+        showFormatButtons
         books={[
           {
             title: 'Invertir con confianza: El arte de ganar en el mercado de Valores',

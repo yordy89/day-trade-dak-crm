@@ -40,7 +40,7 @@ const ClassVideoList: React.FC = () => {
     >
       {videos?.map((video: ClassVideo) => (
         <Box key={video.key} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* ✅ Protected Video Player */}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- Video element has captions */}
           <video
             controls
             controlsList="nodownload"
@@ -53,7 +53,6 @@ const ClassVideoList: React.FC = () => {
             {video.captionsUrl ? <track src={video.captionsUrl} kind="subtitles" label="Español" default /> : null}
             Tu navegador no soporta videos.
           </video>
-
           {/* ✅ Video Title Formatted */}
           <Typography variant="h6" sx={{ mt: 1, textAlign: 'center' }}>
             {`Clase - ${formatVideoTitle(video.key)}`}

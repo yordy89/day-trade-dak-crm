@@ -25,8 +25,8 @@ export function TradingBooksList({ title, books, showFormatButtons = false }: Tr
         {title}
       </Typography>
       <Grid container spacing={3} justifyContent="center">
-        {books.map((book, index) => (
-          <Grid item key={index} xs={12} sm={6} md={4}> {/* 3 columns on medium screens and larger */}
+        {books.map((book) => (
+          <Grid item key={book.title} xs={12} sm={6} md={4}> {/* 3 columns on medium screens and larger */}
             <TradingBookItem {...book} showFormatButton={showFormatButtons} />
           </Grid>
         ))}
