@@ -75,8 +75,8 @@ export function PaymentSuccess(): React.JSX.Element {
           {isLoading ? (
             <CircularProgress sx={{ mt: 2 }} />
           ) : (
-            <Button variant="contained" sx={{ mt: 3 }} onClick={() => router.push('/dashboard/mentorship')}>
-              Ir a Mentorías
+            <Button variant="contained" sx={{ mt: 3 }} onClick={() => router.push(`/dashboard/${subscriptionName.toLowerCase()}`)}>
+              Ir a {mapMembershipName(subscriptionName as SubscriptionPlan)}
             </Button>
           )}
         </>
