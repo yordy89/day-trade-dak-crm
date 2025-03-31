@@ -27,7 +27,7 @@ const subscriptionPlans = [
     title: 'Clases',
     priceId: 'price_1R5wSRE0taYR7njRd270eE8O',
     price: '$53.99/mes',
-    features: ['✔ Acceso a las clases diarias'],
+    features: ['✔ Acceso a las clases diarias grabadas'],
   },
 ];
 
