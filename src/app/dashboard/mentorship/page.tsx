@@ -3,7 +3,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
-import VideoList from '@/components/dashboard/mentorship/video-list';
+import MentorshipVideoList from '@/components/dashboard/mentorship/video-list';
 import { SubscriptionGuard } from '@/components/dashboard/subscriptions/subscription-guard';
 import { SubscriptionPlan } from '@/types/user';
 
@@ -14,7 +14,7 @@ export default function MentorshipPage() {
         <Typography variant="h4" fontWeight="bold" mb={3}>
           Mentorías
         </Typography>
-        <VideoList />
+        <MentorshipVideoList />
       </Box>
     </SubscriptionGuard>
   );
