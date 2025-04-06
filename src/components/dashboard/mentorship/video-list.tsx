@@ -5,7 +5,6 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
 import API from '@/lib/axios';
-import { formatVideoTitle } from '@/lib/date-format';
 
 interface ClassVideo {
   key: string; // 🔹 S3 file key
