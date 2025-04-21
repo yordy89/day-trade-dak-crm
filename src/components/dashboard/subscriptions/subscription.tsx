@@ -18,17 +18,25 @@ const subscriptionPlans = [
     name: SubscriptionPlan.MENTORSHIP,
     title: 'Mentorías',
     priceId: 'price_1Qz2KuE0taYR7njR00NmGEJu', //This is Prod
-    // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX',
+    // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX', // This is dev
     price: '$22.99/mes',
     features: ['✔ Acceso a mentorías'],
   },
   {
     name: SubscriptionPlan.CLASS,
     title: 'Clases',
-    priceId: 'price_1R5wSRE0taYR7njRd270eE8O',
+    priceId: 'price_1R5wSRE0taYR7njRd270eE8O', //This is prod
+    // priceId: 'price_1R5bWkJ1acFkbhNIFMuDqkMj', // This is dev
     price: '$53.99/mes',
     features: ['✔ Acceso a las clases diarias grabadas'],
   },
+  // {
+  //   name: SubscriptionPlan.STOCK,
+  //   title: 'Stocks',
+  //   priceId: 'price_1RGOg5J1acFkbhNIBI6fd5l6',
+  //   price: '$29.99/mes',
+  //   features: ['✔ Acceso a clases para invertir en Stocks e ETFs'],
+  // },
 ];
 
 export function SubscriptionManager(): React.JSX.Element {

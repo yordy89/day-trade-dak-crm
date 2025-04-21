@@ -103,7 +103,7 @@ export function AccountInfo(): React.JSX.Element {
       {/* ✅ Active Subscriptions List */}
       {user?.activeSubscriptions && user?.activeSubscriptions?.length > 0 ? (
         <CardContent>
-          <Typography variant="h6">Tus Planes Activos:</Typography>
+          <Typography variant="h6">Planes Activos:</Typography>
           {user.activeSubscriptions
             .filter((plan: any) => plan !== SubscriptionPlan.FREE) // ✅ Hide FREE plan from cancellation
             .map((plan) => (

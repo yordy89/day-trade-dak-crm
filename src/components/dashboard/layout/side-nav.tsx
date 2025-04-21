@@ -94,13 +94,17 @@ function NavItemList({
   userSubscriptions: string[];
   userRole: Role;
 }): React.JSX.Element {
+  const filteredItems = navItems.filter(
+    (item) => !item.requiredRole || item.requiredRole === userRole
+  );
+
   return (
     <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-      {navItems.map((item) => (
+      {filteredItems.map((item) => (
         <NavItem
-          key={item.id} // FIXED: Passing key separately
+          key={item.id}
           pathname={pathname}
-          {...item} // Spreading props (without key)
+          {...item}
           userSubscriptions={userSubscriptions}
           userRole={userRole}
         />
@@ -108,6 +112,7 @@ function NavItemList({
     </Stack>
   );
 }
+
 
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;

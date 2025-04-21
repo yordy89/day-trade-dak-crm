@@ -112,9 +112,13 @@ function renderNavItems({
   userRole: Role;
   onClose: () => void;
 }): React.JSX.Element {
+  const filteredItems = items.filter(
+    (item) => !item.requiredRole || item.requiredRole === userRole
+  );
+
   return (
     <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-      {items.map((item) => (
+      {filteredItems.map((item) => (
         <NavItem
           key={item.id}
           pathname={pathname}
@@ -127,6 +131,7 @@ function renderNavItems({
     </Stack>
   );
 }
+
 
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;

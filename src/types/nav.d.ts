@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from './user';
+import type { SubscriptionPlan, Role } from './user';
 
 export interface NavItemConfig {
   id: string;
@@ -15,4 +15,5 @@ export interface NavItemConfig {
   // can extend it to accept multiple matchers.
   matcher?: { type: 'startsWith' | 'equals'; href: string };
   requiredSubscription?: SubscriptionPlan;
+  requiredRole?: Role;
 }
