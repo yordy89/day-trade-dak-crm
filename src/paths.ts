@@ -4,10 +4,14 @@ export const paths = {
   terms: {
     terms: '/terms/terms-conditions',
   },
+  admin: {
+    users: '/admin'
+  },
   dashboard: {
     overview: '/dashboard/overview',
     mentorship: '/dashboard/mentorship',
     class: '/dashboard/class',
+    stocks: '/dashboard/stock',
     books: '/dashboard/books',
     companies: '/dashboard/companies',
     calendar: '/dashboard/calendar',

@@ -5,7 +5,7 @@ import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
-import { CalendarCheck, Buildings, Book, ChalkboardTeacher, Student } from '@phosphor-icons/react';
+import { CalendarCheck, Buildings, Book, ChalkboardTeacher, Student, ChartLineUp } from '@phosphor-icons/react';
 
 export const navIcons = {
   'chart-pie': ChartPieIcon,
@@ -18,5 +18,6 @@ export const navIcons = {
   users: UsersIcon,
   mentorship: ChalkboardTeacher,
   class: Student,
+  stocks: ChartLineUp,
   book: Book,
 } as Record<string, Icon>;
