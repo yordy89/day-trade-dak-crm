@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { paths } from '@/paths';
 import API from '@/lib/axios';
-import GoogleMap from '@/components/admin/common/GoogleMap';
+import GoogleMap from '../../../components/admin/common/GoogleMap';
 import { DynamicLogo } from '@/components/core/logo';
 
 import EventRegistrationForm from '../components/event-registration-form';
