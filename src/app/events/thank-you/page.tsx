@@ -9,8 +9,7 @@ import GoogleMap from '../../../components/admin/common/GoogleMap';
 const ThankYouPage = () => {
   const router = useRouter();
 
-  const eventLocation = 'JW Marriott Tampa Water Street, 510 Water St, Tampa, FL 33602, USA';
-  const eventDate = new Date('2024-12-20T18:00:00');
+  const eventLocation = '4200 George J.Bean Parkway,Tampa, FL 33607, USA';
 
   return (
     <Box
@@ -38,9 +37,12 @@ const ThankYouPage = () => {
         <Typography variant="h6" gutterBottom>
           📍 {eventLocation}
         </Typography>
-        <Typography variant="h6">
-          🕒 {eventDate.toLocaleDateString()} –{' '}
-          {eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        <Typography variant="body1" color="white" style={{ marginTop: '25px' }}>
+          📅 Sábado, 23 de agosto de 2025
+        </Typography>
+        <Typography variant="body1" color="white">
+          ⏰ <span style={{ fontWeight: 'bold' }}>VIP:</span> 8:30 AM – 10:00 AM |{' '}
+          <span style={{ fontWeight: 'bold' }}>Evento General:</span> 10:00 AM – 2:00 PM
         </Typography>
 
         {/* ✅ Google Map */}
