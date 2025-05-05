@@ -9,21 +9,11 @@ import { useQuery } from '@tanstack/react-query';
 
 import { paths } from '@/paths';
 import API from '@/lib/axios';
-import GoogleMap from '@/components/admin/common/googleMap';
+import GoogleMap from '@/components/admin/common/GoogleMap';
 import { DynamicLogo } from '@/components/core/logo';
 
 import EventRegistrationForm from '../components/event-registration-form';
 import VipRegistrationForm from '../components/vip-registration-form';
-
-interface Event {
-  _id: string;
-  name: string;
-  description?: string;
-  date: string;
-  vipPrice?: number;
-  location?: string;
-  bannerImage?: string;
-}
 
 export default function EventPage() {
   const params = useParams<{ eventId: string }>();
@@ -140,7 +130,7 @@ export default function EventPage() {
                       >
                         🎟️ Registrarme Gratis
                       </Button>
-                      {event.vipPrice && event.vipPrice > 0 && (
+                      {event.vipPrice && event.vipPrice > 0 ? (
                         <Button
                           fullWidth
                           variant="outlined"
@@ -150,7 +140,7 @@ export default function EventPage() {
                         >
                           ⭐ Acceso VIP (${event.vipPrice})
                         </Button>
-                      )}
+                      ): null}
                     </Stack>
                   ) : (
                     <>
@@ -206,8 +196,8 @@ export default function EventPage() {
                   { feature: 'Testimonios en vivo y transformaciones reales', free: true, vip: true },
                   { feature: 'Presentación del Plan de Acción final', free: true, vip: true },
                   { feature: 'Oferta exclusiva al final del evento', free: true, vip: true },
-                ].map((item, idx) => (
-                  <React.Fragment key={idx}>
+                ].map((item) => (
+                  <React.Fragment key={item.feature}>
                     <Grid item xs={6} sx={{ textAlign: 'left' }}>
                       <Typography>{item.feature}</Typography>
                     </Grid>

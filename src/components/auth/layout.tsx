@@ -127,7 +127,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               Próximo Evento: Invertir con Confianza
             </Typography>
             <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
-                📍 {'4200 George J.Bean Parkway,Tampa, FL 33607, USA'}
+                📍 4200 George J.Bean Parkway,Tampa, FL 33607, USA
               </Typography>
             <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
                 📅 Sábado, 23 de agosto de 2025

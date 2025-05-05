@@ -34,7 +34,7 @@ export default function AdminPanel(): React.JSX.Element {
   }
 
   if (user.role !== Role.ADMIN) {
-    return <p></p>;
+    return <p/>;
   }
 
   return (

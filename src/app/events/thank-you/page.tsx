@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Button, Typography } from '@mui/material';
 
-import GoogleMap from '@/components/admin/common/googleMap';
+import GoogleMap from '@/components/admin/common/GoogleMap';
 
 const ThankYouPage = () => {
   const router = useRouter();

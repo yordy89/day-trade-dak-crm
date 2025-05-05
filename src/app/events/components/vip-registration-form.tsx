@@ -59,7 +59,7 @@ const VipRegistrationForm: React.FC<VipFormProps> = ({ eventId, priceId, promoCo
         <Typography variant="h5" textAlign="center">
           Registro VIP
         </Typography>
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+        {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
         <TextField
           label="Nombre"
           value={formData.firstName}

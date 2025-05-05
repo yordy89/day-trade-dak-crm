@@ -33,7 +33,7 @@ const EventList = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newEvent, setNewEvent] = useState<Partial<Event>>({});
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events } = useQuery({
     queryKey: ['admin-events'],
     queryFn: async () => {
       const res = await API.get('/events');
@@ -54,7 +54,6 @@ const EventList = () => {
 
   const handleCreateEvent = () => {
     if (!newEvent.name || !newEvent.date) {
-      alert('Nombre y fecha son requeridos');
       return;
     }
     createEvent.mutate(newEvent);
@@ -77,8 +76,8 @@ const EventList = () => {
                 {event.description}
               </Typography>
               <Typography variant="body2">📅 {new Date(event.date).toLocaleString()}</Typography>
-              {event.vipPrice && <Typography variant="body2">💵 VIP: ${event.vipPrice}</Typography>}
-              {event.location && <Typography variant="body2">📍 {event.location}</Typography>}
+              {event.vipPrice ? <Typography variant="body2">💵 VIP: ${event.vipPrice}</Typography> : null}
+              {event.location ? <Typography variant="body2">📍 {event.location}</Typography> : null}
             </CardContent>
           </Card>
         ))}

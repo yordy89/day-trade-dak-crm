@@ -59,7 +59,7 @@ const EventRegistrationForm: React.FC<RegistrationFormProps> = ({ eventId, onReg
         </Typography>
 
         {/* Show Error Alert */}
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+        {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
 
         <TextField
           label="Nombre"
