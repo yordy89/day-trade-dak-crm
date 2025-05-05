@@ -1,19 +1,22 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Divider, Paper, Tab, Tabs } from '@mui/material';
-import UserList from '../../components/admin/user/user-list';
-import { useAuthStore } from '@/store/auth-store';
 import { useRouter } from 'next/navigation'; // ✅ App Router
+import { useAuthStore } from '@/store/auth-store';
+import { Box, CircularProgress, Divider, Paper, Tab, Tabs } from '@mui/material';
+
 import { Role } from '@/types/user';
 import { paths } from '@/paths';
 
+import UserList from '../../components/admin/user/user-list';
+import EventList from '../../components/admin/event/event-list';
+
 const adminTabs = [
   { label: 'Usuarios', component: <UserList /> },
-  // You can add more admin tabs here later
+  { label: 'Eventos', component: <EventList /> },
 ];
 
-export default function AdminPanel():  React.JSX.Element {
+export default function AdminPanel(): React.JSX.Element {
   const [selectedTab, setSelectedTab] = useState(0);
   const currentTab = adminTabs[selectedTab];
 
@@ -31,7 +34,7 @@ export default function AdminPanel():  React.JSX.Element {
   }
 
   if (user.role !== Role.ADMIN) {
-    return <p></p>;
+    return <p/>;
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { Card, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Button, Card, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { CheckCircle, FacebookLogo, InstagramLogo, TwitterLogo } from '@phosphor-icons/react';
@@ -16,9 +16,9 @@ export interface LayoutProps {
 
 const features = [
   'Mentorías Exclusivas 🔥',
-  // 'Expert Trading Insights',
-  // 'Customizable Trading Strategies',
-  // 'Advanced Risk Management Tools',
+  'Clases Diarias Grabadas 🔥',
+  'Libros Recomendados',
+  'Earnings Semanales',
   // 'Live Market Scanning',
   // 'Educational Trading Resources',
 ];
@@ -106,11 +106,11 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
         </Card>
 
         {/* Features List Section */}
-        <Box>
+        <Box sx={{ textAlign: 'left' }}>
           <Typography variant="h5" color="white" sx={{ fontWeight: 'bold', mb: 2 }}>
             Todo lo que necesitas para tu trading
           </Typography>
-          <Box sx={{ display: 'flex', gap: '60px' }}>
+          <Box sx={{ display: 'flex', gap: '30px' }}>
             <List sx={{ color: 'white', textAlign: 'left' }}>
               {features.map((feature) => (
                 <ListItem key={feature} sx={{ pl: 0 }}>
@@ -121,16 +121,29 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
                 </ListItem>
               ))}
             </List>
-            {/* <List sx={{ color: 'white', textAlign: 'left' }}>
-              {features.map((feature) => (
-                <ListItem key={feature} sx={{ pl: 0 }}>
-                  <ListItemIcon sx={{ minWidth: '32px' }}>
-                    <CheckCircle size={20} weight="bold" color="lightgreen" />
-                  </ListItemIcon>
-                  <ListItemText primary={feature} />
-                </ListItem>
-              ))}
-            </List> */}
+          </Box>
+          <Box sx={{ textAlign: 'left', color: 'white', mt: 6 }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+              Próximo Evento: Invertir con Confianza
+            </Typography>
+            <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
+                📍 4200 George J.Bean Parkway,Tampa, FL 33607, USA
+              </Typography>
+            <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
+                📅 Sábado, 23 de agosto de 2025
+              </Typography>
+              <Typography variant="body1" color="white" style={{marginBottom: '10px'}}>
+                ⏰ <span style={{fontWeight: 'bold'}}>VIP:</span> 8:30 AM – 10:00 AM | <span style={{fontWeight: 'bold'}}>Evento General:</span> 10:00 AM – 2:00 PM
+              </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              component={RouterLink}
+              href="/events/680fe27154c9b64e54e2424f"
+              sx={{ mt: 1 }}
+            >
+              Registrarse
+            </Button>
           </Box>
         </Box>
       </Box>
@@ -167,9 +180,9 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           © {new Date().getFullYear()} Day Trade Dak. Todos los derechos reservados.
         </Typography>
         <Typography variant="body2" sx={{ fontSize: '12px', opacity: 0.8 }}>
-          **Descargo de responsabilidad**: Day Trade Dak no es un asesor de inversiones, legal o fiscal registrado. Todo el
-          contenido es solo para fines informativos y no debe considerarse asesoramiento financiero. El trading implica
-          riesgos, y el rendimiento pasado no garantiza resultados futuros.
+          **Descargo de responsabilidad**: Day Trade Dak no es un asesor de inversiones, legal o fiscal registrado. Todo
+          el contenido es solo para fines informativos y no debe considerarse asesoramiento financiero. El trading
+          implica riesgos, y el rendimiento pasado no garantiza resultados futuros.
         </Typography>
       </Box>
     </Box>
