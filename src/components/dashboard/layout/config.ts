@@ -1,11 +1,30 @@
 import { type NavItemConfig } from '@/types/nav';
-import { paths } from '@/paths';
 import { Role, SubscriptionPlan } from '@/types/user';
+import { paths } from '@/paths';
 
 export const navItems = [
   { id: 'overview', title: 'Resumen', href: paths.dashboard.overview, icon: 'chart-pie' },
-  { id: 'mentorship', title: 'Mentorías', href: paths.dashboard.mentorship, icon: 'mentorship', requiredSubscription: SubscriptionPlan.MENTORSHIP },
-  { id: 'class', title: 'Clases', href: paths.dashboard.class, icon: 'class', requiredSubscription: SubscriptionPlan.CLASS},
+  {
+    id: 'mentorship',
+    title: 'Mentorías',
+    href: paths.dashboard.mentorship,
+    icon: 'mentorship',
+    requiredSubscription: SubscriptionPlan.MENTORSHIP,
+  },
+  {
+    id: 'class',
+    title: 'Clases',
+    href: paths.dashboard.class,
+    icon: 'class',
+    requiredSubscription: SubscriptionPlan.CLASS,
+  },
+  {
+    id: 'psicotrading',
+    title: 'PsicoTrading',
+    href: paths.dashboard.psicotrading,
+    icon: 'psicotrading',
+    requiredSubscription: SubscriptionPlan.PSICOTRADING,
+  },
   // { id: 'class', title: 'Stocks Videos', href: paths.dashboard.stocks, icon: 'stocks', requiredSubscription: SubscriptionPlan.STOCK},
   { id: 'books', title: 'Libros', href: paths.dashboard.books, icon: 'book' },
   // { id: 'companies', title: 'Companies', href: paths.dashboard.companies, icon: 'companies', requiredSubscription: SubscriptionPlan.PRO  },

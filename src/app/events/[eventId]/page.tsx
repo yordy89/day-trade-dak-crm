@@ -155,8 +155,8 @@ export default function EventPage() {
                       {registrationType === 'vip' && (
                         <VipRegistrationForm
                           eventId={event._id}
-                          //   priceId={'price_1RJKtNJ1acFkbhNIBNsLFT4p'} // This is dev
-                          priceId="price_1RLV02E0taYR7njRQ0uGNiMa"
+                            // priceId={'price_1RJKtNJ1acFkbhNIBNsLFT4p'} // This is dev
+                          priceId="price_1RLV02E0taYR7njRQ0uGNiMa" // This is prod
                           promoCode={promoCode}
                         />
                       )}

@@ -27,8 +27,15 @@ const subscriptionPlans = [
     title: 'Clases',
     priceId: 'price_1R5wSRE0taYR7njRd270eE8O', //This is prod
     // priceId: 'price_1R5bWkJ1acFkbhNIFMuDqkMj', // This is dev
-    price: '$53.99/mes',
+    price: '$52.99/mes',
     features: ['✔ Acceso a las clases diarias grabadas'],
+  },
+  {
+    name: SubscriptionPlan.PSICOTRADING,
+    title: 'PsicoTrading',
+    priceId: 'price_1RNIS6J1acFkbhNIyPeQVOAS', //This is prod
+    price: '$29.99/mes',
+    features: ['✔ Acceso a las mentorias de PsicoTrading'],
   },
   // {
   //   name: SubscriptionPlan.STOCK,
