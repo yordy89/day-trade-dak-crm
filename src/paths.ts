@@ -12,6 +12,7 @@ export const paths = {
     mentorship: '/dashboard/mentorship',
     class: '/dashboard/class',
     stocks: '/dashboard/stock',
+    psicotrading: '/dashboard/psicotrading',
     books: '/dashboard/books',
     companies: '/dashboard/companies',
     calendar: '/dashboard/calendar',
