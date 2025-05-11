@@ -8,7 +8,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/react-query';
 import { LocalizationProvider } from '@/components/core/localization-provider';
 import { ThemeProvider } from '@/components/core/theme-provider/theme-provider';
-import { LogoutRedirect } from '@/components/core/logout-redirect'; // ✅ import it
 
 export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 
