@@ -33,7 +33,8 @@ const subscriptionPlans = [
   {
     name: SubscriptionPlan.PSICOTRADING,
     title: 'PsicoTrading',
-    priceId: 'price_1RNIS6J1acFkbhNIyPeQVOAS', //This is prod
+    priceId: 'price_1RMx9KE0taYR7njRSoew9Cq1', //This is Prod
+    // priceId: 'price_1RNIS6J1acFkbhNIyPeQVOAS', //This is dev
     price: '$29.99/mes',
     features: ['✔ Acceso a las mentorias de PsicoTrading'],
   },
