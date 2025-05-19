@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // ✅ App Router
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { Box, CircularProgress, Divider, Paper, Tab, Tabs } from '@mui/material';
 
 import { Role } from '@/types/user';
 import { paths } from '@/paths';
 
-import UserList from '../../components/admin/user/user-list';
 import EventList from '../../components/admin/event/event-list';
+import UserList from '../../components/admin/user/user-list';
 
 const adminTabs = [
   { label: 'Usuarios', component: <UserList /> },
@@ -17,8 +17,10 @@ const adminTabs = [
 ];
 
 export default function AdminPanel(): React.JSX.Element {
-  const [selectedTab, setSelectedTab] = useState(0);
-  const currentTab = adminTabs[selectedTab];
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'events' ? 1 : 0;
+  const [selectedTab, setSelectedTab] = useState(initialTab);
+  const currentTab = adminTabs[selectedTab]; // ✅ fix
 
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
@@ -34,7 +36,7 @@ export default function AdminPanel(): React.JSX.Element {
   }
 
   if (user.role !== Role.ADMIN) {
-    return <p/>;
+    return <p />;
   }
 
   return (

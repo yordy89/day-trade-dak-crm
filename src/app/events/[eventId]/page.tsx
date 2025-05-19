@@ -173,7 +173,7 @@ export default function EventPage() {
               </Typography>
 
               <Grid container spacing={2} alignItems="center" sx={{ textAlign: 'center' }}>
-                <Grid item xs={6}></Grid>
+                <Grid item xs={6}/>
                 <Grid item xs={3}>
                   <Typography variant="h6" fontWeight="bold">
                     Gratis
