@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Box,
   Button,
@@ -53,9 +54,7 @@ const EventList = () => {
   });
 
   const handleCreateEvent = () => {
-    if (!newEvent.name || !newEvent.date) {
-      return;
-    }
+    if (!newEvent.name || !newEvent.date) return;
     createEvent.mutate(newEvent);
   };
 
@@ -66,21 +65,50 @@ const EventList = () => {
       </Button>
 
       <Stack spacing={3}>
-        {events?.map((event: Event) => (
-          <Card key={event._id} variant="outlined">
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">
-                {event.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {event.description}
-              </Typography>
-              <Typography variant="body2">📅 {new Date(event.date).toLocaleString()}</Typography>
-              {event.vipPrice ? <Typography variant="body2">💵 VIP: ${event.vipPrice}</Typography> : null}
-              {event.location ? <Typography variant="body2">📍 {event.location}</Typography> : null}
-            </CardContent>
-          </Card>
-        ))}
+        {events?.map((event: Event) => {
+          const isUpcoming = new Date(event.date) > new Date();
+
+          return (
+            <Card key={event._id} variant="outlined" sx={{ position: 'relative' }}>
+              <CardContent>
+                {/* Status at top-right */}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 16,
+                    color: isUpcoming ? 'green' : 'red',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {isUpcoming ? '🟢 Activo' : '🔴 Finalizado'}
+                </Typography>
+
+                {/* Event Details */}
+                <Typography variant="h6" fontWeight="bold" mb={1}>
+                  {event.name}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {event.description}
+                </Typography>
+
+                <Typography variant="body2">📅 {new Date(event.date).toLocaleString()}</Typography>
+                {event.vipPrice ? <Typography variant="body2">💵 VIP: ${event.vipPrice}</Typography> : null}
+                {event.location ? <Typography variant="body2">📍 {event.location}</Typography> : null}
+
+                {/* Actions bottom-right */}
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-start', gap: 1 }}>
+                  <Button component={Link} href={`/events/${event._id}/participants`} variant="outlined" size="small">
+                    👥 Ver Participantes
+                  </Button>
+                  {/* Future buttons can be added here */}
+                </Box>
+              </CardContent>
+            </Card>
+          );
+        })}
       </Stack>
 
       {/* Dialog to Create Event */}
@@ -106,9 +134,7 @@ const EventList = () => {
             fullWidth
             value={newEvent.date || ''}
             onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Precio VIP (opcional)"
