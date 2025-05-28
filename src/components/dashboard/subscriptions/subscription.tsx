@@ -17,9 +17,9 @@ const subscriptionPlans = [
   {
     name: SubscriptionPlan.MENTORSHIP,
     title: 'Mentorías',
-    priceId: 'price_1Qz2KuE0taYR7njR00NmGEJu', //This is Prod
+    priceId: 'price_1RTnbQE0taYR7njRttjfaMqy', //This is Prod
     // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX', // This is dev
-    price: '$22.99/mes',
+    price: '$499.99/mes',
     features: ['✔ Acceso a mentorías'],
   },
   {
