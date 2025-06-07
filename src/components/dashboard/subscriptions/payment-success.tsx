@@ -6,9 +6,9 @@ import { useAuthStore } from '@/store/auth-store';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { CheckCircle, WarningCircle } from '@phosphor-icons/react';
 
+import { SubscriptionPlan } from '@/types/user';
 import API from '@/lib/axios';
 import { mapMembershipName } from '@/lib/memberships';
-import type { SubscriptionPlan } from '@/types/user';
 
 export function PaymentSuccess(): React.JSX.Element {
   const router = useRouter();
@@ -59,6 +59,14 @@ export function PaymentSuccess(): React.JSX.Element {
     }
   }, [subscriptionName, setUser]);
 
+  const navigateTo = () => {
+    if (subscriptionName === (SubscriptionPlan.MONEYPEACE as string)) {
+      router.push('/dashboard/superation/proposit');
+    } else {
+      router.push(`/dashboard/${subscriptionName.toLowerCase()}`);
+    }
+  };
+
   React.useEffect(() => {
     void fetchUpdatedUser();
   }, [fetchUpdatedUser]); // Runs only once when the component mounts
@@ -71,11 +79,13 @@ export function PaymentSuccess(): React.JSX.Element {
         <>
           <CheckCircle size={80} weight="fill" color="green" />
           <Typography variant="h4">¡Pago Exitoso!</Typography>
-          <Typography variant="h6">Ahora estás suscrito a {mapMembershipName(subscriptionName as SubscriptionPlan)}.</Typography>
+          <Typography variant="h6">
+            Ahora estás suscrito a {mapMembershipName(subscriptionName as SubscriptionPlan)}.
+          </Typography>
           {isLoading ? (
             <CircularProgress sx={{ mt: 2 }} />
           ) : (
-            <Button variant="contained" sx={{ mt: 3 }} onClick={() => router.push(`/dashboard/${subscriptionName.toLowerCase()}`)}>
+            <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigateTo()}>
               Ir a {mapMembershipName(subscriptionName as SubscriptionPlan)}
             </Button>
           )}

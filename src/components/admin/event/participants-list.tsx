@@ -17,11 +17,11 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { FilePdf, FileXls } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { jsPDF as JSPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { autoTable } from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import { FilePdf, FileXls } from '@phosphor-icons/react';
 
 import API from '@/lib/axios';
 

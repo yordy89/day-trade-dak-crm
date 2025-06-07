@@ -21,6 +21,7 @@ const subscriptionPlans = [
     // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX', // This is dev
     price: '$499.99/mes',
     features: ['✔ Acceso a mentorías'],
+    type: 'subscription',
   },
   {
     name: SubscriptionPlan.CLASS,
@@ -29,6 +30,7 @@ const subscriptionPlans = [
     // priceId: 'price_1R5bWkJ1acFkbhNIFMuDqkMj', // This is dev
     price: '$52.99/mes',
     features: ['✔ Acceso a las clases diarias grabadas'],
+    type: 'subscription',
   },
   {
     name: SubscriptionPlan.PSICOTRADING,
@@ -37,14 +39,18 @@ const subscriptionPlans = [
     // priceId: 'price_1RNIS6J1acFkbhNIyPeQVOAS', //This is dev
     price: '$29.99/mes',
     features: ['✔ Acceso a las mentorias de PsicoTrading'],
+    type: 'subscription',
   },
-  // {
-  //   name: SubscriptionPlan.STOCK,
-  //   title: 'Stocks',
-  //   priceId: 'price_1RGOg5J1acFkbhNIBI6fd5l6',
-  //   price: '$29.99/mes',
-  //   features: ['✔ Acceso a clases para invertir en Stocks e ETFs'],
-  // },
+  {
+    name: SubscriptionPlan.MONEYPEACE,
+    title: 'Paz con el Dinero',
+    description: 'Acceso disponible durante 60 días a partir de la fecha de suscripción.',
+    priceId: 'price_1RX5z8E0taYR7njRaC7mXbqn', //This is Prod
+    // priceId: 'price_1RX2hDJ1acFkbhNIq4mDa1Js', //This is dev
+    price: '$199.99',
+    features: ['✔ Acceso al curso de Paz con el dinero.'],
+    type: 'fixed',
+  },
 ];
 
 export function SubscriptionManager(): React.JSX.Element {
@@ -92,56 +98,76 @@ export function SubscriptionManager(): React.JSX.Element {
 
       {/* Subscription Plans */}
       <Box sx={{ display: 'flex', gap: 3, width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
-        {subscriptionPlans.map(({ name, title, priceId, price, features }) => {
-          const isActive = userSubscriptions.includes(name);
+        {['subscription', 'fixed'].map((planType) => {
+          const groupTitle = planType === 'subscription' ? 'Suscripciones Mensuales' : 'Planes Fijos';
+
+          const plansToShow = subscriptionPlans.filter((plan) => plan.type === planType);
 
           return (
-            <Card
-              key={name}
-              sx={{
-                width: '100%', // Full width
-                maxWidth: 350,
-                textAlign: 'center',
-                backgroundColor: 'black', // Black background
-                color: 'white', // White text
-                borderRadius: 3,
-                p: 3,
-                boxShadow: 3,
-              }}
-            >
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
-                  {title}
-                </Typography>
-                <Typography variant="h6" sx={{ color: 'yellow', mb: 2 }}>
-                  {price}
-                </Typography>
+            <Box key={planType} sx={{ width: '100%', mb: 5 }}>
+              <Typography variant="h5" sx={{ mb: 2, color: 'black', textAlign: 'left' }}>
+                {groupTitle}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 3, width: '100%', flexWrap: 'wrap' }}>
+                {plansToShow.map(({ name, title, description, priceId, price, features }) => {
+                  const isActive = userSubscriptions.includes(name);
 
-                {/* Features List */}
-                {features.map((feature) => (
-                  <Typography key={feature} sx={{ mb: 1 }}>
-                    {feature}
-                  </Typography>
-                ))}
+                  return (
+                    <Card
+                      key={name}
+                      sx={{
+                        width: '100%',
+                        maxWidth: 350,
+                        textAlign: 'center',
+                        backgroundColor: 'black',
+                        color: 'white',
+                        borderRadius: 3,
+                        p: 3,
+                        boxShadow: 3,
+                      }}
+                    >
+                      <CardContent>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+                          {title}
+                        </Typography>
 
-                {isActive ? (
-                  <Typography sx={{ color: 'success.main', mt: 2, fontWeight: 'bold' }}>✅ Activa</Typography>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 2, color: 'white', minWidth: 160 }}
-                    disabled={processingPlan === name}
-                    onClick={() => subscribe({ plan: name, priceId })}
-                  >
-                    {processingPlan === name ? (
-                      <CircularProgress size={24} sx={{ color: 'white' }} />
-                    ) : (
-                      `Mejorar a ${title}`
-                    )}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
+                        <Typography variant="h6" sx={{ color: 'yellow', mb: 2 }}>
+                          {price}
+                        </Typography>
+
+                        {features.map((feature) => (
+                          <Typography key={feature} sx={{ mb: 1 }}>
+                            {feature}
+                          </Typography>
+                        ))}
+                        {description && (
+                          <Typography sx={{ color: 'error.main', mt: 1, fontStyle: 'italic' }}>
+                            {description}
+                          </Typography>
+                        )}
+
+                        {isActive ? (
+                          <Typography sx={{ color: 'success.main', mt: 2, fontWeight: 'bold' }}>✅ Activa</Typography>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            sx={{ mt: 2, color: 'white', minWidth: 160 }}
+                            disabled={processingPlan === name}
+                            onClick={() => subscribe({ plan: name, priceId })}
+                          >
+                            {processingPlan === name ? (
+                              <CircularProgress size={24} sx={{ color: 'white' }} />
+                            ) : (
+                              `Mejorar a ${title}`
+                            )}
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </Box>
+            </Box>
           );
         })}
       </Box>

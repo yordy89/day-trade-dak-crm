@@ -11,16 +11,17 @@ import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
 
 import type { NavItemConfig } from '@/types/nav';
+import { Role } from '@/types/user';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
+import { mapMembershipName } from '@/lib/memberships';
 import { Logo } from '@/components/core/logo';
 
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
-import { Role } from '@/types/user';
-import { mapMembershipName } from '@/lib/memberships';
 
 export interface MobileNavProps {
   onClose: () => void;
@@ -31,7 +32,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const userSubscriptions = user?.subscriptions ?? [];
-  const userRole = user?.role || Role.USER; // Default to 'user' if role is missing
+  const userRole = user?.role || Role.USER;
 
   return (
     <Drawer
@@ -61,25 +62,20 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
       onClose={onClose}
       open={open}
     >
-      {/* Logo */}
       <Stack spacing={2} sx={{ p: 3, alignItems: 'center' }}>
         <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }} onClick={onClose}>
           <Logo color="light" height={82} width={120} />
         </Box>
       </Stack>
 
-      {/* Divider */}
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
 
-      {/* Navigation Menu */}
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
         {renderNavItems({ pathname, items: navItems, userSubscriptions, userRole, onClose })}
       </Box>
 
-      {/* Divider */}
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
 
-      {/* Subscription Upgrade Section */}
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Typography variant="body2" sx={{ color: 'var(--NavItem-color)', mb: 1 }}>
           ¡Suscríbete y accede a herramientas exclusivas para potenciar tu trading!
@@ -112,9 +108,7 @@ function renderNavItems({
   userRole: Role;
   onClose: () => void;
 }): React.JSX.Element {
-  const filteredItems = items.filter(
-    (item) => !item.requiredRole || item.requiredRole === userRole
-  );
+  const filteredItems = items.filter((item) => !item.requiredRole || item.requiredRole === userRole);
 
   return (
     <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
@@ -126,18 +120,19 @@ function renderNavItems({
           userSubscriptions={userSubscriptions}
           userRole={userRole}
           onClose={onClose}
+          items={item.items}
         />
       ))}
     </Stack>
   );
 }
 
-
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;
   userSubscriptions: string[];
   userRole: Role;
   onClose: () => void;
+  items?: NavItemConfig[];
 }
 
 function NavItem({
@@ -152,20 +147,40 @@ function NavItem({
   userSubscriptions,
   userRole,
   onClose,
+  items,
 }: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  
-  // ✅ Allow admins to access everything
-  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
+  const isRestricted =
+    requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
+  const hasChildren = items && items.length > 0;
+  const [open, setOpen] = React.useState(false);
 
   const handleClick = (event: React.MouseEvent) => {
     if (isRestricted) {
-      event.preventDefault(); // Prevent navigation if restricted
+      event.preventDefault();
+    } else if (!hasChildren) {
+      onClose();
     } else {
-      onClose(); // ✅ Close menu on valid menu item click
+      setOpen((prev) => !prev);
     }
   };
+
+  const linkProps: any = {};
+
+  if (href && !isRestricted && !hasChildren) {
+    if (external) {
+      linkProps.component = 'a';
+      linkProps.href = href;
+      linkProps.target = '_blank';
+      linkProps.rel = 'noreferrer';
+    } else {
+      linkProps.component = RouterLink;
+      linkProps.href = href;
+    }
+  }
+
+  linkProps.onClick = handleClick;
 
   return (
     <li>
@@ -174,43 +189,33 @@ function NavItem({
         disableInteractive
       >
         <Box
-          {...(href && !isRestricted
-            ? {
-                component: external ? 'a' : RouterLink,
-                href,
-                target: external ? '_blank' : undefined,
-                rel: external ? 'noreferrer' : undefined,
-                onClick: handleClick, // ✅ Close menu on valid item click
-              }
-            : { component: 'span', onClick: handleClick })} // Prevents navigation on restricted items
+          {...linkProps}
           sx={{
             alignItems: 'center',
             borderRadius: 1,
             color: isRestricted ? 'var(--NavItem-disabled-color)' : 'var(--NavItem-color)',
             cursor: isRestricted ? 'not-allowed' : 'pointer',
             display: 'flex',
-            flex: '0 0 auto',
+            justifyContent: 'space-between',
             gap: 1,
             p: '6px 16px',
-            position: 'relative',
             textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            ...(isRestricted && {
-              bgcolor: 'var(--NavItem-disabled-background)',
+            ...(active && {
+              bgcolor: 'var(--NavItem-active-background)',
+              color: 'var(--NavItem-active-color)',
             }),
-            ...(active && { bgcolor: 'var(--NavItem-active-background)', color: 'var(--NavItem-active-color)' }),
           }}
         >
-          <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {Icon ? (
-              <Icon
-                fill={active ? 'var(--NavItem-icon-active-color)' : 'var(--NavItem-icon-color)'}
-                fontSize="var(--icon-fontSize-md)"
-                weight={active ? 'fill' : undefined}
-              />
-            ) : null}
-          </Box>
-          <Box sx={{ flex: '1 1 auto' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
+                <Icon
+                  fill={active ? 'var(--NavItem-icon-active-color)' : 'var(--NavItem-icon-color)'}
+                  fontSize="var(--icon-fontSize-md)"
+                  weight={active ? 'fill' : undefined}
+                />
+              </Box>
+            ): null}
             <Typography
               component="span"
               sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
@@ -218,8 +223,25 @@ function NavItem({
               {title}
             </Typography>
           </Box>
+          {hasChildren ? (open ? <CaretUp size={16} /> : <CaretDown size={16} />) : null}
         </Box>
       </Tooltip>
+
+      {hasChildren && open ? (
+        <Stack component="ul" spacing={0.5} sx={{ listStyle: 'none', pl: 4, mt: 1 }}>
+          {items.map((subItem) => (
+            <NavItem
+              key={subItem.id}
+              {...subItem}
+              pathname={pathname}
+              userSubscriptions={userSubscriptions}
+              userRole={userRole}
+              onClose={onClose}
+              items={subItem.items}
+            />
+          ))}
+        </Stack>
+      ) : null}
     </li>
   );
 }

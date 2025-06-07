@@ -24,7 +24,8 @@ export enum SubscriptionPlan {
   MENTORSHIP = 'Mentorship',
   CLASS = 'Class',
   STOCK = 'Stock',
-  PSICOTRADING = 'Psicotrading'
+  PSICOTRADING = 'Psicotrading',
+  MONEYPEACE = 'MoneyPeace'
 }
 
 export enum Role {

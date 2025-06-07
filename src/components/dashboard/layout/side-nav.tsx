@@ -10,12 +10,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
 
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
 import { Logo } from '@/components/core/logo';
-
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
 import { Role } from '@/types/user';
@@ -26,7 +26,7 @@ export function SideNav(): React.JSX.Element {
 
   const userSubscriptions = useAuthStore((state) => state.user?.subscriptions ?? []);
   const user = useAuthStore((state) => state.user);
-  const userRole = user?.role || Role.USER ; // Default to 'user' if role is missing
+  const userRole = user?.role || Role.USER;
 
   return (
     <Box
@@ -63,13 +63,12 @@ export function SideNav(): React.JSX.Element {
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole}/>
+        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole} />
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
-      {/* Upgrade Now Button at the Bottom */}
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Typography variant="body2" sx={{ color: 'var(--NavItem-color)', mb: 1 }}>
-        ¡Suscríbete y accede a herramientas exclusivas para potenciar tu trading!
+          ¡Suscríbete y accede a herramientas exclusivas para potenciar tu trading!
         </Typography>
         <Button
           component={RouterLink}
@@ -107,17 +106,18 @@ function NavItemList({
           {...item}
           userSubscriptions={userSubscriptions}
           userRole={userRole}
+          items={item.items}
         />
       ))}
     </Stack>
   );
 }
 
-
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   pathname: string;
   userSubscriptions: string[];
   userRole: Role;
+  items?: NavItemConfig[];
 }
 
 function NavItem({
@@ -131,16 +131,41 @@ function NavItem({
   requiredSubscription,
   userSubscriptions,
   userRole,
+  items,
 }: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  const isRestricted = requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
+  const isRestricted =
+    requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
+  const hasChildren = items && items.length > 0;
+  const [open, setOpen] = React.useState(false);
 
   const handleClick = (event: React.MouseEvent) => {
     if (isRestricted) {
-      event.preventDefault(); // Prevent navigation if restricted
+      event.preventDefault();
     }
   };
+
+  let linkProps = {};
+  if (href && !isRestricted && !hasChildren) {
+    if (external) {
+      linkProps = {
+        component: 'a',
+        href,
+        target: '_blank',
+        rel: 'noreferrer',
+      };
+    } else {
+      linkProps = {
+        component: RouterLink,
+        href,
+      };
+    }
+  } else {
+    linkProps = {
+      component: 'span',
+    };
+  }
 
   return (
     <li>
@@ -149,42 +174,34 @@ function NavItem({
         disableInteractive
       >
         <Box
-          {...(href && !isRestricted
-            ? {
-                component: external ? 'a' : RouterLink,
-                href,
-                target: external ? '_blank' : undefined,
-                rel: external ? 'noreferrer' : undefined,
-              }
-            : { component: 'span', onClick: handleClick })} // FIXED: Prevents navigation on restricted items
+          {...linkProps}
+          onClick={hasChildren ? () => setOpen(!open) : handleClick}
           sx={{
             alignItems: 'center',
             borderRadius: 1,
             color: isRestricted ? 'var(--NavItem-disabled-color)' : 'var(--NavItem-color)',
             cursor: isRestricted ? 'not-allowed' : 'pointer',
             display: 'flex',
-            flex: '0 0 auto',
+            justifyContent: 'space-between',
             gap: 1,
             p: '6px 16px',
-            position: 'relative',
             textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            ...(isRestricted && {
-              bgcolor: 'var(--NavItem-disabled-background)',
+            ...(active && {
+              bgcolor: 'var(--NavItem-active-background)',
+              color: 'var(--NavItem-active-color)',
             }),
-            ...(active && { bgcolor: 'var(--NavItem-active-background)', color: 'var(--NavItem-active-color)' }),
           }}
         >
-          <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {Icon ? (
-              <Icon
-                fill={active ? 'var(--NavItem-icon-active-color)' : 'var(--NavItem-icon-color)'}
-                fontSize="var(--icon-fontSize-md)"
-                weight={active ? 'fill' : undefined}
-              />
-            ) : null}
-          </Box>
-          <Box sx={{ flex: '1 1 auto' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
+                <Icon
+                  fill={active ? 'var(--NavItem-icon-active-color)' : 'var(--NavItem-icon-color)'}
+                  fontSize="var(--icon-fontSize-md)"
+                  weight={active ? 'fill' : undefined}
+                />
+              </Box>
+            ) : null }
             <Typography
               component="span"
               sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
@@ -192,8 +209,29 @@ function NavItem({
               {title}
             </Typography>
           </Box>
+
+          {hasChildren ? (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {open ? <CaretUp size={16} weight="bold" /> : <CaretDown size={16} weight="bold" />}
+            </Box>
+          ) : null}
         </Box>
       </Tooltip>
+
+      {hasChildren && open ? (
+        <Stack component="ul" spacing={0.5} sx={{ listStyle: 'none', pl: 4, mt: 1 }}>
+          {items.map((subItem) => (
+            <NavItem
+              key={subItem.id}
+              {...subItem}
+              pathname={pathname}
+              userSubscriptions={userSubscriptions}
+              userRole={userRole}
+              items={subItem.items}
+            />
+          ))}
+        </Stack>
+      ) : null}
     </li>
   );
 }
