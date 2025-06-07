@@ -25,6 +25,10 @@ export const paths = {
       plans: '/dashboard/subscription/plans',
       success: '/dashboard/subscription/success',
     },
+    superation: {
+      proposit: '/dashboard/superation/proposit',
+      mind: '/dashboard/superation/mind'
+    }
   },
   errors: { notFound: '/errors/not-found' },
 } as const;

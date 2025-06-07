@@ -25,6 +25,19 @@ export const navItems = [
     icon: 'psicotrading',
     requiredSubscription: SubscriptionPlan.PSICOTRADING,
   },
+  {
+    id: 'superacion',
+    title: 'Crecimiento Personal',
+    icon: 'book', // or any icon you like
+    items: [
+      {
+        id: 'money-peace',
+        title: 'Paz Con El Dinero',
+        href: paths.dashboard.superation.proposit,
+      }
+    ],
+  },
+
   // { id: 'class', title: 'Stocks Videos', href: paths.dashboard.stocks, icon: 'stocks', requiredSubscription: SubscriptionPlan.STOCK},
   { id: 'books', title: 'Libros', href: paths.dashboard.books, icon: 'book' },
   // { id: 'companies', title: 'Companies', href: paths.dashboard.companies, icon: 'companies', requiredSubscription: SubscriptionPlan.PRO  },
