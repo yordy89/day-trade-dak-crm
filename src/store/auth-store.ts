@@ -22,16 +22,16 @@ export const useAuthStore = create<AuthState>()(
       authToken: null,
       isAuthenticated: false,
       
-      setUser: (user) => {
-        set(() => ({ user, isAuthenticated: Boolean(user) }));
+      setUser: (newUser) => {
+        set(() => ({ user: newUser, isAuthenticated: Boolean(newUser) }));
       },
 
-      setPhase: (phase) => set((state) => ({
-        user: { ...state.user!, tradingPhase: phase }
+      setPhase: (newPhase) => set((state) => ({
+        user: { ...state.user!, tradingPhase: newPhase }
       })),
 
-      setAuthToken: (token) => {
-        set(() => ({ authToken: token }));
+      setAuthToken: (newToken) => {
+        set(() => ({ authToken: newToken }));
       },
 
       logout: () => {
@@ -43,8 +43,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       _hasHydrated: false,
-      setHasHydrated: (state) => {
-        set(() => ({ _hasHydrated: state }));
+      setHasHydrated: (hydrated) => {
+        set(() => ({ _hasHydrated: hydrated }));
       },
     }),
     {

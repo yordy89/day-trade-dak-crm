@@ -16,14 +16,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
   ListItemAvatar,
   Avatar,
-  Divider,
 } from '@mui/material';
 import {
   Microphone,
@@ -37,13 +35,11 @@ import {
   Chat,
   Users,
   HandPalm,
-  DotsThreeVertical,
-  ArrowSquareOut,
   X,
   ArrowsOut,
   ArrowsIn,
 } from '@phosphor-icons/react';
-import { useMeeting, useParticipant, usePubSub } from '@videosdk.live/react-sdk';
+import { useMeeting, usePubSub } from '@videosdk.live/react-sdk';
 import { useVideoSDK } from '../providers/videosdk-provider';
 import { ParticipantView } from './participant-view';
 import { ChatPanel } from './chat-panel';
@@ -74,7 +70,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
     localMicOn,
     localWebcamOn,
     recordingState,
-    meetingState,
+    // meetingState,
     localParticipant: sdkLocalParticipant,
   } = useMeeting({
     onMeetingJoined: () => {
@@ -101,7 +97,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
   const participantsArray = Array.from(participants.values());
   const participantCount = participantsArray.length;
   const raiseHandCount = raiseHandQueue.size;
-  const localParticipant = sdkLocalParticipant || participantsArray.find(p => p.isLocal);
+  const localParticipant = sdkLocalParticipant || participantsArray.find(p => p.local);
   const hasRaisedHand = localParticipantId ? raiseHandQueue.has(localParticipantId) : false;
 
 
@@ -129,7 +125,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
             newQueue.set(participantId || senderId, {
               participantId: participantId || senderId,
               participantName: participantName || 'Unknown',
-              timestamp: timestamp || Date.now()
+              timestamp: typeof timestamp === 'number' ? timestamp : Date.now()
             });
             return newQueue;
           });
@@ -152,7 +148,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
               newQueue.set(senderId, {
                 participantId: senderId,
                 participantName: participant.displayName || 'Unknown',
-                timestamp: timestamp || Date.now()
+                timestamp: typeof timestamp === 'number' ? timestamp : Date.now()
               });
             }
             return newQueue;
@@ -178,7 +174,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
 
   // Handle screen share state
   useEffect(() => {
-    setScreenSharing(!!presenterId);
+    setScreenSharing(Boolean(presenterId));
   }, [presenterId]);
 
   const handleToggleMic = () => {
@@ -193,7 +189,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
     if (!isHost) return;
     
     try {
-      await toggleScreenShare();
+      toggleScreenShare();
     } catch (error) {
       console.error('Error toggling screen share:', error);
     }
@@ -204,20 +200,9 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
     
     try {
       if (recording) {
-        await stopRecording();
+        stopRecording();
       } else {
-        await startRecording({
-          webhookUrl: `${process.env.NEXT_PUBLIC_API_URL}/api/videosdk/recording-webhook`,
-          config: {
-            layout: {
-              type: 'SPOTLIGHT',
-              priority: 'SPEAKER',
-              gridSize: 4,
-            },
-            theme: 'DARK',
-            quality: 'high',
-          },
-        });
+        startRecording(`${process.env.NEXT_PUBLIC_API_URL}/api/videosdk/recording-webhook`);
       }
     } catch (error) {
       console.error('Error toggling recording:', error);
@@ -234,7 +219,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
   };
 
   const handleRaiseHand = () => {
-    if (!joined || meetingState !== 'JOINED') {
+    if (!joined) {
       return;
     }
     
@@ -285,7 +270,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
   // Listen for fullscreen changes
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      setIsFullscreen(Boolean(document.fullscreenElement));
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -299,11 +284,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
   useEffect(() => {
     // Set initial active speaker when no screen share
     if (!presenterId && participantsArray.length > 0) {
-      // First try to find the host (CONFERENCE mode)
-      const hostParticipant = participantsArray.find(p => p.mode === 'CONFERENCE');
-      if (hostParticipant) {
-        setActiveSpeakerId(hostParticipant.id);
-      } else if (isHost && localParticipant) {
+      if (isHost && localParticipant) {
         // If current user is host, show them
         setActiveSpeakerId(localParticipant.id);
       } else if (localParticipant) {
@@ -352,8 +333,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
             <Typography variant="h6" fontWeight={600}>
               Live Trading Session
             </Typography>
-            {recording && (
-              <Chip
+            {recording ? <Chip
                 label="RECORDING"
                 color="error"
                 size="small"
@@ -366,8 +346,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
                     '100%': { opacity: 1 },
                   },
                 }}
-              />
-            )}
+              /> : null}
           </Stack>
           
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -378,16 +357,14 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
               onClick={() => setShowParticipants(!showParticipants)}
               clickable
             />
-            {isHost && raiseHandCount > 0 && (
-              <Chip
+            {isHost && raiseHandCount > 0 ? <Chip
                 icon={<HandPalm size={16} />}
                 label={raiseHandCount}
                 size="small"
                 color="warning"
                 onClick={() => setShowRaiseHandQueue(!showRaiseHandQueue)}
                 clickable
-              />
-            )}
+              /> : null}
           </Stack>
         </Stack>
       </Paper>
@@ -499,8 +476,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
 
 
         {/* Raise Hand Queue Panel for Host */}
-        {isHost && showRaiseHandQueue && raiseHandCount > 0 && (
-          <Paper
+        {isHost && showRaiseHandQueue && raiseHandCount > 0 ? <Paper
             sx={{
               position: 'absolute',
               top: 80,
@@ -556,12 +532,10 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
                   );
                 })}
             </List>
-          </Paper>
-        )}
+          </Paper> : null}
 
         {/* Side Panels */}
-        {(showChat || showParticipants) && (
-          <Box
+        {(showChat || showParticipants) ? <Box
             sx={{
               width: 320,
               display: 'flex',
@@ -570,20 +544,15 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
               borderColor: 'divider',
             }}
           >
-            {showParticipants && (
-              <ParticipantsList
+            {showParticipants ? <ParticipantsList
                 participants={participantsArray}
                 raiseHandQueue={raiseHandQueue}
                 onClose={() => setShowParticipants(false)}
                 onLowerHand={handleLowerHand}
                 isHost={isHost}
-              />
-            )}
-            {showChat && !showParticipants && !showRaiseHandQueue && (
-              <ChatPanel onClose={() => setShowChat(false)} />
-            )}
-            {showRaiseHandQueue && isHost && !showParticipants && (
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              /> : null}
+            {showChat && !showParticipants && !showRaiseHandQueue ? <ChatPanel onClose={() => setShowChat(false)} /> : null}
+            {showRaiseHandQueue && isHost && !showParticipants ? <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Typography variant="h6" fontWeight={600}>
@@ -615,10 +584,8 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
                       </ListItem>
                     ))}
                 </List>
-              </Box>
-            )}
-          </Box>
-        )}
+              </Box> : null}
+          </Box> : null}
       </Box>
 
       {/* Control Bar */}
@@ -635,7 +602,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
           <Tooltip title={allMuted && !isHost ? 'Muted by host' : (localMicOn ? 'Mute' : 'Unmute')}>
             <IconButton
               onClick={handleToggleMic}
-              disabled={allMuted && !isHost && localMicOn}
+              disabled={allMuted && !isHost ? localMicOn : false}
               color={localMicOn ? 'default' : 'error'}
               sx={{
                 bgcolor: localMicOn ? 'background.paper' : alpha(theme.palette.error.main, 0.1),
@@ -657,8 +624,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
             </IconButton>
           </Tooltip>
 
-          {isHost && (
-            <>
+          {isHost ? <>
               <Tooltip title={screenSharing ? 'Stop sharing' : 'Share screen'}>
                 <IconButton
                   onClick={handleToggleScreenShare}
@@ -689,8 +655,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
                 allMuted={allMuted}
                 onMuteStateChange={setAllMuted}
               />
-            </>
-          )}
+            </> : null}
 
           {/* Leave Button */}
           <Box sx={{ mx: 2 }}>
@@ -750,8 +715,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
       </Paper>
 
       {/* Raise Hand Queue Dialog (Host Only) */}
-      {isHost && (
-        <Dialog
+      {isHost ? <Dialog
           open={showRaiseHandQueue}
           onClose={() => setShowRaiseHandQueue(false)}
           maxWidth="sm"
@@ -810,8 +774,7 @@ export function MeetingRoom({ onLeave }: MeetingRoomProps) {
               </List>
             )}
           </DialogContent>
-        </Dialog>
-      )}
+        </Dialog> : null}
     </Box>
   );
 }

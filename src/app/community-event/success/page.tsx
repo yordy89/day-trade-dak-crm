@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { 
   Box, 
   Container, 
@@ -44,20 +44,18 @@ import { useTranslation } from 'react-i18next';
 export default function CommunityEventSuccessPage() {
   const router = useRouter();
   const theme = useTheme();
-  const { t, i18n } = useTranslation();
-  const [showConfetti, setShowConfetti] = useState(false);
+  const { i18n } = useTranslation();
   const isSpanish = i18n.language === 'es';
 
   useEffect(() => {
     // Trigger confetti animation
     const timer = setTimeout(() => {
-      confetti({
+      void confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#16a34a', '#22c55e', '#4ade80', '#86efac'],
       });
-      setShowConfetti(true);
     }, 500);
 
     return () => clearTimeout(timer);
@@ -202,8 +200,8 @@ export default function CommunityEventSuccessPage() {
                 {isSpanish ? 'Lo que incluye tu registro' : 'What your registration includes'}
               </Typography>
               <Grid container spacing={2}>
-                {eventHighlights.map((highlight, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
+                {eventHighlights.map((highlight) => (
+                  <Grid item xs={12} sm={6} key={highlight.title}>
                     <Paper 
                       sx={{ 
                         p: 2, 

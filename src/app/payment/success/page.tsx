@@ -1,20 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { CheckCircle } from '@phosphor-icons/react';
 import API from '@/lib/axios';
-import { useClientAuth } from '@/hooks/use-client-auth';
 import { useAuthStore } from '@/store/auth-store';
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const plan = searchParams.get('plan');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const confirmAndRedirect = async () => {
       if (sessionId) {
         try {
@@ -45,7 +44,7 @@ export default function PaymentSuccessPage() {
       }
     };
 
-    confirmAndRedirect();
+    void confirmAndRedirect();
   }, [sessionId, plan, router]);
 
   return (
@@ -67,5 +66,24 @@ export default function PaymentSuccessPage() {
         Serás redirigido en unos segundos
       </Typography>
     </Box>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

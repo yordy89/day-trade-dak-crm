@@ -18,9 +18,6 @@ import {
   CircularProgress,
   ToggleButton,
   ToggleButtonGroup,
-  useTheme,
-  alpha,
-  TextField,
 } from '@mui/material';
 import {
   CalendarMonth,
@@ -32,7 +29,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { format, startOfWeek, endOfWeek, addDays, subDays } from 'date-fns';
+import { format, startOfWeek, endOfWeek } from 'date-fns';
 import API from '@/lib/axios';
 
 interface EarningsItem {
@@ -48,19 +45,19 @@ interface EarningsItem {
 }
 
 export default function EarningsCalendar() {
-  const theme = useTheme();
   const [dateRange, setDateRange] = useState<'today' | 'week' | 'custom'>('week');
   const [startDate, setStartDate] = useState<Date>(startOfWeek(new Date()));
   const [endDate, setEndDate] = useState<Date>(endOfWeek(new Date()));
 
   const getDateRange = () => {
     switch (dateRange) {
-      case 'today':
+      case 'today': {
         const today = new Date();
         return {
           from: format(today, 'yyyy-MM-dd'),
           to: format(today, 'yyyy-MM-dd'),
         };
+      }
       case 'week':
         return {
           from: format(startOfWeek(new Date()), 'yyyy-MM-dd'),
@@ -99,13 +96,13 @@ export default function EarningsCalendar() {
   };
 
   const groupByDate = (items: EarningsItem[]) => {
-    const grouped = items.reduce((acc, item) => {
+    const grouped = items.reduce<Record<string, EarningsItem[]>>((acc, item) => {
       if (!acc[item.date]) {
         acc[item.date] = [];
       }
       acc[item.date].push(item);
       return acc;
-    }, {} as Record<string, EarningsItem[]>);
+    }, {});
 
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
   };
@@ -125,7 +122,11 @@ export default function EarningsCalendar() {
           <ToggleButtonGroup
             value={dateRange}
             exclusive
-            onChange={(_, value) => value && setDateRange(value)}
+            onChange={(_, value) => {
+              if (value) {
+                setDateRange(value);
+              }
+            }}
             size="small"
           >
             <ToggleButton value="today">Today</ToggleButton>
@@ -139,7 +140,11 @@ export default function EarningsCalendar() {
                 <DatePicker
                   label="Start Date"
                   value={startDate}
-                  onChange={(date) => date && setStartDate(date)}
+                  onChange={(date) => {
+                    if (date) {
+                      setStartDate(date);
+                    }
+                  }}
                   slotProps={{
                     textField: { size: 'small' },
                   }}
@@ -147,7 +152,11 @@ export default function EarningsCalendar() {
                 <DatePicker
                   label="End Date"
                   value={endDate}
-                  onChange={(date) => date && setEndDate(date)}
+                  onChange={(date) => {
+                    if (date) {
+                      setEndDate(date);
+                    }
+                  }}
                   slotProps={{
                     textField: { size: 'small' },
                   }}
@@ -189,7 +198,7 @@ export default function EarningsCalendar() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {items.map((item, index) => {
+                    {items.map((item, _index) => {
                       const hasReported = item.epsActual !== null;
                       const epsBeat = hasReported && item.epsActual! > (item.epsEstimate || 0);
                       const epsDiff = hasReported && item.epsEstimate
@@ -197,7 +206,7 @@ export default function EarningsCalendar() {
                         : null;
 
                       return (
-                        <TableRow key={`${item.symbol}-${index}`}>
+                        <TableRow key={`${item.symbol}-${item.date}-${item.quarter}-${item.year}`}>
                           <TableCell>
                             <Typography fontWeight={600}>{item.symbol}</Typography>
                           </TableCell>

@@ -16,9 +16,7 @@ import {
   Typography,
   Box,
   IconButton,
-  InputAdornment,
   Divider,
-  Grid,
   InputBase,
   useTheme as useMuiTheme,
   alpha,
@@ -54,14 +52,6 @@ type Values = zod.infer<ReturnType<typeof createSchema>>;
 
 const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false } satisfies Values;
 
-interface SignUpResponse {
-  token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-}
 
 interface SignUpCredentials {
   firstName: string;
@@ -83,11 +73,11 @@ interface CustomInputProps {
   isDarkMode: boolean;
   muiTheme: any;
   name: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   endAdornment?: React.ReactNode;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ 
+const CustomInput = React.memo<CustomInputProps>(({ 
   icon, 
   label, 
   isDarkMode, 
@@ -109,7 +99,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {props.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -176,18 +166,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
             },
           }}
         />
-        {endAdornment && (
-          <Box sx={{ pr: 1 }}>
+        {endAdornment ? <Box sx={{ pr: 1 }}>
             {endAdornment}
-          </Box>
-        )}
+          </Box> : null}
       </Box>
-      {helperText && (
-        <FormHelperText>{helperText}</FormHelperText>
-      )}
+      {helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
     </FormControl>
   );
-};
+});
+
+CustomInput.displayName = 'CustomInput';
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
@@ -225,7 +213,7 @@ export function SignUpForm(): React.JSX.Element {
 
   const onSubmit = (values: Values): void => {
     // Extract terms from values to exclude it from the API call
-    const { terms, ...signUpData } = values;
+    const { terms: _terms, ...signUpData } = values;
     signUp(signUpData);
   };
 

@@ -15,7 +15,7 @@ const stripePromise = loadStripe(`${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_K
 // Define available plans with their Stripe price IDs and features
 const subscriptionPlans = [
   {
-    name: SubscriptionPlan.MENTORSHIP,
+    name: SubscriptionPlan.LiveRecorded,
     title: 'Mentorías',
     priceId: 'price_1RTnbQE0taYR7njRttjfaMqy', //This is Prod
     // priceId: 'price_1Qy0JcJ1acFkbhNI4q0axjLX', // This is dev
@@ -24,7 +24,7 @@ const subscriptionPlans = [
     type: 'subscription',
   },
   {
-    name: SubscriptionPlan.CLASS,
+    name: SubscriptionPlan.CLASSES,
     title: 'Clases',
     priceId: 'price_1R5wSRE0taYR7njRd270eE8O', //This is prod
     // priceId: 'price_1R5bWkJ1acFkbhNIFMuDqkMj', // This is dev
@@ -42,7 +42,7 @@ const subscriptionPlans = [
     type: 'subscription',
   },
   {
-    name: SubscriptionPlan.MONEYPEACE,
+    name: SubscriptionPlan.PeaceWithMoney,
     title: 'Paz con el Dinero',
     description: 'Acceso disponible durante 60 días a partir de la fecha de suscripción.',
     priceId: 'price_1RX5z8E0taYR7njRaC7mXbqn', //This is Prod
@@ -141,11 +141,9 @@ export function SubscriptionManager(): React.JSX.Element {
                             {feature}
                           </Typography>
                         ))}
-                        {description && (
-                          <Typography sx={{ color: 'error.main', mt: 1, fontStyle: 'italic' }}>
+                        {description ? <Typography sx={{ color: 'error.main', mt: 1, fontStyle: 'italic' }}>
                             {description}
-                          </Typography>
-                        )}
+                          </Typography> : null}
 
                         {isActive ? (
                           <Typography sx={{ color: 'success.main', mt: 2, fontWeight: 'bold' }}>✅ Activa</Typography>

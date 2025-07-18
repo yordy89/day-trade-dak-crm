@@ -49,8 +49,8 @@ export function TradingStats() {
         </Box>
 
         <Grid container spacing={4}>
-          {stats.map((stat, index) => (
-            <Grid item xs={6} md={3} key={index}>
+          {stats.map((stat, _index) => (
+            <Grid item xs={6} md={3} key={stat.label}>
               <Box 
                 className="text-center p-6 rounded-lg bg-[#1a1f2e] border border-gray-800 hover:border-gray-700 transition-all"
               >

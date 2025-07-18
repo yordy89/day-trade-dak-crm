@@ -17,12 +17,10 @@ import {
   ListItemText,
   Divider,
   Paper,
-  IconButton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Avatar,
-  Rating,
   Alert,
   useTheme,
   alpha,
@@ -32,10 +30,7 @@ import {
   CheckCircle,
   Star,
   PlayCircle,
-  Timer,
-  Language,
   CardMembership,
-  Download,
   ExpandMore,
   Group,
   Groups,
@@ -50,11 +45,8 @@ import {
   Warning,
   Psychology,
   ArrowForward,
-  CheckBox,
-  Schedule,
   LocalOffer,
 } from '@mui/icons-material';
-import Image from 'next/image';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { MainNavbar } from '@/components/landing/main-navbar';
 import { ProfessionalFooter } from '@/components/landing/professional-footer';
@@ -62,7 +54,6 @@ import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { EventRegistrationModal } from '@/components/events/EventRegistrationModal';
 import { eventService } from '@/services/api/event.service';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 interface PaymentOption {
@@ -73,7 +64,7 @@ interface PaymentOption {
   available: boolean;
 }
 
-const getPaymentOptions = (t: any): PaymentOption[] => [
+const _getPaymentOptions = (t: any): PaymentOption[] => [
   {
     id: 'card',
     name: t('pricing.paymentOptions.card.name'),
@@ -157,7 +148,7 @@ const getPhaseDetails = (t: any) => {
 const getHighlights = (t: any) => {
   try {
     const highlightItems = t('highlights.items', { returnObjects: true });
-    const icons = [<School />, <TrendingUp />, <Groups />, <LiveTv />, <Group />, <Psychology />];
+    const icons = [<School key="school" />, <TrendingUp key="trending" />, <Groups key="groups" />, <LiveTv key="live" />, <Group key="group" />, <Psychology key="psychology" />];
     
     if (!Array.isArray(highlightItems)) {
       console.error('highlights.items is not an array:', highlightItems);
@@ -224,7 +215,7 @@ const BullBearBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
         const height = Math.random() * 100 + 50;
         const y = 400 - height / 2;
         return (
-          <g key={i}>
+          <g key={`candle-${x}`}>
             <rect
               x={x - 15}
               y={y}
@@ -256,7 +247,7 @@ const TradingPatternGraphic = () => (
       {/* Grid lines */}
       {[...Array(5)].map((_, i) => (
         <line
-          key={`h-${i}`}
+          key={`h-line-${i * 40}`}
           x1="0"
           y1={i * 40}
           x2="800"
@@ -283,8 +274,8 @@ const TradingPatternGraphic = () => (
         { x: 600, high: 60, low: 120, open: 110, close: 70, bull: true },
         { x: 650, high: 40, low: 100, open: 50, close: 90, bull: false },
         { x: 700, high: 20, low: 80, open: 70, close: 30, bull: true },
-      ].map((candle, i) => (
-        <g key={i}>
+      ].map((candle, _i) => (
+        <g key={`candlestick-${candle.x}`}>
           {/* Wick */}
           <line
             x1={candle.x}
@@ -323,16 +314,13 @@ export default function MasterCoursePage() {
   const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
   const { t, ready } = useTranslation('masterCourse');
-  const [selectedPayment, setSelectedPayment] = useState<string>('card');
-  const [isProcessing, setIsProcessing] = useState(false);
   const [pricing, setPricing] = useState<{ basePrice: number; currency: string } | null>(null);
   const [isLoadingPrice, setIsLoadingPrice] = useState(true);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [event, setEvent] = useState<any>(null);
-  const [isLoadingEvent, setIsLoadingEvent] = useState(true);
+  const [, setIsLoadingEvent] = useState(true);
   
   // Get translated data (only if translations are ready)
-  const paymentOptions = ready ? getPaymentOptions(t) : [];
   const phaseDetails = ready ? getPhaseDetails(t) : [];
   const highlights = ready ? getHighlights(t) : [];
 
@@ -342,8 +330,7 @@ export default function MasterCoursePage() {
       try {
         // First, get all events and find the master course
         const eventsResponse = await eventService.getEvents({ 
-          isActive: true,
-          type: 'master_course' 
+          isActive: true
         });
         
         // Find the first active master course event
@@ -411,8 +398,8 @@ export default function MasterCoursePage() {
       }
     };
 
-    fetchData();
-  }, []);
+    void fetchData();
+  }, [t]);
 
   const handlePurchase = async () => {
     // Open the registration modal for all users (logged in or not)
@@ -445,7 +432,7 @@ export default function MasterCoursePage() {
       <MainNavbar />
       
       {/* Warning Banner for Temporary Event */}
-      {event && (event as any)._isTemporary && (
+      {event?._isTemporary ? (
         <Alert 
           severity="warning" 
           sx={{ 
@@ -459,7 +446,7 @@ export default function MasterCoursePage() {
             <strong>{t('ui.messages.developmentMode')}:</strong> {t('ui.messages.noEventFound')}
           </Typography>
         </Alert>
-      )}
+      ) : null}
       
       <Box sx={{ pt: { xs: 14, md: 18 }, minHeight: '100vh', position: 'relative' }}>
         <BullBearBackground isDarkMode={isDarkMode} />
@@ -551,7 +538,7 @@ export default function MasterCoursePage() {
                 </Stack>
                 
                 {/* BNPL Payment Options Message */}
-                {pricing && (
+                {pricing ? (
                   <Paper
                     elevation={0}
                     sx={{
@@ -574,7 +561,7 @@ export default function MasterCoursePage() {
                       </Box>
                     </Stack>
                   </Paper>
-                )}
+                ) : null}
               </Stack>
             </Grid>
             <Grid item xs={12} md={5}>
@@ -641,8 +628,8 @@ export default function MasterCoursePage() {
                 color: phase.color,
                 icon: ['📚', '📈', '💹'][index],
                 title: phase.title
-              })).map((item, index) => (
-                <Grid item xs={12} md={4} key={index}>
+              })).map((item, _index) => (
+                <Grid item xs={12} md={4} key={item.phase}>
                   <Box sx={{ textAlign: 'center', position: 'relative' }}>
                     <Box
                       sx={{
@@ -734,8 +721,8 @@ export default function MasterCoursePage() {
               title: t('targetAudience.entrepreneurs.title'),
               description: t('targetAudience.entrepreneurs.description'),
             },
-          ].map((feature, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+          ].map((feature, _index) => (
+            <Grid item xs={12} sm={6} md={3} key={feature.title}>
               <Paper
                 elevation={0}
                 sx={{
@@ -820,8 +807,8 @@ export default function MasterCoursePage() {
                 </Box>
                 
                 <Grid container spacing={3}>
-                  {phaseDetails[0].highlights.map((highlight, idx) => (
-                    <Grid item xs={12} md={6} key={idx}>
+                  {phaseDetails[0]?.highlights?.map((highlight: string, _idx: number) => (
+                    <Grid item xs={12} md={6} key={highlight}>
                       <Stack direction="row" spacing={2} alignItems="flex-start">
                         <CheckCircle sx={{ color: '#16a34a', flexShrink: 0, mt: 0.5 }} />
                         <Typography variant="body1">{highlight}</Typography>
@@ -836,8 +823,8 @@ export default function MasterCoursePage() {
                     {t('programComplete.phase1.modulesTitle')}
                   </Typography>
                   <Grid container spacing={2}>
-                    {phaseDetails[0].modules.map((module) => (
-                      <Grid item xs={12} md={6} lg={3} key={module.number}>
+                    {phaseDetails[0]?.modules?.map((module: any) => (
+                      <Grid item xs={12} md={6} lg={3} key={`module-${module.number}`}>
                         <Card sx={{ height: '100%', backgroundColor: alpha('#16a34a', 0.05) }}>
                           <CardContent>
                             <Stack direction="row" spacing={2} alignItems="center" mb={2}>
@@ -849,8 +836,8 @@ export default function MasterCoursePage() {
                               </Typography>
                             </Stack>
                             <List dense sx={{ py: 0 }}>
-                              {module.topics.map((topic, idx) => (
-                                <ListItem key={idx} sx={{ px: 0, py: 0.5 }}>
+                              {module.topics.map((topic: string, _idx: number) => (
+                                <ListItem key={topic} sx={{ px: 0, py: 0.5 }}>
                                   <ListItemIcon sx={{ minWidth: 24 }}>
                                     <ArrowForward sx={{ fontSize: 14, color: '#16a34a' }} />
                                   </ListItemIcon>
@@ -874,8 +861,8 @@ export default function MasterCoursePage() {
                     {t('programComplete.phase1.mentorshipsTitle')}
                   </Typography>
                   <Grid container spacing={2}>
-                    {phaseDetails[0].mentorships.map((mentorship, idx) => (
-                      <Grid item xs={12} md={6} key={idx}>
+                    {phaseDetails[0]?.mentorships?.map((mentorship: string, _idx: number) => (
+                      <Grid item xs={12} md={6} key={mentorship}>
                         <Stack direction="row" spacing={2} alignItems="center">
                           <Groups sx={{ color: '#16a34a' }} />
                           <Typography variant="body1">{mentorship}</Typography>
@@ -924,14 +911,14 @@ export default function MasterCoursePage() {
                     {t('programComplete.phase2.title')}
                   </Typography>
                   <Typography variant="h5" color="text.secondary">
-                    {phaseDetails[1].subtitle}
+                    {phaseDetails[1]?.subtitle}
                   </Typography>
                 </Box>
 
                 {/* Day by Day Breakdown */}
                 <Grid container spacing={3}>
-                  {phaseDetails[1].dayByDay.map((day, index) => (
-                    <Grid item xs={12} key={index}>
+                  {phaseDetails[1]?.dayByDay?.map((day: any, _index: number) => (
+                    <Grid item xs={12} key={day.title}>
                       <Card 
                         sx={{ 
                           backgroundColor: alpha('#3b82f6', 0.05),
@@ -953,8 +940,8 @@ export default function MasterCoursePage() {
                             </Box>
                           </Stack>
                           <Grid container spacing={2}>
-                            {day.activities.map((activity, idx) => (
-                              <Grid item xs={12} md={6} key={idx}>
+                            {day.activities.map((activity: string, _idx: number) => (
+                              <Grid item xs={12} md={6} key={activity}>
                                 <Stack direction="row" spacing={2} alignItems="flex-start">
                                   <CheckCircle sx={{ color: '#3b82f6', flexShrink: 0, mt: 0.5 }} />
                                   <Typography variant="body1">{activity}</Typography>
@@ -1018,16 +1005,16 @@ export default function MasterCoursePage() {
                     }}
                   />
                   <Typography variant="h3" fontWeight={700} color="#f59e0b" gutterBottom>
-                    {phaseDetails[2].title}
+                    {phaseDetails[2]?.title}
                   </Typography>
                   <Typography variant="h5" color="text.secondary">
-                    {phaseDetails[2].subtitle}
+                    {phaseDetails[2]?.subtitle}
                   </Typography>
                 </Box>
                 
                 <Grid container spacing={3}>
-                  {phaseDetails[2].features.map((feature, idx) => (
-                    <Grid item xs={12} md={6} key={idx}>
+                  {phaseDetails[2]?.features?.map((feature: string, _idx: number) => (
+                    <Grid item xs={12} md={6} key={feature}>
                       <Stack direction="row" spacing={2} alignItems="flex-start">
                         <CheckCircle sx={{ color: '#f59e0b', flexShrink: 0, mt: 0.5 }} />
                         <Typography variant="body1">{feature}</Typography>
@@ -1062,8 +1049,8 @@ export default function MasterCoursePage() {
                       {t('whyItWorks.whatWeDont.title')} ❌
                     </Typography>
                     <List>
-                      {(t('whyItWorks.whatWeDont.items', { returnObjects: true }) as string[]).map((item, idx) => (
-                        <ListItem key={idx}>
+                      {(t('whyItWorks.whatWeDont.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                        <ListItem key={item}>
                           <ListItemIcon>
                             <Warning sx={{ color: 'error.main' }} />
                           </ListItemIcon>
@@ -1088,8 +1075,8 @@ export default function MasterCoursePage() {
                       {t('whyItWorks.whatWeDo.title')} ✓
                     </Typography>
                     <List>
-                      {(t('whyItWorks.whatWeDo.items', { returnObjects: true }) as string[]).map((item, idx) => (
-                        <ListItem key={idx}>
+                      {(t('whyItWorks.whatWeDo.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                        <ListItem key={item}>
                           <ListItemIcon>
                             <CheckCircle sx={{ color: 'success.main' }} />
                           </ListItemIcon>
@@ -1151,7 +1138,7 @@ export default function MasterCoursePage() {
             </Box>
           </Box>
 
-          {/* What's Included */}
+          {/* What&apos;s Included */}
           <Box sx={{ mt: 10 }}>
             <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
               {t('whatIncludes.title')}
@@ -1212,8 +1199,8 @@ export default function MasterCoursePage() {
           {t('whatMakesUnique.title')}
         </Typography>
         <Grid container spacing={4}>
-          {highlights.map((highlight, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+          {highlights.map((highlight, _index) => (
+            <Grid item xs={12} sm={6} md={3} key={highlight.title}>
               <Paper
                 elevation={0}
                 sx={{
@@ -1265,8 +1252,8 @@ export default function MasterCoursePage() {
                   {t('sessionContent.day1.title')}
                 </Typography>
                 <List>
-                  {(t('sessionContent.day1.items', { returnObjects: true }) as string[]).map((item, idx) => (
-                    <ListItem key={idx}>
+                  {(t('sessionContent.day1.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                    <ListItem key={item}>
                       <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
                       <ListItemText primary={item} />
                     </ListItem>
@@ -1280,8 +1267,8 @@ export default function MasterCoursePage() {
                   {t('sessionContent.day2.title')}
                 </Typography>
                 <List>
-                  {(t('sessionContent.day2.items', { returnObjects: true }) as string[]).map((item, idx) => (
-                    <ListItem key={idx}>
+                  {(t('sessionContent.day2.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                    <ListItem key={item}>
                       <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
                       <ListItemText primary={item} />
                     </ListItem>
@@ -1295,8 +1282,8 @@ export default function MasterCoursePage() {
                   {t('sessionContent.day3.title')}
                 </Typography>
                 <List>
-                  {(t('sessionContent.day3.items', { returnObjects: true }) as string[]).map((item, idx) => (
-                    <ListItem key={idx}>
+                  {(t('sessionContent.day3.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                    <ListItem key={item}>
                       <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
                       <ListItemText primary={item} />
                     </ListItem>
@@ -1475,8 +1462,8 @@ export default function MasterCoursePage() {
         <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
           {t('faq.mainTitle')}
         </Typography>
-        {(t('faq.questions', { returnObjects: true }) as Array<{question: string, answer: string}>).map((faq, index) => (
-          <Accordion key={index} sx={{ mb: 2 }}>
+        {(t('faq.questions', { returnObjects: true }) as {question: string, answer: string}[]).map((faq, _index) => (
+          <Accordion key={faq.question} sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMore />}>
               <Typography variant="h6">{faq.question}</Typography>
             </AccordionSummary>
@@ -1490,15 +1477,15 @@ export default function MasterCoursePage() {
     <ProfessionalFooter />
     
     {/* Event Registration Modal */}
-    {event && (
+    {event ? (
       <EventRegistrationModal
         isOpen={isRegistrationModalOpen}
         onClose={() => setIsRegistrationModalOpen(false)}
         event={event}
-        userId={user?.id}
+        userId={user?._id}
         userEmail={user?.email}
       />
-    )}
+    ) : null}
     </>
   );
 }

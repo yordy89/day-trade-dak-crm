@@ -44,7 +44,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
   }, []);
 
   React.useEffect(() => {
-    checkSession().catch((err: unknown) => {
+    void checkSession().catch((err: unknown) => {
       logger.error(err);
       // noop
     });

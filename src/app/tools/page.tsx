@@ -4,7 +4,6 @@ import React from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, Button } from '@mui/material';
 import { BarChart, Calculate, TrendingUp, Analytics } from '@mui/icons-material';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 import { MainNavbar } from '@/components/landing/main-navbar';
 
 const tools = [
@@ -39,7 +38,6 @@ const tools = [
 ];
 
 export default function ToolsPage() {
-  const { t } = useTranslation();
 
   return (
     <>

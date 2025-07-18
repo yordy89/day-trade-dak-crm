@@ -9,7 +9,7 @@ import StockVideoList from '@/components/academy/stock/stock-video-list';
 
 export default function StockPage(): React.JSX.Element {
   return (
-    <SubscriptionGuard requiredSubscription={SubscriptionPlan.STOCK}>
+    <SubscriptionGuard requiredSubscription={SubscriptionPlan.MasterClases}>
       <Box sx={{ height: '100vh', width: '100%', p: 3 }}>
         <Typography variant="h4" fontWeight="bold" mb={3}>
           Inversiones en Acciones

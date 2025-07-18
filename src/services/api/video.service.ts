@@ -51,11 +51,12 @@ class VideoService {
       const response = await API.get<Video[]>('/videos', { params });
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -64,11 +65,12 @@ class VideoService {
       const response = await API.get<Video>(`/videos/${videoId}`);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load video details.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -77,11 +79,12 @@ class VideoService {
       const response = await API.post<Video>('/videos', data);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to create video.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -90,11 +93,12 @@ class VideoService {
       const response = await API.put<Video>(`/videos/${videoId}`, data);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update video.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -102,11 +106,12 @@ class VideoService {
     try {
       await API.delete(`/videos/${videoId}`);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to delete video.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -116,11 +121,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/classVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load class videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -129,11 +135,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/mentorshipVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load mentorship videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -142,11 +149,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/stockVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load stock videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -155,11 +163,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/psicotradingVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load psicotrading videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -168,11 +177,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/cursos/curso1');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load course videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -181,11 +191,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/classesVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load classes videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -194,11 +205,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/classVideos');
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load live recorded videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -207,11 +219,12 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>(`/videos/cursos/${courseKey}`);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load superacion videos.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -244,7 +257,7 @@ class VideoService {
       if (error instanceof Error && 'response' in error && (error as any).response?.status === 404) {
         // Return a mock object to prevent errors
         return {
-          _id: 'mock-' + Date.now(),
+          _id: `mock-${Date.now()}`,
           userId: '',
           videoId: data.videoId,
           s3Key: data.s3Key,
@@ -253,7 +266,7 @@ class VideoService {
       console.warn('Video progress tracking not available');
       // Return a mock object to prevent errors
       return {
-        _id: 'mock-' + Date.now(),
+        _id: `mock-${Date.now()}`,
         userId: '',
         videoId: data.videoId,
         s3Key: data.s3Key,

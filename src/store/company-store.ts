@@ -25,7 +25,7 @@ interface CompanyStore {
 
 export const useCompanyStore = create<CompanyStore>((set) => ({
   companies: [],
-  setCompanies: (companies) => set({ companies }),
+  setCompanies: (newCompanies) => set({ companies: newCompanies }),
   addCompany: (company: StockData) =>
     set((state) => ({
       companies: state.companies.some((c) => c.symbol === company.symbol)

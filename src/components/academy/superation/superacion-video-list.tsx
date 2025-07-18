@@ -19,14 +19,14 @@ import {
   alpha,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { HandsPraying } from '@phosphor-icons/react/dist/ssr/HandsPraying';
 import { Calendar } from '@phosphor-icons/react/dist/ssr/Calendar';
 import { Sparkle } from '@phosphor-icons/react/dist/ssr/Sparkle';
 import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
-import { videoService, VideoMetadata } from '@/services/api/video.service';
+import { videoService } from '@/services/api/video.service';
+import type { VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 import { getVideosDescriptions } from '@/data/curso1';
 import { useTranslation } from 'react-i18next';
@@ -82,7 +82,7 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
-      completed: userClass?.completedAt ? true : false,
+      completed: Boolean(userClass?.completedAt),
       progress: userClass?.progress || 0,
     };
   });
@@ -95,7 +95,7 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
     router.push(`/academy/personal-growth/peace-with-money/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (video: VideoWithProgress) => {
+  const getVideoDuration = (_video: VideoWithProgress) => {
     // TODO: Get actual duration from video metadata
     // For now, return a placeholder
     return t('peaceWithMoney.video.videoLesson');

@@ -47,7 +47,7 @@ const ThankYouPage = () => {
 
         {/* ✅ Google Map */}
         <Box mt={3}>
-          <GoogleMap address={eventLocation} height="250px" />
+          <GoogleMap height="250px" />
         </Box>
       </Box>
 

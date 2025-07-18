@@ -1,27 +1,27 @@
 'use client';
 
-import React, { Component, ReactNode } from 'react';
+import React, { Component, type ReactNode } from 'react';
 import { Box, Typography, Button, Stack, Alert, Container } from '@mui/material';
 import { ErrorOutline, Refresh, Home } from '@mui/icons-material';
 import { logger } from '@/lib/default-logger';
 import { errorHandler } from '@/lib/error-handler';
 
-interface Props {
+interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
   showDetails?: boolean;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: React.ErrorInfo | null;
   errorId: string;
 }
 
-export class EnhancedErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     
     this.state = {
@@ -32,7 +32,7 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
     };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     const errorId = errorHandler.generateCorrelationId();
     
     return {
@@ -120,19 +120,17 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
               color="text.secondary"
               sx={{ mb: 4, maxWidth: 600 }}
             >
-              We're sorry for the inconvenience. An unexpected error has occurred. 
+              We&apos;re sorry for the inconvenience. An unexpected error has occurred. 
               Please try refreshing the page or contact support if the problem persists.
             </Typography>
 
-            {errorId && (
-              <Alert severity="info" sx={{ mb: 3 }}>
+            {errorId ? <Alert severity="info" sx={{ mb: 3 }}>
                 Error ID: <strong>{errorId}</strong>
                 <br />
                 <Typography variant="caption" color="text.secondary">
                   Please provide this ID when contacting support
                 </Typography>
-              </Alert>
-            )}
+              </Alert> : null}
 
             <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
               <Button
@@ -154,8 +152,7 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
               </Button>
             </Stack>
 
-            {showDetails && error && (
-              <Box
+            {showDetails && error ? <Box
                 sx={{
                   mt: 4,
                   p: 3,
@@ -185,8 +182,7 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
                   {error.stack}
                 </Typography>
 
-                {errorInfo && (
-                  <>
+                {errorInfo ? <>
                     <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
                       Component Stack
                     </Typography>
@@ -203,10 +199,8 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
                     >
                       {errorInfo.componentStack}
                     </Typography>
-                  </>
-                )}
-              </Box>
-            )}
+                  </> : null}
+              </Box> : null}
           </Box>
         </Container>
       );
@@ -218,16 +212,16 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
 
 // HOC for easier usage
 export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<Props, 'children'>
+  ComponentToWrap: React.ComponentType<P>,
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
 ) {
   const WrappedComponent = (props: P) => (
     <EnhancedErrorBoundary {...errorBoundaryProps}>
-      <Component {...props} />
+      <ComponentToWrap {...props} />
     </EnhancedErrorBoundary>
   );
 
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withErrorBoundary(${ComponentToWrap.displayName || ComponentToWrap.name})`;
 
   return WrappedComponent;
 }

@@ -20,11 +20,11 @@ import { useTheme } from '@/components/theme/theme-provider';
 import { useTranslation } from 'react-i18next';
 
 export function TopBar() {
-  const { isDarkMode } = useTheme();
+  const _theme = useTheme();
   const { t } = useTranslation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [marketOpen, setMarketOpen] = useState(false);
-  const [marketData, setMarketData] = useState({
+  const [marketData] = useState({
     index: 'DAK Index',
     value: 247.83,
     change: 1.91,
@@ -47,12 +47,12 @@ export function TopBar() {
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+    return `${date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
       timeZone: 'America/New_York'
-    }) + ' EST';
+    })} EST`;
   };
 
   const socialLinks = [
@@ -64,8 +64,7 @@ export function TopBar() {
   ];
 
   return (
-    <>
-      <Box
+    <Box
         sx={{
           backgroundColor: '#0a0a0a',
           color: 'white',
@@ -296,24 +295,5 @@ export function TopBar() {
           </Box>
         </Container>
       </Box>
-      
-      {/* Animation for pulse effect */}
-      <style jsx global>{`
-        @keyframes pulse {
-          0% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.2);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-    </>
   );
 }

@@ -23,8 +23,8 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { SubscriptionSelector } from './subscription-selector';
-import { api } from '@/lib/api';
-import { useSnackbar } from '@/hooks/use-snackbar';
+import API from '@/lib/axios';
+// import { useSnackbar } from '@/hooks/use-snackbar';
 
 interface CreateMeetingFormProps {
   open: boolean;
@@ -51,8 +51,9 @@ interface MeetingFormData {
 }
 
 export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFormProps) {
-  const { showSnackbar } = useSnackbar();
+  // const { showSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<MeetingFormData>({
     title: '',
     description: '',
@@ -73,10 +74,11 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      setError(null);
       
       // Validate form
       if (!formData.title || !formData.scheduledAt) {
-        showSnackbar('Please fill in all required fields', 'error');
+        setError('Please fill in all required fields');
         return;
       }
 
@@ -87,9 +89,10 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
       };
 
       // Create meeting via admin API
-      await api.post('/admin/meetings', meetingData);
+      await API.post('/admin/meetings', meetingData);
       
-      showSnackbar('Meeting created successfully', 'success');
+      // showSnackbar('Meeting created successfully', 'success');
+      console.log('Meeting created successfully');
       onSuccess?.();
       onClose();
       
@@ -110,8 +113,8 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
         allowedSubscriptions: [],
         restrictedToSubscriptions: false,
       });
-    } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Failed to create meeting', 'error');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to create meeting');
     } finally {
       setLoading(false);
     }
@@ -122,6 +125,11 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
       <DialogTitle>Create New Meeting</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
+          {error && (
+            <Alert severity="error" onClose={() => setError(null)}>
+              {error}
+            </Alert>
+          )}
           <TextField
             label="Meeting Title"
             fullWidth
@@ -253,11 +261,11 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
             />
           </Box>
 
-          {formData.restrictedToSubscriptions && formData.allowedSubscriptions.length === 0 && (
+          {formData.restrictedToSubscriptions && formData.allowedSubscriptions.length === 0 ? (
             <Alert severity="warning">
               No subscriptions selected. Only admins and the host will be able to join this meeting.
             </Alert>
-          )}
+          ) : null}
         </Stack>
       </DialogContent>
       <DialogActions>

@@ -10,7 +10,6 @@ import {
   Stack,
   Alert,
 } from '@mui/material';
-import { SignOut } from '@phosphor-icons/react';
 import axios from 'axios';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useRouter } from 'next/navigation';
@@ -83,7 +82,7 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
       }
     };
 
-    fetchMeetingToken();
+    void fetchMeetingToken();
   }, [meetingId, authToken, authLoading]);
 
   const handleLeaveMeeting = async () => {
@@ -153,7 +152,7 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
             {error}
           </Alert>
           <Stack spacing={2}>
-            {error?.includes('log in') && (
+            {error?.includes('log in') ? (
               <Button 
                 variant="contained" 
                 onClick={() => router.push('/auth/sign-in')} 
@@ -161,7 +160,7 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
               >
                 Go to Login
               </Button>
-            )}
+            ) : null}
             <Button 
               variant={error?.includes('log in') ? "outlined" : "contained"} 
               onClick={onClose} 
@@ -196,10 +195,10 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
       <VideoSDKProvider
         meetingId={roomId || meetingId}
         authToken={meetingToken}
-        participantId={user._id}
+        participantId={user._id || `participant-${Date.now()}`}
         participantName={userName}
-        micEnabled={true}
-        webcamEnabled={true}
+        micEnabled
+        webcamEnabled
         isHost={isHost}
       >
         <MeetingRoom onLeave={handleLeaveMeeting} />

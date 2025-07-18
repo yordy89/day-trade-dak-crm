@@ -18,7 +18,6 @@ import {
   useTheme,
   alpha,
   Divider,
-  Paper,
   CircularProgress,
   Alert,
   ToggleButton,
@@ -27,21 +26,15 @@ import {
 } from '@mui/material';
 import {
   CheckCircle as Check,
-  Star,
   Lightning,
   Crown,
-  ChartLineUp,
-  Users,
   VideoCamera,
   Brain,
   BookOpen,
   Certificate,
-  Rocket,
   Clock,
-  Sparkle,
   Calendar,
   CurrencyDollar,
-  X,
   Info,
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +70,7 @@ interface PricingPlan {
 
 const getLivePlans = (t: any): PricingPlan[] => [
   {
-    id: SubscriptionPlan.LIVE_WEEKLY_MANUAL,
+    id: SubscriptionPlan.LiveWeeklyManual,
     name: t('subscriptions.plans.liveWeekly.name'),
     price: 53.99,
     period: t('subscriptions.perWeek'),
@@ -96,7 +89,7 @@ const getLivePlans = (t: any): PricingPlan[] => [
     duration: t('subscriptions.daysOfAccess', { days: 7 }),
   },
   {
-    id: SubscriptionPlan.LIVE_WEEKLY_RECURRING,
+    id: SubscriptionPlan.LiveWeeklyRecurring,
     name: t('subscriptions.plans.liveWeeklyAuto.name'),
     price: 51.99,
     originalPrice: 53.99,
@@ -121,7 +114,7 @@ const getLivePlans = (t: any): PricingPlan[] => [
 
 const getMonthlyPlans = (t: any): PricingPlan[] => [
   {
-    id: SubscriptionPlan.MASTER_CLASES,
+    id: SubscriptionPlan.MasterClases,
     name: t('subscriptions.plans.masterClasses.name'),
     price: 199.99,
     period: t('subscriptions.perMonth'),
@@ -141,7 +134,7 @@ const getMonthlyPlans = (t: any): PricingPlan[] => [
     ],
   },
   {
-    id: SubscriptionPlan.LIVE_RECORDED,
+    id: SubscriptionPlan.LiveRecorded,
     name: t('subscriptions.plans.liveRecorded.name'),
     price: 52.99,
     period: t('subscriptions.perMonth'),
@@ -201,7 +194,7 @@ const getFixedPlans = (t: any): PricingPlan[] => [
     tag: t('subscriptions.popularTag'),
   },
   {
-    id: SubscriptionPlan.PEACE_WITH_MONEY,
+    id: SubscriptionPlan.PeaceWithMoney,
     name: t('subscriptions.plans.peaceWithMoney.name'),
     price: 199.99,
     period: t('subscriptions.oneTimePayment'),
@@ -225,15 +218,15 @@ export default function PlansPage() {
   const theme = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isDarkMode = theme.palette.mode === 'dark';
-  const { user } = useClientAuth();
+  const _isDarkMode = theme.palette.mode === 'dark';
+  const { user, authToken } = useClientAuth();
   const { t } = useTranslation('academy');
   const [selectedView, setSelectedView] = useState<'all' | 'live' | 'monthly' | 'fixed'>('all');
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [_billingPeriod, _setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   
   // Get translated plans
   const LIVE_PLANS = getLivePlans(t);
@@ -259,7 +252,7 @@ export default function PlansPage() {
   // Get user's active subscriptions
   const activeSubscriptions = user?.subscriptions || [];
   const hasLiveSubscription = activeSubscriptions.some(
-    sub => sub === SubscriptionPlan.LIVE_WEEKLY_MANUAL || sub === SubscriptionPlan.LIVE_WEEKLY_RECURRING
+    sub => sub === (SubscriptionPlan.LiveWeeklyManual as string) || sub === (SubscriptionPlan.LiveWeeklyRecurring as string)
   );
 
   // Fetch dynamic prices
@@ -274,7 +267,7 @@ export default function PlansPage() {
       try {
         const response = await API.get('/payments/plan-prices', {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
         const pricesData = response.data;
@@ -286,9 +279,9 @@ export default function PlansPage() {
         });
         
         setPrices(priceMap);
-      } catch (error) {
-        console.error('Error fetching prices:', error);
-        // Don't show error for non-authenticated users
+      } catch (err) {
+        console.error('Error fetching prices:', err);
+        // Don&apos;t show error for non-authenticated users
         if (user) {
           setError(t('subscriptions.errorLoadingPrices'));
         }
@@ -297,8 +290,8 @@ export default function PlansPage() {
       }
     };
 
-    fetchPrices();
-  }, [user]);
+    void fetchPrices();
+  }, [user, authToken, t]);
 
   const handleSubscribe = async (plan: SubscriptionPlan) => {
     if (!user) {
@@ -307,7 +300,7 @@ export default function PlansPage() {
     }
 
     // Check if user already has this subscription
-    if (activeSubscriptions.includes(plan)) {
+    if (activeSubscriptions.includes(plan as string)) {
       setError(t('subscriptions.alreadyHaveSubscription'));
       return;
     }
@@ -332,15 +325,15 @@ export default function PlansPage() {
         const stripe = await stripePromise;
         if (!stripe) throw new Error('Stripe not loaded');
 
-        const { error } = await stripe.redirectToCheckout({
+        const { error: stripeError } = await stripe.redirectToCheckout({
           sessionId: response.data.sessionId,
         });
 
-        if (error) throw error;
+        if (stripeError) throw new Error(stripeError.message || 'Stripe checkout error');
       }
-    } catch (error: any) {
-      console.error('Subscription error:', error);
-      setError(error.response?.data?.message || t('subscriptions.paymentError'));
+    } catch (err: any) {
+      console.error('Subscription error:', err);
+      setError(err.response?.data?.message || t('subscriptions.paymentError'));
     } finally {
       setLoadingPlan(null);
     }
@@ -355,11 +348,11 @@ export default function PlansPage() {
     }
     
     // Apply manual discounts for specific cases
-    if (plan.id === SubscriptionPlan.MASTER_CLASES && hasLiveSubscription) {
+    if ((plan.id as string) === (SubscriptionPlan.MasterClases as string) && hasLiveSubscription) {
       return 22.99; // Special community price
     }
     
-    if (plan.id === SubscriptionPlan.LIVE_RECORDED && hasLiveSubscription) {
+    if ((plan.id as string) === (SubscriptionPlan.LiveRecorded as string) && hasLiveSubscription) {
       return 0; // Free with Live subscription
     }
     
@@ -368,7 +361,7 @@ export default function PlansPage() {
 
   const renderPlanCard = (plan: PricingPlan) => {
     const displayPrice = getDisplayPrice(plan);
-    const isCurrentPlan = activeSubscriptions.includes(plan.id);
+    const isCurrentPlan = activeSubscriptions.includes(plan.id as string);
     const isFree = displayPrice === 0;
     const isHighlighted = highlightedPlan === plan.id;
 
@@ -383,8 +376,7 @@ export default function PlansPage() {
         }}
       >
         {/* Badge - Outside the Card */}
-        {(plan.popular || plan.tag || isHighlighted) && (
-          <Chip
+        {(plan.popular || plan.tag || isHighlighted) ? <Chip
             label={isHighlighted ? '✨ RECOMENDADO PARA TI' : plan.tag || 'MÁS POPULAR'}
             size="small"
             sx={{
@@ -404,8 +396,7 @@ export default function PlansPage() {
                 '75%': { transform: 'translateX(-50%) rotate(5deg)' },
               },
             }}
-          />
-        )}
+          /> : null}
         
         <Card
           elevation={0}
@@ -454,14 +445,12 @@ export default function PlansPage() {
               <Typography variant="body2" color="text.secondary">
                 {plan.description}
               </Typography>
-              {plan.duration && (
-                <Chip
+              {plan.duration ? <Chip
                   icon={<Clock size={16} />}
                   label={plan.duration}
                   size="small"
                   variant="outlined"
-                />
-              )}
+                /> : null}
             </Stack>
 
             {/* Price */}
@@ -477,15 +466,13 @@ export default function PlansPage() {
                 </Stack>
               ) : (
                 <>
-                  {plan.originalPrice && displayPrice < plan.originalPrice && (
-                    <Typography
+                  {plan.originalPrice && displayPrice < plan.originalPrice ? <Typography
                       variant="h5"
                       color="text.disabled"
                       sx={{ textDecoration: 'line-through', mr: 1 }}
                     >
                       ${plan.originalPrice}
-                    </Typography>
-                  )}
+                    </Typography> : null}
                   <Typography variant="h3" fontWeight={800}>
                     ${typeof displayPrice === 'number' ? displayPrice.toFixed(2) : displayPrice}
                   </Typography>
@@ -500,8 +487,8 @@ export default function PlansPage() {
 
             {/* Features */}
             <List dense sx={{ py: 0 }}>
-              {plan.features.map((feature, index) => (
-                <ListItem key={index} sx={{ px: 0 }}>
+              {plan.features.map((feature, _index) => (
+                <ListItem key={feature.text} sx={{ px: 0 }}>
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <Check
                       size={20}
@@ -669,13 +656,11 @@ export default function PlansPage() {
       </Container>
 
       {/* Error Alert */}
-      {error && (
-        <Container maxWidth="lg" sx={{ mb: 2 }}>
+      {error ? <Container maxWidth="lg" sx={{ mb: 2 }}>
           <Alert severity="error" onClose={() => setError(null)}>
             {error}
           </Alert>
-        </Container>
-      )}
+        </Container> : null}
 
       {/* Pricing Cards */}
       <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 } }}>
@@ -711,8 +696,7 @@ export default function PlansPage() {
         )}
 
         {/* Conditional Pricing Info */}
-        {hasLiveSubscription && (
-          <Alert severity="info" sx={{ mt: 4 }}>
+        {hasLiveSubscription ? <Alert severity="info" sx={{ mt: 4 }}>
             <Typography variant="body2">
               <strong>¡Beneficios de tu suscripción Live activa!</strong>
               <br />
@@ -720,8 +704,7 @@ export default function PlansPage() {
               <br />
               • Live Grabados: Acceso GRATIS incluido
             </Typography>
-          </Alert>
-        )}
+          </Alert> : null}
 
         {/* Trust Indicators */}
         <Box sx={{ mt: 10, textAlign: 'center' }}>

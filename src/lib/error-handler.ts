@@ -20,7 +20,9 @@ class ErrorHandler {
   private static instance: ErrorHandler;
   private correlationIdPrefix = 'dtd';
 
-  private constructor() {}
+  private constructor() {
+    // Private constructor for singleton pattern
+  }
 
   static getInstance(): ErrorHandler {
     if (!ErrorHandler.instance) {

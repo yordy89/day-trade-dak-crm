@@ -1,6 +1,6 @@
 import API from '@/lib/axios';
 import { errorHandler } from '@/lib/error-handler';
-import { User } from '@/types/user';
+import type { User } from '@/types/user';
 
 export interface UpdateUserData {
   firstName?: string;
@@ -23,11 +23,12 @@ class UserService {
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load user profile.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -39,11 +40,12 @@ class UserService {
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update profile.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -66,11 +68,12 @@ class UserService {
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to upload profile image.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -82,11 +85,12 @@ class UserService {
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update trading phase.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -95,11 +99,12 @@ class UserService {
       const response = await API.get<{ subscriptions: string[] }>('/users/subscriptions');
       return response.data.subscriptions;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load subscriptions.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -107,11 +112,12 @@ class UserService {
     try {
       await API.delete(`/users/subscriptions/${subscriptionId}`);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to cancel subscription.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -131,11 +137,12 @@ class UserService {
       const response = await API.get('/users', { params });
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load users.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -144,11 +151,12 @@ class UserService {
       const response = await API.get<User>(`/users/${userId}`);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load user details.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -157,11 +165,12 @@ class UserService {
       const response = await API.patch<User>(`/users/${userId}/role`, { role });
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update user role.',
       });
+      throw new Error(apiError.message);
     }
   }
 }

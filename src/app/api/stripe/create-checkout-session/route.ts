@@ -1,11 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
-
 export async function POST(request: NextRequest) {
+  // Initialize Stripe inside the function to avoid build-time errors
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!stripeSecretKey) {
+    console.error('Stripe secret key not configured');
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 }
+    );
+  }
+  
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2025-06-30.basil',
+  });
   try {
     const body = await request.json();
     const { priceId, mode, successUrl, cancelUrl, metadata, paymentMethodTypes } = body;
@@ -14,7 +25,7 @@ export async function POST(request: NextRequest) {
     const configuredPaymentMethods = paymentMethodTypes || ['card'];
     
     // Add BNPL options if available for the customer's location
-    const bnplMethods = [];
+    const bnplMethods: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = [];
     
     // Klarna is available in many countries
     if (configuredPaymentMethods.includes('klarna')) {

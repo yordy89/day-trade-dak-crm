@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -12,24 +12,17 @@ import {
   Stack,
   Alert,
   CircularProgress,
-  Paper,
-  Divider,
-  IconButton,
-  Tooltip,
-  Badge,
 } from '@mui/material';
 import {
   CheckCircle,
   Star,
-  Info,
-  Timer,
   Loop,
   MoneyOff,
   School,
   Psychology,
   VideoLibrary,
   LiveTv,
-  MenuBook,
+  Timer,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { SubscriptionPlan } from '@/types/user';
@@ -64,7 +57,7 @@ interface SubscriptionPlanConfig {
 
 const subscriptionPlans: SubscriptionPlanConfig[] = [
   {
-    id: SubscriptionPlan.LIVE_WEEKLY_MANUAL,
+    id: SubscriptionPlan.LiveWeeklyManual,
     name: 'Live Trading - Weekly',
     description: 'Access daily live trading sessions for 7 days',
     icon: <LiveTv />,
@@ -80,7 +73,7 @@ const subscriptionPlans: SubscriptionPlanConfig[] = [
     ],
   },
   {
-    id: SubscriptionPlan.LIVE_WEEKLY_RECURRING,
+    id: SubscriptionPlan.LiveWeeklyRecurring,
     name: 'Live Trading - Auto Renew',
     description: 'Continuous access to daily live trading sessions',
     icon: <Loop />,
@@ -97,7 +90,7 @@ const subscriptionPlans: SubscriptionPlanConfig[] = [
     ],
   },
   {
-    id: SubscriptionPlan.BASIC,
+    id: SubscriptionPlan.MasterClases,
     name: 'Master Class',
     description: 'Comprehensive trading education program',
     icon: <School />,
@@ -112,7 +105,7 @@ const subscriptionPlans: SubscriptionPlanConfig[] = [
     ],
   },
   {
-    id: SubscriptionPlan.CLASS,
+    id: SubscriptionPlan.CLASSES,
     name: 'Recorded Classes',
     description: 'Access to all recorded trading classes',
     icon: <VideoLibrary />,
@@ -127,7 +120,7 @@ const subscriptionPlans: SubscriptionPlanConfig[] = [
     ],
   },
   {
-    id: SubscriptionPlan.MENTORSHIP,
+    id: SubscriptionPlan.LiveRecorded,
     name: 'Personal Mentorship',
     description: 'One-on-one guidance from expert traders',
     icon: <Star />,
@@ -157,7 +150,7 @@ const subscriptionPlans: SubscriptionPlanConfig[] = [
     ],
   },
   {
-    id: SubscriptionPlan.MONEYPEACE,
+    id: SubscriptionPlan.PeaceWithMoney,
     name: 'Peace with Money',
     description: '60-day transformational program',
     icon: <MoneyOff />,
@@ -178,7 +171,8 @@ export function EnhancedSubscriptionManager() {
   const { user } = useClientAuth();
   const userSubscriptions = user?.subscriptions || [];
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-  const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<Record<string, string[]>>({});
+  const [_selectedPaymentMethods, _setSelectedPaymentMethods] = useState<Record<string, string[]>>({});
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch plan prices with conditional pricing
   const { data: planPrices, isLoading: pricesLoading } = useQuery({
@@ -187,7 +181,7 @@ export function EnhancedSubscriptionManager() {
       const response = await API.get('/payments/plan-prices');
       return response.data as PlanPrice[];
     },
-    enabled: !!user,
+    enabled: Boolean(user),
   });
 
   // Subscribe mutation
@@ -218,12 +212,13 @@ export function EnhancedSubscriptionManager() {
         await stripe.redirectToCheckout({ sessionId: data.sessionId });
       }
     },
-    onError: (error) => {
-      console.error('Subscription error:', error);
-      alert('Failed to create subscription. Please try again.');
+    onError: (err) => {
+      console.error('Subscription error:', err);
+      setError('Failed to create subscription. Please try again.');
     },
     onSettled: () => {
       setProcessingPlan(null);
+      setError(null);
     },
   });
 
@@ -236,8 +231,8 @@ export function EnhancedSubscriptionManager() {
   };
 
   const hasLiveSubscription = () => {
-    return userSubscriptions.includes(SubscriptionPlan.LIVE_WEEKLY_MANUAL) ||
-           userSubscriptions.includes(SubscriptionPlan.LIVE_WEEKLY_RECURRING);
+    return userSubscriptions.includes(SubscriptionPlan.LiveWeeklyManual) ||
+           userSubscriptions.includes(SubscriptionPlan.LiveWeeklyRecurring);
   };
 
   const renderPriceTag = (plan: SubscriptionPlanConfig, price?: PlanPrice) => {
@@ -265,14 +260,14 @@ export function EnhancedSubscriptionManager() {
 
     return (
       <Stack spacing={0.5}>
-        {price.discount > 0 && (
+        {price.discount > 0 ? (
           <Typography
             variant="body2"
             sx={{ textDecoration: 'line-through', color: 'text.secondary' }}
           >
             ${price.originalPrice}
           </Typography>
-        )}
+        ) : null}
         <Stack direction="row" alignItems="baseline">
           <Typography variant="h4" fontWeight="bold">
             ${price.finalPrice}
@@ -281,14 +276,14 @@ export function EnhancedSubscriptionManager() {
             {billingPeriod}
           </Typography>
         </Stack>
-        {price.discountReason && (
+        {price.discountReason ? (
           <Chip
             label={price.discountReason}
             size="small"
             color="success"
             variant="outlined"
           />
-        )}
+        ) : null}
       </Stack>
     );
   };
@@ -299,12 +294,18 @@ export function EnhancedSubscriptionManager() {
         Choose Your Trading Journey
       </Typography>
       
-      {hasLiveSubscription() && (
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      
+      {hasLiveSubscription() ? (
         <Alert severity="success" sx={{ mb: 3 }}>
           <strong>Live Subscriber Benefits:</strong> You get special pricing on Master Class 
           and FREE access to Recorded Classes!
         </Alert>
-      )}
+      ) : null}
 
       <Grid container spacing={3}>
         {/* Live Trading Section */}
@@ -329,7 +330,7 @@ export function EnhancedSubscriptionManager() {
                         borderColor: plan.popular ? plan.color : 'divider',
                       }}
                     >
-                      {plan.badge && (
+                      {plan.badge ? (
                         <Chip
                           label={plan.badge}
                           size="small"
@@ -341,7 +342,7 @@ export function EnhancedSubscriptionManager() {
                             color: 'white',
                           }}
                         />
-                      )}
+                      ) : null}
                       
                       <CardContent>
                         <Stack spacing={3}>
@@ -362,9 +363,9 @@ export function EnhancedSubscriptionManager() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.map((feature, idx) => (
+                            {plan.features.map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.id}-feature-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -373,7 +374,7 @@ export function EnhancedSubscriptionManager() {
                                 <CheckCircle 
                                   sx={{ 
                                     fontSize: 16, 
-                                    color: plan.id === SubscriptionPlan.CLASS && hasLiveSubscription() 
+                                    color: (plan.id as string) === (SubscriptionPlan.CLASSES as string) && hasLiveSubscription() 
                                       ? 'success.main' 
                                       : 'text.secondary' 
                                   }} 
@@ -458,9 +459,9 @@ export function EnhancedSubscriptionManager() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.slice(0, 3).map((feature, idx) => (
+                            {plan.features.slice(0, 3).map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.id}-f-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -541,13 +542,13 @@ export function EnhancedSubscriptionManager() {
                               <Typography variant="h6" fontWeight="600">
                                 {plan.name}
                               </Typography>
-                              {plan.duration && (
+                              {plan.duration ? (
                                 <Chip
                                   label={plan.duration}
                                   size="small"
                                   icon={<Timer fontSize="small" />}
                                 />
-                              )}
+                              ) : null}
                             </Stack>
                             <Typography variant="body2" color="text.secondary" mt={1}>
                               {plan.description}
@@ -557,9 +558,9 @@ export function EnhancedSubscriptionManager() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.map((feature, idx) => (
+                            {plan.features.map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.id}-feat-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -654,9 +655,9 @@ export function EnhancedSubscriptionManager() {
                         'Live trading labs',
                         'Certificate of completion',
                         'BNPL options available',
-                      ].map((feature, idx) => (
+                      ].map((feature) => (
                         <Stack
-                          key={idx}
+                          key={feature}
                           direction="row"
                           spacing={1}
                           alignItems="center"

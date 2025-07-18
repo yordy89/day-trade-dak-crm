@@ -9,9 +9,6 @@ import {
   Card, 
   CardContent, 
   Button,
-  Divider,
-  useTheme as useMuiTheme,
-  alpha,
 } from '@mui/material';
 import { 
   TrendingUp, 
@@ -75,7 +72,7 @@ const TradingChartBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
       const isGreen = Math.random() > 0.5;
       
       return (
-        <g key={i}>
+        <g key={`candlestick-x${x}-y${y.toFixed(0)}`}>
           {/* Wick */}
           <line
             x1={x + 10}
@@ -148,8 +145,7 @@ const MarketPattern = ({ isDarkMode }: { isDarkMode: boolean }) => (
 );
 
 export default function AboutPage() {
-  const { t, i18n } = useTranslation();
-  const muiTheme = useMuiTheme();
+  const { t } = useTranslation();
   const { isDarkMode } = useTheme();
 
   return (
@@ -183,16 +179,16 @@ export default function AboutPage() {
           }}
         >
           {[...Array(2)].map((_, setIndex) => (
-            <Box key={setIndex} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box key={setIndex === 0 ? 'ticker-set-primary' : 'ticker-set-secondary'} sx={{ display: 'flex', alignItems: 'center' }}>
               {[
                 { symbol: 'SPY', price: 512.45, change: 2.34, positive: true },
                 { symbol: 'QQQ', price: 425.67, change: -1.23, positive: false },
                 { symbol: 'DIA', price: 389.12, change: 0.89, positive: true },
                 { symbol: 'IWM', price: 198.34, change: -0.45, positive: false },
                 { symbol: 'VIX', price: 15.67, change: 0.12, positive: true },
-              ].map((stock, i) => (
+              ].map((stock) => (
                 <Box
-                  key={`${setIndex}-${i}`}
+                  key={`${stock.symbol}-${stock.price}`}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -238,7 +234,7 @@ export default function AboutPage() {
           {/* Floating Chart Elements */}
           {[...Array(5)].map((_, i) => (
             <Box
-              key={i}
+              key={`bg-chart-${Math.random().toString(36).substr(2, 9)}`}
               sx={{
                 position: 'absolute',
                 width: '200px',
@@ -520,8 +516,8 @@ export default function AboutPage() {
             {t('about.values.title')}
           </Typography>
           <Grid container spacing={4}>
-            {values.map((value, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+            {values.map((value) => (
+              <Grid item xs={12} sm={6} md={3} key={value.titleKey}>
                 <Card sx={{
                   height: '100%',
                   textAlign: 'center',

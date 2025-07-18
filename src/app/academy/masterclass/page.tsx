@@ -41,10 +41,10 @@ export default function MentorshipPage() {
   // Check for MASTER_CLASES subscription with expiration
   const hasSubscriptionAccess = userSubscriptions.some(sub => {
     if (typeof sub === 'string') {
-      return sub === SubscriptionPlan.MASTER_CLASES;
+      return sub === (SubscriptionPlan.MasterClases as string);
     } else if (sub && typeof sub === 'object' && 'plan' in sub) {
       // Check if it's MasterClases plan
-      if (sub.plan === SubscriptionPlan.MASTER_CLASES) {
+      if (sub.plan === (SubscriptionPlan.MasterClases as string)) {
         // If no expiresAt field, it's a permanent subscription
         if (!('expiresAt' in sub) || !sub.expiresAt) {
           return true;
@@ -69,7 +69,7 @@ export default function MentorshipPage() {
     }
   };
 
-  // Don't render until auth is loaded to prevent showing restricted state prematurely
+  // Don&apos;t render until auth is loaded to prevent showing restricted state prematurely
   if (isLoading) {
     return null;
   }

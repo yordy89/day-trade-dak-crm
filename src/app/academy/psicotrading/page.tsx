@@ -8,7 +8,6 @@ import { Box, Button, Typography } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react';
 
 import { Role, SubscriptionPlan } from '@/types/user';
-import { SubscriptionGuard } from '@/components/academy/subscriptions/subscription-guard';
 import PsicoTradingVideoList from '@/components/academy/psicotrading/psicotrading-video-list';
 import PsicoTradingIntro from '@/components/academy/psicotrading/psicotrading-intro';
 
@@ -24,10 +23,10 @@ export default function Page() {
   // Check for PSICOTRADING subscription with expiration
   const hasSubscriptionAccess = userSubscriptions.some(sub => {
     if (typeof sub === 'string') {
-      return sub === SubscriptionPlan.PSICOTRADING;
+      return sub === (SubscriptionPlan.PSICOTRADING as string);
     } else if (sub && typeof sub === 'object' && 'plan' in sub) {
       // Check if it's Psicotrading plan
-      if (sub.plan === SubscriptionPlan.PSICOTRADING) {
+      if (sub.plan === (SubscriptionPlan.PSICOTRADING as string)) {
         // If no expiresAt field, it's a permanent subscription
         if (!('expiresAt' in sub) || !sub.expiresAt) {
           return true;
@@ -70,7 +69,7 @@ export default function Page() {
     }
   };
   
-  // Don't render until auth is loaded to prevent redirect issues
+  // Don&apos;t render until auth is loaded to prevent redirect issues
   if (isLoading) {
     return null;
   }

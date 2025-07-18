@@ -13,13 +13,19 @@ const CompanyList: React.FC = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['companies'],
     queryFn: async () => {
-      return companyService.getAll();
+      const response = await companyService.searchCompanies();
+      return response.companies;
     },
   });
 
   useEffect(() => {
     if (data) {
-      setCompanies(data);
+      const mappedCompanies = data.map((company) => ({
+        symbol: company.symbol,
+        name: company.name,
+        currentPrice: company.currentPrice || 0,
+      }));
+      setCompanies(mappedCompanies);
     }
   }, [data, setCompanies]);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import {
@@ -37,7 +37,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
-import Image from 'next/image';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -165,11 +164,11 @@ function CheckoutForm({ session }: { session: CheckoutSession }) {
           />
         </Box>
 
-        {error && (
+        {error ? (
           <Alert severity="error" sx={{ mt: 2 }}>
             {error}
           </Alert>
-        )}
+        ) : null}
 
         {/* Action Buttons */}
         <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
@@ -271,7 +270,7 @@ export default function CheckoutPage() {
       }
     };
 
-    fetchSession();
+    void fetchSession();
   }, [sessionId]);
 
   if (isLoading) {
@@ -395,7 +394,7 @@ export default function CheckoutPage() {
               {/* Why BNPL */}
               <Card>
                 <CardContent>
-                  <Stack direction="row" spacing={1} alignItems="center" gutterBottom>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
                     <Info color="primary" />
                     <Typography variant="h6" fontWeight={600}>
                       {t('checkout.whyBNPL', 'Why Buy Now, Pay Later?')}

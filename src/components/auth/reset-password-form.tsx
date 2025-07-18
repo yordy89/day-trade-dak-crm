@@ -13,7 +13,6 @@ import {
   Typography,
   Box,
   InputAdornment,
-  Link,
 } from '@mui/material';
 import {
   Email,
@@ -43,7 +42,7 @@ export function ResetPasswordForm(): React.JSX.Element {
 
   const { mutate: resetPassword, isPending } = useMutation({
     mutationFn: async (values: Values) => {
-      return authService.resetPassword(values.email);
+      return authService.resetPassword({ email: values.email });
     },
     onSuccess: () => {
       toast.success('Password reset instructions sent to your email');
@@ -79,7 +78,7 @@ export function ResetPasswordForm(): React.JSX.Element {
           Forgot Password?
         </Typography>
         <Typography color="text.secondary" variant="body1" textAlign="center" sx={{ maxWidth: 400 }}>
-          No worries! Enter your email and we'll send you reset instructions.
+          No worries! Enter your email and we&apos;ll send you reset instructions.
         </Typography>
       </Stack>
       

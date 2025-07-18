@@ -10,7 +10,6 @@ import {
   Paper,
   Stack,
   Divider,
-  Alert,
   CircularProgress,
   Grid,
   Card,
@@ -28,7 +27,6 @@ import {
   CheckCircle,
   Email,
   CalendarToday,
-  LocationOn,
   School,
   TrendingUp,
   Download,
@@ -36,18 +34,13 @@ import {
   ContentCopy,
   LiveTv,
   Groups,
-  Psychology,
-  Timer,
   AutoAwesome,
-  Celebration,
 } from '@mui/icons-material';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { MainNavbar } from '@/components/landing/main-navbar';
 import { ProfessionalFooter } from '@/components/landing/professional-footer';
-import { eventService } from '@/services/api/event.service';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const MotionBox = motion(Box);
@@ -63,13 +56,13 @@ export default function RegistrationSuccessPage() {
   const eventParam = searchParams.get('event');
   
   const [loading, setLoading] = useState(true);
-  const [sessionData, setSessionData] = useState<any>(null);
-  const [copied, setCopied] = useState(false);
+  const [_sessionData, setSessionData] = useState<any>(null);
+  const [_copied, setCopied] = useState(false);
 
   // Trigger confetti animation
   useEffect(() => {
     const timer = setTimeout(() => {
-      confetti({
+      void confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
@@ -90,14 +83,14 @@ export default function RegistrationSuccessPage() {
     if (sessionId) {
       setSessionData({
         success: true,
-        sessionId: sessionId,
+        sessionId,
         event: eventParam,
       });
     }
   }, [sessionId, eventParam]);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('info@daytradedash.com');
+    void navigator.clipboard.writeText('info@daytradedash.com');
     setCopied(true);
     toast.success('Email copiado al portapapeles');
     setTimeout(() => setCopied(false), 2000);
@@ -203,11 +196,9 @@ export default function RegistrationSuccessPage() {
               Tu inscripción al Master Course ha sido confirmada
             </Typography>
             
-            {user && (
-              <Typography variant="body1" color="text.secondary">
+            {user ? <Typography variant="body1" color="text.secondary">
                 Hemos enviado todos los detalles a <strong>{user.email}</strong>
-              </Typography>
-            )}
+              </Typography> : null}
           </MotionBox>
 
           <Grid container spacing={4}>

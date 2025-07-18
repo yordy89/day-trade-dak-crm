@@ -14,24 +14,27 @@ export interface User {
   city?: string;
   createdAt?: string;
   updatedAt?: string;
+  customClassAccess?: {
+    reason: string;
+  };
 }
 
 export enum SubscriptionPlan {
   // Community Subscriptions (Weekly)
-  LIVE_WEEKLY_MANUAL = 'LiveWeeklyManual',
-  LIVE_WEEKLY_RECURRING = 'LiveWeeklyRecurring',
+  LiveWeeklyManual = 'LiveWeeklyManual',
+  LiveWeeklyRecurring = 'LiveWeeklyRecurring',
   
   // Recurring Monthly Subscriptions
-  MASTER_CLASES = 'MasterClases',
-  LIVE_RECORDED = 'LiveRecorded',
+  MasterClases = 'MasterClases',
+  LiveRecorded = 'LiveRecorded',
   PSICOTRADING = 'Psicotrading',
   
   // One-Time Purchases
   CLASSES = 'Classes',
-  PEACE_WITH_MONEY = 'PeaceWithMoney',
-  MASTER_COURSE = 'MasterCourse',
-  COMMUNITY_EVENT = 'CommunityEvent',
-  VIP_EVENT = 'VipEvent',
+  PeaceWithMoney = 'PeaceWithMoney',
+  MasterCourse = 'MasterCourse',
+  CommunityEvent = 'CommunityEvent',
+  VipEvent = 'VipEvent',
 }
 
 export enum Role {

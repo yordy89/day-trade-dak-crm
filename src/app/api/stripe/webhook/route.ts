@@ -1,13 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
 export async function POST(request: NextRequest) {
+  // Initialize Stripe inside the function to avoid build-time errors
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  
+  if (!stripeSecretKey || !webhookSecret) {
+    console.error('Stripe configuration missing');
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 }
+    );
+  }
+  
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2025-06-30.basil',
+  });
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature')!;
@@ -26,36 +36,42 @@ export async function POST(request: NextRequest) {
 
     // Handle the event
     switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object as Stripe.Checkout.Session;
+      case 'checkout.session.completed': {
+        const session = event.data.object;
         await handleCheckoutSessionCompleted(session);
         break;
+      }
 
-      case 'payment_intent.succeeded':
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object;
         await handlePaymentIntentSucceeded(paymentIntent);
         break;
+      }
 
-      case 'payment_intent.payment_failed':
-        const failedPayment = event.data.object as Stripe.PaymentIntent;
+      case 'payment_intent.payment_failed': {
+        const failedPayment = event.data.object;
         await handlePaymentIntentFailed(failedPayment);
         break;
+      }
 
       case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        const subscription = event.data.object as Stripe.Subscription;
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
         await handleSubscriptionChange(subscription);
         break;
+      }
 
-      case 'customer.subscription.deleted':
-        const deletedSubscription = event.data.object as Stripe.Subscription;
+      case 'customer.subscription.deleted': {
+        const deletedSubscription = event.data.object;
         await handleSubscriptionDeleted(deletedSubscription);
         break;
+      }
 
-      case 'invoice.payment_succeeded':
-        const invoice = event.data.object as Stripe.Invoice;
+      case 'invoice.payment_succeeded': {
+        const invoice = event.data.object;
         await handleInvoicePaymentSucceeded(invoice);
         break;
+      }
 
       default:
         console.log(`Unhandled event type: ${event.type}`);
@@ -171,7 +187,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     subscriptionId: subscription.id,
     customerId: subscription.customer,
     status: subscription.status,
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
     billingInterval: interval,
     isWeekly,
     metadata: subscription.metadata,

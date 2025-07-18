@@ -155,9 +155,9 @@ export function LiveTicker() {
         {/* Scrolling ticker */}
         <Box className="mt-8 overflow-hidden bg-[#1a1f2e] rounded-lg border border-gray-800 py-3">
           <Box className="flex animate-scroll">
-            {[...tickers, ...tickers].map((ticker, index) => (
+            {[...tickers, ...tickers].map((ticker, _index) => (
               <Box
-                key={`${ticker.id}-${index}`}
+                key={`${ticker.id}-${_index}`}
                 className="flex items-center px-6 border-r border-gray-800"
               >
                 <Typography variant="body2" className="text-gray-400 mr-2">

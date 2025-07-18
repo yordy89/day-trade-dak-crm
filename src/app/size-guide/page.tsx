@@ -17,7 +17,6 @@ import {
   Grid,
   Chip,
   useTheme as useMuiTheme,
-  alpha,
 } from '@mui/material';
 import { 
   Straighten,
@@ -66,8 +65,8 @@ const MeasurementGuide = ({ isDarkMode }: { isDarkMode: boolean }) => (
 );
 
 export default function SizeGuidePage() {
-  const { t, i18n } = useTranslation();
-  const muiTheme = useMuiTheme();
+  const { t } = useTranslation();
+  const _muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
 
   const sizeData = [
@@ -142,7 +141,7 @@ export default function SizeGuidePage() {
                 <Grid item xs={12} md={6}>
                   <Box sx={{ pl: { md: 4 } }}>
                     {measurementTips.map((tip, index) => (
-                      <Box key={index} sx={{ mb: 3 }}>
+                      <Box key={tip.titleKey} sx={{ mb: 3 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                           <Chip 
                             label={String.fromCharCode(65 + index)} 

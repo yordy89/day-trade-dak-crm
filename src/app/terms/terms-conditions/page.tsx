@@ -15,7 +15,6 @@ import {
   Chip,
   IconButton,
   useTheme,
-  alpha,
   Fade,
   Grid,
   Card,
@@ -31,11 +30,9 @@ import {
   CheckCircle,
   Warning,
   Globe,
-  Scales,
   ArrowLeft,
   UserCheck,
   ShieldCheck,
-  CreditCard,
   Prohibit,
   Key,
   Buildings,
@@ -62,7 +59,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Fade in={true} timeout={600}>
+        <Fade in timeout={600}>
           <Box>{children}</Box>
         </Fade>
       )}
@@ -745,7 +742,7 @@ export default function TermsAndPrivacy(): React.JSX.Element {
                             width: 48,
                             height: 48,
                             borderRadius: 2,
-                            backgroundColor: theme.palette.primary.main + '20',
+                            backgroundColor: `${theme.palette.primary.main}20`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -796,7 +793,7 @@ export default function TermsAndPrivacy(): React.JSX.Element {
                 label="support@daytradedak.com" 
                 size="small" 
                 variant="outlined"
-                onClick={() => window.location.href = 'mailto:support@daytradedak.com'}
+                onClick={() => { window.location.href = 'mailto:support@daytradedak.com'; }}
                 sx={{ cursor: 'pointer' }}
               />
             </Stack>

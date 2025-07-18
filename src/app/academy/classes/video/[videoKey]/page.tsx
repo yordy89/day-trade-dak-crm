@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Box,
   Container,
@@ -13,28 +13,20 @@ import {
   CircularProgress,
   Chip,
   Grid,
-  LinearProgress,
-  useTheme,
-  alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { BookOpen } from '@phosphor-icons/react/dist/ssr/BookOpen';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
-import { videoService } from '@/services/api/video.service';
 import API from '@/lib/axios';
 
 export default function ClassesVideoPlayerPage() {
-  const theme = useTheme();
   const router = useRouter();
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const [hasWatched, setHasWatched] = useState(false);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -61,7 +53,6 @@ export default function ClassesVideoPlayerPage() {
   
   // Fetch user's progress for this video
   // TODO: Enable when backend endpoints are implemented
-  const userProgress = null;
   /*
   const { data: userProgress } = useQuery({
     queryKey: ['user-video-class', videoKey],
@@ -71,41 +62,6 @@ export default function ClassesVideoPlayerPage() {
     },
   });
   */
-  
-  // Create or update video class (progress tracking)
-  const createVideoClass = useMutation({
-    mutationFn: async () => {
-      if (!userProgress) {
-        // Create new video class
-        return videoService.createVideoClass({
-          videoId: videoKey, // Using key as ID for now
-          s3Key: videoKey,
-        });
-      }
-      return userProgress;
-    },
-  });
-  
-  // Update video progress
-  const updateProgress = useMutation({
-    mutationFn: async (progress: number) => {
-      if (userProgress?._id) {
-        return videoService.updateVideoProgress(userProgress._id, progress);
-      }
-    },
-  });
-  
-  // Mark video as complete
-  const completeVideo = useMutation({
-    mutationFn: async () => {
-      if (userProgress?._id) {
-        return videoService.completeVideo(userProgress._id);
-      }
-    },
-    onSuccess: () => {
-      setHasWatched(true);
-    },
-  });
   
   // Extract video name from key
   const extractVideoName = (key: string): string => {
@@ -118,15 +74,15 @@ export default function ClassesVideoPlayerPage() {
   };
   
   // Handle video progress
-  const handleProgress = (progress: number) => {
+  const handleProgress = (_progress: number) => {
     // TODO: Enable when backend endpoints are implemented
     // Only update every 5% to avoid too many API calls
-    // if (Math.floor(progress) % 5 === 0) {
-    //   updateProgress.mutate(progress);
+    // if (Math.floor(_progress) % 5 === 0) {
+    //   updateProgress.mutate(_progress);
     // }
     
     // Mark as complete when reaching 90%
-    // if (progress >= 90 && !hasWatched && !userProgress?.completedAt) {
+    // if (_progress >= 90 && !hasWatched && !userProgress?.completedAt) {
     //   completeVideo.mutate();
     // }
   };
@@ -324,7 +280,7 @@ export default function ClassesVideoPlayerPage() {
               {(userProgress?.completedAt || hasWatched) && (
                 <Alert severity="success" sx={{ mt: 2 }}>
                   <Typography variant="body2">
-                    Great job! You've completed this lesson.
+                    Great job! You&apos;ve completed this lesson.
                   </Typography>
                 </Alert>
               )}

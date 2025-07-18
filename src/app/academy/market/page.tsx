@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -31,7 +31,6 @@ import {
   Refresh,
   Star,
   StarBorder,
-  Assessment,
   ShowChart,
 } from '@mui/icons-material';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -48,15 +47,16 @@ interface StockQuote {
   t: number; // Timestamp
 }
 
-interface MarketStatus {
-  exchange: string;
-  holiday: string;
-  isOpen: boolean;
-  timezone: string;
-  t: number;
-}
+// Commented out unused interface
+// interface MarketStatus {
+//   exchange: string;
+//   holiday: string;
+//   isOpen: boolean;
+//   timezone: string;
+//   t: number;
+// }
 
-const POPULAR_STOCKS = [
+const _POPULAR_STOCKS = [
   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
   'META', 'NVDA', 'JPM', 'V', 'JNJ',
 ];

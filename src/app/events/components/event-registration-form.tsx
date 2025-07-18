@@ -12,7 +12,6 @@ import {
   CircularProgress,
   FormControl,
   InputBase,
-  FormHelperText,
 } from '@mui/material';
 import {
   Person,
@@ -41,6 +40,8 @@ interface CustomInputProps {
   required?: boolean;
   isDarkMode: boolean;
   muiTheme: any;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({ 
@@ -194,7 +195,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 const EventRegistrationForm: React.FC<RegistrationFormProps> = ({ eventId, onRegistered }) => {
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
-  const { t, i18n } = useTranslation();
+  const { t, i18n: _i18n } = useTranslation();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -247,8 +248,7 @@ const EventRegistrationForm: React.FC<RegistrationFormProps> = ({ eventId, onReg
           </Typography>
         </Box>
 
-        {errorMessage && (
-          <Alert 
+        {errorMessage ? <Alert 
             severity="error" 
             sx={{ 
               borderRadius: 2,
@@ -256,8 +256,7 @@ const EventRegistrationForm: React.FC<RegistrationFormProps> = ({ eventId, onReg
             }}
           >
             {errorMessage}
-          </Alert>
-        )}
+          </Alert> : null}
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <CustomInput

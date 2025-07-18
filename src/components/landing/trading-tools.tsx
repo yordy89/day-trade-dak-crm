@@ -208,8 +208,7 @@ export function TradingTools() {
                     },
                   }}
                 >
-                  {tool.popular && (
-                    <Box
+                  {tool.popular ? <Box
                       sx={{
                         position: 'absolute',
                         top: 0,
@@ -224,8 +223,7 @@ export function TradingTools() {
                       }}
                     >
                       {t('common.mostPopular')}
-                    </Box>
-                  )}
+                    </Box> : null}
 
                   <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
                     {/* Header */}
@@ -251,8 +249,7 @@ export function TradingTools() {
                           <Typography variant="h5" fontWeight="700">
                             {tool.title}
                           </Typography>
-                          {tool.badge && (
-                            <Chip
+                          {tool.badge ? <Chip
                               label={tool.badge}
                               size="small"
                               sx={{
@@ -261,8 +258,7 @@ export function TradingTools() {
                                 fontWeight: 600,
                                 height: 20,
                               }}
-                            />
-                          )}
+                            /> : null}
                         </Box>
                       </Box>
                     </Box>
@@ -281,8 +277,8 @@ export function TradingTools() {
 
                     {/* Features */}
                     <List sx={{ py: 0, mb: 3, flex: 1 }}>
-                      {tool.features.map((feature, index) => (
-                        <ListItem key={index} sx={{ px: 0, py: 0.5 }}>
+                      {tool.features.map((feature, _index) => (
+                        <ListItem key={feature} sx={{ px: 0, py: 0.5 }}>
                           <ListItemIcon sx={{ minWidth: 28 }}>
                             <CheckCircle sx={{ fontSize: 16, color: '#16a34a' }} />
                           </ListItemIcon>

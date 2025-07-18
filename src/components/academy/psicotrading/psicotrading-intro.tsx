@@ -172,8 +172,8 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
       </Typography>
       
       <Grid container spacing={3} mb={6}>
-        {benefits.map((benefit, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+        {benefits.map((benefit) => (
+          <Grid item xs={12} sm={6} md={3} key={benefit.title}>
             <Card 
               sx={{ 
                 height: '100%',
@@ -218,8 +218,8 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
         </Typography>
         
         <Grid container spacing={2}>
-          {features.map((feature, index) => (
-            <Grid item xs={12} md={6} key={index}>
+          {features.map((feature) => (
+            <Grid item xs={12} md={6} key={feature}>
               <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 1 }}>
                 <CheckCircle size={24} weight="fill" color={theme.palette.success.main} />
                 <Typography>{feature}</Typography>

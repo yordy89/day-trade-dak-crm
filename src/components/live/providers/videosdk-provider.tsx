@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { MeetingProvider } from '@videosdk.live/react-sdk';
 
 interface VideoSDKContextValue {
@@ -60,7 +61,7 @@ export function VideoSDKProvider({
           name: participantName,
           debugMode: false,
           participantId,
-          mode: 'CONFERENCE',
+          mode: 'SEND_AND_RECV',
           multiStream: true,
         }}
         token={authToken}

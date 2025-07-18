@@ -8,7 +8,6 @@ import { Box, Button, Typography } from '@mui/material';
 import { DownloadSimple } from '@phosphor-icons/react';
 
 import { Role, SubscriptionPlan } from '@/types/user';
-import { SubscriptionGuard } from '@/components/academy/subscriptions/subscription-guard';
 import SuperacionVideoList from '@/components/academy/superation/superacion-video-list';
 import SuperacionIntro from '@/components/academy/superation/superation-intro';
 
@@ -23,10 +22,10 @@ export default function PropositoPage() {
   // Check for PEACE_WITH_MONEY subscription with expiration
   const hasSubscriptionAccess = userSubscriptions.some(sub => {
     if (typeof sub === 'string') {
-      return sub === SubscriptionPlan.PEACE_WITH_MONEY;
+      return sub === (SubscriptionPlan.PeaceWithMoney as string);
     } else if (sub && typeof sub === 'object' && 'plan' in sub) {
       // Check if it's Peace with Money plan
-      if (sub.plan === SubscriptionPlan.PEACE_WITH_MONEY) {
+      if (sub.plan === (SubscriptionPlan.PeaceWithMoney as string)) {
         // If no expiresAt field, it's a permanent subscription
         if (!('expiresAt' in sub) || !sub.expiresAt) {
           return true;
@@ -58,7 +57,7 @@ export default function PropositoPage() {
     }
   };
   
-  // Don't render until auth is loaded to prevent redirect issues
+  // Don&apos;t render until auth is loaded to prevent redirect issues
   if (isLoading) {
     return null;
   }

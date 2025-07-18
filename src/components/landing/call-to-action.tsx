@@ -99,8 +99,8 @@ export function CallToAction() {
 
               {/* Benefits */}
               <Grid container spacing={2} sx={{ mb: 4 }}>
-                {benefits.map((benefit, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
+                {benefits.map((benefit, _index) => (
+                  <Grid item xs={12} sm={6} key={benefit}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <CheckCircle sx={{ color: '#16a34a', fontSize: 20 }} />
                       <Typography variant="body1">{benefit}</Typography>

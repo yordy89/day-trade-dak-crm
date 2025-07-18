@@ -8,7 +8,6 @@ import {
   Typography,
   Grid,
   Card,
-  CardContent,
   Button,
   Chip,
   Stack,
@@ -26,7 +25,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Tooltip,
   IconButton,
 } from '@mui/material';
 import {
@@ -35,7 +33,6 @@ import {
   LocationOn,
   CalendarToday,
   Schedule,
-  LiveTv,
   TrendingUp,
   Psychology,
   EmojiEvents,
@@ -58,7 +55,6 @@ import {
   Email,
   Phone,
 } from '@mui/icons-material';
-import Image from 'next/image';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { EventRegistrationModal } from '@/components/events/EventRegistrationModal';
@@ -70,14 +66,14 @@ export default function CommunityEventPage() {
   const theme = useTheme();
   const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
-  const { t } = useTranslation('communityEvent');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { t: _t } = useTranslation('communityEvent');
+  const [isProcessing, _setIsProcessing] = useState(false);
   const [pricing, setPricing] = useState<{ basePrice: number; currency: string } | null>(null);
   const [isLoadingPrice, setIsLoadingPrice] = useState(true);
-  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+  const [_hasActiveSubscription, _setHasActiveSubscription] = useState(false);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [event, setEvent] = useState<any>(null);
-  const [isLoadingEvent, setIsLoadingEvent] = useState(true);
+  const [_isLoadingEvent, _setIsLoadingEvent] = useState(true);
 
   useEffect(() => {
     // Check if user has Live Semanal subscription
@@ -86,16 +82,16 @@ export default function CommunityEventPage() {
       const hasActive = allSubscriptions.some((sub: any) => {
         // Handle both string and object subscription formats
         if (typeof sub === 'string') {
-          return [SubscriptionPlan.LIVE_WEEKLY_MANUAL, SubscriptionPlan.LIVE_WEEKLY_RECURRING].includes(sub as SubscriptionPlan);
+          return [SubscriptionPlan.LiveWeeklyManual, SubscriptionPlan.LiveWeeklyRecurring].includes(sub as SubscriptionPlan);
         } else if (sub && typeof sub === 'object' && 'plan' in sub) {
           // Check if it's a Live subscription and not expired
-          const isLivePlan = [SubscriptionPlan.LIVE_WEEKLY_MANUAL, SubscriptionPlan.LIVE_WEEKLY_RECURRING].includes(sub.plan as SubscriptionPlan);
+          const isLivePlan = [SubscriptionPlan.LiveWeeklyManual, SubscriptionPlan.LiveWeeklyRecurring].includes(sub.plan as SubscriptionPlan);
           const isNotExpired = !sub.expiresAt || new Date(sub.expiresAt) > new Date();
           return isLivePlan && isNotExpired;
         }
         return false;
       });
-      setHasActiveSubscription(hasActive);
+      _setHasActiveSubscription(hasActive);
     }
 
     // Fetch event data and pricing
@@ -143,11 +139,11 @@ export default function CommunityEventPage() {
         });
       } finally {
         setIsLoadingPrice(false);
-        setIsLoadingEvent(false);
+        _setIsLoadingEvent(false);
       }
     };
 
-    fetchData();
+    void fetchData();
   }, [user]);
 
   const handlePurchase = async () => {
@@ -367,7 +363,7 @@ export default function CommunityEventPage() {
                   </Stack>
 
                   {/* BNPL Payment Options Message */}
-                  {pricing && (
+                  {pricing ? (
                     <Paper
                       elevation={0}
                       sx={{
@@ -390,7 +386,7 @@ export default function CommunityEventPage() {
                         </Box>
                       </Stack>
                     </Paper>
-                  )}
+                  ) : null}
                 </Stack>
               </Grid>
               <Grid item xs={12} md={4}>
@@ -416,7 +412,7 @@ export default function CommunityEventPage() {
                   <Divider sx={{ my: 3 }} />
                   <Alert severity="success">
                     <Typography variant="body2" fontWeight={600}>
-                      "Aquí no ven teoría... aquí ven cómo se hace dinero en vivo y con disciplina."
+                      &quot;Aquí no ven teoría... aquí ven cómo se hace dinero en vivo y con disciplina.&quot;
                     </Typography>
                   </Alert>
                 </Paper>
@@ -432,10 +428,10 @@ export default function CommunityEventPage() {
               Programa Completo de 3 Días
             </Typography>
             <Grid container spacing={4}>
-              {daySchedule.map((day, index) => (
-                <Grid item xs={12} key={index}>
+              {daySchedule.map((day) => (
+                <Grid item xs={12} key={day.day}>
                   <Accordion 
-                    defaultExpanded={index === 0}
+                    defaultExpanded={day.day === 'DÍA 1 - Jueves 25 de Septiembre'}
                     sx={{
                       backgroundColor: alpha(day.color, 0.05),
                       borderLeft: `4px solid ${day.color}`,
@@ -659,7 +655,7 @@ export default function CommunityEventPage() {
                 </Typography>
               </Alert>
               <Typography variant="h5" fontWeight={600} color="primary">
-                "Decidir bien bajo presión no es talento, es entrenamiento."
+                &quot;Decidir bien bajo presión no es talento, es entrenamiento.&quot;
               </Typography>
             </Box>
           </Container>
@@ -802,8 +798,8 @@ export default function CommunityEventPage() {
             </Box>
             
             <Typography variant="body1" sx={{ mt: 4, opacity: 0.8 }}>
-              "Muchos pierden por entrar mal, pero otros pierden por reforzar sin sentido.<br/>
-              Este módulo te entrena para entrar solo donde hay probabilidad real, no emoción."
+              &quot;Muchos pierden por entrar mal, pero otros pierden por reforzar sin sentido.&quot;<br/>
+              &quot;Este módulo te entrena para entrar solo donde hay probabilidad real, no emoción.&quot;
             </Typography>
           </Container>
         </Box>
@@ -962,7 +958,7 @@ export default function CommunityEventPage() {
       </Box>
       
       {/* Event Registration Modal */}
-      {event && (
+      {event ? (
         <EventRegistrationModal
           isOpen={isRegistrationModalOpen}
           onClose={() => setIsRegistrationModalOpen(false)}
@@ -970,7 +966,7 @@ export default function CommunityEventPage() {
           userId={user?._id}
           userEmail={user?.email}
         />
-      )}
+      ) : null}
     </>
   );
 }

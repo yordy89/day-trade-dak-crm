@@ -206,7 +206,7 @@ export default function EventPage() {
   const searchParams = useSearchParams();
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
-  const { t, i18n } = useTranslation();
+  const { t: _t, i18n } = useTranslation();
   
   const promoCode = searchParams.get('promo') || undefined;
   const [registrationType, setRegistrationType] = useState<'free' | 'vip' | null>(promoCode ? 'vip' : null);
@@ -416,7 +416,7 @@ export default function EventPage() {
                         {event.location || '4200 George J.Bean Parkway, Tampa, FL 33607, USA'}
                       </Typography>
                       <Box sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                        <GoogleMap address={event.location || ''} height="300px" />
+                        <GoogleMap height="300px" />
                       </Box>
                     </CardContent>
                   </Card>
@@ -487,8 +487,7 @@ export default function EventPage() {
                             </Card>
 
                             {/* VIP Registration Option */}
-                            {event.vipPrice && event.vipPrice > 0 && (
-                              <Card 
+                            {event.vipPrice && event.vipPrice > 0 ? <Card 
                                 sx={{ 
                                   cursor: 'pointer',
                                   transition: 'all 0.3s',
@@ -532,8 +531,7 @@ export default function EventPage() {
                                     </Box>
                                   </Stack>
                                 </CardContent>
-                              </Card>
-                            )}
+                              </Card> : null}
                           </Stack>
                         ) : (
                           <>
@@ -621,7 +619,7 @@ export default function EventPage() {
 
               {/* Benefits List */}
               {benefits.map((item, index) => (
-                <Box key={index}>
+                <Box key={item.feature}>
                   <Grid container spacing={2} alignItems="center" sx={{ py: 2 }}>
                     <Grid item xs={12} md={6}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -652,7 +650,7 @@ export default function EventPage() {
                       </Box>
                     </Grid>
                   </Grid>
-                  {index < benefits.length - 1 && <Divider />}
+                  {index < benefits.length - 1 ? <Divider /> : null}
                 </Box>
               ))}
             </Paper>

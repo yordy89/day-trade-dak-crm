@@ -5,7 +5,6 @@ import {
   Box,
   Typography,
   Stack,
-  Chip,
   useTheme,
   alpha,
 } from '@mui/material';
@@ -25,18 +24,16 @@ interface ParticipantViewProps {
   isMainStage?: boolean;
 }
 
-export function ParticipantView({ participantId, isPresenter = false, isMainStage = false }: ParticipantViewProps) {
+export function ParticipantView({ participantId, isPresenter = false }: ParticipantViewProps) {
   const theme = useTheme();
   const {
     webcamStream,
-    micStream,
     screenShareStream,
     webcamOn,
     micOn,
     screenShareOn,
     displayName,
     isLocal,
-    mode,
   } = useParticipant(participantId);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -48,7 +45,7 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
       const mediaStream = new MediaStream();
       mediaStream.addTrack(webcamStream.track);
       videoRef.current.srcObject = mediaStream;
-      videoRef.current.play().catch(console.error);
+      videoRef.current.play().catch((error: unknown) => console.error(error));
     }
   }, [webcamStream]);
 
@@ -58,11 +55,11 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
       const mediaStream = new MediaStream();
       mediaStream.addTrack(screenShareStream.track);
       screenRef.current.srcObject = mediaStream;
-      screenRef.current.play().catch(console.error);
+      screenRef.current.play().catch((error: unknown) => console.error(error));
     }
   }, [screenShareStream]);
 
-  const isHost = mode === 'CONFERENCE';
+  const isHost = false; // TODO: Determine host status differently
   const showVideo = webcamOn && webcamStream;
   const showScreen = screenShareOn && screenShareStream;
 
@@ -89,7 +86,9 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
             height: '100%',
             objectFit: 'contain',
           }}
-        />
+        >
+          <track kind="captions" />
+        </video>
       ) : showVideo ? (
         <video
           ref={videoRef}
@@ -102,7 +101,9 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
             objectFit: 'cover',
             transform: isLocal ? 'scaleX(-1)' : 'none',
           }}
-        />
+        >
+          <track kind="captions" />
+        </video>
       ) : (
         <Box
           sx={{
@@ -164,7 +165,7 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
               }}
             >
               {displayName}
-              {isLocal && ' (You)'}
+              {isLocal ? ' (You)' : ''}
             </Typography>
             {isHost && (
               <Crown size={14} color={theme.palette.warning.main} weight="fill" />
@@ -172,9 +173,9 @@ export function ParticipantView({ participantId, isPresenter = false, isMainStag
           </Stack>
           
           <Stack direction="row" spacing={0.5}>
-            {screenShareOn && (
+            {screenShareOn ? (
               <Desktop size={16} color="white" />
-            )}
+            ) : null}
             {micOn ? (
               <Microphone size={16} color="white" />
             ) : (

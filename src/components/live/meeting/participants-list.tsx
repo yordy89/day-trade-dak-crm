@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -17,6 +17,12 @@ import {
   Divider,
   useTheme,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import {
   X,
@@ -28,14 +34,125 @@ import {
   Crown,
   UserMinus,
 } from '@phosphor-icons/react';
-import { Participant, useParticipant } from '@videosdk.live/react-sdk';
+import { useParticipant } from '@videosdk.live/react-sdk';
 
 interface ParticipantsListProps {
-  participants: Participant[];
+  participants: any[];
   raiseHandQueue: Map<string, { participantId: string; participantName: string; timestamp: number }>;
   onClose: () => void;
   onLowerHand: (participantId: string) => void;
   isHost: boolean;
+}
+
+// Component to handle individual participant controls
+function ParticipantControls({ participant, onLowerHand, raiseHandQueue }: { participant: any; onLowerHand: (id: string) => void; raiseHandQueue: Map<string, any> }) {
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  
+  const { 
+    enableMic, 
+    disableMic, 
+    enableWebcam, 
+    disableWebcam,
+    remove
+  } = useParticipant(participant.id);
+
+  const handleToggleMic = () => {
+    if (participant.micOn) {
+      disableMic();
+    } else {
+      enableMic();
+    }
+  };
+
+  const handleToggleCamera = () => {
+    if (participant.webcamOn) {
+      disableWebcam();
+    } else {
+      enableWebcam();
+    }
+  };
+
+  const handleRemoveParticipant = () => {
+    setRemoveDialogOpen(true);
+  };
+  
+  const handleConfirmRemove = () => {
+    remove();
+    setRemoveDialogOpen(false);
+  };
+  
+  const handleCancelRemove = () => {
+    setRemoveDialogOpen(false);
+  };
+
+  return (
+    <Stack direction="row" spacing={0.5}>
+      {raiseHandQueue.has(participant.id) && (
+        <Tooltip title="Lower hand">
+          <IconButton
+            size="small"
+            onClick={() => onLowerHand(participant.id)}
+          >
+            <HandPalm size={16} />
+          </IconButton>
+        </Tooltip>
+      )}
+      
+      <Tooltip title={participant.micOn ? "Mute participant" : "Request unmute (participant must unmute themselves)"}>
+        <IconButton
+          size="small"
+          onClick={handleToggleMic}
+          color={participant.micOn ? "default" : "error"}
+        >
+          {participant.micOn ? <Microphone size={16} /> : <MicrophoneSlash size={16} />}
+        </IconButton>
+      </Tooltip>
+      
+      <Tooltip title={participant.webcamOn ? "Turn off camera" : "Request camera on"}>
+        <IconButton
+          size="small"
+          onClick={handleToggleCamera}
+          color={participant.webcamOn ? "default" : "error"}
+        >
+          {participant.webcamOn ? <VideoCamera size={16} /> : <VideoCameraSlash size={16} />}
+        </IconButton>
+      </Tooltip>
+      
+      <Tooltip title="Remove from meeting">
+        <IconButton
+          size="small"
+          color="error"
+          onClick={handleRemoveParticipant}
+        >
+          <UserMinus size={16} />
+        </IconButton>
+      </Tooltip>
+      
+      <Dialog
+        open={removeDialogOpen}
+        onClose={handleCancelRemove}
+        aria-labelledby="remove-participant-dialog-title"
+        aria-describedby="remove-participant-dialog-description"
+      >
+        <DialogTitle id="remove-participant-dialog-title">
+          Remove Participant
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="remove-participant-dialog-description">
+            Are you sure you want to remove {participant.displayName} from the meeting?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelRemove} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmRemove} color="error">
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Stack>
+  );
 }
 
 export function ParticipantsList({
@@ -46,84 +163,6 @@ export function ParticipantsList({
   isHost,
 }: ParticipantsListProps) {
   const theme = useTheme();
-
-  // Component to handle individual participant controls
-  const ParticipantControls = ({ participant }: { participant: Participant }) => {
-    const { 
-      enableMic, 
-      disableMic, 
-      enableWebcam, 
-      disableWebcam,
-      remove
-    } = useParticipant(participant.id);
-
-    const handleToggleMic = () => {
-      if (participant.micOn) {
-        disableMic();
-      } else {
-        enableMic();
-      }
-    };
-
-    const handleToggleCamera = () => {
-      if (participant.webcamOn) {
-        disableWebcam();
-      } else {
-        enableWebcam();
-      }
-    };
-
-    const handleRemoveParticipant = () => {
-      if (window.confirm(`Remove ${participant.displayName} from the meeting?`)) {
-        remove();
-      }
-    };
-
-    return (
-      <Stack direction="row" spacing={0.5}>
-        {raiseHandQueue.has(participant.id) && (
-          <Tooltip title="Lower hand">
-            <IconButton
-              size="small"
-              onClick={() => onLowerHand(participant.id)}
-            >
-              <HandPalm size={16} />
-            </IconButton>
-          </Tooltip>
-        )}
-        
-        <Tooltip title={participant.micOn ? "Mute participant" : "Request unmute (participant must unmute themselves)"}>
-          <IconButton
-            size="small"
-            onClick={handleToggleMic}
-            color={participant.micOn ? "default" : "error"}
-          >
-            {participant.micOn ? <Microphone size={16} /> : <MicrophoneSlash size={16} />}
-          </IconButton>
-        </Tooltip>
-        
-        <Tooltip title={participant.webcamOn ? "Turn off camera" : "Request camera on"}>
-          <IconButton
-            size="small"
-            onClick={handleToggleCamera}
-            color={participant.webcamOn ? "default" : "error"}
-          >
-            {participant.webcamOn ? <VideoCamera size={16} /> : <VideoCameraSlash size={16} />}
-          </IconButton>
-        </Tooltip>
-        
-        <Tooltip title="Remove from meeting">
-          <IconButton
-            size="small"
-            color="error"
-            onClick={handleRemoveParticipant}
-          >
-            <UserMinus size={16} />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-    );
-  };
 
   // Sort participants: raised hands first, then hosts, then others
   const sortedParticipants = [...participants].sort((a, b) => {
@@ -201,12 +240,12 @@ export function ParticipantsList({
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="body2" fontWeight={500}>
                       {participant.displayName}
-                      {participant.isLocal && ' (You)'}
+                      {participant.isLocal ? ' (You)' : ''}
                     </Typography>
-                    {isParticipantHost && (
+                    {isParticipantHost ? (
                       <Crown size={16} color={theme.palette.warning.main} weight="fill" />
-                    )}
-                    {hasRaisedHand && (
+                    ) : null}
+                    {hasRaisedHand ? (
                       <Chip
                         icon={<HandPalm size={14} />}
                         label="Hand Raised"
@@ -214,7 +253,7 @@ export function ParticipantsList({
                         color="warning"
                         variant="outlined"
                       />
-                    )}
+                    ) : null}
                   </Stack>
                 }
                 secondaryTypographyProps={{ component: 'div' }}
@@ -234,18 +273,18 @@ export function ParticipantsList({
                 }
               />
               
-              {isHost && !participant.isLocal && (
+              {isHost && !participant.isLocal ? (
                 <ListItemSecondaryAction>
-                  <ParticipantControls participant={participant} />
+                  <ParticipantControls participant={participant} onLowerHand={onLowerHand} raiseHandQueue={raiseHandQueue} />
                 </ListItemSecondaryAction>
-              )}
+              ) : null}
             </ListItem>
           );
         })}
       </List>
 
       {/* Host Controls */}
-      {isHost && raiseHandQueue.size > 0 && (
+      {isHost && raiseHandQueue.size > 0 ? (
         <>
           <Divider />
           <Box sx={{ p: 2 }}>
@@ -254,7 +293,7 @@ export function ParticipantsList({
             </Typography>
           </Box>
         </>
-      )}
+      ) : null}
     </Box>
   );
 }

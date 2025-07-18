@@ -15,7 +15,6 @@ import {
   ListItemIcon,
   Collapse,
   IconButton,
-  Chip,
   LinearProgress,
   Divider,
   Button,
@@ -30,9 +29,7 @@ import {
   ExpandMore,
   ExpandLess,
   Download,
-  Assignment,
   Quiz,
-  Timer,
   Description,
 } from '@mui/icons-material';
 import { useParams, useRouter } from 'next/navigation';
@@ -229,13 +226,13 @@ export default function CourseVideoPage() {
   let currentModule: CourseModule | null = null;
   let relatedVideos: Video[] = [];
 
-  courseData.modules.forEach(module => {
-    module.videos.forEach(video => {
-      if (video.id === videoId) {
-        currentVideo = video;
-        currentModule = module;
+  courseData.modules.forEach(courseModule => {
+    courseModule.videos.forEach(moduleVideo => {
+      if (moduleVideo.id === videoId) {
+        currentVideo = moduleVideo as Video;
+        currentModule = courseModule;
         // Get other videos from the same module as related
-        relatedVideos = module.videos.filter(v => v.id !== videoId);
+        relatedVideos = courseModule.videos.filter(v => v.id !== videoId);
       }
     });
   });
@@ -243,6 +240,10 @@ export default function CourseVideoPage() {
   if (!currentVideo) {
     return <Typography>Video not found</Typography>;
   }
+
+  // TypeScript assertion to help with type inference
+  const video = currentVideo as Video;
+  const activeModule = currentModule as CourseModule | null;
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
@@ -283,43 +284,47 @@ export default function CourseVideoPage() {
 
               {/* Module List */}
               <List sx={{ p: 0 }}>
-                {courseData.modules.map((module, moduleIndex) => (
-                  <Box key={module.id} sx={{ mb: 1 }}>
+                {courseData.modules.map((courseModule, moduleIndex) => (
+                  <Box key={courseModule.id} sx={{ mb: 1 }}>
                     <ListItem
                       disablePadding
                       sx={{
                         backgroundColor:
-                          currentModule?.id === module.id
+                          activeModule?.id === courseModule.id
                             ? alpha(theme.palette.primary.main, 0.08)
                             : 'transparent',
                         borderRadius: 1,
                       }}
                     >
-                      <ListItemButton onClick={() => toggleModule(module.id)}>
+                      <ListItemButton onClick={() => toggleModule(courseModule.id)}>
                         <ListItemText
                           primary={
                             <Stack direction="row" alignItems="center" spacing={1}>
                               <Typography variant="subtitle2" fontWeight={600}>
-                                Module {moduleIndex + 1}: {module.title}
+                                Module {moduleIndex + 1}: {courseModule.title}
                               </Typography>
                             </Stack>
                           }
-                          secondary={`${module.videos.length} videos`}
+                          secondary={`${courseModule.videos.length} videos`}
                         />
                         <IconButton size="small">
-                          {expandedModules.includes(module.id) ? <ExpandLess /> : <ExpandMore />}
+                          {expandedModules.includes(courseModule.id) ? <ExpandLess /> : <ExpandMore />}
                         </IconButton>
                       </ListItemButton>
                     </ListItem>
 
-                    <Collapse in={expandedModules.includes(module.id)}>
+                    <Collapse in={expandedModules.includes(courseModule.id)}>
                       <List component="div" disablePadding sx={{ pl: 2 }}>
-                        {module.videos.map((video, videoIndex) => (
-                          <ListItem key={video.id} disablePadding>
+                        {courseModule.videos.map((moduleVideo, videoIndex) => (
+                          <ListItem key={moduleVideo.id} disablePadding>
                             <ListItemButton
-                              onClick={() => !video.isLocked && navigateToVideo(video.id)}
-                              disabled={video.isLocked}
-                              selected={video.id === videoId}
+                              onClick={() => {
+                                if (!('isLocked' in moduleVideo && moduleVideo.isLocked)) {
+                                  navigateToVideo(moduleVideo.id);
+                                }
+                              }}
+                              disabled={'isLocked' in moduleVideo ? moduleVideo.isLocked : false}
+                              selected={moduleVideo.id === videoId}
                               sx={{
                                 borderRadius: 1,
                                 mb: 0.5,
@@ -329,9 +334,9 @@ export default function CourseVideoPage() {
                               }}
                             >
                               <ListItemIcon sx={{ minWidth: 36 }}>
-                                {video.isCompleted || completedVideos.includes(video.id) ? (
+                                {moduleVideo.isCompleted || completedVideos.includes(moduleVideo.id) ? (
                                   <CheckCircle color="success" fontSize="small" />
-                                ) : video.isLocked ? (
+                                ) : ('isLocked' in moduleVideo && moduleVideo.isLocked) ? (
                                   <Lock color="disabled" fontSize="small" />
                                 ) : (
                                   <PlayCircleOutline fontSize="small" />
@@ -340,12 +345,12 @@ export default function CourseVideoPage() {
                               <ListItemText
                                 primary={
                                   <Typography variant="body2">
-                                    {videoIndex + 1}. {video.title}
+                                    {videoIndex + 1}. {moduleVideo.title}
                                   </Typography>
                                 }
                                 secondary={
                                   <Typography variant="caption" color="text.secondary">
-                                    {Math.floor(video.duration / 60)} min
+                                    {Math.floor(moduleVideo.duration / 60)} min
                                   </Typography>
                                 }
                               />
@@ -354,7 +359,7 @@ export default function CourseVideoPage() {
                         ))}
 
                         {/* Module Resources */}
-                        {module.resources && module.resources.length > 0 && (
+                        {courseModule.resources && courseModule.resources.length > 0 ? (
                           <ListItem disablePadding>
                             <ListItemButton sx={{ borderRadius: 1, mb: 0.5 }}>
                               <ListItemIcon sx={{ minWidth: 36 }}>
@@ -363,20 +368,20 @@ export default function CourseVideoPage() {
                               <ListItemText
                                 primary={
                                   <Typography variant="body2">
-                                    Resources ({module.resources.length})
+                                    Resources ({courseModule.resources.length})
                                   </Typography>
                                 }
                               />
                             </ListItemButton>
                           </ListItem>
-                        )}
+                        ) : null}
 
                         {/* Module Quiz */}
-                        {module.quiz && (
+                        {courseModule.quiz ? (
                           <ListItem disablePadding>
                             <ListItemButton sx={{ borderRadius: 1 }}>
                               <ListItemIcon sx={{ minWidth: 36 }}>
-                                {module.quiz.isCompleted ? (
+                                {courseModule.quiz.isCompleted ? (
                                   <CheckCircle color="success" fontSize="small" />
                                 ) : (
                                   <Quiz fontSize="small" />
@@ -385,24 +390,24 @@ export default function CourseVideoPage() {
                               <ListItemText
                                 primary={
                                   <Typography variant="body2">
-                                    {module.quiz.title}
+                                    {courseModule.quiz.title}
                                   </Typography>
                                 }
                                 secondary={
-                                  module.quiz.isCompleted ? (
+                                  courseModule.quiz.isCompleted ? (
                                     <Typography variant="caption" color="success.main">
-                                      Score: {module.quiz.score}%
+                                      Score: {courseModule.quiz.score}%
                                     </Typography>
                                   ) : (
                                     <Typography variant="caption" color="text.secondary">
-                                      {module.quiz.questions} questions
+                                      {courseModule.quiz.questions} questions
                                     </Typography>
                                   )
                                 }
                               />
                             </ListItemButton>
                           </ListItem>
-                        )}
+                        ) : null}
                       </List>
                     </Collapse>
                   </Box>
@@ -416,11 +421,11 @@ export default function CourseVideoPage() {
         <Grid item xs={12} lg={9}>
           <ProfessionalVideoPlayer
             video={{
-              id: currentVideo.id,
-              title: currentVideo.title,
-              description: currentVideo.description,
-              duration: currentVideo.duration,
-              category: currentModule?.title,
+              id: video.id,
+              title: video.title,
+              description: video.description || '',
+              duration: video.duration,
+              category: activeModule?.title,
               instructor: courseData.instructor,
               uploadDate: 'December 1, 2024',
               views: 1234,
@@ -431,7 +436,7 @@ export default function CourseVideoPage() {
             onComplete={handleVideoComplete}
             relatedVideos={relatedVideos.map(v => ({
               ...v,
-              category: currentModule?.title,
+              category: activeModule?.title,
               instructor: courseData.instructor,
             }))}
             bookmarks={bookmarks}
@@ -439,14 +444,14 @@ export default function CourseVideoPage() {
           />
 
           {/* Module Resources */}
-          {currentModule?.resources && currentModule.resources.length > 0 && (
+          {activeModule?.resources && activeModule.resources.length > 0 ? (
             <Card sx={{ mt: 3 }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
                   Module Resources
                 </Typography>
                 <Grid container spacing={2}>
-                  {currentModule.resources.map(resource => (
+                  {activeModule.resources.map(resource => (
                     <Grid item xs={12} sm={6} md={4} key={resource.id}>
                       <Button
                         fullWidth
@@ -474,7 +479,7 @@ export default function CourseVideoPage() {
                 </Grid>
               </CardContent>
             </Card>
-          )}
+          ) : null}
         </Grid>
       </Grid>
     </Container>

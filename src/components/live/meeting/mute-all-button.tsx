@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { SpeakerSlash } from '@phosphor-icons/react';
 import { useParticipant } from '@videosdk.live/react-sdk';
@@ -17,7 +17,7 @@ interface MuteAllButtonProps {
 function ParticipantMuter({ participant, shouldMute }: { participant: any; shouldMute: boolean }) {
   const { disableMic } = useParticipant(participant.id);
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (shouldMute && participant.micOn && !participant.isLocal) {
       disableMic();
     }
@@ -39,13 +39,13 @@ export function MuteAllButton({ participants, isHost, allMuted, onMuteStateChang
   return (
     <>
       {/* Render individual muters when mute all is active */}
-      {allMuted && participants.map((participant) => (
+      {allMuted ? participants.map((participant) => (
         <ParticipantMuter 
           key={participant.id} 
           participant={participant} 
           shouldMute={allMuted}
         />
-      ))}
+      )) : null}
       
       <Tooltip title={allMuted ? "Allow all to unmute" : "Mute all participants"}>
         <IconButton
