@@ -13,10 +13,21 @@ import {
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { videoSDKService } from '@/services/api/videosdk.service';
-import { VideoSDKProvider } from '@/components/live/providers/videosdk-provider';
-import { MeetingRoom } from '@/components/live/meeting/meeting-room';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports to avoid SSR issues
+const VideoSDKProvider = dynamic(
+  () => import('@/components/live/providers/videosdk-provider').then(mod => mod.VideoSDKProvider),
+  { ssr: false }
+);
+
+const MeetingRoom = dynamic(
+  () => import('@/components/live/meeting/meeting-room').then(mod => mod.MeetingRoom),
+  { ssr: false }
+);
 
 export default function RoomPage() {
+  const [isMounted, setIsMounted] = useState(false);
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -29,6 +40,11 @@ export default function RoomPage() {
   const [error, setError] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [meetingValid, setMeetingValid] = useState(false);
+  
+  // Ensure component only renders on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const initializeMeeting = async () => {
@@ -64,6 +80,21 @@ export default function RoomPage() {
       void initializeMeeting();
     }
   }, [user, roomId, isHost, authLoading]);
+
+  // Don't render VideoSDK components until client-side
+  if (!isMounted) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        bgcolor="background.default"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (authLoading || loading) {
     return (
