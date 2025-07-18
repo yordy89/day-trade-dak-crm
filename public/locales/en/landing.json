@@ -1,0 +1,591 @@
+{
+  "hero": {
+    "badge": "🔥 #1 Trading Education Platform",
+    "title": "Master Trading with",
+    "titleHighlight": "Professional Education",
+    "subtitle": "Join 50,000+ successful traders. Learn proven strategies, get real-time signals, and transform your financial future with expert mentorship.",
+    "cta": {
+      "startTrial": "Start Free Trial",
+      "watchDemo": "Watch Demo"
+    },
+    "stats": {
+      "activeStudents": "Active Students",
+      "successRate": "Success Rate",
+      "videoLessons": "Video Lessons",
+      "liveSupport": "Live Support"
+    },
+    "liveMarket": {
+      "title": "Live Market Data",
+      "badge": "LIVE",
+      "sp500": "S&P 500",
+      "nasdaq": "NASDAQ",
+      "dowJones": "Dow Jones",
+      "features": {
+        "realTimeData": "Real-time data",
+        "expertAnalysis": "Expert analysis",
+        "verifiedSignals": "Verified signals",
+        "accuracy": "95% accuracy"
+      }
+    }
+  },
+  "services": {
+    "label": "WHAT WE OFFER",
+    "title": "Everything You Need to",
+    "titleHighlight": "Succeed",
+    "subtitle": "From education to live trading signals, we provide all the tools and resources you need to become a profitable trader.",
+    "items": {
+      "signals": {
+        "title": "Live Trading Signals",
+        "description": "Get real-time buy/sell alerts from professional traders with 95% accuracy rate."
+      },
+      "academy": {
+        "title": "Trading Academy",
+        "description": "Comprehensive courses from beginner to advanced with 500+ video lessons."
+      },
+      "masterClasses": {
+        "title": "Master Classes",
+        "description": "Elite trading classes with experienced professionals to accelerate your success."
+      },
+      "psychology": {
+        "title": "Trading Psychology",
+        "description": "Master your emotions and develop the mindset of successful traders."
+      },
+      "analysis": {
+        "title": "Market Analysis",
+        "description": "Daily technical and fundamental analysis of major markets and stocks."
+      },
+      "library": {
+        "title": "Resource Library",
+        "description": "Access exclusive trading books, strategies, and research materials."
+      }
+    },
+    "cta": {
+      "learnMore": "Learn More",
+      "assessment": "Not sure where to start? Take our free trading assessment",
+      "takeAssessment": "Take Free Assessment"
+    }
+  },
+  "liveTrading": {
+    "label": "LIVE TRADING",
+    "title": "Trade Live with",
+    "titleHighlight": "Professional Traders",
+    "subtitle": "Join our live trading rooms and watch professional traders in action. Learn their strategies, ask questions, and make profits together.",
+    "stats": {
+      "viewers": "Live viewers now",
+      "profitableSessions": "Profitable sessions"
+    },
+    "cta": "Join Live Trading Room",
+    "sessions": {
+      "morning": {
+        "title": "Morning Market Analysis",
+        "description": "Analyzing pre-market movers and setting up day trades"
+      },
+      "options": {
+        "title": "Options Strategy Session",
+        "description": "Advanced options strategies for volatile markets"
+      },
+      "crypto": {
+        "title": "Crypto Trading Masterclass",
+        "description": "Bitcoin and altcoin technical analysis"
+      }
+    },
+    "status": {
+      "live": "Live Now",
+      "upcoming": "Starts in {time}",
+      "ended": "Ended {time} ago",
+      "viewers": "viewers",
+      "profit": "profit"
+    },
+    "joinMessage": "Join {count}+ traders currently online"
+  },
+  "education": {
+    "label": "EDUCATION PROGRAMS",
+    "title": "Transform Your Trading with",
+    "titleHighlight": "Expert Education",
+    "subtitle": "From beginner to professional, our comprehensive courses are designed to take you through every stage of your trading journey.",
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "programs": {
+      "fundamentals": {
+        "title": "Trading Fundamentals",
+        "description": "Master the basics of trading, market analysis, and risk management",
+        "features": [
+          "Market basics & terminology",
+          "Technical analysis foundations",
+          "Risk management strategies",
+          "Live trading sessions"
+        ],
+        "duration": "8 weeks",
+        "lessons": "48 lessons",
+        "students": "{count} students"
+      },
+      "technical": {
+        "title": "Advanced Technical Analysis",
+        "description": "Deep dive into chart patterns, indicators, and trading strategies",
+        "features": [
+          "Advanced chart patterns",
+          "Multi-timeframe analysis",
+          "Algorithmic trading basics",
+          "Options strategies"
+        ],
+        "duration": "12 weeks",
+        "lessons": "72 lessons",
+        "students": "{count} students"
+      },
+      "professional": {
+        "title": "Professional Day Trading",
+        "description": "Trade like a pro with institutional strategies and tools",
+        "features": [
+          "Institutional trading strategies",
+          "High-frequency trading",
+          "Portfolio management",
+          "API & automation"
+        ],
+        "duration": "16 weeks",
+        "lessons": "96 lessons",
+        "students": "{count} students"
+      }
+    },
+    "badge": "Expert Trader",
+    "progress": "Progress",
+    "continue": "Continue",
+    "enrollNow": "Enroll Now",
+    "cta": {
+      "title": "Can't decide which course is right for you?",
+      "button": "Take Skill Assessment"
+    }
+  },
+  "tools": {
+    "label": "TRADING TOOLS",
+    "title": "Professional Tools for",
+    "titleHighlight": "Serious Traders",
+    "subtitle": "Access institutional-grade trading tools designed to give you an edge in the markets. From advanced charting to AI-powered analytics.",
+    "items": {
+      "charting": {
+        "title": "Advanced Charting",
+        "description": "Professional-grade charts with 100+ indicators and drawing tools",
+        "badge": "PRO",
+        "features": [
+          "Real-time data streaming",
+          "100+ technical indicators",
+          "Custom timeframes",
+          "Multi-chart layouts",
+          "Pattern recognition"
+        ]
+      },
+      "calculator": {
+        "title": "Position Calculator",
+        "description": "Calculate optimal position sizes and manage risk effectively",
+        "badge": "NEW",
+        "features": [
+          "Risk/reward calculator",
+          "Position sizing",
+          "Stop loss placement",
+          "Profit targets",
+          "Portfolio allocation"
+        ]
+      },
+      "scanner": {
+        "title": "Market Scanner",
+        "description": "Find trading opportunities with powerful screening tools",
+        "badge": "FREE",
+        "features": [
+          "Real-time scanning",
+          "Custom filters",
+          "Technical alerts",
+          "Volume analysis",
+          "Price action alerts"
+        ]
+      },
+      "backtester": {
+        "title": "Strategy Backtester",
+        "description": "Test your trading strategies with historical data",
+        "features": [
+          "Historical analysis",
+          "Performance metrics",
+          "Risk assessment",
+          "Optimization tools",
+          "Detailed reports"
+        ]
+      },
+      "analytics": {
+        "title": "Trade Analytics",
+        "description": "Track and analyze your trading performance",
+        "features": [
+          "P&L tracking",
+          "Win rate analysis",
+          "Risk metrics",
+          "Trade journal",
+          "Performance reports"
+        ]
+      },
+      "alerts": {
+        "title": "Smart Alerts",
+        "description": "Never miss a trading opportunity with custom alerts",
+        "features": [
+          "Price alerts",
+          "Technical alerts",
+          "News alerts",
+          "Mobile notifications",
+          "Email alerts"
+        ]
+      }
+    },
+    "cta": {
+      "launchTool": "Launch Tool",
+      "premium": {
+        "title": "Get All Tools with Premium Access",
+        "description": "Unlock all professional tools, real-time data, and advanced features",
+        "button": "Start Premium Trial"
+      }
+    }
+  },
+  "success": {
+    "label": "SUCCESS STORIES",
+    "title": "Real Traders,",
+    "titleHighlight": "Real Results",
+    "subtitle": "Join thousands of successful traders who have transformed their financial future with our proven strategies and expert guidance.",
+    "stats": {
+      "successRate": "Success Rate",
+      "totalStudents": "Total Students",
+      "avgReturn": "Avg. Monthly Return",
+      "totalProfits": "Total Profits"
+    },
+    "badge": "FEATURED SUCCESS",
+    "stories": {
+      "dayTrader": {
+        "role": "Full-time Day Trader",
+        "quote": "DayTradeDak transformed my trading completely. The mentorship program gave me the confidence and skills to quit my job and trade full-time. I've consistently made 15-20% monthly returns.",
+        "achievement": "Achieved financial freedom"
+      },
+      "optionsTrader": {
+        "role": "Options Trader",
+        "quote": "The options strategies I learned here are incredible. I started with $5,000 and now manage a portfolio worth over $150,000. The live trading sessions are invaluable.",
+        "achievement": "30x portfolio growth"
+      },
+      "swingTrader": {
+        "role": "Swing Trader",
+        "quote": "As a beginner, I was losing money constantly. After taking the fundamentals course, I've been profitable for 14 straight months. The risk management lessons saved my account.",
+        "achievement": "14 months profitable"
+      },
+      "cryptoTrader": {
+        "role": "Crypto Trader",
+        "quote": "The crypto trading masterclass opened my eyes to opportunities I never knew existed. I've made more in 6 months than in my previous 3 years of trading.",
+        "achievement": "Doubled annual income"
+      }
+    },
+    "details": {
+      "profit": "Total Profit",
+      "period": "Trading Period",
+      "achievement": "Achievement",
+      "location": "Location"
+    }
+  },
+  "pricing": {
+    "label": "PRICING PLANS",
+    "title": "Choose Your Path to",
+    "titleHighlight": "Trading Success",
+    "subtitle": "Start with a 14-day free trial. No credit card required. Cancel anytime with our 30-day money-back guarantee.",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Perfect for beginners starting their trading journey",
+        "price": "$39",
+        "period": "/month",
+        "yearlyPrice": "$31",
+        "billedAnnually": "billed annually",
+        "features": [
+          "Basic trading courses",
+          "5 video lessons per week",
+          "Market analysis reports",
+          "Community forum access",
+          "Basic technical indicators",
+          "Email support"
+        ]
+      },
+      "professional": {
+        "name": "Professional",
+        "badge": "MOST POPULAR",
+        "description": "Most popular choice for serious traders",
+        "price": "$99",
+        "period": "/month",
+        "yearlyPrice": "$79",
+        "billedAnnually": "billed annually",
+        "features": [
+          "All Basic features",
+          "Unlimited video lessons",
+          "Live trading sessions (3x week)",
+          "Advanced trading strategies",
+          "Real-time alerts & signals",
+          "Priority support",
+          "Trading psychology course",
+          "Position calculator tools"
+        ]
+      },
+      "elite": {
+        "name": "Elite",
+        "badge": "BEST VALUE",
+        "description": "Complete access with personalized mentorship",
+        "price": "$299",
+        "period": "/month",
+        "yearlyPrice": "$239",
+        "billedAnnually": "billed annually",
+        "features": [
+          "All Professional features",
+          "Weekly 1-on-1 mentorship",
+          "Daily live trading room",
+          "Custom trading strategies",
+          "API & automation access",
+          "White-glove support",
+          "Exclusive masterclasses",
+          "Personal trading coach",
+          "Institutional tools access",
+          "Lifetime updates"
+        ]
+      }
+    },
+    "cta": "Start Free Trial",
+    "guarantees": {
+      "support": {
+        "title": "24/7 Support",
+        "description": "Get help whenever you need it from our expert support team"
+      },
+      "moneyBack": {
+        "title": "30-Day Guarantee",
+        "description": "Not satisfied? Get a full refund within 30 days, no questions asked"
+      },
+      "cancel": {
+        "title": "Cancel Anytime",
+        "description": "No contracts, no hidden fees. Cancel your subscription anytime"
+      }
+    }
+  },
+  "cta": {
+    "badges": [
+      "14-day free trial",
+      "No credit card required",
+      "Cancel anytime",
+      "30-day money back guarantee"
+    ],
+    "title": "Ready to Start Your",
+    "titleHighlight": "Trading Journey?",
+    "subtitle": "Join 50,000+ traders who are already profiting from our proven strategies and expert guidance.",
+    "buttons": {
+      "startTrial": "Start Free Trial",
+      "viewPricing": "View Pricing"
+    },
+    "stats": {
+      "successRate": {
+        "value": "95%",
+        "label": "Success Rate"
+      },
+      "support": {
+        "value": "24/7",
+        "label": "Live Support"
+      },
+      "lessons": {
+        "value": "500+",
+        "label": "Video Lessons"
+      },
+      "traders": {
+        "value": "50k+",
+        "label": "Active Traders"
+      }
+    },
+    "testimonial": {
+      "quote": "DayTradeDak completely transformed my trading. I went from losing money to consistently profitable in just 3 months!",
+      "author": "- Sarah Johnson, Professional Trader"
+    },
+    "newsletter": {
+      "title": "Get Free Trading Tips & Market Analysis",
+      "subtitle": "Join our newsletter and receive daily market insights directly to your inbox",
+      "placeholder": "Enter your email",
+      "button": "Subscribe Free"
+    }
+  },
+  "footer": {
+    "sections": {
+      "trading": {
+        "title": "Trading",
+        "links": {
+          "liveRoom": "Live Trading Room",
+          "signals": "Trading Signals",
+          "analysis": "Market Analysis",
+          "calendar": "Economic Calendar",
+          "tools": "Trading Tools"
+        }
+      },
+      "education": {
+        "title": "Education",
+        "links": {
+          "academy": "Trading Academy",
+          "masterClasses": "Master Classes",
+          "psychology": "Trading Psychology",
+          "library": "eBooks Library",
+          "webinars": "Webinars"
+        }
+      },
+      "company": {
+        "title": "Company",
+        "links": {
+          "about": "About Us",
+          "success": "Success Stories",
+          "careers": "Careers",
+          "blog": "Blog",
+          "contact": "Contact"
+        }
+      },
+      "support": {
+        "title": "Support",
+        "links": {
+          "help": "Help Center",
+          "faq": "FAQ",
+          "terms": "Terms of Service",
+          "privacy": "Privacy Policy",
+          "risk": "Risk Disclosure"
+        }
+      }
+    },
+    "about": {
+      "description": "Empowering traders worldwide with professional education, real-time signals, and proven strategies for consistent success in the financial markets."
+    },
+    "contact": {
+      "phone": "+1 (727) 486-1608",
+      "email": "support@daytradedak.com",
+      "address": "Miami, FL 33101, USA"
+    },
+    "newsletter": {
+      "title": "Stay Updated with Market Insights",
+      "subtitle": "Get daily market analysis and trading tips delivered to your inbox",
+      "placeholder": "Enter your email",
+      "button": "Subscribe"
+    },
+    "copyright": "© {year} DayTradeDak. All rights reserved.",
+    "riskWarning": "Risk Warning: Trading involves substantial risk and may result in the loss of your invested capital. Past performance is not indicative of future results."
+  },
+  "navbar": {
+    "trading": {
+      "title": "Trading",
+      "liveRoom": {
+        "title": "Live Trading Room",
+        "description": "Join live sessions with pro traders"
+      },
+      "analysis": {
+        "title": "Market Analysis",
+        "description": "Daily technical & fundamental analysis"
+      },
+      "signals": {
+        "title": "Trading Signals",
+        "description": "Real-time buy/sell alerts"
+      },
+      "calendar": {
+        "title": "Economic Calendar",
+        "description": "Important market events"
+      }
+    },
+    "education": {
+      "title": "Education",
+      "academy": {
+        "title": "Trading Academy",
+        "description": "Comprehensive trading courses"
+      },
+      "masterClasses": {
+        "title": "Master Classes",
+        "description": "Elite trading masterclasses"
+      },
+      "psychology": {
+        "title": "Trading Psychology",
+        "description": "Master your trading mindset"
+      },
+      "library": {
+        "title": "eBooks Library",
+        "description": "Trading books & resources"
+      }
+    },
+    "tools": {
+      "title": "Tools",
+      "screener": {
+        "title": "Stock Screener",
+        "description": "Find trading opportunities"
+      },
+      "calculator": {
+        "title": "Position Calculator",
+        "description": "Risk & position sizing"
+      },
+      "scanner": {
+        "title": "Market Scanner",
+        "description": "Real-time market data"
+      }
+    },
+    "live": "Live",
+    "pricing": "Pricing",
+    "about": "About",
+    "login": "Login",
+    "getStarted": "Get Started"
+  },
+  "topBar": {
+    "socialMedia": {
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube"
+    },
+    "contact": {
+      "email": "support@daytradedk.com",
+      "phone": "+1 (727) 486 1603"
+    },
+    "dakIndex": "DAK Index",
+    "est": "EST"
+  },
+  "common": {
+    "viewAll": "View All →",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "startNow": "Start Now",
+    "joinNow": "Join Now",
+    "launchTool": "Launch Tool",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "premium": "Premium",
+    "free": "Free",
+    "new": "NEW",
+    "pro": "PRO",
+    "popular": "Popular",
+    "recommended": "Recommended",
+    "bestValue": "Best Value",
+    "mostPopular": "Most Popular",
+    "save": "Save",
+    "off": "OFF",
+    "volume": "Vol:",
+    "call": "CALL",
+    "put": "PUT",
+    "buy": "Buy",
+    "sell": "Sell",
+    "profit": "Profit",
+    "loss": "Loss",
+    "period": "Period",
+    "location": "Location",
+    "achievement": "Achievement",
+    "totalProfit": "Total Profit",
+    "tradingPeriod": "Trading Period",
+    "years": "{count} years",
+    "months": "{count} months",
+    "days": "{count} days",
+    "hours": "{count} hours",
+    "minutes": "{count} minutes",
+    "viewers": "{count} viewers",
+    "students": "{count} students",
+    "lessons": "{count} lessons",
+    "weeks": "{count} weeks"
+  }
+}

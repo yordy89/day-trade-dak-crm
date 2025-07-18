@@ -1,0 +1,407 @@
+{
+  "hero": {
+    "badge": "Cupos Limitados Disponibles",
+    "title": "Curso Intensivo de Trading 2025",
+    "subtitle": "Programa de Transformación en Trading de 4 Meses",
+    "description": "Programa completo de formación en trading que combina aprendizaje online, entrenamiento presencial en Miami y práctica supervisada con mentorías profesionales.",
+    "startDate": "Comienza 15 de Enero, 2025",
+    "duration": "4 Meses de Duración",
+    "location": "Miami, Florida",
+    "stats": {
+      "students": {
+        "number": "50",
+        "label": "Estudiantes Máximo"
+      },
+      "modules": {
+        "number": "8",
+        "label": "Módulos Especializados"
+      },
+      "mentorship": {
+        "number": "12+",
+        "label": "Sesiones de Mentoría"
+      },
+      "certification": {
+        "number": "100%",
+        "label": "Graduados Certificados"
+      },
+      "intensiveDays": "Días Intensivos",
+      "realPractice": "Práctica Real",
+      "live": "En Vivo",
+      "tradingSessions": "Sesiones de Trading"
+    },
+    "cta": {
+      "primary": "Reserva Tu Cupo",
+      "secondary": "Descargar Programa"
+    },
+    "buttons": {
+      "registerNow": "Inscríbete Ahora - $3,000",
+      "viewProgram": "Ver Programa"
+    },
+    "tagline": "Transforma tu camino en el trading con guía experta",
+    "wantMySpot": "QUIERO MI LUGAR"
+  },
+  "phases": {
+    "title": "Tu Camino al Trading Profesional",
+    "subtitle": "Tres fases diseñadas para una transformación completa",
+    "phase1": {
+      "number": "01",
+      "name": "Aprendizaje Online",
+      "duration": "2 Meses",
+      "dates": "15 Ene - 15 Mar, 2025",
+      "description": "Domina los fundamentos con nuestro curriculum online completo",
+      "activities": [
+        "Sesiones semanales en vivo con traders expertos",
+        "Ejercicios interactivos y análisis de mercado real",
+        "Acceso a comunidad exclusiva de trading",
+        "Seguimiento personal de progreso"
+      ],
+      "modules": [
+        "Fundamentos del Trading y Psicología del Mercado",
+        "Dominio del Análisis Técnico",
+        "Estrategias de Gestión de Riesgo",
+        "Plataformas y Herramientas de Trading",
+        "Estructura del Mercado y Acción del Precio",
+        "Estrategias de Entrada y Salida",
+        "Gestión de Portafolio",
+        "Desarrollo del Plan de Trading"
+      ]
+    },
+    "phase2": {
+      "number": "02",
+      "name": "Entrenamiento Presencial",
+      "duration": "3 Días",
+      "dates": "25-27 de Octubre, 2025",
+      "location": "Miami, Florida - Hotel Intercontinental",
+      "description": "Entrenamiento intensivo con sesiones de trading en vivo",
+      "activities": [
+        "Trading en vivo con capital real",
+        "Sesiones de coaching uno a uno",
+        "Oportunidades de networking profesional",
+        "Ejercicios de trading grupal"
+      ],
+      "includes": [
+        "Todas las comidas incluidas",
+        "Materiales del curso",
+        "Configuración del espacio de trading",
+        "Ceremonia de certificación"
+      ]
+    },
+    "phase3": {
+      "number": "03",
+      "name": "Práctica Supervisada",
+      "duration": "2 Meses",
+      "dates": "28 Oct - 28 Dic, 2025",
+      "description": "Aplica tu conocimiento con guía y apoyo profesional",
+      "activities": [
+        "Sesiones semanales de Q&A con mentores",
+        "Acceso a grupo privado de WhatsApp",
+        "Retroalimentación personalizada de trading",
+        "Seguimiento y optimización del desempeño"
+      ],
+      "certification": "Certificación Profesional de Trading al completar"
+    }
+  },
+  "highlights": {
+    "title": "¿Por Qué Elegir Nuestro Curso Master?",
+    "subtitle": "Todo lo que necesitas para convertirte en trader profesional",
+    "items": [
+      {
+        "title": "Instructores Expertos",
+        "description": "Aprende de Yordy - CEO y Head Trader, y nuestro Equipo Profesional de Trading"
+      },
+      {
+        "title": "Metodología Comprobada",
+        "description": "Estrategias probadas en batalla usadas por traders profesionales diariamente"
+      },
+      {
+        "title": "Comunidad de Por Vida",
+        "description": "Únete a una red exclusiva de traders exitosos"
+      },
+      {
+        "title": "Experiencia Real de Trading",
+        "description": "Practica con capital real bajo supervisión profesional"
+      },
+      {
+        "title": "Soporte Integral",
+        "description": "Acceso 24/7 a recursos y guía de mentores"
+      },
+      {
+        "title": "Oportunidades Profesionales",
+        "description": "Acceso a firmas de trading y oportunidades profesionales"
+      }
+    ]
+  },
+  "requirements": {
+    "title": "Requisitos del Curso",
+    "subtitle": "Lo que necesitas para tener éxito",
+    "items": [
+      "Compromiso de 4 meses con el programa",
+      "Laptop o computadora de escritorio",
+      "Capital inicial mínimo de $500 para práctica",
+      "Disponibilidad para viajar a Miami para el entrenamiento presencial",
+      "Comprensión básica de los mercados financieros (preferible)",
+      "Dedicación a la práctica y aprendizaje diario"
+    ]
+  },
+  "pricing": {
+    "title": "Inversión en Tu Futuro",
+    "subtitle": "Elige tu opción de inscripción",
+    "regular": {
+      "label": "Precio Regular",
+      "price": "$2,999",
+      "decimals": ".99",
+      "features": [
+        "Acceso completo al programa",
+        "Todos los materiales del curso",
+        "Certificación incluida",
+        "Acceso a la comunidad"
+      ],
+      "cta": "Inscríbete Ahora"
+    },
+    "vip": {
+      "label": "VIP Inscripción Temprana",
+      "badge": "Ahorra $500",
+      "price": "$2,499",
+      "decimals": ".99",
+      "features": [
+        "Todo lo del plan Regular",
+        "Acceso prioritario a mentores",
+        "Recursos VIP exclusivos",
+        "Sesión de coaching 1 a 1"
+      ],
+      "cta": "Obtén Acceso VIP"
+    },
+    "payment": {
+      "title": "Opciones de Pago Flexibles",
+      "options": [
+        "Pago completo (ahorra 5%)",
+        "2 cuotas",
+        "4 pagos mensuales"
+      ],
+      "guarantee": "Garantía de devolución de 30 días"
+    },
+    "importantNotice": {
+      "title": "Recuerda:",
+      "description": "No se maneja trading, solo acompañamiento y práctica guiada. Aprende haciendo con mentores expertos y empieza a invertir con confianza!"
+    },
+    "pricingSection": {
+      "title": "Invierte en tu Educación Financiera",
+      "subtitle": "Solo 20 plazas disponibles - Presencial en Tampa, FL o Virtual",
+      "modalitiesInfo": "Modalidades disponibles:",
+      "modalitiesDescription": "Presencial en Tampa, FL o Virtual con acceso completo a todas las sesiones en vivo.",
+      "registerButton": "REGÍSTRATE AHORA",
+      "regularSubtitle": "Pago completo",
+      "features": [
+        "3 días de formación intensiva",
+        "Todos los materiales del curso",
+        "Certificación incluida",
+        "Acceso a la comunidad"
+      ]
+    }
+  },
+  "testimonials": {
+    "title": "Historias de Éxito",
+    "subtitle": "Escucha a nuestros graduados"
+  },
+  "faq": {
+    "mainTitle": "¿Qué incluye esta experiencia?",
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Todo lo que necesitas saber",
+    "contact": "¿Aún tienes preguntas? Contáctanos en",
+    "questions": [
+      {
+        "question": "¿Cómo es el formato del curso?",
+        "answer": "3 días intensivos de entrenamiento presencial en Tampa, FL o virtual con acceso completo a todas las sesiones en vivo."
+      },
+      {
+        "question": "¿Qué aprenderé exactamente?",
+        "answer": "Estrategias de trading probadas, análisis técnico, gestión de riesgo, psicología del trading y cómo operar en mercados reales con mentoría."
+      },
+      {
+        "question": "¿Incluye práctica real?",
+        "answer": "Sí, tendrás sesiones de trading en vivo con acompañamiento de expertos y práctica guiada en mercados reales."
+      },
+      {
+        "question": "¿Qué modalidades están disponibles?",
+        "answer": "Puedes asistir presencialmente en Tampa, FL o participar virtualmente con acceso completo a todas las sesiones en vivo."
+      },
+      {
+        "question": "¿Qué incluye el precio?",
+        "answer": "3 días de formación intensiva, materiales del curso, mentoría personalizada, acceso a la comunidad exclusiva de traders y certificado de participación."
+      },
+      {
+        "question": "¿Necesito experiencia previa?",
+        "answer": "No, el curso está diseñado tanto para principiantes como para traders con experiencia que quieren mejorar sus resultados."
+      }
+    ]
+  },
+  "cta": {
+    "title": "¿Listo para Transformar tu Trading?",
+    "subtitle": "Cupos limitados - Asegura el tuyo hoy",
+    "spots": {
+      "label": "Solo",
+      "number": "{{spots}}",
+      "suffix": "cupos disponibles"
+    },
+    "button": "Reserva Tu Cupo Ahora",
+    "urgency": "La clase se llena rápido - ¡No te lo pierdas!"
+  },
+  "support": {
+    "title": "¿Necesitas Ayuda?",
+    "contactTitle": "Información de Contacto",
+    "email": "mastertrading@daytradedash.com",
+    "phone": "Teléfono",
+    "phoneNumber": "786.356.7260",
+    "web": "Web",
+    "website": "www.DayTradeDAK.com",
+    "whatsapp": "Soporte por WhatsApp",
+    "schedule": "Agenda una Llamada"
+  },
+  "messages": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal. Por favor intenta de nuevo.",
+    "success": {
+      "enrollment": "¡Felicitaciones! Tu cupo ha sido reservado.",
+      "download": "El programa ha sido enviado a tu correo electrónico."
+    },
+    "validation": {
+      "email": "Por favor ingresa un correo electrónico válido",
+      "phone": "Por favor ingresa un número de teléfono válido",
+      "required": "Este campo es requerido"
+    }
+  },
+  "targetAudience": {
+    "title": "¿Para quién es este curso?",
+    "beginners": {
+      "title": "Principiantes",
+      "description": "Quieren aprender trading de forma estructurada y práctica, sin perder tiempo ni dinero"
+    },
+    "experiencedTraders": {
+      "title": "Traders con Experiencia",
+      "description": "Buscan perfeccionar estrategias y aprender nuevas técnicas"
+    },
+    "investors": {
+      "title": "Inversionistas",
+      "description": "Quieren pasar de inversión tradicional a trading activo"
+    },
+    "entrepreneurs": {
+      "title": "Emprendedores",
+      "description": "Buscan generar ingresos adicionales con el trading"
+    }
+  },
+  "whatIncludes": {
+    "title": "¿Qué incluye esta experiencia?",
+    "onlineModules": {
+      "number": "8",
+      "title": "Módulos Online",
+      "description": "Videos HD con estrategias paso a paso"
+    },
+    "groupMentoring": {
+      "number": "4",
+      "title": "Mentorías Grupales",
+      "description": "Sesiones en vivo vía Zoom cada semana"
+    },
+    "inPersonDays": {
+      "number": "3",
+      "title": "Días Presenciales",
+      "description": "Evento intensivo en Tampa, FL"
+    },
+    "practiceMonths": {
+      "number": "2",
+      "title": "Meses de Práctica",
+      "description": "Trading en vivo con acompañamiento diario"
+    }
+  },
+  "whatMakesUnique": {
+    "title": "Lo que hace único este curso"
+  },
+  "whyItWorks": {
+    "title": "Por Qué Funciona Nuestro Método",
+    "subtitle": "Metodología probada con resultados reales",
+    "whatWeDont": {
+      "title": "Lo que NO hacemos",
+      "items": [
+        "NO vendemos sueños de hacerte rico de la noche a la mañana",
+        "NO prometemos ganancias irreales del 500% mensual",
+        "NO te dejamos solo con videos pregrabados",
+        "NO usamos estrategias obsoletas o teóricas",
+        "NO ocultamos los riesgos del trading"
+      ]
+    },
+    "whatWeDo": {
+      "title": "Lo que SÍ hacemos",
+      "items": [
+        "SÍ enseñamos estrategias probadas en mercados reales",
+        "SÍ operamos en vivo para que veas el proceso completo",
+        "SÍ te acompañamos diariamente por 2 meses",
+        "SÍ te enseñamos gestión de riesgo profesional",
+        "SÍ formamos traders disciplinados y consistentes"
+      ]
+    }
+  },
+  "successFormula": {
+    "title": "Nuestra fórmula de éxito",
+    "technicalKnowledge": "Conocimiento Técnico",
+    "emotionalControl": "Control Emocional",
+    "supervisedPractice": "Práctica Supervisada",
+    "consistentTrader": "TRADER CONSISTENTE"
+  },
+  "programComplete": {
+    "title": "Programa Completo del Curso",
+    "phase1": {
+      "badge": "FASE 1 - 15 días online",
+      "title": "Tu Base Estratégica",
+      "subtitle": "Fundamentos sólidos para operar con confianza",
+      "mentorshipsTitle": "Mentorías y Soporte",
+      "modulesTitle": "Módulos del Curso"
+    },
+    "phase2": {
+      "badge": "FASE 2 - 3 días presenciales (Oct 25-27)",
+      "title": "Entrenamiento Presencial Intensivo",
+      "subtitle": "Entrenamiento intensivo con sesiones de trading en vivo"
+    },
+    "phase3": {
+      "badge": "FASE 3 - 2 meses supervisados",
+      "title": "Práctica Supervisada",
+      "subtitle": "Aplica tu conocimiento con guía profesional"
+    }
+  },
+  "yourJourney": {
+    "title": "Tu Camino Hacia el Trading Profesional"
+  },
+  "sessionContent": {
+    "title": "Sesión de Contenido",
+    "day1": {
+      "title": "Día 1 - Estrategia y análisis en tiempo real",
+      "items": [
+        "Introducción a la estructura diaria del mercado y su comportamiento",
+        "Identificación de tendencias, patrones y puntos de entrada de alta probabilidad",
+        "Cálculo efectivo de niveles de stop loss y take profit",
+        "Análisis de casos reales y revisión crítica de operaciones históricas"
+      ]
+    },
+    "day2": {
+      "title": "Día 2 - Mentalidad, psicología y estrategias avanzadas",
+      "items": [
+        "Psicología y mentalidad ganadora del trader exitoso",
+        "Técnicas para controlar el miedo, la avaricia y la impaciencia",
+        "Cómo identificar tendencias resistencias y soportes clave",
+        "Uso avanzado de indicadores y variables para trading de precisión"
+      ]
+    },
+    "day3": {
+      "title": "Día 3 - Práctica en vivo y operativa guiada",
+      "items": [
+        "Sesión en vivo de trading con mentor acompañamiento",
+        "Aplicación práctica de las estrategias y técnicas aprendidas",
+        "Resolución de dudas y ajustes personalizados",
+        "Sesión abierta de preguntas y estrategias"
+      ]
+    }
+  },
+  "seo": {
+    "title": "Curso Intensivo de Trading 2025 - Educación Profesional en Trading",
+    "description": "Únete a nuestro programa intensivo de trading de 4 meses. Aprende de profesionales, opera en vivo en Miami y obtén tu certificación. Limitado a 50 estudiantes.",
+    "keywords": "curso de trading, trading profesional, taller de trading Miami, certificación en trading, educación day trading"
+  }
+}

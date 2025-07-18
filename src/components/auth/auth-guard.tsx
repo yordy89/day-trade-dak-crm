@@ -1,49 +1,88 @@
 'use client';
 
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/auth-store';
-import Alert from '@mui/material/Alert';
+import React, { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { CircularProgress, Box } from '@mui/material';
+import { useClientAuth } from '@/hooks/use-client-auth';
 
-import { paths } from '@/paths';
-import { createLogger, LogLevel } from '@/lib/logger';
-import { useFetchUser } from '@/hooks/use-fetch-user';
-
-export interface AuthGuardProps {
+interface AuthGuardProps {
   children: React.ReactNode;
 }
 
-const logger = createLogger({
-  prefix: '[AuthGuard]',
-  level: LogLevel.ALL,
-});
+// List of public routes that don't require authentication
+const publicRoutes = [
+  '/',
+  '/products',
+  '/blog',
+  '/about',
+  '/contact',
+  '/auth/sign-in',
+  '/auth/sign-up',
+  '/auth/reset-password',
+  '/terms',
+  '/privacy',
+  '/events',
+  '/academy/subscription/plans',
+  '/academy/subscription/success',
+];
 
-export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | null {
+export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const authToken = useAuthStore((state) => state.authToken);
-  const hasHydrated = useAuthStore((state) => state._hasHydrated);
-  const { isLoading, error } = useFetchUser();
-  const [isChecking, setIsChecking] = React.useState<boolean>(true);
-  React.useEffect(() => {
-    if (!hasHydrated || isLoading) return;
-  
-    if (!authToken && (!user || error)) {
-      logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
-      router.replace(paths.auth.signIn);
+  const pathname = usePathname();
+  const { authToken, isLoading: authLoading } = useClientAuth();
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Wait for auth to load
+    if (authLoading) {
       return;
     }
-  
+
+    // Check if the current route is public
+    const isPublicRoute = publicRoutes.some(route => 
+      pathname === route || pathname?.startsWith(`${route}/`)
+    );
+
+    if (isPublicRoute) {
+      setIsAuthenticated(true);
+      setIsChecking(false);
+      return;
+    }
+
+    // Check authentication status
+    if (!authToken) {
+      // Store the intended destination before redirecting
+      const redirectUrl = encodeURIComponent(pathname || '/');
+      setIsChecking(false);
+      router.push(`/auth/sign-in?redirect=${redirectUrl}`);
+      return;
+    }
+
+    // User is authenticated
+    setIsAuthenticated(true);
     setIsChecking(false);
-  }, [isLoading, error, user, authToken, router, hasHydrated]);
-  
-  if (!hasHydrated || isChecking || isLoading) {
-    return null; // Render nothing while Zustand is rehydrating
+  }, [pathname, router, authToken, authLoading]);
+
+  // Show loading spinner while checking auth
+  if (isChecking || authLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  if (error) {
-    return <Alert severity="error">{error.message || 'An error occurred while checking authentication.'}</Alert>;
+  // If authenticated (or public route), render children
+  if (isAuthenticated) {
+    return <>{children}</>;
   }
 
-  return <>{children}</>;
+  // Not authenticated and not a public route - show nothing while redirecting
+  return null;
 }

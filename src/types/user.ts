@@ -5,7 +5,7 @@ export interface User {
   email: string;
   profileImage?: string;
   tradingPhase?: number;
-  subscriptions: string[];
+  subscriptions: any[]; // Can be string[] or detailed subscription objects
   activeSubscriptions?: string[];
   expiredSubscriptions?: string[];
   role: Role;
@@ -17,15 +17,21 @@ export interface User {
 }
 
 export enum SubscriptionPlan {
-  FREE = 'Free',
-  BASIC = 'Basic',
-  PRO = 'Pro',
-  ENTERPRISE = 'Enterprise',
-  MENTORSHIP = 'Mentorship',
-  CLASS = 'Class',
-  STOCK = 'Stock',
+  // Community Subscriptions (Weekly)
+  LIVE_WEEKLY_MANUAL = 'LiveWeeklyManual',
+  LIVE_WEEKLY_RECURRING = 'LiveWeeklyRecurring',
+  
+  // Recurring Monthly Subscriptions
+  MASTER_CLASES = 'MasterClases',
+  LIVE_RECORDED = 'LiveRecorded',
   PSICOTRADING = 'Psicotrading',
-  MONEYPEACE = 'MoneyPeace'
+  
+  // One-Time Purchases
+  CLASSES = 'Classes',
+  PEACE_WITH_MONEY = 'PeaceWithMoney',
+  MASTER_COURSE = 'MasterCourse',
+  COMMUNITY_EVENT = 'CommunityEvent',
+  VIP_EVENT = 'VipEvent',
 }
 
 export enum Role {

@@ -1,0 +1,895 @@
+{
+  "app": {
+    "name": "DayTradeDak",
+    "tagline": "Professional Trading Education Platform"
+  },
+  "navigation": {
+    "home": "Home",
+    "academy": "Academy",
+    "tools": "Tools",
+    "live": "Live",
+    "classes": "Classes",
+    "masterClass": "Master Classes",
+    "liveGrabados": "Recorded Live",
+    "event": "Event",
+    "shop": "Shop",
+    "about": "About Us",
+    "books": "Books",
+    "community": "Community",
+    "contact": "Contact Us",
+    "overview": "Overview",
+    "mentorship": "Mentorship",
+    "psicotrading": "PsicoTrading",
+    "personalGrowth": "Personal Growth",
+    "moneyPeace": "Peace with Money",
+    "profile": "Profile",
+    "admin": "Admin",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "masterCourse": "Master Course",
+    "communityEvent": "Community Event",
+    "account": "My Account",
+    "subscriptions": "Subscriptions"
+  },
+  "subscription": {
+    "upgrade": "Upgrade Plan",
+    "current": "Current Plan",
+    "free": "Free",
+    "basic": "Basic",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "mentorship": "Mentorship",
+    "liveRecorded": "Recorded Live",
+    "masterClases": "Master Classes",
+    "peaceWithMoney": "Peace with Money",
+    "psicotrading": "PsicoTrading",
+    "moneyPeace": "Peace with Money",
+    "subscribe": "Subscribe Now",
+    "manage": "Manage Subscription",
+    "required": "Subscription Required",
+    "active": "Active",
+    "expired": "Expired",
+    "activeSubscriptions": "Active Subscriptions",
+    "expiredSubscriptions": "Subscription History",
+    "noActiveSubscriptions": "You have no active subscriptions",
+    "exploreOurPlans": "Explore our plans to access premium content",
+    "viewAvailablePlans": "View Available Plans",
+    "cancelSubscription": "Cancel Subscription",
+    "keepSubscription": "Keep subscription",
+    "confirmCancel": "Are you sure you want to cancel your subscription",
+    "willKeepAccess": "You'll keep access until the end of your billing cycle.",
+    "processing": "Processing...",
+    "yesCancel": "Yes, cancel",
+    "renewsAutomatically": "Auto-renewal active",
+    "activeUntil": "Active until",
+    "expiresOn": "Expires",
+    "nextPayment": "Next payment",
+    "startDate": "Start",
+    "price": "Price",
+    "type": "Type",
+    "status": "Status",
+    "weeklySubscription": "Weekly subscription",
+    "monthlySubscription": "Monthly subscription",
+    "oneTimePayment": "One-time payment",
+    "autoRenew": "Auto-renewal",
+    "expiredOn": "Expired on",
+    "canceled": "Canceled"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "refresh": "Refresh",
+    "view": "View",
+    "download": "Download",
+    "update": "Update",
+    "saving": "Saving...",
+    "startNow": "Start Now",
+    "goBack": "Go Back",
+    "viewPlans": "View Plans",
+    "retry": "Retry",
+    "retryNow": "Retry now",
+    "backToPlans": "Back to plans"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "loading": "Loading...",
+    "processing": "Processing..."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "en": "English",
+    "es": "Spanish"
+  },
+  "user": {
+    "profile": {
+      "title": "My Profile",
+      "personalInfo": "Personal Information",
+      "security": "Security",
+      "notifications": "Notifications",
+      "premium": "Premium",
+      "memberSince": "Member since",
+      "activePlans": "Active Plans",
+      "completedCourses": "Completed Courses",
+      "achievements": "Achievements",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "updatePassword": "Update Password",
+      "notificationPreferences": "Notification Preferences",
+      "notificationComingSoon": "Soon you'll be able to configure your notification preferences."
+    }
+  },
+  "subscriptionPlans": {
+    "title": "PRICING & SUBSCRIPTIONS",
+    "hero": {
+      "title1": "Invest in your",
+      "title2": "Financial Education",
+      "subtitle": "Choose the plan that best fits your goals and start transforming your trading today"
+    },
+    "filters": {
+      "all": "All Plans",
+      "live": "Live Trading",
+      "monthly": "Monthly",
+      "oneTime": "One-Time"
+    },
+    "sections": {
+      "all": "All Our Services",
+      "live": "Live Trading Plans",
+      "monthly": "Monthly Subscriptions",
+      "oneTime": "One-Time Payment"
+    },
+    "badges": {
+      "recommended": "✨ RECOMMENDED FOR YOU",
+      "popular": "MOST POPULAR",
+      "save": "SAVE",
+      "freeWith": "FREE with Live subscription"
+    },
+    "durations": {
+      "days": "days of access",
+      "month": "/month",
+      "oneTime": "one-time payment"
+    },
+    "plans": {
+      "liveWeeklyManual": {
+        "name": "Weekly Live",
+        "description": "Weekly access to live trading",
+        "features": [
+          "Daily live trading sessions",
+          "Real-time market analysis",
+          "Live trading signals",
+          "Chat with professional traders",
+          "Manual renewal each week",
+          "Cancel anytime"
+        ]
+      },
+      "liveWeeklyRecurring": {
+        "name": "Weekly Live Auto",
+        "description": "Weekly automatic renewal",
+        "features": [
+          "Everything from the manual weekly plan",
+          "Automatic renewal",
+          "Discounted price",
+          "No access interruptions",
+          "Cancel anytime",
+          "Best value per week"
+        ]
+      },
+      "masterClasses": {
+        "name": "Master Classes",
+        "description": "Professional trading master classes",
+        "features": [
+          "Weekly live master classes",
+          "Advanced trading strategies",
+          "Professional technical analysis",
+          "Exclusive trader community",
+          "Downloadable study material",
+          "Certificate of participation"
+        ],
+        "specialPrice": "Special price for community",
+        "tooltip": "$22.99 with Live subscription"
+      },
+      "liveRecorded": {
+        "name": "Recorded Live",
+        "description": "Complete library of live trading sessions",
+        "features": [
+          "Access to all recorded sessions",
+          "New content daily",
+          "Real-time market analysis",
+          "Step-by-step explained strategies",
+          "Download for offline viewing"
+        ],
+        "tooltip": "Included at no additional cost"
+      },
+      "psicoTrading": {
+        "name": "PsicoTrading",
+        "description": "Master trading psychology",
+        "features": [
+          "Trading psychology sessions",
+          "Emotional control in operations",
+          "Mindfulness techniques",
+          "Personalized mental plan",
+          "Psychological support group",
+          "Monthly evaluations"
+        ]
+      },
+      "classes": {
+        "name": "Classes",
+        "description": "Structured professional trading course",
+        "features": [
+          "15 days of full access",
+          "Over 40 hours of content",
+          "6 structured modules",
+          "Practical exercises",
+          "Downloadable material",
+          "Completion certificate"
+        ]
+      },
+      "peaceWithMoney": {
+        "name": "Peace with Money",
+        "description": "Complete financial education course",
+        "features": [
+          "60 days of full access",
+          "Financial education course",
+          "Personal finance management",
+          "Financial freedom step by step",
+          "Downloadable material",
+          "Completion certificate"
+        ]
+      }
+    },
+    "trustIndicators": {
+      "trial": {
+        "title": "7-Day Trial",
+        "description": "Try any service risk-free"
+      },
+      "guarantee": {
+        "title": "30-Day Guarantee",
+        "description": "Not satisfied? Full refund"
+      },
+      "cancel": {
+        "title": "Cancel Anytime",
+        "description": "No contracts or commitments"
+      }
+    },
+    "alerts": {
+      "alreadyActive": "You already have this subscription active",
+      "error": "Error processing payment",
+      "benefits": {
+        "title": "Benefits of your active Live subscription!",
+        "masterClassesDiscount": "• Master Classes: Special price of $22.99 (normally $199.99)",
+        "freeRecorded": "• Recorded Live: FREE access included"
+      }
+    },
+    "buttons": {
+      "currentPlan": "Current Plan",
+      "activateFree": "Activate Free"
+    }
+  },
+  "payment": {
+    "success": {
+      "title": "Payment Successful!",
+      "processing": "Processing payment...",
+      "updatingProfile": "Updating your profile...",
+      "syncingSubscription": "Syncing subscription...",
+      "ready": "Ready!",
+      "verifying": "Verifying subscription...",
+      "confirming": "Confirming payment...",
+      "activated": "Your subscription has been successfully activated",
+      "confirmationEmail": "You will receive a confirmation email shortly",
+      "sessionId": "Session ID: "
+    },
+    "error": {
+      "title": "Error processing payment",
+      "couldNotConfirm": "We could not confirm your subscription. Please try again.",
+      "failedToConfirm": "Failed to confirm payment. Please try again.",
+      "confirmationFailed": "Payment confirmation failed"
+    },
+    "planDescriptions": {
+      "masterCourse": "Full access to Master Course with lifetime updates",
+      "liveWeekly": "Daily live classes and real-time market analysis",
+      "mentorship": "1-on-1 mentorship with expert traders and personalized plan",
+      "psicoTrading": "Master your trading psychology and transform your mindset",
+      "peaceWithMoney": "60-day financial transformation program",
+      "liveWeeklyManual": "Weekly access to Live Trading Room with real-time analysis",
+      "liveWeeklyRecurring": "Automatic subscription to Live Trading Room with exclusive benefits"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "recentTrades": "Recent Trades",
+    "portfolio": "Portfolio Value",
+    "todaysPL": "Today's P&L",
+    "earnings": "Earnings",
+    "calendar": "Calendar"
+  },
+  "trading": {
+    "buy": "Buy",
+    "sell": "Sell",
+    "call": "Call",
+    "put": "Put",
+    "marketOpen": "Market Open",
+    "marketClosed": "Market Closed",
+    "volume": "Volume",
+    "price": "Price",
+    "change": "Change",
+    "hotTrade": "HOT TRADE",
+    "executeTrade": "Execute Trade"
+  },
+  "topBar": {
+    "market": "Market",
+    "open": "OPEN",
+    "closed": "CLOSED",
+    "liveUpdates": "Live Updates",
+    "call": "Call",
+    "support": "Support"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team",
+    "info": {
+      "email": {
+        "title": "Email",
+        "action": "Send Email"
+      },
+      "phone": {
+        "title": "Phone",
+        "action": "Call Now"
+      },
+      "office": {
+        "title": "Office",
+        "action": "Get Directions"
+      },
+      "hours": {
+        "title": "Hours",
+        "details": "Mon-Fri 9AM-6PM EST",
+        "action": "Schedule Call"
+      }
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "subtitle": "Fill out the form below and we'll get back to you as soon as possible.",
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "inquiryType": "Inquiry Type",
+      "selectType": "Select an inquiry type",
+      "message": "Your Message",
+      "messagePlaceholder": "Tell us how we can help you...",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "validation": {
+        "requiredFields": "Please fill in all required fields"
+      }
+    },
+    "inquiryTypes": {
+      "general": "General Inquiry",
+      "technical": "Technical Support",
+      "billing": "Billing Question",
+      "partnership": "Partnership Opportunity",
+      "media": "Media Inquiry",
+      "other": "Other"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "What are your support hours?",
+      "a1": "Our support team is available Monday through Friday, 9 AM to 6 PM EST.",
+      "q2": "How quickly will I get a response?",
+      "a2": "We typically respond to all inquiries within 24 business hours.",
+      "q3": "Do you offer phone support?",
+      "a3": "Yes, phone support is available for premium members during business hours.",
+      "viewAll": "View All FAQs"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About DayTradeDak",
+      "subtitle": "Transforming lives through professional trading education and mentorship",
+      "cta": "Join Our Event"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "content": "To democratize trading education and empower individuals worldwide to achieve financial independence through smart, disciplined trading strategies and comprehensive mentorship."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "content": "To be the leading platform for trading education, creating a global community of successful, ethical traders who contribute to financial markets with knowledge, discipline, and integrity."
+    },
+    "ceo": {
+      "title": "Meet Our Founder",
+      "bio1": "Mijail Medina is a profitable trader born in Cienfuegos, Cuba. He studied mechanical engineering and from a young age had a strong motivation to achieve financial freedom, seeing investments as the path to achieve it.",
+      "bio2": "After leaving Cuba, he lived experiences that marked him, such as meeting someone in Spain who made investments but did not allow him to learn directly from him. Despite these limitations, Mijail knew how to extract valuable lessons and found his own path to become a successful trader.",
+      "bio3": "Today, he specializes in interactive live sessions, offering personalized and practical guidance so that others can achieve their goals in the world of trading. In addition, he has decided to share his experience through a book that narrates his journey from his beginnings to reaching his first million, and is developing a course to teach others to be profitable traders.",
+      "bio4": "His story focuses on how to overcome adversity and how to transform into the person necessary to achieve financial success.",
+      "highlights": {
+        "title": "Key Achievements",
+        "trader": "Profitable Trader",
+        "engineer": "Mechanical Engineer",
+        "author": "Book Author",
+        "mentor": "Trading Mentor"
+      }
+    },
+    "values": {
+      "title": "Our Core Values",
+      "transformation": {
+        "title": "Personal Transformation",
+        "description": "We believe success in trading starts with personal growth and mindset development."
+      },
+      "education": {
+        "title": "Quality Education",
+        "description": "Comprehensive, practical education that prepares you for real market conditions."
+      },
+      "community": {
+        "title": "Strong Community",
+        "description": "A supportive network of traders sharing knowledge and experiences."
+      },
+      "success": {
+        "title": "Proven Success",
+        "description": "Strategies and methods tested in real markets with consistent results."
+      }
+    },
+    "journey": {
+      "title": "The Journey to Success",
+      "content1": "From humble beginnings in Cuba to achieving financial freedom through trading, Mijail's journey is a testament to perseverance, continuous learning, and the power of transformation.",
+      "content2": "His approach combines technical analysis with psychological discipline, creating a comprehensive methodology that has helped thousands of students achieve their trading goals."
+    },
+    "cta": {
+      "title": "Ready to Start Your Trading Journey?",
+      "subtitle": "Join our community and learn from a proven successful trader",
+      "contact": "Get in Touch",
+      "getStarted": "Start Learning"
+    }
+  },
+  "sizeGuide": {
+    "title": "Size Guide",
+    "subtitle": "Find your perfect fit with our comprehensive sizing chart",
+    "howToMeasure": "How to Measure",
+    "sizeChart": "Size Chart",
+    "centimeters": "Centimeters",
+    "inches": "Inches",
+    "size": "Size",
+    "chest": "Chest",
+    "length": "Length",
+    "sleeve": "Sleeve",
+    "inchesChart": "Size Chart (Inches)",
+    "additionalTips": "Additional Tips",
+    "tips": {
+      "chest": {
+        "title": "Chest Width",
+        "description": "Measure around the fullest part of your chest, keeping the tape measure horizontal."
+      },
+      "length": {
+        "title": "Body Length",
+        "description": "Measure from the highest point of the shoulder down to the bottom hem."
+      },
+      "sleeve": {
+        "title": "Sleeve Length",
+        "description": "Measure from the center back neck to the end of the sleeve."
+      }
+    },
+    "tip1": {
+      "title": "Accurate Measurements",
+      "description": "For the best fit, have someone else take your measurements while you stand relaxed."
+    },
+    "tip2": {
+      "title": "Between Sizes?",
+      "description": "If you're between sizes, we recommend choosing the larger size for a comfortable fit."
+    },
+    "tip3": {
+      "title": "Need Help?",
+      "description": "Contact our customer service team if you have any questions about sizing."
+    }
+  },
+  "books": {
+    "title": "Success Library: Finance, Trading and Self-Improvement",
+    "subtitle": "Recommended books that will transform your mindset and finances",
+    "ceoBook": {
+      "label": "CEO'S BOOK",
+      "title": "Trading Step by Step",
+      "description": "Discover the strategies and techniques that have led Mijail Medina to success in trading. This book is a complete guide for those who want to start or improve their journey in the stock market."
+    },
+    "recommendedBooks": "Books that Will Transform Your Mindset and Finances",
+    "categories": {
+      "trading": "Trading",
+      "finance": "Finance",
+      "personalGrowth": "Personal Growth"
+    },
+    "author": "Author:",
+    "buyOnAmazon": {
+      "hardcover": "Buy on Amazon (Hardcover)",
+      "paperback": "Buy on Amazon (Paperback)",
+      "kindle": "Buy on Amazon (Kindle)",
+      "view": "View on Amazon"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome Back, Trader",
+      "subtitle": "Access your trading dashboard and market insights",
+      "email": "Email Address",
+      "password": "Password",
+      "emailPlaceholder": "john@example.com",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submitButton": "Sign In to Trade",
+      "submittingButton": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Start Trading Now",
+      "or": "OR",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password is required",
+        "loginFailed": "Login failed"
+      }
+    },
+    "signUp": {
+      "title": "Join Elite Traders",
+      "subtitle": "Start your journey to financial freedom",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "password": "Password",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "emailPlaceholder": "john@example.com",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "termsPrefix": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "submitButton": "Create Trading Account",
+      "submittingButton": "Creating Account...",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign In",
+      "or": "OR",
+      "errors": {
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password must be at least 6 characters",
+        "termsRequired": "You must accept the terms and conditions",
+        "signupFailed": "Sign-up failed"
+      }
+    },
+    "layout": {
+      "startJourney": {
+        "title": "Start Your Trading Journey",
+        "subtitle": "Everything you need to become a successful trader"
+      },
+      "features": {
+        "mentorship": {
+          "title": "Elite Mentorship Program",
+          "subtitle": "1-on-1 coaching with pro traders"
+        },
+        "classes": {
+          "title": "Daily Trading Classes",
+          "subtitle": "Live sessions & recorded content"
+        },
+        "library": {
+          "title": "Trading Library",
+          "subtitle": "Curated books & resources"
+        },
+        "earnings": {
+          "title": "Weekly Earnings Reports",
+          "subtitle": "Market analysis & insights"
+        },
+        "marketData": {
+          "title": "Real-Time Market Data",
+          "subtitle": "Live charts & indicators"
+        },
+        "psychology": {
+          "title": "Trading Psychology",
+          "subtitle": "Master your mindset"
+        }
+      },
+      "upcomingEvent": {
+        "label": "UPCOMING EVENT",
+        "title": "Invest with Confidence Workshop",
+        "location": "Tampa, FL",
+        "date": "August 23, 2025",
+        "learnMore": "Learn More"
+      },
+      "footer": {
+        "copyright": "© {year} DayTradeDak. All rights reserved.",
+        "disclaimer": "Trading involves risk. Past performance does not guarantee future results."
+      }
+    }
+  },
+  "events": {
+    "registration": {
+      "modal": {
+        "registerFor": "Register for",
+        "completeRegistration": "Complete your registration to proceed to payment",
+        "personalInformation": "Personal Information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone Number (Optional)",
+        "emailDisabledHint": "You must register with your account email",
+        "eventPreferences": "Event Preferences",
+        "dietaryRestrictions": "Dietary Restrictions",
+        "roomPreference": "Room Preference",
+        "dietaryPlaceholder": "Any dietary restrictions we should know about?",
+        "roomPlaceholder": "Single, double, or no preference",
+        "whatHappensNext": "What happens next?",
+        "afterSubmitting": "After submitting this form, you'll be redirected to our secure payment page to complete your registration.",
+        "courseAccess": "You'll receive instant access to course materials after payment.",
+        "eventConfirmation": "You'll receive a confirmation email with event details.",
+        "cancel": "Cancel",
+        "proceedToPayment": "Proceed to Payment - $",
+        "tradingLevel": "Trading Level",
+        "tradingLevelPlaceholder": "e.g., Beginner, Intermediate, Advanced",
+        "expectations": "What do you hope to learn?",
+        "expectationsPlaceholder": "Share your goals for this course...",
+        "tradingBackground": "Trading Background",
+        "tradingExperience": "Trading Experience",
+        "tradingExperiencePlaceholder": "Tell us about your trading experience...",
+        "expectationsLabel": "What do you expect from this course?",
+        "expectationsShortPlaceholder": "Share your expectations..."
+      },
+      "free": {
+        "title": "Free Registration",
+        "subtitle": "Complete the form to reserve your spot",
+        "submitButton": "Register for Free",
+        "submittingButton": "Registering...",
+        "termsText": "By registering, you agree to receive communications about the event."
+      },
+      "vip": {
+        "title": "VIP Registration",
+        "subtitle": "Get exclusive access and premium benefits",
+        "submitButton": "Continue to Payment",
+        "submittingButton": "Redirecting...",
+        "promoCodeApplied": "Promo code applied",
+        "termsText": "You will be redirected to a secure payment page to complete your registration."
+      },
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "firstNamePlaceholder": "John",
+        "lastNamePlaceholder": "Doe",
+        "emailPlaceholder": "john@example.com",
+        "phonePlaceholder": "+1 (555) 123-4567"
+      },
+      "errors": {
+        "registrationFailed": "An error occurred during registration. Please try again.",
+        "vipRegistrationFailed": "An error occurred processing your VIP registration. Please try again.",
+        "alreadyRegistered": "You have already registered for this event with this email address",
+        "activeSubscriptionRequired": "An active subscription is required to register for this event",
+        "eventFull": "Sorry, this event is full",
+        "checkoutFailed": "Failed to create checkout session"
+      }
+    },
+    "details": {
+      "specialEvent": "SPECIAL EVENT",
+      "date": "Date",
+      "schedule": "Schedule",
+      "general": "General",
+      "location": "Location",
+      "freeAccess": "General Access",
+      "vipAccess": "⭐ VIP Access",
+      "recommended": "RECOMMENDED",
+      "freeDescription": "Access to main event and general activities",
+      "vipDescription": "Exclusive session + premium benefits",
+      "compareBenefits": "Compare Benefits",
+      "compareBenefitsSubtitle": "Choose the option that best fits your goals",
+      "free": "Free",
+      "readyToTransform": "Ready to transform your financial future?",
+      "registerNow": "Register Now",
+      "selectOption": "Select your registration option"
+    },
+    "schedule": {
+      "vipTime": "VIP: 8:30 AM – 10:00 AM",
+      "generalTime": "General: 10:00 AM – 2:00 PM",
+      "saturday": "Saturday, August 23, 2025"
+    },
+    "benefits": {
+      "fullAccess": "Full event access (10 AM - 2 PM)",
+      "vipSession": "VIP Session \"Investor with Purpose\" (8:30 AM - 10 AM)",
+      "signedBook": "Signed physical book by the Mentor",
+      "privateTalk": "Private talk: How a real mentor thinks",
+      "privatePhoto": "Private photo with VIP event background",
+      "beginnerTalk": "Talk \"From Beginner to Profitable\"",
+      "workshop": "Interactive workshop: Would you invest or not?",
+      "testimonials": "Live testimonials and real transformations",
+      "actionPlan": "Final Action Plan presentation",
+      "exclusiveOffer": "Exclusive offer at the end of the event"
+    }
+  },
+  "academy": {
+    "title": "Trading Academy",
+    "welcome": {
+      "greeting": "Welcome back, {name}!",
+      "defaultName": "Trader",
+      "subtitle": "Your journey to trading success continues. Here's your current progress.",
+      "dayStreak": "day streak",
+      "achievements": "achievements"
+    },
+    "progress": {
+      "title": "Your Progress",
+      "coursesCompleted": "Courses Completed",
+      "learningHours": "Learning Hours",
+      "achievementsUnlocked": "Achievements Unlocked",
+      "analysisCompleted": "Analysis Completed"
+    },
+    "learningPaths": {
+      "title": "Learning Paths",
+      "courses": {
+        "title": "Trading Courses",
+        "description": "Learn professional trading strategies with our structured courses"
+      },
+      "mentorship": {
+        "title": "Mentorship Program",
+        "description": "Personalized 1-on-1 sessions with professional traders"
+      },
+      "psychoTrading": {
+        "title": "PsychoTrading",
+        "description": "Master trading psychology and improve your mindset"
+      },
+      "personalGrowth": {
+        "title": "Personal Growth",
+        "description": "Develop skills for success in trading and life"
+      },
+      "explore": "Explore",
+      "comingSoon": "Coming Soon"
+    },
+    "upcomingClasses": {
+      "title": "Upcoming Live Classes",
+      "viewAll": "View all",
+      "advancedTechnicalAnalysis": "Advanced Technical Analysis",
+      "riskManagement": "Risk Management",
+      "tomorrow": "Tomorrow",
+      "friday": "Friday"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "viewMarketAnalysis": "View Market Analysis",
+      "exploreTradingLibrary": "Explore Trading Library",
+      "reviewEarningsReports": "Review Earnings Reports",
+      "continueLearning": "Continue Learning"
+    },
+    "cta": {
+      "title": "Ready to take your trading to the next level?",
+      "subtitle": "Join our VIP mentorship and get exclusive access to advanced strategies",
+      "button": "View Subscription Plans"
+    },
+    "nav": {
+      "overview": "Overview",
+      "market": "Market Data",
+      "earnings": "Earnings Calendar",
+      "courses": "Courses",
+      "mentorship": "Mentorship",
+      "classes": "Classes",
+      "psicotrading": "PsychoTrading",
+      "personalGrowth": "Personal Growth",
+      "peaceWithMoney": "Peace with Money",
+      "books": "Books",
+      "profile": "Profile",
+      "admin": "Admin"
+    }
+  },
+  "legal": {
+    "title": "Compliance Policy & Terms of Service",
+    "subtitle": "Discover how we ensure a safe and transparent environment for your trading experience",
+    "termsTab": "Terms of Service",
+    "privacyTab": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "backToHome": "Back to Home",
+    "terms": {
+      "toolsTitle": "DayTradeDAK Tools and Resources",
+      "educational": "Educational Platform",
+      "toolsDescription": "DayTradeDAK is your ally in the world of trading, offering a wide range of educational tools designed to improve your skills. Our market analysis provides you with accurate and up-to-date information, while our trading strategies help you make informed decisions. Whether you're a beginner or an expert, our resources are designed to enhance your success in the stock market.",
+      "orderProcessing": {
+        "title": "Order Processing",
+        "subtitle": "Immediate Platform Access",
+        "description": "Once you complete your payment, you'll receive instant access to our platform. There are no delays: you can start exploring our tools and resources immediately. Additionally, you'll receive an email confirmation to ensure everything is in order. Enjoy 24/7 access to our services while your subscription is active."
+      },
+      "pricing": {
+        "title": "Pricing in USD",
+        "subtitle": "Pricing Information",
+        "description": "All prices for our services are expressed in US dollars (USD), ensuring clarity and transparency in every transaction. This approach allows our users to easily understand associated costs without surprises or additional conversions. By using the US dollar as our reference currency, we ensure a consistent and uncomplicated user experience."
+      },
+      "policies": {
+        "title": "Important Policies"
+      },
+      "cancellation": {
+        "title": "Cancellation Policy",
+        "description": "At LIVE ANALYSIS, we value flexibility and customer satisfaction. That's why we offer our users the ability to cancel their subscription at any time through their account settings. This process is simple and designed for users to maintain full control over their subscriptions.",
+        "benefit": "Access continues until end of billing period"
+      },
+      "refunds": {
+        "title": "Refund Policy",
+        "subtitle": "Refunds and Payments",
+        "description": "Due to the digital and immediate nature of our services, we do not offer refunds once payment has been processed. This policy is designed to maintain the integrity of our services and ensure all users have equitable access to our resources.",
+        "warning": "No refunds after payment processing"
+      },
+      "additional": {
+        "title": "Additional Terms"
+      },
+      "risk": {
+        "title": "Trading Risk Disclaimer",
+        "description": "Trading financial instruments carries high risk and is not suitable for all investors. You may lose part or all of your investment. Past performance does not guarantee future results. DayTradeDAK is not responsible for financial losses resulting from information or strategies presented on the platform."
+      },
+      "noAdvice": {
+        "title": "No Financial Advice",
+        "description": "DayTradeDAK is an educational platform and market analysis service. We are not registered financial advisors and do not provide financial, legal, or investment advice. All strategies and analyses presented on the platform are for educational purposes only."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "commitment": "Your Privacy Matters",
+      "introduction": "At DayTradeDAK, we are committed to protecting your privacy and personal data. This privacy policy explains how we collect, use, protect, and share your information when you use our platform and services.",
+      "dataCollection": {
+        "title": "Data We Collect",
+        "subtitle": "We collect the following information:",
+        "name": "Name and contact information",
+        "email": "Email address for communications",
+        "payment": "Payment information (processed securely)",
+        "usage": "Platform usage data and preferences"
+      },
+      "dataUsage": {
+        "title": "How We Use Your Data",
+        "subtitle": "Your data is used for:",
+        "service": "Providing and improving our services",
+        "communication": "Sending important updates and notifications",
+        "improvement": "Analyzing usage to enhance user experience",
+        "legal": "Complying with legal obligations"
+      },
+      "security": {
+        "title": "Data Security",
+        "badge": "256-bit Encryption",
+        "description": "We implement industry-standard security measures to protect your personal information from unauthorized access, disclosure, alteration, or destruction. Our security protocols are regularly updated to ensure maximum protection.",
+        "encryption": "Data Encryption",
+        "access": "Access Control",
+        "monitoring": "24/7 Monitoring",
+        "updates": "Regular Updates"
+      },
+      "rights": {
+        "title": "Your Rights",
+        "access": {
+          "title": "Access",
+          "description": "Request a copy of your personal data"
+        },
+        "rectification": {
+          "title": "Rectification",
+          "description": "Correct inaccurate information"
+        },
+        "deletion": {
+          "title": "Deletion",
+          "description": "Request deletion of your data"
+        },
+        "portability": {
+          "title": "Portability",
+          "description": "Transfer your data to another service"
+        }
+      }
+    }
+  }
+}

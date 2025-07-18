@@ -1,19 +1,31 @@
 'use client';
 
 import * as React from 'react';
+import RouterLink from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormHelperText,
+  OutlinedInput,
+  Stack,
+  Typography,
+  Box,
+  InputAdornment,
+  Link,
+} from '@mui/material';
+import {
+  Email,
+  ArrowBack,
+  LockReset,
+} from '@mui/icons-material';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
-
-import { authClient } from '@/lib/auth/client';
+import { paths } from '@/paths';
+import { useMutation } from '@tanstack/react-query';
+import { authService } from '@/services/api/auth.service';
+import { toast } from 'react-hot-toast';
 
 const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
 
@@ -22,8 +34,6 @@ type Values = zod.infer<typeof schema>;
 const defaultValues = { email: '' } satisfies Values;
 
 export function ResetPasswordForm(): React.JSX.Element {
-  const [isPending, setIsPending] = React.useState<boolean>(false);
-
   const {
     control,
     handleSubmit,
@@ -31,44 +41,118 @@ export function ResetPasswordForm(): React.JSX.Element {
     formState: { errors },
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
+  const { mutate: resetPassword, isPending } = useMutation({
+    mutationFn: async (values: Values) => {
+      return authService.resetPassword(values.email);
+    },
+    onSuccess: () => {
+      toast.success('Password reset instructions sent to your email');
+      // Could redirect to a confirmation page
+    },
+    onError: (error: Error) => {
+      setError('root', { type: 'server', message: error.message });
+    },
+  });
+
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
-      setIsPending(true);
-
-      const { error } = await authClient.resetPassword(values);
-
-      if (error) {
-        setError('root', { type: 'server', message: error });
-        setIsPending(false);
-        return;
-      }
-
-      setIsPending(false);
-
-      // Redirect to confirm password reset
+      resetPassword(values);
     },
-    [setError]
+    [resetPassword]
   );
 
   return (
     <Stack spacing={4}>
-      <Typography variant="h5">Reset password</Typography>
+      <Stack spacing={2} alignItems="center">
+        <Box 
+          sx={{ 
+            p: 2,
+            borderRadius: '50%',
+            bgcolor: 'primary.main',
+            color: 'white',
+            mb: 2,
+          }}
+        >
+          <LockReset sx={{ fontSize: 40 }} />
+        </Box>
+        <Typography variant="h3" fontWeight={800} textAlign="center">
+          Forgot Password?
+        </Typography>
+        <Typography color="text.secondary" variant="body1" textAlign="center" sx={{ maxWidth: 400 }}>
+          No worries! Enter your email and we'll send you reset instructions.
+        </Typography>
+      </Stack>
+      
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
+        <Stack spacing={3}>
           <Controller
             control={control}
             name="email"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.email)}>
-                <InputLabel>Email address</InputLabel>
-                <OutlinedInput {...field} label="Email address" type="email" />
+              <FormControl fullWidth error={Boolean(errors.email)}>
+                <OutlinedInput
+                  {...field}
+                  placeholder="Enter your email address"
+                  type="email"
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <Email sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  }
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      color: 'text.primary',
+                    },
+                  }}
+                />
                 {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
-          {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
-          <Button disabled={isPending} type="submit" variant="contained">
-            Send recovery link
+          
+          {errors.root ? (
+            <Alert severity="error" sx={{ borderRadius: 2 }}>
+              {errors.root.message}
+            </Alert>
+          ) : null}
+          
+          <Button 
+            disabled={isPending} 
+            type="submit" 
+            variant="contained"
+            size="large"
+            fullWidth
+            sx={{
+              py: 1.5,
+              background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+              },
+            }}
+          >
+            {isPending ? 'Sending...' : 'Send Reset Instructions'}
+          </Button>
+          
+          <Button
+            component={RouterLink}
+            href={paths.auth.signIn}
+            variant="text"
+            startIcon={<ArrowBack />}
+            sx={{ 
+              color: 'text.secondary',
+              '&:hover': {
+                color: 'primary.main',
+                bgcolor: 'transparent',
+              },
+            }}
+          >
+            Back to Sign In
           </Button>
         </Stack>
       </form>

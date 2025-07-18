@@ -1,0 +1,407 @@
+{
+  "hero": {
+    "badge": "Limited Spots Available",
+    "title": "Master Trading Course 2025",
+    "subtitle": "4-Month Intensive Trading Transformation Program",
+    "description": "Complete trading education program that combines online learning, in-person training in Miami, and supervised practice with professional mentorship.",
+    "startDate": "Starts January 15, 2025",
+    "duration": "4 Months Duration",
+    "location": "Miami, Florida",
+    "stats": {
+      "students": {
+        "number": "50",
+        "label": "Maximum Students"
+      },
+      "modules": {
+        "number": "8",
+        "label": "Specialized Modules"
+      },
+      "mentorship": {
+        "number": "12+",
+        "label": "Mentoring Sessions"
+      },
+      "certification": {
+        "number": "100%",
+        "label": "Certified Graduates"
+      },
+      "intensiveDays": "Intensive Days",
+      "realPractice": "Real Practice",
+      "live": "Live",
+      "tradingSessions": "Trading Sessions"
+    },
+    "cta": {
+      "primary": "Reserve Your Spot",
+      "secondary": "Download Syllabus"
+    },
+    "buttons": {
+      "registerNow": "Register Now - $3,000",
+      "viewProgram": "View Program"
+    },
+    "tagline": "Transform your trading journey with expert guidance",
+    "wantMySpot": "I WANT MY SPOT"
+  },
+  "phases": {
+    "title": "Your Journey to Professional Trading",
+    "subtitle": "Three phases designed for complete transformation",
+    "phase1": {
+      "number": "01",
+      "name": "Online Learning",
+      "duration": "2 Months",
+      "dates": "Jan 15 - Mar 15, 2025",
+      "description": "Master the fundamentals with our comprehensive online curriculum",
+      "activities": [
+        "Weekly live sessions with expert traders",
+        "Interactive exercises and real market analysis",
+        "Access to exclusive trading community",
+        "Personal progress tracking"
+      ],
+      "modules": [
+        "Trading Fundamentals & Market Psychology",
+        "Technical Analysis Mastery",
+        "Risk Management Strategies",
+        "Trading Platform & Tools",
+        "Market Structure & Price Action",
+        "Entry & Exit Strategies",
+        "Portfolio Management",
+        "Trading Plan Development"
+      ]
+    },
+    "phase2": {
+      "number": "02",
+      "name": "In-Person Training",
+      "duration": "3 Days",
+      "dates": "October 25-27, 2025",
+      "location": "Miami, Florida - Hotel Intercontinental",
+      "description": "Intensive hands-on training with live trading sessions",
+      "activities": [
+        "Live trading with real capital",
+        "One-on-one coaching sessions",
+        "Professional networking opportunities",
+        "Group trading exercises"
+      ],
+      "includes": [
+        "All meals included",
+        "Course materials",
+        "Trading workspace setup",
+        "Certificate ceremony"
+      ]
+    },
+    "phase3": {
+      "number": "03",
+      "name": "Supervised Practice",
+      "duration": "2 Months",
+      "dates": "Oct 28 - Dec 28, 2025",
+      "description": "Apply your knowledge with professional guidance and support",
+      "activities": [
+        "Weekly Q&A sessions with mentors",
+        "Private WhatsApp group access",
+        "Personalized trading feedback",
+        "Performance tracking and optimization"
+      ],
+      "certification": "Professional Trading Certification upon completion"
+    }
+  },
+  "highlights": {
+    "title": "Why Choose Our Master Course?",
+    "subtitle": "Everything you need to become a professional trader",
+    "items": [
+      {
+        "title": "Expert Instructors",
+        "description": "Learn from Yordy - CEO & Head Trader, and our Professional Trading Team"
+      },
+      {
+        "title": "Proven Methodology",
+        "description": "Battle-tested strategies used by professional traders daily"
+      },
+      {
+        "title": "Lifetime Community",
+        "description": "Join an exclusive network of successful traders"
+      },
+      {
+        "title": "Real Trading Experience",
+        "description": "Practice with real capital under professional supervision"
+      },
+      {
+        "title": "Comprehensive Support",
+        "description": "24/7 access to resources and mentor guidance"
+      },
+      {
+        "title": "Career Opportunities",
+        "description": "Access to trading firms and professional opportunities"
+      }
+    ]
+  },
+  "requirements": {
+    "title": "Course Requirements",
+    "subtitle": "What you need to succeed",
+    "items": [
+      "4-month commitment to the program",
+      "Laptop or desktop computer",
+      "Minimum $500 initial trading capital",
+      "Availability to travel to Miami for in-person training",
+      "Basic understanding of financial markets (preferred)",
+      "Dedication to daily practice and learning"
+    ]
+  },
+  "pricing": {
+    "title": "Investment in Your Future",
+    "subtitle": "Choose your enrollment option",
+    "regular": {
+      "label": "Regular Price",
+      "price": "$2,999",
+      "decimals": ".99",
+      "features": [
+        "Full program access",
+        "All course materials",
+        "Certification included",
+        "Community access"
+      ],
+      "cta": "Enroll Now"
+    },
+    "vip": {
+      "label": "VIP Early Bird",
+      "badge": "Save $500",
+      "price": "$2,499",
+      "decimals": ".99",
+      "features": [
+        "Everything in Regular",
+        "Priority mentor access",
+        "Exclusive VIP resources",
+        "1-on-1 coaching session"
+      ],
+      "cta": "Get VIP Access"
+    },
+    "payment": {
+      "title": "Flexible Payment Options",
+      "options": [
+        "Pay in full (save 5%)",
+        "2 installments",
+        "4 monthly payments"
+      ],
+      "guarantee": "30-day money-back guarantee"
+    },
+    "importantNotice": {
+      "title": "Remember:",
+      "description": "We don't manage trading, only guidance and guided practice. Learn by doing with expert mentors and start investing with confidence!"
+    },
+    "pricingSection": {
+      "title": "Invest in your Financial Education",
+      "subtitle": "Only 20 spots available - In-person in Tampa, FL or Virtual",
+      "modalitiesInfo": "Available modalities:",
+      "modalitiesDescription": "In-person in Tampa, FL or Virtual with full access to all live sessions.",
+      "registerButton": "REGISTER NOW",
+      "regularSubtitle": "Full payment",
+      "features": [
+        "3 days of intensive training",
+        "All course materials",
+        "Certification included",
+        "Community access"
+      ]
+    }
+  },
+  "testimonials": {
+    "title": "Success Stories",
+    "subtitle": "Hear from our graduates"
+  },
+  "faq": {
+    "mainTitle": "What does this experience include?",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know",
+    "contact": "Still have questions? Contact us at",
+    "questions": [
+      {
+        "question": "What is the course format?",
+        "answer": "3 intensive days of in-person training in Tampa, FL or virtual with full access to all live sessions."
+      },
+      {
+        "question": "What will I learn exactly?",
+        "answer": "Proven trading strategies, technical analysis, risk management, trading psychology, and how to operate in real markets with mentorship."
+      },
+      {
+        "question": "Does it include real practice?",
+        "answer": "Yes, you'll have live trading sessions with expert guidance and guided practice in real markets."
+      },
+      {
+        "question": "What modalities are available?",
+        "answer": "You can attend in-person in Tampa, FL or participate virtually with full access to all live sessions."
+      },
+      {
+        "question": "What does the price include?",
+        "answer": "3 days of intensive training, course materials, personalized mentoring, access to exclusive trader community, and participation certificate."
+      },
+      {
+        "question": "Do I need prior experience?",
+        "answer": "No, the course is designed for both beginners and experienced traders who want to improve their results."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to Transform Your Trading?",
+    "subtitle": "Limited spots available - Secure yours today",
+    "spots": {
+      "label": "Only",
+      "number": "{{spots}}",
+      "suffix": "spots remaining"
+    },
+    "button": "Reserve Your Spot Now",
+    "urgency": "Class fills up fast - Don't miss out!"
+  },
+  "support": {
+    "title": "Need Help?",
+    "contactTitle": "Contact Information",
+    "email": "mastertrading@daytradedash.com",
+    "phone": "Phone",
+    "phoneNumber": "786.356.7260",
+    "web": "Web",
+    "website": "www.DayTradeDAK.com",
+    "whatsapp": "WhatsApp Support",
+    "schedule": "Schedule a Call"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "success": {
+      "enrollment": "Congratulations! Your spot has been reserved.",
+      "download": "Syllabus has been sent to your email."
+    },
+    "validation": {
+      "email": "Please enter a valid email address",
+      "phone": "Please enter a valid phone number",
+      "required": "This field is required"
+    }
+  },
+  "targetAudience": {
+    "title": "Who is this course for?",
+    "beginners": {
+      "title": "Beginners",
+      "description": "Want to learn trading in a structured way and practice without wasting time or money"
+    },
+    "experiencedTraders": {
+      "title": "Traders with Experience",
+      "description": "Looking to perfect strategies and learn new techniques"
+    },
+    "investors": {
+      "title": "Investors",
+      "description": "Want to move from traditional investing to active trading"
+    },
+    "entrepreneurs": {
+      "title": "Entrepreneurs",
+      "description": "Looking to generate additional income with trading"
+    }
+  },
+  "whatIncludes": {
+    "title": "What does this experience include?",
+    "onlineModules": {
+      "number": "8",
+      "title": "Online Modules",
+      "description": "HD videos with step-by-step strategies"
+    },
+    "groupMentoring": {
+      "number": "4",
+      "title": "Group Mentoring",
+      "description": "Live sessions via Zoom every week"
+    },
+    "inPersonDays": {
+      "number": "3",
+      "title": "In-Person Days",
+      "description": "Intensive event in Tampa, FL"
+    },
+    "practiceMonths": {
+      "number": "2",
+      "title": "Months of Practice",
+      "description": "Live trading with daily guidance"
+    }
+  },
+  "whatMakesUnique": {
+    "title": "What makes this course unique"
+  },
+  "whyItWorks": {
+    "title": "Why Our Method Works",
+    "subtitle": "Proven methodology with real results",
+    "whatWeDont": {
+      "title": "What we DON'T do",
+      "items": [
+        "We don't sell dreams of getting rich overnight",
+        "We don't promise unrealistic 500% monthly returns",
+        "We don't leave you alone with pre-recorded videos",
+        "We don't use obsolete or theoretical strategies",
+        "We don't hide the risks of trading"
+      ]
+    },
+    "whatWeDo": {
+      "title": "What we DO",
+      "items": [
+        "We teach proven strategies in real markets",
+        "We operate live so you can see the complete process",
+        "We accompany you daily for 2 months",
+        "We teach you professional risk management",
+        "We train disciplined and consistent traders"
+      ]
+    }
+  },
+  "successFormula": {
+    "title": "Our Success Formula",
+    "technicalKnowledge": "Technical Knowledge",
+    "emotionalControl": "Emotional Control",
+    "supervisedPractice": "Supervised Practice",
+    "consistentTrader": "CONSISTENT TRADER"
+  },
+  "programComplete": {
+    "title": "Complete Course Program",
+    "phase1": {
+      "badge": "PHASE 1 - 15 days online",
+      "title": "Your Strategic Foundation",
+      "subtitle": "Solid fundamentals to trade with confidence",
+      "mentorshipsTitle": "Mentorships & Support",
+      "modulesTitle": "Course Modules"
+    },
+    "phase2": {
+      "badge": "PHASE 2 - 3 in-person days (Oct 25-27)",
+      "title": "Intensive In-Person Training",
+      "subtitle": "Intensive hands-on training with live trading sessions"
+    },
+    "phase3": {
+      "badge": "PHASE 3 - 2 months of real practice",
+      "title": "Supervised Practice",
+      "subtitle": "Apply your knowledge with professional guidance"
+    }
+  },
+  "yourJourney": {
+    "title": "Your Journey to Professional Trading"
+  },
+  "sessionContent": {
+    "title": "Session Content",
+    "day1": {
+      "title": "Day 1 - Strategy and real-time analysis",
+      "items": [
+        "Introduction to daily market structure and behavior",
+        "Identifying trends, patterns and high probability entry points",
+        "Effective calculation of stop loss and take profit levels",
+        "Real case analysis and critical review of historical operations"
+      ]
+    },
+    "day2": {
+      "title": "Day 2 - Mindset, psychology and advanced strategies",
+      "items": [
+        "Psychology and winning mindset of successful traders",
+        "Techniques to control fear, greed and impatience",
+        "How to identify trends, resistance and key support levels",
+        "Advanced use of indicators and variables for precision trading"
+      ]
+    },
+    "day3": {
+      "title": "Day 3 - Live practice and guided operations",
+      "items": [
+        "Live trading session with mentor accompaniment",
+        "Practical application of learned strategies and techniques",
+        "Q&A session and personalized adjustments",
+        "Open session for questions and strategies"
+      ]
+    }
+  },
+  "seo": {
+    "title": "Master Trading Course 2025 - Professional Trading Education",
+    "description": "Join our 4-month intensive trading program. Learn from professionals, trade live in Miami, and get certified. Limited to 50 students.",
+    "keywords": "trading course, professional trading, Miami trading workshop, trading certification, day trading education"
+  }
+}

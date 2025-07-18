@@ -1,0 +1,591 @@
+{
+  "hero": {
+    "badge": "🔥 Plataforma #1 de Educación en Trading",
+    "title": "Domina el Trading con",
+    "titleHighlight": "Educación Profesional",
+    "subtitle": "Únete a más de 50,000 traders exitosos. Aprende estrategias comprobadas, recibe señales en tiempo real y transforma tu futuro financiero con mentoría experta.",
+    "cta": {
+      "startTrial": "Iniciar Prueba Gratis",
+      "watchDemo": "Ver Demo"
+    },
+    "stats": {
+      "activeStudents": "Estudiantes Activos",
+      "successRate": "Tasa de Éxito",
+      "videoLessons": "Video Lecciones",
+      "liveSupport": "Soporte en Vivo"
+    },
+    "liveMarket": {
+      "title": "Datos del Mercado en Vivo",
+      "badge": "EN VIVO",
+      "sp500": "S&P 500",
+      "nasdaq": "NASDAQ",
+      "dowJones": "Dow Jones",
+      "features": {
+        "realTimeData": "Datos en tiempo real",
+        "expertAnalysis": "Análisis experto",
+        "verifiedSignals": "Señales verificadas",
+        "accuracy": "95% de precisión"
+      }
+    }
+  },
+  "services": {
+    "label": "LO QUE OFRECEMOS",
+    "title": "Todo lo que Necesitas para",
+    "titleHighlight": "Tener Éxito",
+    "subtitle": "Desde educación hasta señales de trading en vivo, proporcionamos todas las herramientas y recursos que necesitas para convertirte en un trader rentable.",
+    "items": {
+      "signals": {
+        "title": "Señales de Trading en Vivo",
+        "description": "Recibe alertas de compra/venta en tiempo real de traders profesionales con 95% de precisión."
+      },
+      "academy": {
+        "title": "Academia de Trading",
+        "description": "Cursos completos desde principiante hasta avanzado con más de 500 video lecciones."
+      },
+      "masterClasses": {
+        "title": "Master Classes",
+        "description": "Clases de trading elite con profesionales experimentados para acelerar tu éxito."
+      },
+      "psychology": {
+        "title": "Psicología del Trading",
+        "description": "Domina tus emociones y desarrolla la mentalidad de los traders exitosos."
+      },
+      "analysis": {
+        "title": "Análisis del Mercado",
+        "description": "Análisis técnico y fundamental diario de los principales mercados y acciones."
+      },
+      "library": {
+        "title": "Biblioteca de Recursos",
+        "description": "Accede a libros exclusivos de trading, estrategias y materiales de investigación."
+      }
+    },
+    "cta": {
+      "learnMore": "Aprende Más",
+      "assessment": "¿No sabes por dónde empezar? Realiza nuestra evaluación gratuita de trading",
+      "takeAssessment": "Realizar Evaluación Gratis"
+    }
+  },
+  "liveTrading": {
+    "label": "TRADING EN VIVO",
+    "title": "Opera en Vivo con",
+    "titleHighlight": "Traders Profesionales",
+    "subtitle": "Únete a nuestras salas de trading en vivo y observa a traders profesionales en acción. Aprende sus estrategias, haz preguntas y obtén ganancias juntos.",
+    "stats": {
+      "viewers": "Espectadores en vivo ahora",
+      "profitableSessions": "Sesiones rentables"
+    },
+    "cta": "Unirse a la Sala de Trading en Vivo",
+    "sessions": {
+      "morning": {
+        "title": "Análisis del Mercado Matutino",
+        "description": "Analizando movimientos pre-mercado y configurando operaciones del día"
+      },
+      "options": {
+        "title": "Sesión de Estrategia de Opciones",
+        "description": "Estrategias avanzadas de opciones para mercados volátiles"
+      },
+      "crypto": {
+        "title": "Masterclass de Trading de Cripto",
+        "description": "Análisis técnico de Bitcoin y altcoins"
+      }
+    },
+    "status": {
+      "live": "En Vivo Ahora",
+      "upcoming": "Comienza en {time}",
+      "ended": "Terminó hace {time}",
+      "viewers": "espectadores",
+      "profit": "ganancia"
+    },
+    "joinMessage": "Únete a {count}+ traders actualmente en línea"
+  },
+  "education": {
+    "label": "PROGRAMAS DE EDUCACIÓN",
+    "title": "Transforma tu Trading con",
+    "titleHighlight": "Educación Experta",
+    "subtitle": "Desde principiante hasta profesional, nuestros cursos completos están diseñados para llevarte a través de cada etapa de tu viaje en el trading.",
+    "levels": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado"
+    },
+    "programs": {
+      "fundamentals": {
+        "title": "Fundamentos del Trading",
+        "description": "Domina los conceptos básicos del trading, análisis de mercado y gestión de riesgos",
+        "features": [
+          "Conceptos básicos del mercado y terminología",
+          "Fundamentos del análisis técnico",
+          "Estrategias de gestión de riesgos",
+          "Sesiones de trading en vivo"
+        ],
+        "duration": "8 semanas",
+        "lessons": "48 lecciones",
+        "students": "{count} estudiantes"
+      },
+      "technical": {
+        "title": "Análisis Técnico Avanzado",
+        "description": "Profundiza en patrones de gráficos, indicadores y estrategias de trading",
+        "features": [
+          "Patrones de gráficos avanzados",
+          "Análisis de múltiples marcos temporales",
+          "Conceptos básicos de trading algorítmico",
+          "Estrategias de opciones"
+        ],
+        "duration": "12 semanas",
+        "lessons": "72 lecciones",
+        "students": "{count} estudiantes"
+      },
+      "professional": {
+        "title": "Trading Profesional del Día",
+        "description": "Opera como un profesional con estrategias y herramientas institucionales",
+        "features": [
+          "Estrategias de trading institucional",
+          "Trading de alta frecuencia",
+          "Gestión de portafolio",
+          "API y automatización"
+        ],
+        "duration": "16 semanas",
+        "lessons": "96 lecciones",
+        "students": "{count} estudiantes"
+      }
+    },
+    "badge": "Trader Experto",
+    "progress": "Progreso",
+    "continue": "Continuar",
+    "enrollNow": "Inscribirse Ahora",
+    "cta": {
+      "title": "¿No puedes decidir qué curso es el adecuado para ti?",
+      "button": "Realizar Evaluación de Habilidades"
+    }
+  },
+  "tools": {
+    "label": "HERRAMIENTAS DE TRADING",
+    "title": "Herramientas Profesionales para",
+    "titleHighlight": "Traders Serios",
+    "subtitle": "Accede a herramientas de trading de grado institucional diseñadas para darte una ventaja en los mercados. Desde gráficos avanzados hasta análisis impulsado por IA.",
+    "items": {
+      "charting": {
+        "title": "Gráficos Avanzados",
+        "description": "Gráficos de grado profesional con más de 100 indicadores y herramientas de dibujo",
+        "badge": "PRO",
+        "features": [
+          "Transmisión de datos en tiempo real",
+          "Más de 100 indicadores técnicos",
+          "Marcos temporales personalizados",
+          "Diseños de múltiples gráficos",
+          "Reconocimiento de patrones"
+        ]
+      },
+      "calculator": {
+        "title": "Calculadora de Posición",
+        "description": "Calcula tamaños óptimos de posición y gestiona el riesgo efectivamente",
+        "badge": "NUEVO",
+        "features": [
+          "Calculadora de riesgo/recompensa",
+          "Tamaño de posición",
+          "Colocación de stop loss",
+          "Objetivos de ganancia",
+          "Asignación de portafolio"
+        ]
+      },
+      "scanner": {
+        "title": "Escáner del Mercado",
+        "description": "Encuentra oportunidades de trading con potentes herramientas de filtrado",
+        "badge": "GRATIS",
+        "features": [
+          "Escaneo en tiempo real",
+          "Filtros personalizados",
+          "Alertas técnicas",
+          "Análisis de volumen",
+          "Alertas de acción del precio"
+        ]
+      },
+      "backtester": {
+        "title": "Probador de Estrategias",
+        "description": "Prueba tus estrategias de trading con datos históricos",
+        "features": [
+          "Análisis histórico",
+          "Métricas de rendimiento",
+          "Evaluación de riesgos",
+          "Herramientas de optimización",
+          "Informes detallados"
+        ]
+      },
+      "analytics": {
+        "title": "Análisis de Operaciones",
+        "description": "Rastrea y analiza tu rendimiento de trading",
+        "features": [
+          "Seguimiento de P&G",
+          "Análisis de tasa de éxito",
+          "Métricas de riesgo",
+          "Diario de operaciones",
+          "Informes de rendimiento"
+        ]
+      },
+      "alerts": {
+        "title": "Alertas Inteligentes",
+        "description": "Nunca pierdas una oportunidad de trading con alertas personalizadas",
+        "features": [
+          "Alertas de precio",
+          "Alertas técnicas",
+          "Alertas de noticias",
+          "Notificaciones móviles",
+          "Alertas por correo"
+        ]
+      }
+    },
+    "cta": {
+      "launchTool": "Lanzar Herramienta",
+      "premium": {
+        "title": "Obtén Todas las Herramientas con Acceso Premium",
+        "description": "Desbloquea todas las herramientas profesionales, datos en tiempo real y funciones avanzadas",
+        "button": "Iniciar Prueba Premium"
+      }
+    }
+  },
+  "success": {
+    "label": "HISTORIAS DE ÉXITO",
+    "title": "Traders Reales,",
+    "titleHighlight": "Resultados Reales",
+    "subtitle": "Únete a miles de traders exitosos que han transformado su futuro financiero con nuestras estrategias comprobadas y orientación experta.",
+    "stats": {
+      "successRate": "Tasa de Éxito",
+      "totalStudents": "Total de Estudiantes",
+      "avgReturn": "Retorno Mensual Promedio",
+      "totalProfits": "Ganancias Totales"
+    },
+    "badge": "ÉXITO DESTACADO",
+    "stories": {
+      "dayTrader": {
+        "role": "Day Trader de Tiempo Completo",
+        "quote": "DayTradeDak transformó completamente mi trading. El programa de mentoría me dio la confianza y las habilidades para dejar mi trabajo y operar a tiempo completo. He obtenido consistentemente retornos mensuales del 15-20%.",
+        "achievement": "Logró libertad financiera"
+      },
+      "optionsTrader": {
+        "role": "Trader de Opciones",
+        "quote": "Las estrategias de opciones que aprendí aquí son increíbles. Comencé con $5,000 y ahora manejo un portafolio de más de $150,000. Las sesiones de trading en vivo son invaluables.",
+        "achievement": "Crecimiento del portafolio 30x"
+      },
+      "swingTrader": {
+        "role": "Swing Trader",
+        "quote": "Como principiante, perdía dinero constantemente. Después de tomar el curso de fundamentos, he sido rentable durante 14 meses consecutivos. Las lecciones de gestión de riesgos salvaron mi cuenta.",
+        "achievement": "14 meses rentable"
+      },
+      "cryptoTrader": {
+        "role": "Trader de Cripto",
+        "quote": "El masterclass de trading de cripto abrió mis ojos a oportunidades que nunca supe que existían. He ganado más en 6 meses que en mis 3 años anteriores de trading.",
+        "achievement": "Duplicó su ingreso anual"
+      }
+    },
+    "details": {
+      "profit": "Ganancia Total",
+      "period": "Período de Trading",
+      "achievement": "Logro",
+      "location": "Ubicación"
+    }
+  },
+  "pricing": {
+    "label": "PLANES DE PRECIOS",
+    "title": "Elige tu Camino hacia el",
+    "titleHighlight": "Éxito en el Trading",
+    "subtitle": "Comienza con una prueba gratuita de 14 días. No se requiere tarjeta de crédito. Cancela en cualquier momento con nuestra garantía de devolución de dinero de 30 días.",
+    "billing": {
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "save": "Ahorra 20%"
+    },
+    "plans": {
+      "basic": {
+        "name": "Básico",
+        "description": "Perfecto para principiantes que inician su viaje en el trading",
+        "price": "$39",
+        "period": "/mes",
+        "yearlyPrice": "$31",
+        "billedAnnually": "facturado anualmente",
+        "features": [
+          "Cursos básicos de trading",
+          "5 video lecciones por semana",
+          "Informes de análisis del mercado",
+          "Acceso al foro de la comunidad",
+          "Indicadores técnicos básicos",
+          "Soporte por correo"
+        ]
+      },
+      "professional": {
+        "name": "Profesional",
+        "badge": "MÁS POPULAR",
+        "description": "La opción más popular para traders serios",
+        "price": "$99",
+        "period": "/mes",
+        "yearlyPrice": "$79",
+        "billedAnnually": "facturado anualmente",
+        "features": [
+          "Todas las características Básicas",
+          "Video lecciones ilimitadas",
+          "Sesiones de trading en vivo (3x semana)",
+          "Estrategias avanzadas de trading",
+          "Alertas y señales en tiempo real",
+          "Soporte prioritario",
+          "Curso de psicología del trading",
+          "Herramientas de calculadora de posición"
+        ]
+      },
+      "elite": {
+        "name": "Elite",
+        "badge": "MEJOR VALOR",
+        "description": "Acceso completo con mentoría personalizada",
+        "price": "$299",
+        "period": "/mes",
+        "yearlyPrice": "$239",
+        "billedAnnually": "facturado anualmente",
+        "features": [
+          "Todas las características Profesionales",
+          "Mentoría 1 a 1 semanal",
+          "Sala de trading en vivo diaria",
+          "Estrategias de trading personalizadas",
+          "Acceso a API y automatización",
+          "Soporte de guante blanco",
+          "Masterclasses exclusivas",
+          "Coach personal de trading",
+          "Acceso a herramientas institucionales",
+          "Actualizaciones de por vida"
+        ]
+      }
+    },
+    "cta": "Iniciar Prueba Gratis",
+    "guarantees": {
+      "support": {
+        "title": "Soporte 24/7",
+        "description": "Obtén ayuda cuando la necesites de nuestro equipo de soporte experto"
+      },
+      "moneyBack": {
+        "title": "Garantía de 30 Días",
+        "description": "¿No estás satisfecho? Obtén un reembolso completo dentro de 30 días, sin preguntas"
+      },
+      "cancel": {
+        "title": "Cancela en Cualquier Momento",
+        "description": "Sin contratos, sin tarifas ocultas. Cancela tu suscripción en cualquier momento"
+      }
+    }
+  },
+  "cta": {
+    "badges": [
+      "Prueba gratis de 14 días",
+      "No se requiere tarjeta de crédito",
+      "Cancela en cualquier momento",
+      "Garantía de devolución de dinero de 30 días"
+    ],
+    "title": "¿Listo para Comenzar tu",
+    "titleHighlight": "Viaje en el Trading?",
+    "subtitle": "Únete a más de 50,000 traders que ya están obteniendo ganancias con nuestras estrategias comprobadas y orientación experta.",
+    "buttons": {
+      "startTrial": "Iniciar Prueba Gratis",
+      "viewPricing": "Ver Precios"
+    },
+    "stats": {
+      "successRate": {
+        "value": "95%",
+        "label": "Tasa de Éxito"
+      },
+      "support": {
+        "value": "24/7",
+        "label": "Soporte en Vivo"
+      },
+      "lessons": {
+        "value": "500+",
+        "label": "Video Lecciones"
+      },
+      "traders": {
+        "value": "50k+",
+        "label": "Traders Activos"
+      }
+    },
+    "testimonial": {
+      "quote": "¡DayTradeDak transformó completamente mi trading. Pasé de perder dinero a ser consistentemente rentable en solo 3 meses!",
+      "author": "- Sarah Johnson, Trader Profesional"
+    },
+    "newsletter": {
+      "title": "Obtén Consejos de Trading Gratis y Análisis del Mercado",
+      "subtitle": "Únete a nuestro boletín y recibe información diaria del mercado directamente en tu bandeja de entrada",
+      "placeholder": "Ingresa tu correo",
+      "button": "Suscribirse Gratis"
+    }
+  },
+  "footer": {
+    "sections": {
+      "trading": {
+        "title": "Trading",
+        "links": {
+          "liveRoom": "Sala de Trading en Vivo",
+          "signals": "Señales de Trading",
+          "analysis": "Análisis del Mercado",
+          "calendar": "Calendario Económico",
+          "tools": "Herramientas de Trading"
+        }
+      },
+      "education": {
+        "title": "Educación",
+        "links": {
+          "academy": "Academia de Trading",
+          "masterClasses": "Master Classes",
+          "psychology": "Psicología del Trading",
+          "library": "Biblioteca de eBooks",
+          "webinars": "Webinars"
+        }
+      },
+      "company": {
+        "title": "Compañía",
+        "links": {
+          "about": "Sobre Nosotros",
+          "success": "Historias de Éxito",
+          "careers": "Carreras",
+          "blog": "Blog",
+          "contact": "Contacto"
+        }
+      },
+      "support": {
+        "title": "Soporte",
+        "links": {
+          "help": "Centro de Ayuda",
+          "faq": "Preguntas Frecuentes",
+          "terms": "Términos de Servicio",
+          "privacy": "Política de Privacidad",
+          "risk": "Divulgación de Riesgos"
+        }
+      }
+    },
+    "about": {
+      "description": "Empoderando a traders en todo el mundo con educación profesional, señales en tiempo real y estrategias comprobadas para el éxito consistente en los mercados financieros."
+    },
+    "contact": {
+      "phone": "+1 (727) 486-1608",
+      "email": "support@daytradedak.com",
+      "address": "Miami, FL 33101, USA"
+    },
+    "newsletter": {
+      "title": "Mantente Actualizado con Información del Mercado",
+      "subtitle": "Recibe análisis diario del mercado y consejos de trading en tu bandeja de entrada",
+      "placeholder": "Ingresa tu correo",
+      "button": "Suscribirse"
+    },
+    "copyright": "© {year} DayTradeDak. Todos los derechos reservados.",
+    "riskWarning": "Advertencia de Riesgo: El trading implica un riesgo sustancial y puede resultar en la pérdida de tu capital invertido. El rendimiento pasado no es indicativo de resultados futuros."
+  },
+  "navbar": {
+    "trading": {
+      "title": "Trading",
+      "liveRoom": {
+        "title": "Sala de Trading en Vivo",
+        "description": "Únete a sesiones en vivo con traders profesionales"
+      },
+      "analysis": {
+        "title": "Análisis del Mercado",
+        "description": "Análisis técnico y fundamental diario"
+      },
+      "signals": {
+        "title": "Señales de Trading",
+        "description": "Alertas de compra/venta en tiempo real"
+      },
+      "calendar": {
+        "title": "Calendario Económico",
+        "description": "Eventos importantes del mercado"
+      }
+    },
+    "education": {
+      "title": "Educación",
+      "academy": {
+        "title": "Academia de Trading",
+        "description": "Cursos completos de trading"
+      },
+      "masterClasses": {
+        "title": "Master Classes",
+        "description": "Masterclasses de trading elite"
+      },
+      "psychology": {
+        "title": "Psicología del Trading",
+        "description": "Domina tu mentalidad de trading"
+      },
+      "library": {
+        "title": "Biblioteca de eBooks",
+        "description": "Libros y recursos de trading"
+      }
+    },
+    "tools": {
+      "title": "Herramientas",
+      "screener": {
+        "title": "Filtrador de Acciones",
+        "description": "Encuentra oportunidades de trading"
+      },
+      "calculator": {
+        "title": "Calculadora de Posición",
+        "description": "Riesgo y tamaño de posición"
+      },
+      "scanner": {
+        "title": "Escáner del Mercado",
+        "description": "Datos del mercado en tiempo real"
+      }
+    },
+    "live": "En Vivo",
+    "pricing": "Precios",
+    "about": "Acerca de",
+    "login": "Iniciar Sesión",
+    "getStarted": "Empezar"
+  },
+  "topBar": {
+    "socialMedia": {
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube"
+    },
+    "contact": {
+      "email": "support@daytradedk.com",
+      "phone": "+1 (727) 486 1603"
+    },
+    "dakIndex": "Índice DAK",
+    "est": "EST"
+  },
+  "common": {
+    "viewAll": "Ver Todo →",
+    "learnMore": "Aprender Más",
+    "getStarted": "Comenzar",
+    "startNow": "Empezar Ahora",
+    "joinNow": "Unirse Ahora",
+    "launchTool": "Lanzar Herramienta",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "premium": "Premium",
+    "free": "Gratis",
+    "new": "NUEVO",
+    "pro": "PRO",
+    "popular": "Popular",
+    "recommended": "Recomendado",
+    "bestValue": "Mejor Valor",
+    "mostPopular": "Más Popular",
+    "save": "Ahorra",
+    "off": "DESC",
+    "volume": "Vol:",
+    "call": "CALL",
+    "put": "PUT",
+    "buy": "Comprar",
+    "sell": "Vender",
+    "profit": "Ganancia",
+    "loss": "Pérdida",
+    "period": "Período",
+    "location": "Ubicación",
+    "achievement": "Logro",
+    "totalProfit": "Ganancia Total",
+    "tradingPeriod": "Período de Trading",
+    "years": "{count} años",
+    "months": "{count} meses",
+    "days": "{count} días",
+    "hours": "{count} horas",
+    "minutes": "{count} minutos",
+    "viewers": "{count} espectadores",
+    "students": "{count} estudiantes",
+    "lessons": "{count} lecciones",
+    "weeks": "{count} semanas"
+  }
+}
