@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { User } from '@/types/user';
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   authToken: string | null;
   isAuthenticated: boolean;
@@ -35,12 +35,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        localStorage.removeItem('auth-storage');
-        // set(() => ({
-        //   user: null,
-        //   authToken: null,
-        //   isAuthenticated: false,
-        // }));
+        set(() => ({
+          user: null,
+          authToken: null,
+          isAuthenticated: false,
+        }));
       },
 
       _hasHydrated: false,

@@ -2,187 +2,290 @@
 
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { Button, Card, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Button, Card, IconButton, List, ListItem, ListItemIcon, ListItemText, useTheme, alpha } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { CheckCircle, FacebookLogo, InstagramLogo, TwitterLogo } from '@phosphor-icons/react';
+import { 
+  CheckCircle, 
+  TrendingUp, 
+  ShowChart, 
+  Assessment, 
+  School,
+  MenuBook,
+  Groups,
+  Twitter,
+  Facebook,
+  Instagram,
+  LinkedIn,
+} from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 import { paths } from '@/paths';
 import { DynamicLogo } from '@/components/core/logo';
+import { MainNavbar } from '@/components/landing/main-navbar';
 
 export interface LayoutProps {
   children: React.ReactNode;
 }
 
-const features = [
-  'Mentorías Exclusivas 🔥',
-  'Clases Diarias Grabadas 🔥',
-  'Libros Recomendados',
-  'Earnings Semanales',
-  // 'Live Market Scanning',
-  // 'Educational Trading Resources',
-];
 
 export function Layout({ children }: LayoutProps): React.JSX.Element {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+  const { t, i18n } = useTranslation();
+
+  const features = [
+    { 
+      icon: <Groups />, 
+      text: t('auth.layout.features.mentorship.title'), 
+      subtext: t('auth.layout.features.mentorship.subtitle') 
+    },
+    { 
+      icon: <School />, 
+      text: t('auth.layout.features.classes.title'), 
+      subtext: t('auth.layout.features.classes.subtitle') 
+    },
+    { 
+      icon: <MenuBook />, 
+      text: t('auth.layout.features.library.title'), 
+      subtext: t('auth.layout.features.library.subtitle') 
+    },
+    { 
+      icon: <TrendingUp />, 
+      text: t('auth.layout.features.earnings.title'), 
+      subtext: t('auth.layout.features.earnings.subtitle') 
+    },
+    { 
+      icon: <ShowChart />, 
+      text: t('auth.layout.features.marketData.title'), 
+      subtext: t('auth.layout.features.marketData.subtitle') 
+    },
+    { 
+      icon: <Assessment />, 
+      text: t('auth.layout.features.psychology.title'), 
+      subtext: t('auth.layout.features.psychology.subtitle') 
+    },
+  ];
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh', // Ensure full-screen height
-        backgroundImage: 'url(/assets/login-background.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        px: 3,
-        py: 5,
+        minHeight: '100vh',
+        background: isDarkMode 
+          ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)'
+          : 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `
+            radial-gradient(circle at 20% 50%, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, ${alpha(theme.palette.secondary.main, 0.1)} 0%, transparent 50%),
+            radial-gradient(circle at 40% 20%, ${alpha(theme.palette.info.main, 0.1)} 0%, transparent 50%)
+          `,
+          pointerEvents: 'none',
+        },
       }}
     >
-      {/* Top Section */}
+      {/* Main Navigation - Same as other pages */}
+      <MainNavbar />
+
+      {/* Main Content */}
       <Box
         sx={{
-          width: '100%',
+          flex: 1,
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: { xs: 'column', lg: 'row' },
           alignItems: 'center',
-          flexDirection: { xs: 'column', md: 'row' },
-          px: 4,
-          mb: 4,
-        }}
-      >
-        {/* Logo - Left */}
-        <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-block' }}>
-          <DynamicLogo colorDark="light" colorLight="dark" height={82} width={122} />
-        </Box>
-
-        {/* Welcome Message - Center */}
-        <Box sx={{ flex: 1, textAlign: 'center' }}>
-          <Typography variant="h4" color="white" sx={{ fontWeight: 'bold' }}>
-            Bienvenido a{' '}
-            <Box component="span" sx={{ color: 'primary.light' }}>
-              Day Trade Dak
-            </Box>
-          </Typography>
-          <Typography variant="subtitle1" color="white">
-            Tu plataforma de confianza para análisis de mercado y conocimientos expertos en trading.
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* Main Content (Scrollable if needed) */}
-      <Box
-        sx={{
-          flex: 1, // Takes available space and makes this area scrollable
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: 'flex-start',
-          justifyContent: 'space-evenly',
+          justifyContent: 'center',
           width: '100%',
-          maxWidth: '1800px',
-          gap: 10,
-          overflowY: 'auto', // Allow scrolling if content overflows
-          pb: 15, // Prevent content from overlapping the fixed footer
-          pt: 5,
+          px: 3,
+          pt: 18, // Account for TopBar (36px) + Navbar (80px)
+          pb: 6,
+          gap: { xs: 6, lg: 10 },
+          position: 'relative',
+          zIndex: 5,
         }}
       >
         {/* Form Section */}
         <Card
           sx={{
-            p: 4,
-            width: { xs: '100%', md: '500px' },
-            display: 'flex',
-            justifyContent: 'center',
-            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-            '&:hover': {
-              transform: 'translateY(-8px)',
-              boxShadow: '0px 15px 40px rgba(0, 0, 0, 0.15)',
-            },
+            p: { xs: 3, sm: 4, md: 5 },
+            width: { xs: '100%', sm: '450px', md: '500px' },
+            maxWidth: '500px',
+            background: isDarkMode
+              ? 'rgba(20, 20, 20, 0.9)'
+              : 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(20px)',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 3,
+            boxShadow: isDarkMode
+              ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
           }}
         >
           <Box sx={{ width: '100%' }}>{children}</Box>
         </Card>
 
-        {/* Features List Section */}
-        <Box sx={{ textAlign: 'left' }}>
-          <Typography variant="h5" color="white" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Todo lo que necesitas para tu trading
+        {/* Features Section */}
+        <Box 
+          sx={{ 
+            display: { xs: 'none', lg: 'block' },
+            maxWidth: '600px',
+          }}
+        >
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              fontWeight: 800,
+              mb: 2,
+              background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            {t('auth.layout.startJourney.title')}
           </Typography>
-          <Box sx={{ display: 'flex', gap: '30px' }}>
-            <List sx={{ color: 'white', textAlign: 'left' }}>
-              {features.map((feature) => (
-                <ListItem key={feature} sx={{ pl: 0 }}>
-                  <ListItemIcon sx={{ minWidth: '32px' }}>
-                    <CheckCircle size={20} weight="bold" color="lightgreen" />
-                  </ListItemIcon>
-                  <ListItemText primary={feature} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-          <Box sx={{ textAlign: 'left', color: 'white', mt: 6 }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
-              Próximo Evento: Invertir con Confianza
+          <Typography 
+            variant="h6" 
+            color="text.secondary" 
+            sx={{ mb: 4 }}
+          >
+            {t('auth.layout.startJourney.subtitle')}
+          </Typography>
+          
+          <List sx={{ p: 0 }}>
+            {features.map((feature, index) => (
+              <ListItem 
+                key={index} 
+                sx={{ 
+                  px: 0,
+                  py: 2,
+                  alignItems: 'flex-start',
+                }}
+              >
+                <ListItemIcon 
+                  sx={{ 
+                    minWidth: 48,
+                    mt: 0.5,
+                    color: 'primary.main',
+                  }}
+                >
+                  {feature.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {feature.text}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" color="text.secondary">
+                      {feature.subtext}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+
+          <Box sx={{ mt: 6, p: 3, borderRadius: 2, bgcolor: 'action.hover' }}>
+            <Typography variant="subtitle2" color="primary" sx={{ mb: 1 }}>
+              {t('auth.layout.upcomingEvent.label')}
             </Typography>
-            <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
-                📍 4200 George J.Bean Parkway,Tampa, FL 33607, USA
-              </Typography>
-            <Typography variant="body1" color="white" style={{marginTop: '10px'}}>
-                📅 Sábado, 23 de agosto de 2025
-              </Typography>
-              <Typography variant="body1" color="white" style={{marginBottom: '10px'}}>
-                ⏰ <span style={{fontWeight: 'bold'}}>VIP:</span> 8:30 AM – 10:00 AM | <span style={{fontWeight: 'bold'}}>Evento General:</span> 10:00 AM – 2:00 PM
-              </Typography>
+            <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+              {t('auth.layout.upcomingEvent.title')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              📍 {t('auth.layout.upcomingEvent.location')} | 📅 {t('auth.layout.upcomingEvent.date')}
+            </Typography>
             <Button
-              variant="contained"
-              color="primary"
+              variant="outlined"
               component={RouterLink}
               href="/events/680fe27154c9b64e54e2424f"
-              sx={{ mt: 1 }}
+              fullWidth
+              sx={{
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                '&:hover': {
+                  borderColor: 'primary.dark',
+                  bgcolor: alpha(theme.palette.primary.main, 0.08),
+                },
+              }}
             >
-              Registrarse
+              {t('auth.layout.upcomingEvent.learnMore')}
             </Button>
           </Box>
         </Box>
       </Box>
 
-      {/* Footer (Fixed at Bottom) */}
+      {/* Footer */}
       <Box
         sx={{
           width: '100%',
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
           py: 3,
           px: 4,
           textAlign: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          color: 'white',
+          borderTop: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          mt: 'auto',
         }}
       >
         {/* Social Media Icons */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
-          <IconButton component="a" href="https://twitter.com" target="_blank">
-            <TwitterLogo size={24} color="white" />
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2 }}>
+          <IconButton 
+            component="a" 
+            href="https://twitter.com" 
+            target="_blank"
+            size="small"
+            sx={{ color: 'text.secondary' }}
+          >
+            <Twitter fontSize="small" />
           </IconButton>
-          <IconButton component="a" href="https://facebook.com" target="_blank">
-            <FacebookLogo size={24} color="white" />
+          <IconButton 
+            component="a" 
+            href="https://facebook.com" 
+            target="_blank"
+            size="small"
+            sx={{ color: 'text.secondary' }}
+          >
+            <Facebook fontSize="small" />
           </IconButton>
-          <IconButton component="a" href="https://instagram.com" target="_blank">
-            <InstagramLogo size={24} color="white" />
+          <IconButton 
+            component="a" 
+            href="https://instagram.com" 
+            target="_blank"
+            size="small"
+            sx={{ color: 'text.secondary' }}
+          >
+            <Instagram fontSize="small" />
+          </IconButton>
+          <IconButton 
+            component="a" 
+            href="https://linkedin.com" 
+            target="_blank"
+            size="small"
+            sx={{ color: 'text.secondary' }}
+          >
+            <LinkedIn fontSize="small" />
           </IconButton>
         </Box>
 
-        {/* Disclaimer */}
-        <Typography variant="body2" sx={{ fontSize: '12px', opacity: 0.8, mb: 1 }}>
-          © {new Date().getFullYear()} Day Trade Dak. Todos los derechos reservados.
+        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
+          {t('auth.layout.footer.copyright', { year: new Date().getFullYear() })}
         </Typography>
-        <Typography variant="body2" sx={{ fontSize: '12px', opacity: 0.8 }}>
-          **Descargo de responsabilidad**: Day Trade Dak no es un asesor de inversiones, legal o fiscal registrado. Todo
-          el contenido es solo para fines informativos y no debe considerarse asesoramiento financiero. El trading
-          implica riesgos, y el rendimiento pasado no garantiza resultados futuros.
+        <Typography variant="caption" color="text.secondary" display="block" sx={{ opacity: 0.8 }}>
+          {t('auth.layout.footer.disclaimer')}
         </Typography>
       </Box>
     </Box>

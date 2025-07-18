@@ -1,0 +1,182 @@
+{
+  "hero": {
+    "exclusiveBadge": "EXCLUSIVE FOR ACTIVE MEMBERS",
+    "title": "Exclusive Community Event",
+    "subtitle": "3 all-inclusive days in Tampa, FL - October 25-27, 2025",
+    "description": "The same experience as Master Course Phase 2, but exclusive to our community",
+    "benefits": {
+      "hotel": "5-star hotel",
+      "meals": "All meals included",
+      "networking": "Exclusive networking"
+    },
+    "reserveButton": "RESERVE MY SPOT",
+    "loginPrompt": "This event is exclusive for members with Live Weekly subscription. Would you like to sign in to verify your subscription?",
+    "upgradePrompt": "Your current subscription doesn't include access to community events. You need to upgrade to Live Weekly or Live Weekly Auto. Would you like to see upgrade options?",
+    "subscriptionRequired": "This event requires an active Live Weekly or Live Weekly Auto subscription. Would you like to view available plans?",
+    "membershipRequired": "This event is exclusive for active members. You need an active subscription to participate.",
+    "tooltipDisabled": "You need to be an active community member to access this exclusive event"
+  },
+  "pricing": {
+    "title": "Special Price",
+    "description": "All inclusive: Hotel, meals and training",
+    "limitedSpots": "Limited spots • Only 30 places available"
+  },
+  "included": {
+    "title": "What's included with your investment?",
+    "accommodation": {
+      "title": "Premium Accommodation",
+      "features": {
+        "nights": "3 nights in 5-star hotel",
+        "view": "Ocean view room",
+        "checkin": "Check-in October 24",
+        "checkout": "Check-out October 28"
+      }
+    },
+    "meals": {
+      "title": "Full Board",
+      "features": {
+        "breakfast": "Daily buffet breakfast",
+        "lunch": "Working lunches",
+        "dinner": "Special group dinners",
+        "coffee": "Unlimited coffee breaks"
+      }
+    },
+    "experience": {
+      "title": "Premium Experience",
+      "features": {
+        "training": "3-day intensive training",
+        "liveTrading": "Live trading with mentors",
+        "networking": "Exclusive networking",
+        "certificate": "Certificate of participation"
+      }
+    }
+  },
+  "schedule": {
+    "title": "Day by day program",
+    "day1": {
+      "date": "Day 1 (Oct 25)",
+      "title": "Strategy and real-time analysis",
+      "activities": {
+        "7am": "Welcome breakfast and networking",
+        "830am": "Live market opening: pre-market analysis",
+        "930am": "Live trading: first session",
+        "12pm": "Lunch and trade discussion",
+        "2pm": "Analysis of each trade: what worked and what to improve",
+        "4pm": "Q&A session",
+        "6pm": "Group dinner and networking"
+      }
+    },
+    "day2": {
+      "date": "Day 2 (Oct 26)",
+      "title": "Mindset, psychotrading and advanced strategies",
+      "activities": {
+        "7am": "Breakfast",
+        "830am": "Emotional control during real trades",
+        "10am": "Advanced entry and exit techniques",
+        "12pm": "Lunch",
+        "2pm": "Live profit and loss management",
+        "4pm": "Building a personalized trading plan",
+        "6pm": "Special dinner with surprise guest"
+      }
+    },
+    "day3": {
+      "date": "Day 3 (Oct 27)",
+      "title": "Live practice and guided trading",
+      "activities": {
+        "7am": "Breakfast",
+        "830am": "Supervised trading: you trade with mentor guidance",
+        "10am": "Immediate error correction",
+        "12pm": "Farewell lunch",
+        "2pm": "Group trade analysis",
+        "4pm": "Closing ceremony and certificates",
+        "5pm": "Final networking and farewell"
+      }
+    }
+  },
+  "amenities": {
+    "title": "Hotel Amenities",
+    "pool": {
+      "name": "Pool",
+      "description": "Full access"
+    },
+    "spa": {
+      "name": "Spa",
+      "description": "Relaxation area"
+    },
+    "gym": {
+      "name": "Gym",
+      "description": "24/7 available"
+    },
+    "restaurant": {
+      "name": "Restaurant",
+      "description": "Breakfast and dinner included"
+    },
+    "coffee": {
+      "name": "Coffee Breaks",
+      "description": "Unlimited snacks"
+    },
+    "room": {
+      "name": "Premium Room",
+      "description": "Ocean view"
+    }
+  },
+  "whyAttend": {
+    "title": "Why attend this event?",
+    "transformative": {
+      "title": "Transformative Experience",
+      "description": "This isn't just a trading event, it's a complete experience designed to transform the way you trade the markets. During 3 intensive days, you'll have direct access to professional mentors who trade live with you.",
+      "benefits": {
+        "learn": "Learn directly from professional traders",
+        "operate": "Trade in real time with expert supervision",
+        "network": "Network with successful traders from the community",
+        "environment": "Exclusive and professional environment"
+      }
+    },
+    "value": {
+      "title": "Added Value",
+      "description": "Beyond the training, this event offers you a complete immersion experience in the world of professional trading, with all premium amenities and services included.",
+      "breakdown": {
+        "title": "All Inclusive for",
+        "valued": "Valued at over $2,000 if purchased separately",
+        "hotel": "5-star hotel: $200/night x 3 nights = $600",
+        "meals": "Full meals: $100/day x 3 days = $300",
+        "training": "Professional training: $1,200 value",
+        "mentors": "Access to exclusive mentors: Priceless"
+      }
+    }
+  },
+  "location": {
+    "title": "Event Location",
+    "city": "Tampa, Florida",
+    "description": "Luxury beachfront hotel",
+    "note": "(Exact location will be shared with confirmed participants)",
+    "whyTampa": {
+      "title": "Why Tampa?",
+      "description": "Tampa is the perfect destination for our exclusive event. With its perfect October weather, beautiful beaches, and professional atmosphere, it offers the ideal balance between intense work and relaxation moments.",
+      "benefits": {
+        "weather": {
+          "title": "Perfect weather",
+          "description": "October in Tampa: 75-85°F, ideal for focus"
+        },
+        "access": {
+          "title": "Easy access",
+          "description": "International airport with direct flights"
+        },
+        "professional": {
+          "title": "Professional environment",
+          "description": "City with strong financial presence"
+        }
+      }
+    }
+  },
+  "cta": {
+    "title": "Join this exclusive event!",
+    "subtitle": "Only 30 spots available to maintain quality and personalized attention",
+    "warning": {
+      "title": "This event is exclusive for active DayTradeDak members",
+      "description": "You need to have an active subscription to participate"
+    },
+    "viewPlansButton": "View Subscription Plans",
+    "deadline": "Registration deadline: September 30, 2025"
+  }
+}

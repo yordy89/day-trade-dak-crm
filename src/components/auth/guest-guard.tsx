@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 
 import { paths } from '@/paths';
 import { LogLevel, createLogger } from '@/lib/logger';
-import { useAuthStore } from '@/store/auth-store';
+import { useClientAuth } from '@/hooks/use-client-auth';
 import { useFetchUser } from '@/hooks/use-fetch-user';
 
 export interface GuestGuardProps {
@@ -20,7 +20,7 @@ const logger = createLogger({
 
 export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | null {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user); // Access user state from Zustand
+  const { user } = useClientAuth(); // Use client auth hook
   const { isLoading, error } = useFetchUser(); // Fetch user session
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
 
@@ -35,8 +35,8 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
     }
 
     if (user) {
-      logger.debug('[GuestGuard]: User is logged in, redirecting to dashboard');
-      router.replace(paths.dashboard.overview); // Redirect authenticated users to the dashboard
+      logger.debug('[GuestGuard]: User is logged in, redirecting to academy');
+      router.replace(paths.academy.overview); // Redirect authenticated users to the academy
       return;
     }
 

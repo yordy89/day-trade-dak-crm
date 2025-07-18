@@ -1,33 +1,34 @@
 export const paths = {
   home: '/',
+  about: '/about',
   auth: { signIn: '/auth/sign-in', signUp: '/auth/sign-up', resetPassword: '/auth/reset-password' },
   terms: {
     terms: '/terms/terms-conditions',
   },
-  admin: {
-    users: '/admin'
-  },
-  dashboard: {
-    overview: '/dashboard/overview',
-    mentorship: '/dashboard/mentorship',
-    class: '/dashboard/class',
-    stocks: '/dashboard/stock',
-    psicotrading: '/dashboard/psicotrading',
-    books: '/dashboard/books',
-    companies: '/dashboard/companies',
-    calendar: '/dashboard/calendar',
-    phases: '/dashboard/phases',
-    account: '/dashboard/account',
-    customers: '/dashboard/customers',
-    integrations: '/dashboard/integrations',
-    settings: '/dashboard/settings',
+  academy: {
+    overview: '/academy/overview',
+    market: '/academy/market',
+    earnings: '/academy/earnings',
+    mentorship: '/academy/masterclass',
+    class: '/academy/live-sessions',
+    courses: '/academy/classes',
+    stocks: '/academy/stock',
+    psicotrading: '/academy/psicotrading',
+    books: '/academy/books',
+    companies: '/academy/companies',
+    calendar: '/academy/calendar',
+    phases: '/academy/phases',
+    account: '/academy/account',
+    customers: '/academy/customers',
+    integrations: '/academy/integrations',
+    settings: '/academy/settings',
     subscriptions: {
-      plans: '/dashboard/subscription/plans',
-      success: '/dashboard/subscription/success',
+      plans: '/academy/subscription/plans',
+      success: '/academy/subscription/success',
     },
     superation: {
-      proposit: '/dashboard/superation/proposit',
-      mind: '/dashboard/superation/mind'
+      proposit: '/academy/personal-growth/peace-with-money',
+      mind: '/academy/personal-growth/mind'
     }
   },
   errors: { notFound: '/errors/not-found' },

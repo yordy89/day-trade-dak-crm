@@ -1,0 +1,846 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "classes": "Classes",
+    "masterClasses": "Master Classes",
+    "recordedLiveSessions": "Recorded Live Sessions",
+    "psicoTrading": "PsicoTrading",
+    "personalGrowth": "Personal Growth",
+    "peaceWithMoney": "Peace with Money",
+    "subscriptions": "Subscriptions",
+    "myAccount": "My Account",
+    "tradingAcademy": "Trading Academy",
+    "becomePremium": "Become Premium",
+    "unlockFeatures": "Unlock all features and accelerate your learning",
+    "viewPlans": "View Plans"
+  },
+  "overview": {
+    "pageTitle": "Overview",
+    "welcome": "Welcome, {{name}}!",
+    "welcomeSubtitle": "Your path to success continues. Keep the momentum.",
+    "daysStreak": "{{days}} days streak",
+    "hoursLearning": "{{hours}}h of learning",
+    "achievements": "{{count}} achievements",
+    "continueLearning": "Continue Learning",
+    "yourProgress": "Your Progress",
+    "coursesCompleted": "Courses Completed",
+    "studyHours": "Study Hours",
+    "achievementsEarned": "Achievements Earned",
+    "analysisCompleted": "Analysis Completed",
+    "learningPaths": "Learning Paths",
+    "viewAll": "View All",
+    "explore": "Explore",
+    "percentCompleted": "{{percent}}% completed",
+    "completed": "completed",
+    "recentAchievements": "Recent Achievements",
+    "quickActions": "Quick Actions",
+    "suggestedCourses": "Suggested Courses",
+    "new": "NEW",
+    "trending": "TRENDING",
+    "learningPaths": "Learning Paths",
+    "tradingCourses": {
+      "title": "Trading Courses",
+      "description": "Master professional strategies step by step"
+    },
+    "mentorship": {
+      "title": "1-on-1 Mentorship",
+      "description": "Learn directly from expert traders"
+    },
+    "liveClasses": {
+      "title": "Live Classes",
+      "description": "Daily interactive trading sessions"
+    },
+    "psicoTradingElite": {
+      "title": "PsicoTrading Elite",
+      "description": "Master your mind to master the market"
+    },
+    "recentAchievements": "Recent Achievements",
+    "firstStreak": "First Streak",
+    "tenAnalysis": "10 Analysis",
+    "courseCompleted": "Course Completed",
+    "daysAgo": "{{days}} days ago",
+    "weekAgo": "1 week ago",
+    "weeksAgo": "{{weeks}} weeks ago",
+    "viewAllAchievements": "View All Achievements"
+  },
+  "courses": {
+    "fundamentalCourse": {
+      "title": "Fundamental Course",
+      "description": "Master the basics of trading from scratch"
+    },
+    "advancedStrategies": {
+      "title": "Advanced Strategies",
+      "description": "Take your trading to the next level"
+    },
+    "psicoTradingElite": {
+      "title": "PsicoTrading Elite",
+      "description": "Master your mind to master the market"
+    },
+    "marketAnalysis": {
+      "title": "Market Analysis",
+      "description": "Learn to read and understand markets"
+    }
+  },
+  "achievements": {
+    "firstStreak": "First Streak",
+    "tenAnalysis": "10 Analysis",
+    "courseCompleted": "Course Completed",
+    "weeklyGoal": "Weekly Goal",
+    "monthlyChallenge": "Monthly Challenge",
+    "daysAgo": "{{days}} days ago",
+    "weeksAgo": "{{weeks}} weeks ago"
+  },
+  "stats": {
+    "progress": "Progress",
+    "totalCourses": "Total Courses",
+    "totalHours": "Total Hours",
+    "totalAchievements": "Total Achievements",
+    "totalAnalysis": "Total Analysis",
+    "trend": {
+      "up": "+{{percent}}%",
+      "down": "-{{percent}}%"
+    }
+  },
+  "quickActions": {
+    "title": "Next Steps",
+    "resumeCourse": "Resume Course",
+    "viewAnalysis": "View Analysis",
+    "joinCommunity": "Join Community",
+    "scheduleSession": "Schedule Session",
+    "completeModule": "Complete the technical analysis module",
+    "lessonsRemaining": "Only {{count}} lessons left",
+    "joinLiveClass": "Join tomorrow's live class",
+    "tryPsicoTrading": "Try the PsicoTrading program",
+    "firstSessionFree": "First session available for free"
+  },
+  "account": {
+    "title": "Account Information",
+    "personalInfo": "Personal Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "updateInfo": "Update Information",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "saveChanges": "Save Changes",
+    "updatePassword": "Update Password",
+    "subscriptionStatus": "Subscription Status",
+    "memberSince": "Member Since",
+    "cancelSubscription": "Cancel Subscription",
+    "upgradeSubscription": "Upgrade Subscription",
+    "status": "Status",
+    "active": "ACTIVE",
+    "activeUntil": "Active until {{date}}",
+    "autoRenewalActive": "Auto-renewal active",
+    "expires": "Expires",
+    "activeAutoRenewal": "Active - Auto-renewal",
+    "nextPayment": "Next payment",
+    "startDate": "Start date",
+    "price": "Price",
+    "type": "Type",
+    "weeklySubscription": "Weekly subscription",
+    "monthlySubscription": "Monthly subscription",
+    "oneTimePayment": "One-time payment",
+    "noActiveSubscriptions": "You have no active subscriptions",
+    "exploreOurPlans": "Explore our plans to access premium content",
+    "viewAvailablePlans": "View Available Plans"
+  },
+  "subscriptions": {
+    "pricingAndSubscriptions": "PRICING & SUBSCRIPTIONS",
+    "investInYour": "Invest in your",
+    "financialEducation": "Financial Education",
+    "plans": {
+      "liveWeekly": {
+        "name": "Weekly Live",
+        "description": "Weekly access to live trading"
+      },
+      "liveWeeklyAuto": {
+        "name": "Weekly Live Auto",
+        "description": "Automatic weekly renewal"
+      },
+      "masterClasses": {
+        "name": "Master Classes",
+        "description": "Professional trading master classes"
+      },
+      "liveRecorded": {
+        "name": "Recorded Live",
+        "description": "Complete library of live trading sessions"
+      },
+      "psicoTrading": {
+        "name": "PsicoTrading",
+        "description": "Master the psychology of trading"
+      },
+      "classes": {
+        "name": "Classes",
+        "description": "Structured professional trading course"
+      },
+      "peaceWithMoney": {
+        "name": "Peace with Money",
+        "description": "Complete financial education course"
+      }
+    },
+    "planFeatures": {
+      "liveDailySession": "Daily live trading sessions",
+      "realtimeAnalysis": "Real-time market analysis",
+      "liveTradingSignals": "Live trading signals",
+      "professionalChat": "Chat with professional traders",
+      "weeklyManualRenewal": "Manual renewal each week",
+      "everythingInManual": "Everything in manual plan",
+      "automaticRenewal": "Automatic renewal",
+      "discountedPrice": "Discounted price",
+      "noInterruptions": "No access interruptions",
+      "weeklyMasterClasses": "Weekly live master classes",
+      "advancedStrategies": "Advanced trading strategies",
+      "professionalAnalysis": "Professional technical analysis",
+      "exclusiveCommunity": "Exclusive traders community",
+      "downloadableMaterial": "Downloadable study material",
+      "participationCertificate": "Participation certificate",
+      "communitySpecialPrice": "Special price for community",
+      "accessAllRecorded": "Access to all recorded sessions",
+      "newDailyContent": "New daily content",
+      "stepByStepStrategies": "Strategies explained step by step",
+      "downloadOffline": "Download for offline viewing",
+      "freeWithLive": "FREE with active Live subscription",
+      "psychologySession": "Trading psychology sessions",
+      "emotionalControl": "Emotional control in operations",
+      "mindfulnessTechniques": "Mindfulness techniques",
+      "personalizedMentalPlan": "Personalized mental plan",
+      "psychologicalSupport": "Psychological support group",
+      "monthlyEvaluations": "Monthly evaluations",
+      "15DaysAccess": "15 days of complete access",
+      "40HoursContent": "More than 40 hours of content",
+      "6StructuredModules": "6 structured modules",
+      "practicalExercises": "Practical exercises",
+      "completionCertificate": "Completion certificate",
+      "60DaysAccess": "60 days of complete access",
+      "financialEducation": "Financial education course",
+      "personalFinanceManagement": "Personal finance management",
+      "financialFreedom": "Financial freedom step by step"
+    },
+    "title": "Choose Your Plan",
+    "subtitle": "Select the plan that best fits your trading journey",
+    "monthlyBilling": "Monthly Billing",
+    "yearlyBilling": "Yearly Billing",
+    "perMonth": "/month",
+    "perWeek": "/week",
+    "save": "Save {{percent}}%",
+    "currentPlan": "Current Plan",
+    "selectPlan": "Select Plan",
+    "allPlans": "All Plans",
+    "liveTrading": "Live Trading",
+    "allServices": "All Our Services",
+    "liveTradingPlans": "Live Trading Plans",
+    "monthlySubscriptions": "Monthly Subscriptions",
+    "fixedPlans": "Fixed Plans",
+    "free": "FREE",
+    "withLiveSubscription": "with Live subscription",
+    "oneTimePayment": "one-time payment",
+    "daysOfAccess": "{{days}} days of access",
+    "renewalManual": "Manual renewal every week",
+    "automaticRenewal": "Automatic renewal",
+    "cancelAnytime": "Cancel anytime",
+    "trustedByTraders": "Trusted by Traders",
+    "trustedByTradersDesc": "Join thousands of successful traders",
+    "flexibleAccess": "Flexible Access",
+    "flexibleAccessDesc": "Learn at your own pace, on your schedule",
+    "noContracts": "No contracts or commitments",
+    "bestValuePerWeek": "Best value per week",
+    "save10": "SAVE 10%",
+    "popularTag": "POPULAR",
+    "processing": "Processing...",
+    "activateFree": "Activate Free",
+    "startNow": "Start Now",
+    "alreadyHaveSubscription": "You already have this subscription",
+    "paymentError": "Error processing payment",
+    "errorLoadingPrices": "Error loading prices",
+    "includedNoCost": "Included at no additional cost",
+    "withDiscount": "$22.99 with Live subscription",
+    "features": {
+      "allCourses": "Access to all courses",
+      "liveClasses": "Live trading classes",
+      "personalMentor": "Personal mentor",
+      "tradingSignals": "Trading signals",
+      "communityAccess": "Community access",
+      "downloadableMaterial": "Downloadable material",
+      "certificateCompletion": "Certificate of completion",
+      "prioritySupport": "Priority support"
+    }
+  },
+  "classes": {
+    "title": "Trading Classes",
+    "subtitle": "Learn from professional traders",
+    "searchPlaceholder": "Search classes...",
+    "filters": {
+      "all": "All",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "mostRecent": "Most Recent",
+      "mostPopular": "Most Popular"
+    },
+    "duration": "{{minutes}} min",
+    "students": "{{count}} students",
+    "rating": "{{rating}} rating",
+    "watchNow": "Watch Now",
+    "addToList": "Add to List",
+    "completed": "Completed",
+    "viewClasses": "View Classes",
+    "getAccess": "Get Access (15 days)",
+    "daysRemaining": "{{days}} days remaining",
+    "backToIntro": "Back to Introduction",
+    "intensiveCourse": "15-day intensive course to master trading",
+    "courseDescription": "Learn the strategies and techniques used by professional traders. This course will take you from basic concepts to advanced strategies in just 15 days of intensive content.",
+    "lessons": "Lessons",
+    "daysAccess": "Days of Access",
+    "hoursContent": "Hours of Content",
+    "coursePresentation": "Course Presentation",
+    "discoverWhatYouLearn": "Discover what you'll learn in these 15 days",
+    "features": {
+      "access15Days": "15-Day Access",
+      "access15DaysDesc": "Intensive course with full access for 15 days",
+      "structuredLessons": "Structured Lessons",
+      "structuredLessonsDesc": "Content organized for progressive learning",
+      "provenStrategies": "Proven Strategies",
+      "provenStrategiesDesc": "Trading techniques validated in real markets",
+      "certificateIncluded": "Certificate Included",
+      "certificateIncludedDesc": "Get your certificate upon course completion"
+    },
+    "curriculum": {
+      "module1": "Trading Fundamentals",
+      "module2": "Technical Analysis",
+      "module3": "Risk Management",
+      "module4": "Trading Psychology",
+      "module5": "Advanced Strategies",
+      "module6": "Live Trading",
+      "title": "Course Curriculum",
+      "subtitle": "6 modules designed to take you from beginner to competent trader"
+    },
+    "whyChoose": "Why choose our Classes?",
+    "whyChooseSubtitle": "Designed for traders seeking fast and effective results",
+    "module": "Module",
+    "lessonsCount": "{{count}} lessons",
+    "continueYourLearning": "Continue your learning",
+    "startToday": "Start today",
+    "accessAllContent": "Access all course content and progress at your own pace",
+    "getFullAccess": "Get full access for 15 days and transform your trading",
+    "priceInfo": "Only $52.99 USD for 15 days of full access",
+    "noVideosAvailable": "No videos available",
+    "checkBackLater": "Check back later for new class content",
+    "classVideos": "Class Videos",
+    "percentComplete": "{{percent}}% Complete",
+    "lessonsCompleted": "{{completed}} of {{total}} lessons completed",
+    "completed": "Completed",
+    "videoLesson": "Video lesson",
+    "percentWatched": "{{percent}}% watched",
+    "courseProgress": "Course Progress",
+    "accessExpiresIn": "Your access expires in {{days}} {{days, plural, =1 {day} other {days}}}",
+    "renewAccess": "Renew Access",
+    "accessGrantedBy": "Access granted by",
+    "video": {
+      "tradingClass": "Trading Class",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found.",
+      "backToClasses": "Back to Classes",
+      "aboutTitle": "About this lesson",
+      "aboutDescription": "This comprehensive trading lesson covers essential concepts and strategies for successful day trading. Pay close attention to the key principles discussed and take notes for future reference.",
+      "keyTopics": "Key Topics Covered",
+      "topics": {
+        "analysis": "Market analysis fundamentals",
+        "risk": "Risk management strategies",
+        "entry": "Entry and exit techniques",
+        "examples": "Real-world trading examples"
+      },
+      "learningTips": "Learning Tips",
+      "tips": {
+        "takeNotes": {
+          "title": "Take Notes",
+          "description": "Write down key concepts and strategies as you watch."
+        },
+        "practice": {
+          "title": "Practice",
+          "description": "Apply what you learn in a demo account first."
+        },
+        "askQuestions": {
+          "title": "Ask Questions",
+          "description": "Join our community to discuss concepts with other traders."
+        }
+      }
+    }
+  },
+  "masterclass": {
+    "title": "Master Classes Elite",
+    "subtitle": "Advanced training for professional traders",
+    "description": "Access our exclusive master classes where we reveal the most advanced strategies and techniques of professional trading. High-level content to take your trading to the next level.",
+    "viewMasterClasses": "View Master Classes",
+    "getEliteAccess": "Get Elite Access",
+    "back": "Back",
+    "accessDescription": "Access our exclusive master classes with advanced strategies and professional trading techniques.",
+    "premiumContent": "Premium Content",
+    "advancedLevel": "Advanced Level",
+    "exclusiveAccess": "Exclusive Access",
+    "video": {
+      "eliteContent": "Elite Content",
+      "aboutTitle": "About this master class",
+      "aboutDescription": "This elite master class provides advanced trading insights and strategies from our expert instructors. Take notes and apply these concepts to enhance your trading skills.",
+      "keyTopics": "Key Topics Covered",
+      "topics": {
+        "analysis": "Advanced market analysis techniques",
+        "risk": "Risk management strategies",
+        "psychology": "Elite trading psychology",
+        "caseStudies": "Real-world case studies"
+      },
+      "eliteDescription": "This is exclusive content available only to Elite members. Make sure to take advantage of all the insights shared in this master class.",
+      "proTip": "Pro Tip: Watch with a notebook ready to capture key strategies and insights.",
+      "backToMasterClasses": "Back to Master Classes",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found."
+    },
+    "whyMasterClasses": "Why Master Classes Elite?",
+    "exclusiveContent": {
+      "title": "Exclusive Content",
+      "description": "Master classes with advanced strategies not available in other courses."
+    },
+    "professionalLevel": {
+      "title": "Professional Level",
+      "description": "Techniques and concepts used by institutional traders."
+    },
+    "highValue": {
+      "title": "High Value",
+      "description": "Each class is designed to maximize your return on investment."
+    },
+    "realCases": {
+      "title": "Real Cases",
+      "description": "In-depth analysis of successful operations and lessons learned."
+    },
+    "features": {
+      "institutionalTrading": "Advanced institutional trading strategies",
+      "marketStructure": "In-depth market structure analysis",
+      "professionalRisk": "Professional risk management",
+      "advancedPsychology": "Advanced trading psychology",
+      "orderFlow": "Order flow and volume profile",
+      "algorithms": "Algorithms and systematic trading",
+      "portfolioManagement": "Professional portfolio management",
+      "unlimitedAccess": "Unlimited access and updates"
+    },
+    "topics": {
+      "title": "Master Classes Topics",
+      "institutional": {
+        "title": "Institutional Trading",
+        "description": "How large funds and banks operate"
+      },
+      "advancedManagement": {
+        "title": "Advanced Management",
+        "description": "Professional-level risk management"
+      },
+      "deepAnalysis": {
+        "title": "Deep Analysis",
+        "description": "Market structure and order flow"
+      }
+    },
+    "includedContent": "Included Content",
+    "expectedResults": "Expected Results",
+    "professionalTrading": "Professional Trading",
+    "professionalTradingDesc": "Learn to trade like institutional traders with proven strategies.",
+    "advancedManagement": "Advanced Management",
+    "advancedManagementDesc": "Master risk management techniques used by hedge funds.",
+    "deepAnalysis": "Deep Analysis",
+    "deepAnalysisDesc": "Understand the market from an institutional perspective.",
+    "consistency": "Consistency",
+    "consistencyDesc": "Develop a robust and consistent trading system.",
+    "exclusiveUpdated": "Exclusive and Updated Content",
+    "exclusiveUpdatedDesc": "Our master classes are recorded by professional traders active in the market. Each session includes real analysis of the current market, proven strategies and detailed case studies you won't find anywhere else.",
+    "newClassesAdded": "New master classes added regularly with the latest market trends.",
+    "elevateYourTrading": "Elevate Your Trading to Elite Level",
+    "accessExclusiveKnowledge": "Access exclusive knowledge reserved for professional traders"
+  },
+  "liveRecorded": {
+    "title": "Recorded Live",
+    "subtitle": "Access all recordings of our live trading sessions",
+    "description": "Relive our daily trading classes. Each session includes market analysis, real trades and proven strategies. Learn at your own pace with full access to all recordings.",
+    "viewLiveClasses": "View Live Classes",
+    "getAccess": "Get Access",
+    "back": "Back",
+    "libraryTitle": "Recorded Live Library",
+    "libraryDescription": "Explore our complete collection of recorded live trading sessions. Each recording includes market analysis, real trades and strategies explained step by step.",
+    "mondayToFriday": "Monday to Friday",
+    "activeCommunity": "Active Community",
+    "globalAccess": "Global Access",
+    "updatedDaily": "UPDATED DAILY",
+    "moreThan100Classes": "More than 100 classes available",
+    "whyJoinLiveClasses": "Why join our live classes?",
+    "completeLibrary": {
+      "title": "Complete Library",
+      "description": "Access all recordings of our daily trading classes."
+    },
+    "learnAtYourPace": {
+      "title": "Learn at Your Pace",
+      "description": "Pause, rewind and review lessons as many times as you need."
+    },
+    "detailedAnalysis": {
+      "title": "Detailed Analysis",
+      "description": "Each class includes technical and fundamental market analysis."
+    },
+    "realOperations": {
+      "title": "Real Operations",
+      "description": "Watch real-time trades with step-by-step explanations."
+    },
+    "whatIncludesEachClass": "What does each class include?",
+    "2HoursContent": {
+      "title": "2+ Hours of Content",
+      "description": "Each class includes complete market analysis and explained operations"
+    },
+    "technicalAnalysis": {
+      "title": "Technical Analysis",
+      "description": "Patterns, indicators and key levels explained in detail"
+    },
+    "realTrades": {
+      "title": "Real Trades",
+      "description": "Entries, exits and position management step by step"
+    },
+    "whatIncludes": "What's Included",
+    "features": {
+      "newRecordings": "New recordings added daily",
+      "prePostMarket": "Pre-market and post-market analysis",
+      "detailedExplanations": "Detailed explanations of each trade",
+      "differentMarkets": "Strategies for different markets",
+      "riskManagement": "Risk management explained step by step",
+      "patternIdentification": "Pattern and opportunity identification",
+      "practicalPsychology": "Trading psychology in practice",
+      "unlimitedAccess": "Unlimited access to all recordings"
+    },
+    "whatYouLearn": "What You'll Learn",
+    "advancedTechnicalAnalysis": "Advanced Technical Analysis",
+    "advancedTechnicalAnalysisDesc": "Patterns, indicators and professional strategies applied in real time.",
+    "riskManagement": "Risk Management",
+    "riskManagementDesc": "How to protect your capital and maximize profits with proper stops and sizing.",
+    "tradingPsychology": "Trading Psychology",
+    "tradingPsychologyDesc": "Maintain discipline and control your emotions during operations.",
+    "multipleStrategies": "Multiple Strategies",
+    "multipleStrategiesDesc": "Day trading, swing trading and strategies for different market conditions.",
+    "learnFromProfessionals": "Learn from Professional Traders",
+    "learnFromProfessionalsDesc": "Our classes are taught by traders with years of experience in financial markets. Each instructor brings their unique expertise and strategies proven in real markets.",
+    "10YearsExperience": "10+ years of experience",
+    "thousandsSuccessfulTrades": "Thousands of successful trades",
+    "hundredsStudents": "Hundreds of students",
+    "knowledgeLibrary": "Knowledge Library",
+    "knowledgeLibraryDesc": "Access our extensive library of recorded classes. Each session captures real-time market analysis, trading decisions and lessons learned. Perfect for reviewing concepts and improving your strategy.",
+    "newRecordingsAddedDaily": "New recordings added daily after each live session.",
+    "readyToImprove": "Ready to improve your trading?",
+    "accessEntireLibrary": "Access our entire class library and learn from the best",
+    "video": {
+      "sessionTitle": "Live Session - {{date}} at {{time}}",
+      "liveRecording": "Live Recording",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found.",
+      "backToSessions": "Back to Live Sessions",
+      "aboutTitle": "About this live session",
+      "aboutDescription": "This is a recorded live trading session where our expert instructors share real-time market analysis, trading strategies, and answer questions from the community.",
+      "whatToExpect": "What to expect:",
+      "expectations": {
+        "analysis": "Real-time market analysis and commentary",
+        "examples": "Live trading examples and setups",
+        "qa": "Q&A with community members",
+        "technical": "Technical and fundamental analysis"
+      },
+      "liveSessionRecording": "Live Session Recording",
+      "recordingDescription": "This recording captures the full live trading session, including all market analysis, trades executed, and community interactions.",
+      "tip": "Tip: Take notes on the trading setups and strategies discussed during the session."
+    }
+  },
+  "psicotrading": {
+    "title": "PsicoTrading Elite",
+    "subtitle": "Master your mind, master the markets",
+    "description": "90% of trading success is in your mind. Learn to control your emotions, develop unbreakable discipline and achieve the consistency you seek.",
+    "sessions1to1": "1-on-1 Sessions",
+    "personalizedPlan": "Personalized Plan",
+    "certifiedPsychologist": "Certified Psychologist",
+    "accessVideos": "Access Videos",
+    "startPsicoTrading": "Start PsicoTrading Elite",
+    "backToStart": "Back to Start",
+    "videosTitle": "PsicoTrading Videos",
+    "videosDescription": "Access all exclusive PsicoTrading Elite content",
+    "whatYouAchieve": "What will you achieve with PsicoTrading?",
+    "whatIncludesPsicoTradingElite": "What's included in your PsicoTrading Elite program",
+    "thisProgramIsForYou": "This program is for you if...",
+    "notForYou": "NOT for you if...",
+    "howItWorks": "How does it work?",
+    "transformYourTrading": "Transform Your Trading from the Root",
+    "successfulTradingDescription": "Successful trading is not just about strategies and analysis. It's about having the mental strength to execute your plan without doubt, handle losses without emotional destruction, and maintain discipline when everyone around you panics.",
+    "improveAsPersonAndTrader": "With PsicoTrading Elite, you'll not only improve as a trader, you'll improve as a person.",
+    "readyToMasterYourMind": "Ready to master your mind?",
+    "startYourTransformation": "Start your transformation today",
+    "mentalMastery": {
+      "title": "Mental Mastery",
+      "description": "Develop the mental discipline needed to trade with confidence and emotional control."
+    },
+    "laserFocus": {
+      "title": "Laser Focus",
+      "description": "Learn to maintain focus on your goals without being carried away by market emotions."
+    },
+    "emotionalManagement": {
+      "title": "Emotional Management",
+      "description": "Master your emotions to make rational decisions and avoid impulsive trading."
+    },
+    "consistentPerformance": {
+      "title": "Consistent Performance",
+      "description": "Develop the right mindset to achieve consistent long-term results."
+    },
+    "features": {
+      "oneOnOne": "1-on-1 sessions with psychologist specialized in trading",
+      "personalizedEvaluation": "Personalized psychological evaluation",
+      "adaptedPlan": "Mental plan adapted to your trading style",
+      "advancedEmotional": "Advanced emotional management techniques",
+      "mindfulness": "Mindfulness applied to trading",
+      "fearGreedTools": "Tools to overcome fear and greed",
+      "disciplinePatience": "Development of discipline and patience",
+      "lossManagement": "Strategies to handle losses"
+    },
+    "forYou": {
+      "emotionsControl": "You feel your emotions control your trades",
+      "lostMoneyFear": "You've lost money due to fear or greed",
+      "developDiscipline": "You want to develop discipline and patience",
+      "seekConsistency": "You seek consistency in your results",
+      "readyToWork": "You're ready to work on your mindset",
+      "maximizePotential": "You want to maximize your potential as a trader"
+    },
+    "notForYou": {
+      "magicSolution": "You're looking for a magic solution without effort",
+      "notWillingToWork": "You're not willing to work on yourself",
+      "onlyTechnicalAnalysis": "You believe trading is only technical analysis",
+      "noTimeForSessions": "You don't have time for the sessions",
+      "immediateResults": "You expect immediate results without process",
+      "notOpenToChange": "You're not open to personal change"
+    },
+    "steps": {
+      "initialEvaluation": "Initial Evaluation",
+      "initialEvaluationDesc": "We analyze your psychological profile and trading style",
+      "personalizedPlan": "Personalized Plan",
+      "personalizedPlanDesc": "We create a plan adapted to your specific needs",
+      "sessions1to1": "1-on-1 Sessions",
+      "sessions1to1Desc": "We work together on your mental and emotional development",
+      "results": "Results",
+      "resultsDesc": "You see improvements in your trading and overall well-being"
+    },
+    "modules": {
+      "emotionalControl": "Emotional Control",
+      "mentalDiscipline": "Mental Discipline",
+      "stressManagement": "Stress Management",
+      "decisionMaking": "Decision Making",
+      "mindfulness": "Trading Mindfulness"
+    },
+    "video": {
+      "psicoTrading": "PsicoTrading",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found.",
+      "backToPsicoTrading": "Back to PsicoTrading",
+      "instructor": "Trading Psychology Expert",
+      "aboutTitle": "About this lesson",
+      "aboutDescription": "This PsicoTrading lesson focuses on the psychological aspects of trading, helping you develop the mental discipline and emotional control necessary for successful trading.",
+      "keyLearningPoints": "Key Learning Points:",
+      "points": {
+        "understanding": "Understanding trading psychology",
+        "managing": "Managing emotions during trades",
+        "developing": "Developing mental discipline",
+        "building": "Building confidence in your trading decisions"
+      },
+      "psychologyTips": "Psychology Tips",
+      "tips": {
+        "mentalPrep": {
+          "title": "Mental Preparation",
+          "description": "Clear your mind before watching. Be open to challenging your current beliefs about trading."
+        },
+        "takeNotes": {
+          "title": "Take Notes",
+          "description": "Write down emotional triggers and mental blocks you identify during the lesson."
+        },
+        "practice": {
+          "title": "Practice Daily",
+          "description": "Apply the psychological techniques in your daily trading routine for best results."
+        }
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": {
+      "title": "Notifications",
+      "emailNotifications": "Email Notifications",
+      "pushNotifications": "Push Notifications",
+      "tradingAlerts": "Trading Alerts",
+      "courseUpdates": "Course Updates",
+      "communityActivity": "Community Activity"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "language": "Language",
+      "timezone": "Timezone",
+      "currency": "Currency",
+      "theme": "Theme"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "profileVisibility": "Profile Visibility",
+      "showProgress": "Show Progress",
+      "shareAchievements": "Share Achievements"
+    }
+  },
+  "peaceWithMoney": {
+    "title": "Course for Traders: PEACE WITH MONEY",
+    "subtitle": "21 days to transform your relationship with money",
+    "description": "What if your real winning strategy was to HEAL your relationship with money?",
+    "mainDescription": "It's not your trading system that's holding you back, it's your emotional, mental and energetic bond with money. In 21 days you'll get the keys to transform that relationship and build a solid foundation for sustainable results.",
+    "21Days": "21 Days",
+    "60DaysAccess": "60 days of access",
+    "authorName": "Jorge Lázaro León",
+    "viewVideos": "View Videos",
+    "startTransformation": "I want to start the inner change",
+    "backToIntro": "← Back to introduction",
+    "downloadEbook": "Download Ebook",
+    "autoInquiry1": "SELF-INQUIRY 1 (in lesson 7)",
+    "autoInquiry2": "SELF-INQUIRY 2 (in lesson 14)", 
+    "autoInquiry3": "SELF-INQUIRY 3 (in lesson 21)",
+    "video": {
+      "errorLoading": "Error loading videos",
+      "failedToLoad": "Failed to load Peace with Money videos",
+      "noVideosAvailable": "No videos available yet",
+      "checkBackLater": "Check back later for new Peace with Money content",
+      "dayTitle": "Day {{day}}: {{title}}",
+      "selfInquiry": "Self-Inquiry",
+      "videoLesson": "Video lesson",
+      "dayOf21": "Day {{day}} of 21",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found.",
+      "backToPeaceWithMoney": "Back to Peace with Money",
+      "day": "Day {{day}}",
+      "specialSession": "Special Session",
+      "videoDescription": "Peace with Money - Day {{day}}: {{title}}",
+      "instructor": "Personal Growth Expert",
+      "aboutThisLesson": "About this lesson",
+      "defaultDescription": "This Peace with Money lesson helps you develop a healthy relationship with money through inner transformation and self-discovery.",
+      "specialSessionTitle": "Special Session:",
+      "specialSessionDescription": "This lesson includes a self-inquiry exercise. Don't forget to download the corresponding PDF from the main page.",
+      "dailyPractice": "Daily Practice",
+      "practices": {
+        "morningReflection": {
+          "title": "Morning Reflection",
+          "description": "Start your day with gratitude for the abundance already present in your life."
+        },
+        "journalInsights": {
+          "title": "Journal Insights",
+          "description": "Write down any emotions or resistance that arise when thinking about money."
+        },
+        "practiceAcceptance": {
+          "title": "Practice Acceptance",
+          "description": "Accept your current financial situation while remaining open to positive change."
+        }
+      },
+      "downloadReminder": "Remember to download and complete the self-inquiry worksheet for Day {{day}}!"
+    },
+    "whatYouTransform": "What you'll transform",
+    "benefits": {
+      "innerPeace": {
+        "title": "Inner Peace",
+        "description": "Transform your relationship with money from the emotional and mental root."
+      },
+      "mentalClarity": {
+        "title": "Mental Clarity",
+        "description": "Identify and release limiting beliefs that sabotage your financial success."
+      },
+      "emotionalStability": {
+        "title": "Emotional Stability",
+        "description": "Trade from calm and coherence, not from fear or greed."
+      },
+      "sustainableGrowth": {
+        "title": "Sustainable Growth",
+        "description": "Build a solid foundation for consistent and lasting results."
+      }
+    },
+    "forYouIf": "This course is for you if...",
+    "targetAudience": {
+      "frustration": "You're frustrated that your results don't reflect your technical preparation",
+      "emotionalRollercoaster": "You experience emotional ups and downs when trading: anxiety, euphoria, fear, blockage",
+      "cantRetainMoney": "You make money, but can't retain or sustain it over time",
+      "internalSabotage": "You feel that, despite studying and training, something internal sabotages you",
+      "beyondTechnicalAnalysis": "You know that financial freedom isn't achieved with technical analysis alone"
+    },
+    "whatYouReceive": "What you'll receive in these 21 days",
+    "whatYouGet": {
+      "clearStructure": "A clear structure to review and heal your relationship with money",
+      "practicalTools": "Practical tools to transform limiting beliefs",
+      "keysToWork": "Keys to work on your worthiness, focus and inner connection",
+      "energeticTechniques": "Energetic, emotional and mental techniques to trade with more coherence",
+      "solidFoundation": "A solid foundation to begin a path of true financial freedom"
+    },
+    "courseIncludes": "What's included in the course?",
+    "includes": {
+      "21Lessons": "21 lessons with theoretical-practical content",
+      "ebook": "E-book: The Definitive Guide to Living Peace with Money",
+      "exercises": "Introspection, visualization and abundance activation exercises",
+      "onlineAccess": "100% online access, from anywhere, at your own pace",
+      "60DaysAccess": "60 days of complete access to content"
+    },
+    "thisIsNot": "This is NOT...",
+    "notList": {
+      "technicalCourse": "A technical trading course",
+      "quickProfit": "A promise of quick profitability",
+      "spiritualPath": "A spiritual path without practical application"
+    },
+    "thisIs": "This IS...",
+    "isList": {
+      "doorToRelationship": "A door to an ordered and powerful relationship with money",
+      "innerWork": "Inner work to sustain success",
+      "baseForTrading": "The foundation for trading with greater peace and emotional stability"
+    },
+    "whyStruggles": "Why do you still have ups and downs even though you master technical analysis?",
+    "strugglesAnswer": "Because money activates your deepest fears. Because the relationship you have with it defines how you attract it, sustain it or lose it. Changing that relationship changes your results.",
+    "yourInstructor": "Your instructor",
+    "instructorBio": "Jorge Lázaro León 👨‍🏫✍️ is a writer, therapist and coach specialized in personal and energetic transformation. His approach integrates tools of consciousness, energy and inner reprogramming to help you live money from worthiness and peace.",
+    "exclusiveBonus": "EXCLUSIVE BONUS",
+    "bonusDescription": "When you enroll, you can download the e-book \"The definitive guide to living peace with money\" for free.",
+    "readyToTransform": "Ready to transform your relationship with money?",
+    "startJourney": "Start your 21-day journey to financial peace"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "module": "Module {{number}}",
+    "welcomeBack": "Welcome back, {{name}}",
+    "live": "LIVE",
+    "freePlan": "Free Plan",
+    "becomePremium": "Become Premium",
+    "unlockAllFeatures": "Unlock all features",
+    "upgrade": "Upgrade",
+    "dashboard": "Dashboard",
+    "myProfile": "My Profile",
+    "mySubscription": "My Subscription",
+    "myCourses": "My Courses",
+    "achievements": "Achievements",
+    "logout": "Logout"
+  }
+}
