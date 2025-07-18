@@ -1,9 +1,7 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
-import { useSyncExternalStore } from 'react';
+import { useCallback, useRef, useSyncExternalStore } from 'react';
 import { useAuthStore } from '@/store/auth-store';
-import type { AuthState } from '@/store/auth-store';
 
 // Server-side snapshot (always returns the same object)
 const serverSnapshot = {

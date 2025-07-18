@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -13,19 +13,14 @@ import {
   CircularProgress,
   Chip,
   Grid,
-  LinearProgress,
   useTheme,
-  alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Brain } from '@phosphor-icons/react/dist/ssr/Brain';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
-import { videoService } from '@/services/api/video.service';
 import API from '@/lib/axios';
 
 export default function PsicoTradingVideoPlayerPage() {
@@ -34,7 +29,7 @@ export default function PsicoTradingVideoPlayerPage() {
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const [hasWatched, setHasWatched] = useState(false);
+  const [_hasWatched, _setHasWatched] = useState(false);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -61,7 +56,7 @@ export default function PsicoTradingVideoPlayerPage() {
   
   // Fetch user's progress for this video
   // TODO: Enable when backend endpoints are implemented
-  const userProgress = null;
+  const _userProgress = null;
   
   // Extract video name from key
   const extractVideoName = (key: string): string => {
@@ -74,7 +69,7 @@ export default function PsicoTradingVideoPlayerPage() {
   };
   
   // Handle video progress
-  const handleProgress = (progress: number) => {
+  const handleProgress = (_progress: number) => {
     // TODO: Enable when backend endpoints are implemented
   };
   

@@ -17,7 +17,7 @@ export function SubscriptionGuard({
   requiredSubscription,
 }: SubscriptionGuardProps): React.JSX.Element | null {
   const router = useRouter();
-  const { user, userSubscriptions, userRole } = useClientAuth();
+  const { user: _user, userSubscriptions, userRole } = useClientAuth();
 
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
 
@@ -41,7 +41,7 @@ export function SubscriptionGuard({
     });
 
     // ✅ Allow admins to access all pages
-    if (userRole === Role.ADMIN || hasSubscriptionAccess) {
+    if (userRole === (Role.ADMIN as string) || hasSubscriptionAccess) {
       setIsChecking(false); // Admins & users with a valid subscription can proceed
     } else {
       router.replace(paths.academy.subscriptions.plans); // Redirect unauthorized users

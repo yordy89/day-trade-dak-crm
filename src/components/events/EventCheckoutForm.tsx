@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { eventService } from '@/services/api/event.service';
@@ -14,7 +14,6 @@ import {
   CardContent,
   CardHeader,
   Grid,
-  Stack,
 } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
 

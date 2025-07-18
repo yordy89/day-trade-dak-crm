@@ -38,7 +38,7 @@ interface CalendarEvent {
 
 export function Calendar(): React.JSX.Element {
   const { companies } = useCompanyStore();
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [newEvent, setNewEvent] = useState<Partial<CalendarEvent>>({});
@@ -48,10 +48,17 @@ export function Calendar(): React.JSX.Element {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const eventsData = await eventService.getAll();
-        const personalEvents = eventsData.map((e: any) => ({
-          id: e._id, // ✅ Ensure events have an ID from MongoDB
-          ...e,
+        const response = await eventService.getEvents();
+        const eventsData = response.data;
+        const personalEvents: CalendarEvent[] = eventsData.map((e: any) => ({
+          id: e._id,
+          title: e.title || e.name,
+          start: e.startDate || e.date,
+          end: e.endDate || e.date,
+          startDate: e.startDate || e.date,
+          endDate: e.endDate || e.date,
+          allDay: true,
+          type: 'personal' as const,
         }));
 
         // **Fetch earnings events for favorite companies**
@@ -65,7 +72,7 @@ export function Calendar(): React.JSX.Element {
               start: `2025-02-${day.day === 'Monday' ? '17' : day.day === 'Tuesday' ? '18' : day.day === 'Wednesday' ? '19' : day.day === 'Thursday' ? '20' : '21'}`,
               end: `2025-02-${day.day === 'Monday' ? '17' : day.day === 'Tuesday' ? '18' : day.day === 'Wednesday' ? '19' : day.day === 'Thursday' ? '20' : '21'}`,
               allDay: true,
-              type: 'earnings',
+              type: 'earnings' as const,
               startDate: `2025-02-${day.day === 'Monday' ? '17' : day.day === 'Tuesday' ? '18' : day.day === 'Wednesday' ? '19' : day.day === 'Thursday' ? '20' : '21'}`,
               endDate: `2025-02-${day.day === 'Monday' ? '17' : day.day === 'Tuesday' ? '18' : day.day === 'Wednesday' ? '19' : day.day === 'Thursday' ? '20' : '21'}`,
             }))
@@ -110,13 +117,13 @@ export function Calendar(): React.JSX.Element {
   // ✅ Handle dragging an event
   const handleEventDrop = async (info: any) => {
     const updatedEvent = {
-      start: info.event.start.toISOString(),
-      end: info.event.end ? info.event.end.toISOString() : info.event.start.toISOString(),
-      allDay: info.event.allDay,
+      startDate: info.event.start.toISOString(),
+      endDate: info.event.end ? info.event.end.toISOString() : info.event.start.toISOString(),
+      date: info.event.start.toISOString(),
     };
 
     try {
-      await eventService.update(info.event.id, updatedEvent);
+      await eventService.updateEvent(info.event.id, updatedEvent);
       setEvents(events.map((e) => (e.id === info.event.id ? { ...e, ...updatedEvent } : e)));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -126,12 +133,13 @@ export function Calendar(): React.JSX.Element {
   // ✅ Handle resizing an event
   const handleEventResize = async (info: any) => {
     const updatedEvent = {
-      start: info.event.start.toISOString(),
-      end: info.event.end ? info.event.end.toISOString() : info.event.start.toISOString(),
+      startDate: info.event.start.toISOString(),
+      endDate: info.event.end ? info.event.end.toISOString() : info.event.start.toISOString(),
+      date: info.event.start.toISOString(),
     };
 
     try {
-      await eventService.update(info.event.id, updatedEvent);
+      await eventService.updateEvent(info.event.id, updatedEvent);
       setEvents(events.map((e) => (e.id === info.event.id ? { ...e, ...updatedEvent } : e)));
     } catch (error) {
       console.error('Error resizing event:', error);
@@ -143,15 +151,35 @@ export function Calendar(): React.JSX.Element {
     if (!newEvent.title || !newEvent.start || !newEvent.end) return;
 
     try {
-      if (selectedEvent) {
-        await eventService.update(selectedEvent.id, newEvent);
+      if (selectedEvent?.id) {
+        await eventService.updateEvent(selectedEvent.id, {
+          name: newEvent.title || selectedEvent.title,
+          title: newEvent.title,
+          date: newEvent.start || selectedEvent.start,
+          startDate: newEvent.start,
+          endDate: newEvent.end,
+        });
         setEvents(events.map((e) => (e.id === selectedEvent.id ? { ...e, ...newEvent } : e)));
       } else {
-        const newEventData = await eventService.create({
-          ...newEvent,
-          userId: user?._id,
+        const newEventData = await eventService.createEvent({
+          name: newEvent.title || '',
+          title: newEvent.title,
+          date: newEvent.start || new Date().toISOString(),
+          startDate: newEvent.start,
+          endDate: newEvent.end,
+          isActive: true,
         });
-        setEvents([...events, newEventData]);
+        const calendarEvent: CalendarEvent = {
+          id: newEventData._id,
+          title: newEventData.title || newEventData.name,
+          start: newEventData.startDate || newEventData.date,
+          end: newEventData.endDate || newEventData.date,
+          startDate: newEventData.startDate || newEventData.date,
+          endDate: newEventData.endDate || newEventData.date,
+          allDay: true,
+          type: 'personal',
+        };
+        setEvents([...events, calendarEvent]);
       }
 
       setDialogOpen(false);

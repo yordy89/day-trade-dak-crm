@@ -5,8 +5,6 @@ import {
   Box,
   Container,
   Typography,
-  Card,
-  CardContent,
   Button,
   Stack,
   Grid,
@@ -19,14 +17,9 @@ import {
   AvatarGroup,
   Paper,
   Divider,
-  IconButton,
-  Tooltip,
-  Fade,
-  Grow,
 } from '@mui/material';
 import {
   VideoCamera,
-  Microphone,
   Desktop,
   Users,
   Calendar,
@@ -37,18 +30,25 @@ import {
   WhatsappLogo,
   Timer,
   CheckCircle,
-  Info,
   Television,
   CalendarCheck,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useTranslation } from 'react-i18next';
-import { User } from '@/types/user';
 import axios from 'axios';
 import { formatDistanceToNow, isAfter, isBefore, addMinutes } from 'date-fns';
 import { MainNavbar } from '@/components/landing/main-navbar';
-import { VideoMeetingRoom } from '@/components/meetings/video-meeting-room';
+import dynamic from 'next/dynamic';
+
+// Dynamic import to avoid SSR issues with VideoSDK
+const VideoMeetingRoom = dynamic(
+  () => import('@/components/meetings/video-meeting-room').then(mod => mod.VideoMeetingRoom),
+  { 
+    ssr: false,
+    loading: () => <CircularProgress />
+  }
+);
 
 interface LiveMeetingsResponse {
   hasAccess: boolean;
@@ -97,7 +97,7 @@ export default function LivePage() {
   const theme = useTheme();
   const router = useRouter();
   const { user, authToken, isLoading: authLoading } = useClientAuth();
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   
   const [liveMeetingsData, setLiveMeetingsData] = useState<LiveMeetingsResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -110,7 +110,7 @@ export default function LivePage() {
   useEffect(() => {
     const fetchMeetings = async () => {
       if (!user || !authToken) {
-        console.log('No user or auth token available', { user: !!user, authToken: !!authToken });
+        console.log('No user or auth token available', { user: Boolean(user), authToken: Boolean(authToken) });
         setError('Please log in to view live sessions');
         setLoading(false);
         return;
@@ -172,7 +172,7 @@ export default function LivePage() {
       }
     };
 
-    fetchMeetings();
+    void fetchMeetings();
   }, [user, authToken]);
 
   // Update countdown timer for selected meeting
@@ -217,7 +217,7 @@ export default function LivePage() {
 
     try {
       // Call API to start the meeting
-      const response = await axios.post(
+      const _response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/admin/meetings/${session._id}/start`,
         {},
         {
@@ -237,7 +237,7 @@ export default function LivePage() {
       setLiveMeetingsData(meetingsResponse.data);
       
       // Then join the meeting
-      handleJoinSession(session);
+      await handleJoinSession(session);
     } catch (err: any) {
       console.error('Failed to start meeting:', err);
       if (err.response?.status === 401) {
@@ -262,7 +262,7 @@ export default function LivePage() {
     return 'scheduled';
   };
 
-  const renderMeetingButton = (session: ScheduledSession, isPrimary: boolean = false) => {
+  const renderMeetingButton = (session: ScheduledSession, isPrimary = false) => {
     const status = getSessionStatus(session);
     const hostId = typeof session.host === 'string' ? session.host : session.host._id;
     const isHost = user?._id === hostId;
@@ -276,7 +276,7 @@ export default function LivePage() {
           color="primary"
           size={isPrimary ? "large" : "medium"}
           startIcon={<VideoCamera size={isPrimary ? 24 : 20} weight="fill" />}
-          onClick={() => handleStartMeeting(session)}
+          onClick={() => void handleStartMeeting(session)}
           sx={{
             fontWeight: 600,
           }}
@@ -295,7 +295,7 @@ export default function LivePage() {
             color="error"
             size={isPrimary ? "large" : "medium"}
             startIcon={<Play size={isPrimary ? 24 : 20} weight="fill" />}
-            onClick={() => handleJoinSession(session)}
+            onClick={() => void handleJoinSession(session)}
             sx={{
               animation: 'pulse 2s infinite',
               '@keyframes pulse': {
@@ -421,7 +421,7 @@ export default function LivePage() {
             }}
           >
             <Typography variant="h5" fontWeight={600} gutterBottom>
-              What You'll Get Access To:
+              What You&apos;ll Get Access To:
             </Typography>
             <Grid container spacing={3} sx={{ mt: 1 }}>
               <Grid item xs={12} md={6}>
@@ -516,15 +516,13 @@ export default function LivePage() {
       <MainNavbar />
       
       {/* Show video meeting room if active */}
-      {activeMeeting && user && (
-        <VideoMeetingRoom
+      {activeMeeting && user ? <VideoMeetingRoom
           meetingId={activeMeeting.meetingId}
           roomId={activeMeeting.roomId}
           isHost={activeMeeting.isHost}
           userName={`${user.firstName} ${user.lastName}`}
           onClose={() => setActiveMeeting(null)}
-        />
-      )}
+        /> : null}
       
       <Container maxWidth="xl" sx={{ py: 3 }}>
         {/* Header */}
@@ -594,11 +592,9 @@ export default function LivePage() {
                       {renderMeetingButton(currentMeeting, true)}
                     </Stack>
                     
-                    {currentMeeting.description && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    {currentMeeting.description ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                         {currentMeeting.description}
-                      </Typography>
-                    )}
+                      </Typography> : null}
                   </Box>
 
                   <Divider />
@@ -673,9 +669,7 @@ export default function LivePage() {
                             <Typography variant="body2" fontWeight={500}>
                               {currentMeeting.meetingType.replace(/_/g, ' ').toUpperCase()}
                             </Typography>
-                            {currentMeeting.isRecurring && (
-                              <Chip label="Recurring" size="small" variant="outlined" />
-                            )}
+                            {currentMeeting.isRecurring ? <Chip label="Recurring" size="small" variant="outlined" /> : null}
                           </Stack>
                         </Box>
 
@@ -689,15 +683,13 @@ export default function LivePage() {
                             <Typography variant="body2">
                               {currentMeeting.attendees?.length || 0} / {currentMeeting.maxParticipants}
                             </Typography>
-                            {currentMeeting.attendees && currentMeeting.attendees.length > 0 && (
-                              <AvatarGroup max={3} sx={{ ml: 1 }}>
+                            {currentMeeting.attendees && currentMeeting.attendees.length > 0 ? <AvatarGroup max={3} sx={{ ml: 1 }}>
                                 {currentMeeting.attendees.map((attendee: any, idx: number) => (
                                   <Avatar key={idx} sx={{ width: 24, height: 24 }}>
                                     {attendee.firstName?.charAt(0) || '?'}
                                   </Avatar>
                                 ))}
-                              </AvatarGroup>
-                            )}
+                              </AvatarGroup> : null}
                           </Stack>
                         </Box>
                       </Stack>
@@ -710,24 +702,15 @@ export default function LivePage() {
                       MEETING FEATURES
                     </Typography>
                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
-                      {currentMeeting.enableScreenShare && (
-                        <Chip icon={<Desktop size={14} />} label="Screen Share" size="small" />
-                      )}
-                      {currentMeeting.enableRecording && (
-                        <Chip icon={<Television size={14} />} label="Recording" size="small" />
-                      )}
-                      {currentMeeting.enableChat && (
-                        <Chip icon={<Envelope size={14} />} label="Chat" size="small" />
-                      )}
-                      {currentMeeting.whiteboardEnabled && (
-                        <Chip icon={<CheckCircle size={14} />} label="Whiteboard" size="small" />
-                      )}
+                      {currentMeeting.enableScreenShare ? <Chip icon={<Desktop size={14} />} label="Screen Share" size="small" /> : null}
+                      {currentMeeting.enableRecording ? <Chip icon={<Television size={14} />} label="Recording" size="small" /> : null}
+                      {currentMeeting.enableChat ? <Chip icon={<Envelope size={14} />} label="Chat" size="small" /> : null}
+                      {currentMeeting.whiteboardEnabled ? <Chip icon={<CheckCircle size={14} />} label="Whiteboard" size="small" /> : null}
                     </Stack>
                   </Box>
 
                   {/* Countdown or Status */}
-                  {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart && (
-                    <Box 
+                  {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart ? <Box 
                       sx={{ 
                         p: 2, 
                         bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -738,8 +721,7 @@ export default function LivePage() {
                       <Typography variant="body2" color="primary" fontWeight={600}>
                         Starting in {timeUntilStart}
                       </Typography>
-                    </Box>
-                  )}
+                    </Box> : null}
                 </Stack>
               ) : (
                 <Box 
@@ -822,7 +804,7 @@ export default function LivePage() {
             >
               <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
                 <Typography variant="h6" fontWeight={600}>
-                  Today's Meetings
+                  Today&apos;s Meetings
                 </Typography>
               </Box>
               

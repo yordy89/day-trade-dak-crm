@@ -43,6 +43,8 @@ interface CustomInputProps {
   required?: boolean;
   isDarkMode: boolean;
   muiTheme: any;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({ 
@@ -196,7 +198,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 const VipRegistrationForm: React.FC<VipFormProps> = ({ eventId, priceId, promoCode }) => {
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -252,18 +254,15 @@ const VipRegistrationForm: React.FC<VipFormProps> = ({ eventId, priceId, promoCo
           <Typography variant="body2" color="text.secondary">
             {t('events.registration.vip.subtitle')}
           </Typography>
-          {promoCode && (
-            <Chip 
+          {promoCode ? <Chip 
               label={`${t('events.registration.vip.promoCodeApplied')}: ${promoCode}`}
               color="success"
               size="small"
               sx={{ mt: 1 }}
-            />
-          )}
+            /> : null}
         </Box>
 
-        {errorMessage && (
-          <Alert 
+        {errorMessage ? <Alert 
             severity="error" 
             sx={{ 
               borderRadius: 2,
@@ -271,8 +270,7 @@ const VipRegistrationForm: React.FC<VipFormProps> = ({ eventId, priceId, promoCo
             }}
           >
             {errorMessage}
-          </Alert>
-        )}
+          </Alert> : null}
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <CustomInput

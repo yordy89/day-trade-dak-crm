@@ -52,11 +52,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       case 'linear':
         return (
           <Stack spacing={2} sx={{ width: '100%' }}>
-            {text && (
-              <Typography variant="body2" color="text.secondary" align="center">
+            {text ? <Typography variant="body2" color="text.secondary" align="center">
                 {text}
-              </Typography>
-            )}
+              </Typography> : null}
             <LinearProgress />
           </Stack>
         );
@@ -66,7 +64,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
           <Stack spacing={2} sx={{ width: '100%' }}>
             {Array.from({ length: skeletonRows }).map((_, index) => (
               <Skeleton
-                key={index}
+                key={`skeleton-row-${index}`}
                 variant="rectangular"
                 height={60}
                 animation="wave"
@@ -116,8 +114,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
                 />
               </Box>
             </Box>
-            {text && (
-              <Typography
+            {text ? <Typography
                 variant="body2"
                 color="text.secondary"
                 align="center"
@@ -129,8 +126,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
               >
                 <TrendingUp sx={{ fontSize: 16 }} />
                 {text}
-              </Typography>
-            )}
+              </Typography> : null}
           </Stack>
         );
 
@@ -138,11 +134,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         return (
           <Stack spacing={2} alignItems="center">
             <CircularProgress size={sizes[size]} />
-            {text && (
-              <Typography variant="body2" color="text.secondary" align="center">
+            {text ? <Typography variant="body2" color="text.secondary" align="center">
                 {text}
-              </Typography>
-            )}
+              </Typography> : null}
           </Stack>
         );
     }

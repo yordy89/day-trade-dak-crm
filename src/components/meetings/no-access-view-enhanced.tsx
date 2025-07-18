@@ -15,7 +15,6 @@ import {
   CardContent,
   alpha,
   useTheme,
-  Divider,
 } from '@mui/material';
 import {
   Television,
@@ -24,13 +23,10 @@ import {
   Phone,
   WhatsappLogo,
   Lock,
-  Crown,
-  Info,
   Calendar,
   Clock,
 } from '@phosphor-icons/react';
 import { MainNavbar } from '@/components/landing/main-navbar';
-import { SubscriptionPlan } from '@/types/user';
 
 interface Meeting {
   _id: string;
@@ -87,7 +83,6 @@ export function NoAccessViewEnhanced({
   hasAccess,
   meetings,
   supportInfo,
-  userSubscriptions = [],
 }: NoAccessViewEnhancedProps) {
   const theme = useTheme();
   
@@ -137,10 +132,10 @@ export function NoAccessViewEnhanced({
           </Alert>
 
           {/* Upcoming Meetings Preview */}
-          {upcomingMeetings.length > 0 && (
+          {upcomingMeetings.length > 0 ? (
             <Box sx={{ mb: 6 }}>
               <Typography variant="h6" fontWeight={600} gutterBottom>
-                Upcoming Live Sessions You're Missing:
+                Upcoming Live Sessions You&apos;re Missing:
               </Typography>
               <Grid container spacing={2} sx={{ mt: 1 }}>
                 {upcomingMeetings.map(meeting => (
@@ -166,7 +161,7 @@ export function NoAccessViewEnhanced({
                               })}
                             </Typography>
                           </Stack>
-                          {meeting.restrictedToSubscriptions && meeting.allowedSubscriptions && (
+                          {meeting.restrictedToSubscriptions && meeting.allowedSubscriptions ? (
                             <Box sx={{ mt: 1 }}>
                               <Typography variant="caption" color="text.secondary">
                                 Requires:
@@ -183,7 +178,7 @@ export function NoAccessViewEnhanced({
                                 ))}
                               </Stack>
                             </Box>
-                          )}
+                          ) : null}
                         </Stack>
                       </CardContent>
                     </Card>
@@ -191,7 +186,7 @@ export function NoAccessViewEnhanced({
                 ))}
               </Grid>
             </Box>
-          )}
+          ) : null}
         
           {/* Features */}
           <Paper 
@@ -205,7 +200,7 @@ export function NoAccessViewEnhanced({
             }}
           >
             <Typography variant="h5" fontWeight={600} gutterBottom>
-              What You'll Get Access To:
+              What You&apos;ll Get Access To:
             </Typography>
             <Grid container spacing={3} sx={{ mt: 1 }}>
               <Grid item xs={12} md={6}>

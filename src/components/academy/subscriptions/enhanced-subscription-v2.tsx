@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -12,18 +12,11 @@ import {
   Stack,
   Alert,
   CircularProgress,
-  Paper,
-  Divider,
-  IconButton,
-  Tooltip,
-  Badge,
   Skeleton,
 } from '@mui/material';
 import {
   CheckCircle,
   Star,
-  Info,
-  Timer,
   Loop,
   MoneyOff,
   School,
@@ -38,22 +31,22 @@ import { SubscriptionPlan } from '@/types/user';
 import { loadStripe } from '@stripe/stripe-js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import API from '@/lib/axios';
-import { subscriptionService, SubscriptionPlanData, CalculatedPrice } from '@/services/api/subscription.service';
+import { subscriptionService, type SubscriptionPlanData, type CalculatedPrice } from '@/services/api/subscription.service';
 import { useTranslation } from 'react-i18next';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 // Icon mapping
 const iconComponents = {
-  LiveTv: LiveTv,
-  Loop: Loop,
-  School: School,
-  VideoLibrary: VideoLibrary,
-  Star: Star,
-  Psychology: Psychology,
-  MoneyOff: MoneyOff,
-  Groups: Groups,
-  MenuBook: MenuBook,
+  LiveTv,
+  Loop,
+  School,
+  VideoLibrary,
+  Star,
+  Psychology,
+  MoneyOff,
+  Groups,
+  MenuBook,
 };
 
 export function EnhancedSubscriptionManagerV2() {
@@ -62,6 +55,7 @@ export function EnhancedSubscriptionManagerV2() {
   const lang = i18n.language as 'en' | 'es';
   const userSubscriptions = user?.subscriptions || [];
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch plans from API
   const { data: plansData, isLoading: plansLoading, error: plansError } = useQuery({
@@ -71,9 +65,9 @@ export function EnhancedSubscriptionManagerV2() {
 
   // Fetch user-specific pricing if authenticated
   const { data: pricingData, isLoading: pricingLoading } = useQuery({
-    queryKey: ['subscription-pricing', user?.id],
+    queryKey: ['subscription-pricing', user?._id],
     queryFn: () => subscriptionService.getPlansWithPricing(),
-    enabled: !!user,
+    enabled: Boolean(user),
   });
 
   // Subscribe mutation
@@ -104,12 +98,13 @@ export function EnhancedSubscriptionManagerV2() {
         await stripe.redirectToCheckout({ sessionId: data.sessionId });
       }
     },
-    onError: (error) => {
-      console.error('Subscription error:', error);
-      alert('Failed to create subscription. Please try again.');
+    onError: (err) => {
+      console.error('Subscription error:', err);
+      setError('Failed to create subscription. Please try again.');
     },
     onSettled: () => {
       setProcessingPlan(null);
+      setError(null);
     },
   });
 
@@ -119,16 +114,16 @@ export function EnhancedSubscriptionManagerV2() {
   };
 
   const getPlanPrice = (planId: string): CalculatedPrice | undefined => {
-    return pricingData?.pricing.find(p => p.plan === planId);
+    return pricingData?.pricing.find(p => (p.plan as string) === planId);
   };
 
   const isSubscribed = (planId: string) => {
-    return userSubscriptions.includes(planId as SubscriptionPlan);
+    return userSubscriptions.includes(planId as unknown as SubscriptionPlan);
   };
 
-  const hasLiveSubscription = () => {
-    return userSubscriptions.includes(SubscriptionPlan.LIVE_WEEKLY_MANUAL) ||
-           userSubscriptions.includes(SubscriptionPlan.LIVE_WEEKLY_RECURRING);
+  const hasLiveSubscription = (): boolean => {
+    return userSubscriptions.includes(SubscriptionPlan.LiveWeeklyManual as string) ||
+           userSubscriptions.includes(SubscriptionPlan.LiveWeeklyRecurring as string);
   };
 
   const renderPriceTag = (plan: SubscriptionPlanData, price?: CalculatedPrice) => {
@@ -188,14 +183,12 @@ export function EnhancedSubscriptionManagerV2() {
             {period}
           </Typography>
         </Stack>
-        {price.discountReason && (
-          <Chip
+        {price.discountReason ? <Chip
             label={price.discountReason}
             size="small"
             color="success"
             variant="outlined"
-          />
-        )}
+          /> : null}
       </Stack>
     );
   };
@@ -230,16 +223,22 @@ export function EnhancedSubscriptionManagerV2() {
         Choose Your Trading Journey
       </Typography>
       
-      {hasLiveSubscription() && (
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      
+      {hasLiveSubscription() ? (
         <Alert severity="success" sx={{ mb: 3 }}>
           <strong>Live Subscriber Benefits:</strong> You get special pricing on Master Class 
           and FREE access to Recorded Classes!
         </Alert>
-      )}
+      ) : null}
 
       <Grid container spacing={3}>
         {/* Live Trading Section */}
-        {livePlans.length > 0 && (
+        {livePlans.length > 0 ? (
           <Grid item xs={12}>
             <Typography variant="h5" fontWeight="600" mb={2}>
               Live Trading Access
@@ -260,7 +259,7 @@ export function EnhancedSubscriptionManagerV2() {
                         borderColor: plan.uiMetadata.popular ? plan.uiMetadata.color : 'divider',
                       }}
                     >
-                      {plan.uiMetadata.badge && (
+                      {plan.uiMetadata.badge ? (
                         <Chip
                           label={plan.uiMetadata.badge}
                           size="small"
@@ -272,7 +271,7 @@ export function EnhancedSubscriptionManagerV2() {
                             color: 'white',
                           }}
                         />
-                      )}
+                      ) : null}
                       
                       <CardContent>
                         <Stack spacing={3}>
@@ -293,9 +292,9 @@ export function EnhancedSubscriptionManagerV2() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.map((feature, idx) => (
+                            {plan.features.map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.planId}-feature-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -352,10 +351,10 @@ export function EnhancedSubscriptionManagerV2() {
               })}
             </Grid>
           </Grid>
-        )}
+        ) : null}
 
         {/* Monthly Subscriptions */}
-        {monthlyPlans.length > 0 && (
+        {monthlyPlans.length > 0 ? (
           <Grid item xs={12}>
             <Typography variant="h5" fontWeight="600" mb={2}>
               Monthly Subscriptions
@@ -388,9 +387,9 @@ export function EnhancedSubscriptionManagerV2() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.slice(0, 3).map((feature, idx) => (
+                            {plan.features.slice(0, 3).map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.planId}-feature-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -419,7 +418,7 @@ export function EnhancedSubscriptionManagerV2() {
                               fullWidth
                               size="small"
                               onClick={() => subscribe({ plan: plan.planId as SubscriptionPlan })}
-                              disabled={processingPlan === plan.planId || price?.isFree || !user}
+                              disabled={processingPlan === plan.planId || Boolean(price?.isFree) || !user}
                               sx={{
                                 backgroundColor: plan.uiMetadata.color,
                                 '&:hover': {
@@ -430,11 +429,11 @@ export function EnhancedSubscriptionManagerV2() {
                             >
                               {processingPlan === plan.planId ? (
                                 <CircularProgress size={20} sx={{ color: 'white' }} />
-                              ) : price?.isFree ? (
+                              ) : (price?.isFree ? (
                                 'Included with Live'
                               ) : (
                                 'Subscribe'
-                              )}
+                              ))}
                             </Button>
                           )}
                         </Stack>
@@ -445,10 +444,10 @@ export function EnhancedSubscriptionManagerV2() {
               })}
             </Grid>
           </Grid>
-        )}
+        ) : null}
 
         {/* Fixed-Term Courses */}
-        {fixedPlans.length > 0 && (
+        {fixedPlans.length > 0 ? (
           <Grid item xs={12}>
             <Typography variant="h5" fontWeight="600" mb={2}>
               Special Courses
@@ -472,13 +471,13 @@ export function EnhancedSubscriptionManagerV2() {
                               <Typography variant="h6" fontWeight="600">
                                 {plan.displayName}
                               </Typography>
-                              {plan.uiMetadata.badge && (
+                              {plan.uiMetadata.badge ? (
                                 <Chip
                                   label={plan.uiMetadata.badge}
                                   size="small"
                                   color="warning"
                                 />
-                              )}
+                              ) : null}
                             </Stack>
                             <Typography variant="body2" color="text.secondary" mt={1}>
                               {plan.description}
@@ -488,9 +487,9 @@ export function EnhancedSubscriptionManagerV2() {
                           {renderPriceTag(plan, price)}
 
                           <Box>
-                            {plan.features.map((feature, idx) => (
+                            {plan.features.map((feature) => (
                               <Stack
-                                key={idx}
+                                key={`${plan.planId}-feat-${feature}`}
                                 direction="row"
                                 spacing={1}
                                 alignItems="center"
@@ -542,10 +541,10 @@ export function EnhancedSubscriptionManagerV2() {
               })}
             </Grid>
           </Grid>
-        )}
+        ) : null}
       </Grid>
 
-      {!user && (
+      {!user ? (
         <Box sx={{ mt: 4, p: 3, bgcolor: 'grey.100', borderRadius: 2, textAlign: 'center' }}>
           <Typography variant="body1" gutterBottom>
             Please sign in to subscribe to a plan
@@ -554,7 +553,7 @@ export function EnhancedSubscriptionManagerV2() {
             Sign In
           </Button>
         </Box>
-      )}
+      ) : null}
     </Box>
   );
 }

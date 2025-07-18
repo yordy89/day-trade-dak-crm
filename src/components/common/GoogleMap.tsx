@@ -29,6 +29,7 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
       }}
     >
       <iframe
+        title="Google Map - DayTradeDak Location"
         width="100%"
         height="100%"
         style={{ border: 0 }}

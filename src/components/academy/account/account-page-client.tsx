@@ -20,8 +20,6 @@ import {
   TextField,
   InputAdornment,
   useTheme,
-  alpha,
-  Skeleton,
   CircularProgress,
   Dialog,
   DialogTitle,
@@ -41,12 +39,8 @@ import {
   CheckCircle,
   Warning,
   PencilSimple,
-  Gear,
-  ChartLine,
-  Certificate,
   Trophy,
   CalendarBlank,
-  IdentificationCard,
   LockKey,
   Bell,
   Eye,
@@ -70,14 +64,14 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+      {value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null}
     </div>
   );
 }
 
 export function AccountPageClient(): React.JSX.Element {
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === 'dark';
+  const _isDarkMode = theme.palette.mode === 'dark';
   const { user } = useClientAuth();
   const setUser = useAuthStore.getState().setUser;
   const queryClient = useQueryClient();
@@ -136,7 +130,7 @@ export function AccountPageClient(): React.JSX.Element {
     onSuccess: (data) => {
       setUser(data);
       setIsEditing(false);
-      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      void queryClient.invalidateQueries({ queryKey: ['user-profile'] });
     },
   });
 
@@ -146,7 +140,7 @@ export function AccountPageClient(): React.JSX.Element {
       await API.delete(`/payments/cancel/${plan}`);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      void queryClient.invalidateQueries({ queryKey: ['user-profile'] });
       setIsCancelDialogOpen(false);
     },
   });
@@ -156,13 +150,13 @@ export function AccountPageClient(): React.JSX.Element {
     if (!event.target.files || event.target.files.length === 0) return;
 
     const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
+    const fileFormData = new FormData();
+    fileFormData.append('file', file);
 
     setIsUploading(true);
 
     try {
-      const response = await API.post(`user/${user?._id}/upload-profile-image/`, formData, {
+      const response = await API.post(`user/${user?._id}/upload-profile-image/`, fileFormData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -199,22 +193,14 @@ export function AccountPageClient(): React.JSX.Element {
 
   // Subscription price mapping based on API pricing service
   const subscriptionPrices: Record<string, string> = {
-    [SubscriptionPlan.MASTER_CLASES]: '$299.99/mes',
+    [SubscriptionPlan.MasterClases]: '$299.99/mes',
     [SubscriptionPlan.CLASSES]: '$52.99/mes',
-    [SubscriptionPlan.LIVE_RECORDED]: '$199.99/mes',
+    [SubscriptionPlan.LiveRecorded]: '$199.99/mes',
     [SubscriptionPlan.PSICOTRADING]: '$29.99/mes',
-    [SubscriptionPlan.PEACE_WITH_MONEY]: '$199.99 (único pago)',
-    [SubscriptionPlan.LIVE_WEEKLY_MANUAL]: '$53.99/mes',
-    [SubscriptionPlan.LIVE_WEEKLY_RECURRING]: '$51.99/mes',
-    [SubscriptionPlan.MASTER_COURSE]: '$2999.99',
-    // Also handle lowercase/alternative names from database
-    'MasterClases': '$299.99/mes',
-    'Classes': '$52.99/mes', 
-    'LiveRecorded': '$199.99/mes',
-    'Psicotrading': '$29.99/mes',
-    'PeaceWithMoney': '$199.99 (único pago)',
-    'LiveWeeklyManual': '$53.99/mes',
-    'LiveWeeklyRecurring': '$51.99/mes',
+    [SubscriptionPlan.PeaceWithMoney]: '$199.99 (único pago)',
+    [SubscriptionPlan.LiveWeeklyManual]: '$53.99/mes',
+    [SubscriptionPlan.LiveWeeklyRecurring]: '$51.99/mes',
+    [SubscriptionPlan.MasterCourse]: '$2999.99',
   };
 
   if (isLoading) {
@@ -332,7 +318,7 @@ export function AccountPageClient(): React.JSX.Element {
                 <Typography variant="h4" fontWeight={700}>
                   {`${user?.firstName || 'Usuario'} ${user?.lastName || ''}`}
                 </Typography>
-                {isPremium && (
+                {isPremium ? (
                   <Chip
                     icon={<Crown size={16} weight="fill" />}
                     label="Premium"
@@ -340,7 +326,7 @@ export function AccountPageClient(): React.JSX.Element {
                     size="small"
                     sx={{ fontWeight: 600 }}
                   />
-                )}
+                ) : null}
               </Stack>
 
               <Stack direction="row" spacing={3} flexWrap="wrap" gap={1}>
@@ -351,14 +337,14 @@ export function AccountPageClient(): React.JSX.Element {
                   </Typography>
                 </Stack>
                 
-                {user?.phone && (
+                {user?.phone ? (
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Phone size={16} weight="duotone" />
                     <Typography variant="body2" color="text.secondary">
                       {user.phone}
                     </Typography>
                   </Stack>
-                )}
+                ) : null}
 
                 <Stack direction="row" spacing={1} alignItems="center">
                   <CalendarBlank size={16} weight="duotone" />
@@ -377,7 +363,7 @@ export function AccountPageClient(): React.JSX.Element {
                       return allSubs.filter((sub: any) => {
                         if (typeof sub === 'string') return true;
                         if (sub && typeof sub === 'object' && 'plan' in sub) {
-                          return !sub.expiresAt || new Date(sub.expiresAt) > new Date();
+                          return Boolean(!sub.expiresAt || new Date(sub.expiresAt) > new Date());
                         }
                         return false;
                       }).length;
@@ -389,7 +375,7 @@ export function AccountPageClient(): React.JSX.Element {
                 </Box>
                 <Box>
                   <Typography variant="h5" fontWeight={700}>
-                    {user?.completedCourses || 0}
+                    0
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {t('overview.coursesCompleted')}
@@ -397,10 +383,10 @@ export function AccountPageClient(): React.JSX.Element {
                 </Box>
                 <Box>
                   <Typography variant="h5" fontWeight={700}>
-                    {user?.achievements || 0}
+                    0
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {t('overview.achievements', { count: user?.achievements || 0 })}
+                    {t('overview.achievements', { count: 0 })}
                   </Typography>
                 </Box>
               </Stack>
@@ -428,7 +414,7 @@ export function AccountPageClient(): React.JSX.Element {
               { icon: <Bell size={20} />, label: t('settings.notifications.title') },
             ].map((tab, index) => (
               <Button
-                key={index}
+                key={tab.label}
                 onClick={() => setTabValue(index)}
                 sx={{
                   minHeight: 64,
@@ -734,19 +720,19 @@ export function AccountPageClient(): React.JSX.Element {
 
               return activeSubscriptions.length > 0 ? (
                 <Grid container spacing={2}>
-                  {activeSubscriptions.map((subscription: any, index: number) => {
+                  {activeSubscriptions.map((subscription: any) => {
                     const plan = typeof subscription === 'string' ? subscription : subscription.plan;
                     const expiresAt = typeof subscription === 'object' ? subscription.expiresAt : null;
                     
                     
                     // Determine if subscription is recurring or one-time
                     // If it has an expiresAt date, it's a one-time payment
-                    const hasExpirationDate = !!expiresAt;
+                    const hasExpirationDate = Boolean(expiresAt);
                     const isRecurring = !hasExpirationDate && [
-                      SubscriptionPlan.LIVE_WEEKLY_MANUAL,
-                      SubscriptionPlan.LIVE_WEEKLY_RECURRING,
-                      SubscriptionPlan.MASTER_CLASES,
-                      SubscriptionPlan.LIVE_RECORDED,
+                      SubscriptionPlan.LiveWeeklyManual,
+                      SubscriptionPlan.LiveWeeklyRecurring,
+                      SubscriptionPlan.MasterClases,
+                      SubscriptionPlan.LiveRecorded,
                       SubscriptionPlan.PSICOTRADING
                     ].includes(plan as SubscriptionPlan);
                     
@@ -792,7 +778,7 @@ export function AccountPageClient(): React.JSX.Element {
                           <Divider sx={{ my: 2 }} />
                           
                           <Stack spacing={1}>
-                            {expiresAt && (
+                            {expiresAt ? (
                               <Stack direction="row" justifyContent="space-between">
                                 <Typography variant="body2" color="text.secondary">
                                   {t('account.expires')}:
@@ -801,9 +787,9 @@ export function AccountPageClient(): React.JSX.Element {
                                   {formatDate(expiresAt)}
                                 </Typography>
                               </Stack>
-                            )}
+                            ) : null}
                             {/* Show status for recurring subscriptions */}
-                            {isRecurring && !expiresAt && (
+                            {isRecurring && !expiresAt ? (
                               <Stack direction="row" justifyContent="space-between">
                                 <Typography variant="body2" color="text.secondary">
                                   {t('account.status')}:
@@ -812,9 +798,9 @@ export function AccountPageClient(): React.JSX.Element {
                                   {t('account.activeAutoRenewal')}
                                 </Typography>
                               </Stack>
-                            )}
+                            ) : null}
                             {/* Show next payment date for recurring subscriptions */}
-                            {isRecurring && typeof subscription === 'object' && (subscription.currentPeriodEnd || subscription.nextPaymentDate) && (
+                            {isRecurring && typeof subscription === 'object' && (subscription.currentPeriodEnd || subscription.nextPaymentDate) ? (
                               <Stack direction="row" justifyContent="space-between">
                                 <Typography variant="body2" color="text.secondary">
                                   {t('account.nextPayment')}:
@@ -823,9 +809,9 @@ export function AccountPageClient(): React.JSX.Element {
                                   {formatDate(subscription.nextPaymentDate || subscription.currentPeriodEnd)}
                                 </Typography>
                               </Stack>
-                            )}
+                            ) : null}
                             {/* Show subscription start date if available */}
-                            {typeof subscription === 'object' && subscription.createdAt && (
+                            {typeof subscription === 'object' && subscription.createdAt ? (
                               <Stack direction="row" justifyContent="space-between">
                                 <Typography variant="body2" color="text.secondary">
                                   {t('account.startDate')}:
@@ -834,7 +820,7 @@ export function AccountPageClient(): React.JSX.Element {
                                   {formatDate(subscription.createdAt)}
                                 </Typography>
                               </Stack>
-                            )}
+                            ) : null}
                             <Stack direction="row" justifyContent="space-between">
                               <Typography variant="body2" color="text.secondary">
                                 {t('account.price')}:
@@ -844,27 +830,28 @@ export function AccountPageClient(): React.JSX.Element {
                               </Typography>
                             </Stack>
                             {/* Show subscription type */}
-                            <Stack direction="row" justifyContent="space-between">
-                              <Typography variant="body2" color="text.secondary">
-                                {t('account.type')}:
-                              </Typography>
-                              <Typography variant="body2" fontWeight={500}>
-                                {(() => {
-                                  if (hasExpirationDate) {
-                                    return t('account.oneTimePayment');
-                                  } else if ([SubscriptionPlan.LIVE_WEEKLY_MANUAL, SubscriptionPlan.LIVE_WEEKLY_RECURRING].includes(plan as SubscriptionPlan)) {
-                                    return t('account.weeklySubscription');
-                                  } else if (isRecurring) {
-                                    return t('account.monthlySubscription');
-                                  } else {
-                                    return t('account.oneTimePayment');
-                                  }
-                                })()}
-                              </Typography>
-                            </Stack>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Typography variant="body2" color="text.secondary">
+                              {t('account.type')}:
+                            </Typography>
+                            <Typography variant="body2" fontWeight={500}>
+                              {(() => {
+                                if (hasExpirationDate) {
+                                  return t('account.oneTimePayment');
+                                }
+                                if ([SubscriptionPlan.LiveWeeklyManual, SubscriptionPlan.LiveWeeklyRecurring].includes(plan as SubscriptionPlan)) {
+                                  return t('account.weeklySubscription');
+                                }
+                                if (isRecurring) {
+                                  return t('account.monthlySubscription');
+                                }
+                                return t('account.oneTimePayment');
+                              })()}
+                            </Typography>
+                          </Stack>
                           </Stack>
 
-                          {isRecurring && (
+                          {isRecurring ? (
                             <Button
                               fullWidth
                               variant="outlined"
@@ -877,7 +864,7 @@ export function AccountPageClient(): React.JSX.Element {
                             >
                               {t('account.cancelSubscription')}
                             </Button>
-                          )}
+                          ) : null}
                         </CardContent>
                       </Card>
                     </Grid>
@@ -925,12 +912,12 @@ export function AccountPageClient(): React.JSX.Element {
                   Historial de Suscripciones
                 </Typography>
                 <Stack spacing={2}>
-                  {expiredSubscriptions.map((subscription: any, index: number) => {
+                  {expiredSubscriptions.map((subscription: any) => {
                     const plan = subscription.plan;
                     const expiredDate = subscription.expiresAt;
                     
                     return (
-                      <Card key={index} sx={{ opacity: 0.7 }}>
+                      <Card key={`expired-${plan}`} sx={{ opacity: 0.7 }}>
                         <CardContent sx={{ p: 2 }}>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Stack direction="row" spacing={2} alignItems="center">

@@ -15,14 +15,12 @@ import {
   Menu,
   MenuItem,
   Stack,
-  Tooltip,
   Typography,
   Chip,
   Badge,
   Paper,
   useTheme as useMuiTheme,
   alpha,
-  Fade,
 } from '@mui/material';
 import {
   Sun,
@@ -32,9 +30,7 @@ import {
   User,
   CreditCard,
   BookOpen,
-  Trophy,
   SignOut,
-  Settings,
   ChartLine,
   CaretDown,
   Crown,
@@ -118,7 +114,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
 
   const handleLanguageChange = (lang: Language) => {
     setCurrentLang(lang);
-    i18n.changeLanguage(lang.code);
+    void i18n.changeLanguage(lang.code);
     handleLangMenuClose();
   };
 
@@ -139,7 +135,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
     const subscription = user.subscriptions[0];
     // Handle both string and object subscription formats
     const planName = typeof subscription === 'string' ? subscription : subscription.plan;
-    return planName.charAt(0).toUpperCase() + planName.slice(1);
+    return String(planName).charAt(0).toUpperCase() + String(planName).slice(1);
   };
 
   const isPremium = user?.subscriptions && user.subscriptions.length > 0;
@@ -155,7 +151,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
           : alpha(theme.palette.background.paper, 0.95),
         position: 'sticky',
         top: 0,
-        zIndex: (theme) => theme.zIndex.appBar,
+        zIndex: (muiTheme) => muiTheme.zIndex.appBar,
         backdropFilter: 'blur(20px)',
         overflow: 'hidden',
       }}
@@ -180,15 +176,15 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
           { symbol: 'DIA', change: '+0.5%' },
           { symbol: 'VTI', change: '-1.1%' },
           { symbol: 'VOO', change: '+1.8%' },
-        ].map((etf, index) => (
+        ].map((etf) => (
           <Box
             key={etf.symbol}
             sx={{
               position: 'absolute',
               top: '50%',
-              left: `${10 + (index * 15)}%`,
+              left: `${10 + (etf.symbol.charCodeAt(0) % 6 * 15)}%`,
               transform: 'translateY(-50%)',
-              animation: `drift${index % 2} ${25 + index * 3}s ease-in-out infinite`,
+              animation: `drift${etf.symbol.charCodeAt(0) % 2} ${25 + etf.symbol.charCodeAt(0) % 10 * 3}s ease-in-out infinite`,
               '@keyframes drift0': {
                 '0%, 100%': { transform: 'translateY(-50%) translateX(0px)' },
                 '50%': { transform: 'translateY(-50%) translateX(-20px)' },
@@ -234,16 +230,16 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
           { type: 'green', left: '75%', delay: 2 },
           { type: 'red', left: '85%', delay: 4 },
           { type: 'green', left: '95%', delay: 1 },
-        ].map((candle, index) => (
+        ].map((candle) => (
           <Box
-            key={index}
+            key={`candle-${candle.left}-${candle.delay}`}
             sx={{
               position: 'absolute',
               top: '50%',
               left: candle.left,
               transform: 'translateY(-50%)',
               opacity: isDarkMode ? 0.12 : 0.1,
-              animation: `float${index % 2} ${30 + index * 5}s ease-in-out infinite`,
+              animation: `float${candle.delay % 2} ${30 + candle.delay * 5}s ease-in-out infinite`,
               animationDelay: `${candle.delay}s`,
               '@keyframes float0': {
                 '0%, 100%': { transform: 'translateY(-50%)' },
@@ -435,10 +431,10 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
                 </Avatar>
                 <Box sx={{ display: { xs: 'none', sm: 'block' }, textAlign: 'left' }}>
                   <Typography variant="body2" fontWeight={600} color="text.primary">
-                    {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.firstName || 'Usuario'}
+                    {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || 'Usuario')}
                   </Typography>
                   <Stack direction="row" spacing={0.5} alignItems="center">
-                    {isPremium && <Crown size={12} weight="fill" color={theme.palette.warning.main} />}
+                    {isPremium ? <Crown size={12} weight="fill" color={theme.palette.warning.main} /> : null}
                     <Typography variant="caption" color="text.secondary" fontWeight={500}>
                       {getSubscriptionBadge()}
                     </Typography>
@@ -536,7 +532,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
             </Avatar>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="subtitle1" fontWeight={700}>
-                {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.firstName || 'Usuario'}
+                {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || 'Usuario')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {user?.email || 'email@example.com'}

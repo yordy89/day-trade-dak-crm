@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useStore } from 'zustand';
 import { useAuthStore } from '@/store/auth-store';
-import type { AuthState } from '@/store/auth-store';
 
 // Custom hook that ensures proper hydration and stable references
 export function useAuth() {

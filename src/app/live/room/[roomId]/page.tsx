@@ -9,7 +9,6 @@ import {
   CircularProgress,
   Alert,
   Button,
-  Stack,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useClientAuth } from '@/hooks/use-client-auth';
@@ -62,7 +61,7 @@ export default function RoomPage() {
     };
 
     if (!authLoading) {
-      initializeMeeting();
+      void initializeMeeting();
     }
   }, [user, roomId, isHost, authLoading]);
 
@@ -121,7 +120,7 @@ export default function RoomPage() {
     <VideoSDKProvider
       meetingId={roomId}
       authToken={authToken}
-      participantId={user.id || `participant-${Date.now()}`}
+      participantId={user._id || `participant-${Date.now()}`}
       participantName={`${user.firstName} ${user.lastName}`}
       micEnabled={false}
       webcamEnabled={false}

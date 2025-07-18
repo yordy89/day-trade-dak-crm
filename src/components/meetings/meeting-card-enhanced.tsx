@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Card,
@@ -9,12 +9,10 @@ import {
   Chip,
   Avatar,
   Tooltip,
-  IconButton,
   alpha,
   useTheme,
 } from '@mui/material';
 import { Clock, Users, Lock, Crown, Info } from '@phosphor-icons/react';
-import { SubscriptionPlan } from '@/types/user';
 
 interface MeetingCardEnhancedProps {
   meeting: {
@@ -73,7 +71,7 @@ export function MeetingCardEnhanced({
   const theme = useTheme();
   
   // Check if user has access based on subscriptions
-  const hasSubscriptionAccess = React.useMemo(() => {
+  const hasSubscriptionAccess = useMemo(() => {
     if (!meeting.restrictedToSubscriptions || !meeting.allowedSubscriptions?.length) {
       return true; // No restrictions
     }
@@ -128,7 +126,7 @@ export function MeetingCardEnhanced({
                 ({meeting.duration} min)
               </Typography>
               
-              {isLive && (
+              {isLive ? (
                 <Chip 
                   label="LIVE" 
                   size="small" 
@@ -145,19 +143,19 @@ export function MeetingCardEnhanced({
                     },
                   }}
                 />
-              )}
+              ) : null}
             </Stack>
           </Box>
 
           {/* Meeting Type Badge */}
-          {meeting.meetingType && (
+          {meeting.meetingType ? (
             <Chip 
               label={meeting.meetingType.replace('_', ' ').toUpperCase()} 
               size="small" 
               variant="outlined"
               color={meeting.meetingType === 'daily_live' ? 'primary' : 'default'}
             />
-          )}
+          ) : null}
         </Stack>
 
         {/* Host Info */}
@@ -174,7 +172,7 @@ export function MeetingCardEnhanced({
         </Stack>
 
         {/* Subscription Requirements */}
-        {showSubscriptionInfo && meeting.restrictedToSubscriptions && meeting.allowedSubscriptions?.length > 0 && (
+        {showSubscriptionInfo && meeting.restrictedToSubscriptions && meeting.allowedSubscriptions && meeting.allowedSubscriptions.length > 0 ? (
           <Box 
             sx={{ 
               p: 1.5, 
@@ -193,11 +191,11 @@ export function MeetingCardEnhanced({
                 <Typography variant="caption" fontWeight={600}>
                   {hasSubscriptionAccess ? 'You have access' : 'Subscription required'}
                 </Typography>
-                {(isHost || isAdmin) && (
+                {(isHost || isAdmin) ? (
                   <Tooltip title={isHost ? 'You are the host' : 'Admin access'}>
                     <Crown size={16} color={theme.palette.primary.main} />
                   </Tooltip>
-                )}
+                ) : null}
               </Stack>
               
               <Box>
@@ -223,7 +221,7 @@ export function MeetingCardEnhanced({
               </Box>
             </Stack>
           </Box>
-        )}
+        ) : null}
 
         {/* Participants Info */}
         <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -234,20 +232,20 @@ export function MeetingCardEnhanced({
             </Typography>
           </Stack>
           
-          {meeting.isPublic && (
+          {meeting.isPublic ? (
             <Chip label="Public" size="small" color="info" variant="outlined" />
-          )}
+          ) : null}
         </Stack>
 
         {/* Access Warning */}
-        {!hasSubscriptionAccess && !isPast && (
+        {!hasSubscriptionAccess && !isPast ? (
           <Stack direction="row" spacing={1} alignItems="center">
             <Info size={16} color={theme.palette.warning.main} />
             <Typography variant="caption" color="warning.main">
               You need a subscription to join this meeting
             </Typography>
           </Stack>
-        )}
+        ) : null}
       </Stack>
     </Card>
   );

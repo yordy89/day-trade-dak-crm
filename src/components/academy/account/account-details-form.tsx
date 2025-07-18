@@ -17,10 +17,8 @@ import {
   Stack,
   InputBase,
   IconButton,
-  InputAdornment,
   FormHelperText,
   Snackbar,
-  alpha,
   useTheme as useMuiTheme,
 } from '@mui/material';
 import {
@@ -59,17 +57,18 @@ interface CustomInputProps {
   endAdornment?: React.ReactNode;
 }
 
-const CustomInput = React.memo<CustomInputProps>(({ 
-  icon, 
-  label, 
-  isDarkMode, 
-  muiTheme,
-  error,
-  helperText,
-  endAdornment,
-  disabled,
-  ...props 
-}) => {
+const CustomInput = React.memo<CustomInputProps>((props) => {
+  const { 
+    icon, 
+    label, 
+    isDarkMode, 
+    muiTheme,
+    error,
+    helperText,
+    endAdornment,
+    disabled,
+    ...rest 
+  } = props;
   const [isFocused, setIsFocused] = React.useState(false);
   
   return (
@@ -82,7 +81,7 @@ const CustomInput = React.memo<CustomInputProps>(({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {rest.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -128,7 +127,7 @@ const CustomInput = React.memo<CustomInputProps>(({
           {icon}
         </Box>
         <InputBase
-          {...props}
+          {...rest}
           disabled={disabled}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -154,18 +153,20 @@ const CustomInput = React.memo<CustomInputProps>(({
             },
           }}
         />
-        {endAdornment && (
+        {endAdornment ? (
           <Box sx={{ pr: 1 }}>
             {endAdornment}
           </Box>
-        )}
+        ) : null}
       </Box>
-      {helperText && (
+      {helperText ? (
         <FormHelperText>{helperText}</FormHelperText>
-      )}
+      ) : null}
     </FormControl>
   );
 });
+
+CustomInput.displayName = 'CustomInput';
 
 export function AccountDetailsForm(): React.JSX.Element {
   const user = useAuthStore(selectUser);
@@ -176,7 +177,7 @@ export function AccountDetailsForm(): React.JSX.Element {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
-    phone: user?.phone || '',
+    phoneNumber: user?.phoneNumber || '',
   });
 
   const [passwordData, setPasswordData] = React.useState({
@@ -204,7 +205,7 @@ export function AccountDetailsForm(): React.JSX.Element {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
-        phone: user.phone || '',
+        phoneNumber: user.phoneNumber || '',
       });
     }
   }, [user]);
@@ -224,7 +225,7 @@ export function AccountDetailsForm(): React.JSX.Element {
     setLoading(prev => ({ ...prev, profile: true }));
     
     try {
-      await userService.updateProfile(formData);
+      await userService.updateUser(formData);
       setAlert({ type: 'success', message: 'Perfil actualizado correctamente' });
     } catch (error: any) {
       console.error('Error updating profile:', error);
@@ -250,7 +251,7 @@ export function AccountDetailsForm(): React.JSX.Element {
     setLoading(prev => ({ ...prev, password: true }));
 
     try {
-      await authService.changePassword({
+      await authService.updatePassword({
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
@@ -325,8 +326,8 @@ export function AccountDetailsForm(): React.JSX.Element {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <CustomInput
-                      name="phone"
-                      value={formData.phone}
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
                       onChange={handleInputChange}
                       icon={<Phone size={20} weight="duotone" />}
                       label="Teléfono"
@@ -478,13 +479,13 @@ export function AccountDetailsForm(): React.JSX.Element {
       </Grid>
 
       {/* Snackbar for notifications */}
-      <Snackbar
-        open={!!alert}
-        autoHideDuration={6000}
-        onClose={() => setAlert(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        {alert && (
+      {alert ? (
+        <Snackbar
+          open
+          autoHideDuration={6000}
+          onClose={() => setAlert(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
           <Alert 
             onClose={() => setAlert(null)} 
             severity={alert.type} 
@@ -493,8 +494,8 @@ export function AccountDetailsForm(): React.JSX.Element {
           >
             {alert.message}
           </Alert>
-        )}
-      </Snackbar>
+        </Snackbar>
+      ) : null}
     </>
   );
 }

@@ -91,14 +91,12 @@ export function ProductsSection() {
                   product.popular ? 'ring-2 ring-blue-500' : ''
                 }`}
               >
-                {product.popular && (
-                  <Chip
+                {product.popular ? <Chip
                     label="Most Popular"
                     color="primary"
                     size="small"
                     className="absolute top-4 right-4 z-10"
-                  />
-                )}
+                  /> : null}
                 
                 <div className={`h-2 bg-gradient-to-r ${product.color}`} />
                 
@@ -120,8 +118,8 @@ export function ProductsSection() {
                   </Typography>
                   
                   <ul className="space-y-2 mb-6">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                    {product.features.map((feature, _index) => (
+                      <li key={feature} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
                         <span className="text-green-500 mr-2">✓</span>
                         {feature}
                       </li>

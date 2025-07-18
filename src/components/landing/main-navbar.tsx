@@ -9,9 +9,7 @@ import {
   Box, 
   Menu, 
   MenuItem,
-  Fade,
   Divider,
-  Badge,
   useMediaQuery,
   Drawer,
   List,
@@ -20,12 +18,10 @@ import {
   ListItemText,
   Avatar,
   Typography,
-  Chip,
 } from '@mui/material';
 import {
   DarkMode,
   LightMode,
-  Language,
   AccountCircle,
   Menu as MenuIcon,
   Close,
@@ -78,7 +74,7 @@ export function MainNavbar() {
   };
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+    void i18n.changeLanguage(lng);
     handleLanguageClose();
   };
 
@@ -146,7 +142,7 @@ export function MainNavbar() {
           }}
         >
           {t(`navigation.${item.key}`)}
-          {item.badge && (
+          {item.badge ? (
             <Box
               sx={{
                 position: 'absolute',
@@ -167,7 +163,7 @@ export function MainNavbar() {
             >
               {item.badge}
             </Box>
-          )}
+          ) : null}
         </Button>
       ))}
     </Box>
@@ -205,7 +201,7 @@ export function MainNavbar() {
           <ListItem key={item.key} disablePadding>
             <ListItemButton onClick={() => handleNavClick(item)} sx={{ position: 'relative' }}>
               <ListItemText primary={t(`navigation.${item.key}`)} />
-              {item.badge && (
+              {item.badge ? (
                 <Box
                   sx={{
                     position: 'absolute',
@@ -225,8 +221,8 @@ export function MainNavbar() {
                 >
                   {item.badge}
                 </Box>
-              )}
-              {item.external && <OpenInNew sx={{ fontSize: 16, ml: 1 }} />}
+              ) : null}
+              {item.external ? <OpenInNew sx={{ fontSize: 16, ml: 1 }} /> : null}
             </ListItemButton>
           </ListItem>
         ))}
@@ -342,7 +338,7 @@ export function MainNavbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          {!isMobile && renderDesktopMenu()}
+          {!isMobile ? renderDesktopMenu() : null}
 
           {/* Right Actions */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -374,7 +370,7 @@ export function MainNavbar() {
             </IconButton>
 
             {/* Desktop Auth Buttons */}
-            {!isMobile && (
+            {!isMobile ? (
               <>
                 <Divider orientation="vertical" flexItem sx={{ mx: 1, height: 30, alignSelf: 'center' }} />
                 {isAuthenticated && user ? (
@@ -490,17 +486,17 @@ export function MainNavbar() {
                   </>
                 )}
               </>
-            )}
+            ) : null}
 
             {/* Mobile Menu Button */}
-            {isMobile && (
+            {isMobile ? (
               <IconButton
                 onClick={() => setMobileOpen(true)}
                 sx={{ color: isDarkMode ? 'white' : 'black', cursor: 'pointer' }}
               >
                 <MenuIcon />
               </IconButton>
-            )}
+            ) : null}
           </Box>
         </Toolbar>
       </AppBar>
@@ -533,23 +529,6 @@ export function MainNavbar() {
       {/* Mobile Menu */}
       {renderMobileMenu()}
 
-      {/* Animation for live indicator */}
-      <style jsx global>{`
-        @keyframes pulse {
-          0% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.1);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </>
   );
 }

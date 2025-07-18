@@ -1,4 +1,5 @@
-import { loadStripe, Stripe, StripeElementsOptions } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Stripe, StripeElementsOptions } from '@stripe/stripe-js';
 
 let stripePromise: Promise<Stripe | null>;
 
@@ -45,7 +46,7 @@ export async function redirectToCheckout(sessionId: string) {
   
   if (error) {
     console.error('Stripe redirect error:', error);
-    throw error;
+    throw new Error(error.message || 'Failed to redirect to checkout');
   }
 }
 

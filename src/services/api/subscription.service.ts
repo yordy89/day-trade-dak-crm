@@ -1,5 +1,5 @@
 import API from '@/lib/axios';
-import { SubscriptionPlan } from '@/types/user';
+import type { SubscriptionPlan } from '@/types/user';
 
 export interface PlanPricing {
   baseAmount: number;
@@ -47,7 +47,7 @@ class SubscriptionService {
       const params = new URLSearchParams({ lang });
       if (type) params.append('type', type);
       
-      const response = await API.get(`/public/subscription-plans?${params}`);
+      const response = await API.get(`/public/subscription-plans?${params.toString()}`);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch subscription plans:', error);
@@ -118,7 +118,7 @@ class SubscriptionService {
   /**
    * Format price for display
    */
-  formatPrice(amount: number, currency: string = 'usd'): string {
+  formatPrice(amount: number, currency = 'usd'): string {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency.toUpperCase(),
@@ -130,7 +130,7 @@ class SubscriptionService {
   /**
    * Get billing period text
    */
-  getBillingPeriod(interval: string, intervalCount: number = 1, lang: 'en' | 'es' = 'en'): string {
+  getBillingPeriod(interval: string, intervalCount = 1, lang: 'en' | 'es' = 'en'): string {
     const periods: Record<string, Record<string, string>> = {
       en: {
         weekly: intervalCount === 1 ? '/week' : `/${intervalCount} weeks`,

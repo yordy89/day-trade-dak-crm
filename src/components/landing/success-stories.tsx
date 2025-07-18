@@ -209,8 +209,7 @@ export function SuccessStories() {
         </Grid>
 
         {/* Featured Story */}
-        {featuredStory && (
-          <Card
+        {featuredStory ? <Card
             elevation={0}
             sx={{
               mb: 6,
@@ -249,9 +248,7 @@ export function SuccessStories() {
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                     <Rating value={featuredStory.rating} readOnly size="small" />
-                    {featuredStory.verified && (
-                      <Verified sx={{ fontSize: 18, color: '#16a34a' }} />
-                    )}
+                    {featuredStory.verified ? <Verified sx={{ fontSize: 18, color: '#16a34a' }} /> : null}
                   </Box>
                 </Box>
               </Grid>
@@ -314,8 +311,7 @@ export function SuccessStories() {
                 </Grid>
               </Grid>
             </Grid>
-          </Card>
-        )}
+          </Card> : null}
 
         {/* Regular Stories */}
         <Grid container spacing={3}>
@@ -345,9 +341,7 @@ export function SuccessStories() {
                         <Typography variant="h6" fontWeight="600">
                           {story.name}
                         </Typography>
-                        {story.verified && (
-                          <Verified sx={{ fontSize: 16, color: '#16a34a' }} />
-                        )}
+                        {story.verified ? <Verified sx={{ fontSize: 16, color: '#16a34a' }} /> : null}
                       </Box>
                       <Typography variant="body2" color="text.secondary">
                         {story.role}

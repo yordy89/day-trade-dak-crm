@@ -20,14 +20,12 @@ import {
   Badge,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { VideoCamera } from '@phosphor-icons/react/dist/ssr/VideoCamera';
 import { Calendar } from '@phosphor-icons/react/dist/ssr/Calendar';
-import { CircleDashed } from '@phosphor-icons/react/dist/ssr/CircleDashed';
 import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
-import { videoService, VideoMetadata } from '@/services/api/video.service';
+import { videoService, type VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 import { formatVideoTitle } from '@/lib/date-format';
 
@@ -75,9 +73,7 @@ export default function ClassVideoList() {
       return "Únete el lunes a las 8:45 AM EST";
     }
     // Any other time (weekday after 11 AM)
-    else {
-      return "Únete mañana a las 8:45 AM EST";
-    }
+    return "Únete mañana a las 8:45 AM EST";
   };
 
   // Fetch videos from API
@@ -90,14 +86,14 @@ export default function ClassVideoList() {
         
         // Extract date from title or use key
         let dateStr = '';
-        const dateMatch = title.match(/(\d{4}-\d{2}-\d{2})/);
+        const dateMatch = /(?<date>\d{4}-\d{2}-\d{2})/.exec(title);
         if (dateMatch) {
-          dateStr = dateMatch[1];
+          dateStr = dateMatch.groups!.date;
         }
         
         return {
           ...video,
-          title: title,
+          title,
           date: dateStr,
           isLive: false,
         };
@@ -117,7 +113,7 @@ export default function ClassVideoList() {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
-      completed: userClass?.completedAt ? true : false,
+      completed: Boolean(userClass?.completedAt),
       progress: userClass?.progress || 0,
     };
   });
@@ -148,7 +144,7 @@ export default function ClassVideoList() {
     router.push(`/academy/live-sessions/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (video: VideoWithProgress) => {
+  const getVideoDuration = (_video: VideoWithProgress) => {
     // TODO: Get actual duration from video metadata
     // For now, return a placeholder
     return 'Live recording';
@@ -320,8 +316,7 @@ export default function ClassVideoList() {
                         >
                           {video.title}
                         </Typography>
-                        {video.isLive && (
-                          <Chip
+                        {video.isLive ? <Chip
                             label="EN VIVO"
                             size="small"
                             color="error"
@@ -329,18 +324,16 @@ export default function ClassVideoList() {
                               height: 20,
                               animation: 'pulse 1.5s infinite',
                             }}
-                          />
-                        )}
-                        {/* TODO: Show completion status when progress tracking is implemented
-                        {video.completed && !video.isLive && (
+                          /> : null}
+                        {/* TODO: Show completion status when progress tracking is implemented */}
+                        {video.completed && !video.isLive ? (
                           <Chip
                             label="Completed"
                             size="small"
                             color="success"
                             sx={{ height: 20 }}
                           />
-                        )}
-                        */}
+                        ) : null}
                       </Stack>
                     }
                     secondary={
@@ -353,27 +346,24 @@ export default function ClassVideoList() {
                             </Typography>
                           </Box>
                         )}
-                        {video.date && (
-                          <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {video.date ? <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Calendar size={14} />
                             <Typography component="span" variant="caption" color="text.secondary">
-                              {video.isLive ? 'Ahora' : video.date}
+                              {video.isLive ? 'Ahora' : (video.date || '')}
                             </Typography>
-                          </Box>
-                        )}
+                          </Box> : null}
                         <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <VideoCamera size={14} />
                           <Typography component="span" variant="caption" color="text.secondary">
                             {video.isLive ? 'Sesión en vivo' : 'Grabación de sesión en vivo'}
                           </Typography>
                         </Box>
-                        {/* TODO: Show watch progress when tracking is implemented
-                        {video.progress && video.progress > 0 && video.progress < 100 && !video.isLive && (
+                        {/* TODO: Show watch progress when tracking is implemented */}
+                        {video.progress && video.progress > 0 && video.progress < 100 && !video.isLive ? (
                           <Typography component="span" variant="caption" color="primary.main">
                             {video.progress}% watched
                           </Typography>
-                        )}
-                        */}
+                        ) : null}
                       </Box>
                     }
                   />

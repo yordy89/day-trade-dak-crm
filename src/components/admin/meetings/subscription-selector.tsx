@@ -18,7 +18,7 @@ import {
   Button,
 } from '@mui/material';
 import { SubscriptionPlan } from '@/types/user';
-import { api } from '@/lib/api';
+import API from '@/lib/axios';
 
 interface SubscriptionSelectorProps {
   selectedSubscriptions: string[];
@@ -49,13 +49,13 @@ export function SubscriptionSelector({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSubscriptionPlans();
+    void fetchSubscriptionPlans();
   }, []);
 
   const fetchSubscriptionPlans = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/subscriptions/plans');
+      const response = await API.get('/subscriptions/plans');
       setAvailablePlans(response.data);
     } catch (err) {
       setError('Failed to fetch subscription plans');
@@ -82,7 +82,7 @@ export function SubscriptionSelector({
 
   const formatPlanName = (planId: string): string => {
     return planId
-      .replace(/([A-Z])/g, ' $1')
+      .replace(/(?<uppercase>[A-Z])/g, ' $<uppercase>')
       .trim()
       .replace(/^./, str => str.toUpperCase());
   };
@@ -151,8 +151,7 @@ export function SubscriptionSelector({
           sx={{ mb: 2 }}
         />
         
-        {restrictedToSubscriptions && (
-          <>
+        {restrictedToSubscriptions ? <>
             <FormHelperText sx={{ mb: 2 }}>
               Only users with the selected subscriptions will be able to join this meeting.
               Admins and the host will always have access.
@@ -187,9 +186,7 @@ export function SubscriptionSelector({
                       label={
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Typography>{plan.displayName}</Typography>
-                          {plan.meetingPermissions.hasLiveMeetingAccess && (
-                            <Chip label="Live Access" size="small" color="primary" />
-                          )}
+                          {plan.meetingPermissions.hasLiveMeetingAccess ? <Chip label="Live Access" size="small" color="primary" /> : null}
                         </Stack>
                       }
                     />
@@ -198,13 +195,13 @@ export function SubscriptionSelector({
               </Box>
             ))}
 
-            {restrictedToSubscriptions && selectedSubscriptions.length === 0 && (
+            {restrictedToSubscriptions && selectedSubscriptions.length === 0 ? (
               <Alert severity="warning" sx={{ mt: 2 }}>
                 No subscriptions selected. Only admins and the host will be able to join this meeting.
               </Alert>
-            )}
+            ) : null}
 
-            {selectedSubscriptions.length > 0 && (
+            {selectedSubscriptions.length > 0 ? (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   Selected subscriptions:
@@ -220,9 +217,8 @@ export function SubscriptionSelector({
                   ))}
                 </Stack>
               </Box>
-            )}
-          </>
-        )}
+            ) : null}
+          </> : null}
       </FormControl>
     </Box>
   );

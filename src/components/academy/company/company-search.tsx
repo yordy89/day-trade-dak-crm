@@ -21,7 +21,7 @@ import { companyService } from '@/services/api/company.service';
 
 const API_KEY = 'Z23B66HGDZ65UMPP';
 const API_URL = 'https://www.alphavantage.co/query';
-const STOCK_API_URL = '/company';
+const _STOCK_API_URL = '/company';
 
 const CompanySearch: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -34,7 +34,17 @@ const CompanySearch: React.FC = () => {
   // React Query Mutation to fetch company details
   const { mutate: fetchStockData, isPending: isFetchingStock } = useMutation({
     mutationFn: async (symbol: string) => {
-      return companyService.create({ symbol });
+      const company = await companyService.getCompany(symbol);
+      // Convert to StockData format expected by the store
+      return {
+        symbol: company.symbol,
+        price: {
+          shortName: company.name,
+        },
+        financialData: {
+          currentPrice: company.currentPrice || 0,
+        },
+      } as StockData;
     },
     onSuccess: (stockData: StockData) => {
       addCompany(stockData);

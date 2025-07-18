@@ -17,14 +17,14 @@ const userStoreCreator: StateCreator<UserState> = (set) => ({
   user: null,
   error: null,
   isLoading: false,
-  setUser: (user) => {
-    set(() => ({ user }));
+  setUser: (newUser) => {
+    set(() => ({ user: newUser }));
   },
-  setError: (error) => {
-    set(() => ({ error })); 
+  setError: (newError) => {
+    set(() => ({ error: newError })); 
   },
-  setLoading: (isLoading) => {
-    set(() => ({ isLoading })); 
+  setLoading: (newLoadingState) => {
+    set(() => ({ isLoading: newLoadingState })); 
   },
 });
 

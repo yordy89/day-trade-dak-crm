@@ -57,6 +57,8 @@ const TradingPattern = React.memo(({ isDarkMode }: { isDarkMode: boolean }) => (
   </Box>
 ));
 
+TradingPattern.displayName = 'TradingPattern';
+
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();

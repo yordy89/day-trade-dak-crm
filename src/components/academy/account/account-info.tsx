@@ -23,9 +23,9 @@ import {
   alpha,
   useTheme,
 } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { SubscriptionPlan } from '@/types/user';
+import type { SubscriptionPlan } from '@/types/user';
 import API from '@/lib/axios';
 import { mapMembershipName } from '@/lib/memberships';
 import { 
@@ -34,9 +34,7 @@ import {
   X,
   Warning,
   CheckCircle,
-  User,
   EnvelopeSimple,
-  CalendarBlank,
   Shield,
 } from '@phosphor-icons/react';
 
@@ -53,10 +51,10 @@ export function AccountInfo(): React.JSX.Element {
 
   // User data comes from the auth store via useClientAuth
   // No need to fetch it again
-  const userData = user;
+  const _userData = user;
   const isLoading = !user;
 
-  // Don't update user in useEffect - causes infinite loops
+  // Don&apos;t update user in useEffect - causes infinite loops
 
   // ✅ Subscription Cancellation Mutation
   const cancelSubscription = useMutation({
@@ -207,10 +205,9 @@ export function AccountInfo(): React.JSX.Element {
             </Typography>
           </Stack>
 
-          {user?.activeSubscriptions && user?.activeSubscriptions?.length > 0 ? (
+          {user?.activeSubscriptions && user.activeSubscriptions.length > 0 ? (
             <Stack spacing={1.5}>
               {user.activeSubscriptions
-                .filter((plan: any) => plan !== SubscriptionPlan.FREE)
                 .map((plan) => (
                   <Paper
                     key={plan}
@@ -285,7 +282,7 @@ export function AccountInfo(): React.JSX.Element {
         </Box>
 
         {/* Expired Subscriptions */}
-        {user?.expiredSubscriptions && user?.expiredSubscriptions?.length > 0 && (
+        {user?.expiredSubscriptions && user.expiredSubscriptions.length > 0 ? (
           <Box sx={{ mt: 3, width: '100%' }}>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
               Suscripciones Anteriores
@@ -324,7 +321,7 @@ export function AccountInfo(): React.JSX.Element {
               ))}
             </Stack>
           </Box>
-        )}
+        ) : null}
 
       </CardContent>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { 
   Box, 
   Container, 
@@ -37,18 +37,16 @@ import confetti from 'canvas-confetti';
 
 export default function MasterCourseSuccessPage() {
   const router = useRouter();
-  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     // Trigger confetti animation
     const timer = setTimeout(() => {
-      confetti({
+      void confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#16a34a', '#22c55e', '#4ade80', '#86efac'],
       });
-      setShowConfetti(true);
     }, 500);
 
     return () => clearTimeout(timer);
@@ -170,7 +168,7 @@ export default function MasterCourseSuccessPage() {
                 </Typography>
                 <List>
                   {courseModules.map((module, index) => (
-                    <ListItem key={index} sx={{ bgcolor: 'background.paper', mb: 1, borderRadius: 1 }}>
+                    <ListItem key={module.title} sx={{ bgcolor: 'background.paper', mb: 1, borderRadius: 1 }}>
                       <ListItemIcon>
                         {module.icon}
                       </ListItemIcon>

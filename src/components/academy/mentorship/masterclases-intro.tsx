@@ -18,21 +18,17 @@ import {
   ListItemText,
   useTheme,
   alpha,
-  Avatar,
 } from '@mui/material';
 import { 
   Crown,
-  VideoCamera,
   Lightning,
   ChartLine,
-  Clock,
   Brain,
   Target,
   TrendUp,
   Sparkle,
   CheckCircle,
   Certificate,
-  Users,
   BookOpen,
   Diamond,
 } from '@phosphor-icons/react';
@@ -197,8 +193,8 @@ export default function MasterClasesIntro({ onStart, ctaText }: MasterClasesIntr
       </Typography>
       
       <Grid container spacing={3} mb={6}>
-        {benefits.map((benefit, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+        {benefits.map((benefit) => (
+          <Grid item xs={12} sm={6} md={3} key={benefit.title}>
             <Card 
               sx={{ 
                 height: '100%',
@@ -243,8 +239,8 @@ export default function MasterClasesIntro({ onStart, ctaText }: MasterClasesIntr
         </Typography>
         
         <Grid container spacing={3}>
-          {topics.map((topic, index) => (
-            <Grid item xs={12} md={4} key={index}>
+          {topics.map((topic) => (
+            <Grid item xs={12} md={4} key={topic.title}>
               <Paper 
                 sx={{ 
                   p: 3, 
@@ -279,8 +275,8 @@ export default function MasterClasesIntro({ onStart, ctaText }: MasterClasesIntr
               {t('masterclass.includedContent')}
             </Typography>
             <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
-              {features.map((feature, index) => (
-                <ListItem key={index} disableGutters>
+              {features.map((feature) => (
+                <ListItem key={feature} disableGutters>
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.success.main} />
                   </ListItemIcon>

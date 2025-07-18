@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Container } from '@mui/material';
-import { ArrowLeft, Lock } from '@phosphor-icons/react';
+import { Box, Typography, Button } from '@mui/material';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
@@ -29,16 +29,16 @@ export default function ClasesPage(): React.JSX.Element {
   // Check for CLASSES subscription with expiration
   const hasSubscriptionAccess = userSubscriptions.some(sub => {
     if (typeof sub === 'string') {
-      return sub === SubscriptionPlan.CLASSES;
+      return sub === (SubscriptionPlan.CLASSES as string);
     } else if (sub && typeof sub === 'object' && 'plan' in sub && 'expiresAt' in sub) {
-      return sub.plan === SubscriptionPlan.CLASSES && 
+      return sub.plan === (SubscriptionPlan.CLASSES as string) && 
         (!sub.expiresAt || new Date(sub.expiresAt) > new Date());
     }
     return false;
   });
 
   // Admin always has access
-  const isAdmin = userRole === Role.ADMIN;
+  const isAdmin = (userRole as string) === (Role.ADMIN as string);
   
   const hasAccess = hasSubscriptionAccess || isAdmin;
 
@@ -50,7 +50,7 @@ export default function ClasesPage(): React.JSX.Element {
     
     // Check subscription expiration
     const clasesSubscription = userSubscriptions.find(sub => {
-      if (typeof sub === 'object' && 'plan' in sub && sub.plan === SubscriptionPlan.CLASSES) {
+      if (typeof sub === 'object' && 'plan' in sub && sub.plan === (SubscriptionPlan.CLASSES as string)) {
         return true;
       }
       return false;
@@ -136,11 +136,11 @@ export default function ClasesPage(): React.JSX.Element {
         </Typography>
         
         {/* Show access type */}
-        {user?.customClassAccess?.reason && (
+        {user?.customClassAccess?.reason ? (
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
             {t('classes.accessGrantedBy')}: {user.customClassAccess.reason}
           </Typography>
-        )}
+        ) : null}
       </Box>
       <ClasesVideoList />
     </Box>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -13,19 +13,14 @@ import {
   CircularProgress,
   Chip,
   Grid,
-  LinearProgress,
   useTheme,
-  alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Monitor } from '@phosphor-icons/react/dist/ssr/Monitor';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
-import { videoService } from '@/services/api/video.service';
 import API from '@/lib/axios';
 
 export default function ClassVideoPlayerPage() {
@@ -34,7 +29,7 @@ export default function ClassVideoPlayerPage() {
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const [hasWatched, setHasWatched] = useState(false);
+  const [_hasWatched, _setHasWatched] = useState(false);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -61,7 +56,7 @@ export default function ClassVideoPlayerPage() {
   
   // Fetch user's progress for this video
   // TODO: Enable when backend endpoints are implemented
-  const userProgress = null;
+  const _userProgress = null;
   
   // Extract video name from key
   const extractVideoName = (key: string): string => {
@@ -70,9 +65,9 @@ export default function ClassVideoPlayerPage() {
     const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
     
     // Check if it's a date format (YYYY-MM-DD HH:MM:SS)
-    const dateMatch = nameWithoutExt.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
+    const dateMatch = /^(?<date>\d{4}-\d{2}-\d{2}) (?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})$/.exec(nameWithoutExt);
     if (dateMatch) {
-      const [, date, hour, minute, second] = dateMatch;
+      const { date, hour, minute } = dateMatch.groups!;
       return t('liveRecorded.video.sessionTitle', { date, time: `${hour}:${minute}` });
     }
     
@@ -82,7 +77,7 @@ export default function ClassVideoPlayerPage() {
   };
   
   // Handle video progress
-  const handleProgress = (progress: number) => {
+  const handleProgress = (_progress: number) => {
     // TODO: Enable when backend endpoints are implemented
   };
   

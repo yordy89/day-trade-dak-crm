@@ -9,21 +9,19 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Chip,
   Stack,
   Skeleton,
   Alert,
   useTheme,
   alpha,
-  CircularProgress,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { VideoCamera } from '@phosphor-icons/react/dist/ssr/VideoCamera';
 import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
-import { videoService, VideoMetadata } from '@/services/api/video.service';
+import { videoService } from '@/services/api/video.service';
+import type { VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
@@ -69,8 +67,8 @@ export default function ClasesVideoList() {
   // Extract video order from filename (if videos are numbered)
   const extractOrder = (key: string): number => {
     const filename = key.split('/').pop() || '';
-    const match = filename.match(/^(\d+)[_\-\s]/);
-    return match ? parseInt(match[1], 10) : 999;
+    const match = /^(?<order>\d+)[_\-\s]/.exec(filename);
+    return match ? parseInt(match.groups!.order, 10) : 999;
   };
 
   // Sort videos by order
@@ -83,7 +81,7 @@ export default function ClasesVideoList() {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
-      completed: userClass?.completedAt ? true : false,
+      completed: Boolean(userClass?.completedAt),
       progress: userClass?.progress || 0,
     };
   });
@@ -96,13 +94,13 @@ export default function ClasesVideoList() {
     router.push(`/academy/classes/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (video: VideoWithProgress) => {
+  const getVideoDuration = (_video: VideoWithProgress) => {
     // TODO: Get actual duration from video metadata
     // For now, return a placeholder
     return t('classes.videoLesson');
   };
 
-  const getTotalProgress = () => {
+  const _getTotalProgress = () => {
     if (videosWithProgress.length === 0) return 0;
     const completedCount = videosWithProgress.filter(v => v.completed).length;
     return Math.round((completedCount / videosWithProgress.length) * 100);
@@ -112,7 +110,7 @@ export default function ClasesVideoList() {
     return (
       <Box>
         {[1, 2, 3].map((i) => (
-          <Card key={i} sx={{ mb: 2 }}>
+          <Card key={`skeleton-${i}`} sx={{ mb: 2 }}>
             <CardContent>
               <Skeleton variant="rectangular" height={80} />
               <Box sx={{ mt: 2 }}>

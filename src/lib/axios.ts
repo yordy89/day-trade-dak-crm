@@ -1,6 +1,7 @@
 import { paths } from '@/paths';
 import { useAuthStore } from '@/store/auth-store';
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { errorHandler } from './error-handler';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';

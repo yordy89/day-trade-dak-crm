@@ -18,7 +18,6 @@ import {
   ListItemText,
   useTheme,
   alpha,
-  Divider,
 } from '@mui/material';
 import { 
   Heart,
@@ -197,8 +196,8 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
       </Typography>
       
       <Grid container spacing={3} mb={6}>
-        {benefits.map((benefit, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+        {benefits.map((benefit) => (
+          <Grid item xs={12} sm={6} md={3} key={benefit.title}>
             <Card 
               sx={{ 
                 height: '100%',
@@ -244,8 +243,8 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
               {t('peaceWithMoney.forYouIf')}
             </Typography>
             <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
-              {targetAudience.map((item, index) => (
-                <ListItem key={index} disableGutters>
+              {targetAudience.map((item) => (
+                <ListItem key={item} disableGutters>
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.success.main} />
                   </ListItemIcon>
@@ -263,8 +262,8 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
               {t('peaceWithMoney.whatYouReceive')}
             </Typography>
             <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
-              {whatYouGet.map((item, index) => (
-                <ListItem key={index} disableGutters>
+              {whatYouGet.map((item) => (
+                <ListItem key={item} disableGutters>
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.primary.main} />
                   </ListItemIcon>
@@ -276,7 +275,7 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
         </Grid>
       </Grid>
 
-      {/* What's Included Section */}
+      {/* What&apos;s Included Section */}
       <Paper sx={{ p: 4, mb: 6, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h5" fontWeight={700} mb={3}>
           <Book size={28} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
@@ -284,8 +283,8 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
         </Typography>
         
         <Grid container spacing={2}>
-          {includes.map((item, index) => (
-            <Grid item xs={12} md={6} key={index}>
+          {includes.map((item) => (
+            <Grid item xs={12} md={6} key={item.text}>
               <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 1 }}>
                 <Box sx={{ color: 'primary.main' }}>{item.icon}</Box>
                 <Typography>{item.text}</Typography>
@@ -295,7 +294,7 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
         </Grid>
       </Paper>
 
-      {/* What it is / What it isn't */}
+      {/* What it is / What it isn&apos;t */}
       <Grid container spacing={3} mb={6}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 4, height: '100%', border: '1px solid', borderColor: 'error.main', bgcolor: alpha(theme.palette.error.main, 0.02) }}>

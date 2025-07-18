@@ -237,8 +237,8 @@ export function EducationPrograms() {
 
                   {/* Features */}
                   <Box sx={{ mb: 3, flex: 1 }}>
-                    {course.features.map((feature, index) => (
-                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    {course.features.map((feature, _index) => (
+                      <Box key={_index} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                         <CheckCircle sx={{ fontSize: 16, color: '#16a34a' }} />
                         <Typography variant="body2">{feature}</Typography>
                       </Box>
@@ -246,8 +246,7 @@ export function EducationPrograms() {
                   </Box>
 
                   {/* Progress (if enrolled) */}
-                  {course.progress && (
-                    <Box sx={{ mb: 3 }}>
+                  {course.progress ? <Box sx={{ mb: 3 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="body2">{t('education.progress')}</Typography>
                         <Typography variant="body2" fontWeight="600">
@@ -266,8 +265,7 @@ export function EducationPrograms() {
                           },
                         }}
                       />
-                    </Box>
-                  )}
+                    </Box> : null}
 
                   {/* Stats */}
                   <Box sx={{ display: 'flex', gap: 3, mb: 3 }}>

@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useClientAuth } from '@/hooks/use-client-auth';
 import { useAuthStore } from '@/store/auth-store';
 import { 
   Box, 
@@ -22,7 +21,6 @@ import {
 import { 
   CheckCircle, 
   WarningCircle,
-  Confetti,
   ArrowRight,
   CreditCard,
   Sparkle,
@@ -57,7 +55,7 @@ const ConfettiAnimation = () => {
     >
       {[...Array(confettiCount)].map((_, i) => (
         <motion.div
-          key={i}
+          key={`confetti-${i}`}
           initial={{
             x: Math.random() * window.innerWidth,
             y: -20,
@@ -95,7 +93,7 @@ export function PaymentSuccess(): React.JSX.Element {
   const sessionId = searchParams.get('session_id');
   const subscriptionName = searchParams.get('plan') || searchParams.get('subscription') || 'your new plan';
 
-  // Don't need setUser here, it's handled by the auth store
+  // Don&apos;t need setUser here, it&apos;s handled by the auth store
   const [isLoading, setIsLoading] = React.useState(true);
   const [isError, setIsError] = React.useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = React.useState(false);
@@ -193,11 +191,10 @@ export function PaymentSuccess(): React.JSX.Element {
         }
         // Now fetch the updated user profile
         return fetchUpdatedUser();
-      } else {
-        setErrorMessage(response.data.message || 'Payment confirmation failed');
-        setIsError(true);
-        setIsLoading(false);
       }
+      setErrorMessage(response.data.message || 'Payment confirmation failed');
+      setIsError(true);
+      setIsLoading(false);
     } catch (error: any) {
       console.error('❌ Error confirming payment:', error);
       setErrorMessage(error.response?.data?.message || 'Failed to confirm payment. Please try again.');
@@ -210,15 +207,15 @@ export function PaymentSuccess(): React.JSX.Element {
     // Map subscription plans to their correct routes
     const routeMap: Record<string, string> = {
       [SubscriptionPlan.CLASSES]: '/academy/classes',
-      [SubscriptionPlan.MASTER_CLASES]: '/academy/masterclass',
-      [SubscriptionPlan.LIVE_RECORDED]: '/academy/live-sessions',
+      [SubscriptionPlan.MasterClases]: '/academy/masterclass',
+      [SubscriptionPlan.LiveRecorded]: '/academy/live-sessions',
       [SubscriptionPlan.PSICOTRADING]: '/academy/psicotrading',
-      [SubscriptionPlan.PEACE_WITH_MONEY]: '/academy/personal-growth/peace-with-money',
-      [SubscriptionPlan.LIVE_WEEKLY_MANUAL]: '/live',
-      [SubscriptionPlan.LIVE_WEEKLY_RECURRING]: '/live',
-      [SubscriptionPlan.MASTER_COURSE]: '/master-course',
-      [SubscriptionPlan.COMMUNITY_EVENT]: '/community-event',
-      [SubscriptionPlan.VIP_EVENT]: '/vip-event',
+      [SubscriptionPlan.PeaceWithMoney]: '/academy/personal-growth/peace-with-money',
+      [SubscriptionPlan.LiveWeeklyManual]: '/live',
+      [SubscriptionPlan.LiveWeeklyRecurring]: '/live',
+      [SubscriptionPlan.MasterCourse]: '/master-course',
+      [SubscriptionPlan.CommunityEvent]: '/community-event',
+      [SubscriptionPlan.VipEvent]: '/vip-event',
     };
 
     const route = routeMap[subscriptionName as SubscriptionPlan];
@@ -300,7 +297,7 @@ export function PaymentSuccess(): React.JSX.Element {
         overflow: 'hidden'
       }}
     >
-      {!isError && !isLoading && <ConfettiAnimation />}
+      {!isError && !isLoading ? <ConfettiAnimation /> : null}
       
       <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
         <AnimatePresence mode="wait">
@@ -548,13 +545,11 @@ export function PaymentSuccess(): React.JSX.Element {
                         {errorMessage || 'No pudimos confirmar tu suscripción. Por favor, inténtalo de nuevo.'}
                       </Typography>
                       
-                      {sessionId && (
-                        <Alert severity="info" sx={{ width: '100%' }}>
+                      {sessionId ? <Alert severity="info" sx={{ width: '100%' }}>
                           <Typography variant="caption">
                             ID de sesión: {sessionId.substring(0, 20)}...
                           </Typography>
-                        </Alert>
-                      )}
+                        </Alert> : null}
                     </Stack>
                     
                     <Stack spacing={2} sx={{ width: '100%' }}>
@@ -567,7 +562,7 @@ export function PaymentSuccess(): React.JSX.Element {
                           setIsLoading(true);
                           setProgress(0);
                           retryCountRef.current = 0;
-                          confirmPayment();
+                          void confirmPayment();
                         }}
                       >
                         Reintentar ahora
@@ -588,23 +583,6 @@ export function PaymentSuccess(): React.JSX.Element {
           )}
         </AnimatePresence>
       </Container>
-      
-      <style jsx global>{`
-        @keyframes pulse {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.05);
-            opacity: 0.7;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </Box>
   );
 }

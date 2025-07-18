@@ -19,12 +19,11 @@ import {
   alpha,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { Brain } from '@phosphor-icons/react/dist/ssr/Brain';
 import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
-import { videoService, VideoMetadata } from '@/services/api/video.service';
+import { videoService, type VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 
 interface VideoWithProgress extends VideoMetadata {
@@ -62,8 +61,8 @@ export default function PsicoTradingVideoList() {
   // Extract video order from filename (if videos are numbered)
   const extractOrder = (key: string): number => {
     const filename = key.split('/').pop() || '';
-    const match = filename.match(/^(\d+)[_\-\s]/);
-    return match ? parseInt(match[1], 10) : 999;
+    const match = /^(?<order>\d+)[_\-\s]/.exec(filename);
+    return match ? parseInt(match.groups!.order, 10) : 999;
   };
 
   // Sort videos by order
@@ -76,7 +75,7 @@ export default function PsicoTradingVideoList() {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
-      completed: userClass?.completedAt ? true : false,
+      completed: Boolean(userClass?.completedAt),
       progress: userClass?.progress || 0,
     };
   });
@@ -89,7 +88,7 @@ export default function PsicoTradingVideoList() {
     router.push(`/academy/psicotrading/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (video: VideoWithProgress) => {
+  const getVideoDuration = (_video: VideoWithProgress) => {
     // TODO: Get actual duration from video metadata
     // For now, return a placeholder
     return 'Video lesson';
@@ -209,16 +208,15 @@ export default function PsicoTradingVideoList() {
                         >
                           Lección {index + 1}: {extractVideoName(video.key)}
                         </Typography>
-                        {/* TODO: Show completion status when progress tracking is implemented
-                        {video.completed && (
+                        {/* TODO: Show completion status when progress tracking is implemented */}
+                        {video.completed ? (
                           <Chip
                             label="Completed"
                             size="small"
                             color="success"
                             sx={{ height: 20 }}
                           />
-                        )}
-                        */}
+                        ) : null}
                       </Stack>
                     }
                     secondary={
@@ -235,13 +233,12 @@ export default function PsicoTradingVideoList() {
                             Psicología del Trading
                           </Typography>
                         </Box>
-                        {/* TODO: Show watch progress when tracking is implemented
-                        {video.progress && video.progress > 0 && video.progress < 100 && (
+                        {/* TODO: Show watch progress when tracking is implemented */}
+                        {video.progress && video.progress > 0 && video.progress < 100 ? (
                           <Typography component="span" variant="caption" color="primary.main">
                             {video.progress}% watched
                           </Typography>
-                        )}
-                        */}
+                        ) : null}
                       </Box>
                     }
                   />

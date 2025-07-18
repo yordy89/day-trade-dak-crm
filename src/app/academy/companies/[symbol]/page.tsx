@@ -5,7 +5,7 @@ export default async function CompanyDetail({ params }: { params: Promise<{ symb
   const { symbol } = await params;
   const company: any = {
     name: 'Company Name',
-    symbol: symbol,
+    symbol,
     marketCap: '1B',
     description: 'Company description',
   };

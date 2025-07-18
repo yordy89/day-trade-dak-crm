@@ -101,19 +101,15 @@ export function TradingProducts() {
                   `}
                   elevation={0}
                 >
-                  {product.highlighted && (
-                    <Box className="absolute top-0 right-0 bg-green-500 text-black px-3 py-1 text-xs font-bold">
+                  {product.highlighted ? <Box className="absolute top-0 right-0 bg-green-500 text-black px-3 py-1 text-xs font-bold">
                       MOST POPULAR
-                    </Box>
-                  )}
+                    </Box> : null}
                   
-                  {product.discount && (
-                    <Chip
+                  {product.discount ? <Chip
                       label={product.discount}
                       size="small"
                       className="absolute top-4 left-4 bg-red-600 text-white font-bold"
-                    />
-                  )}
+                    /> : null}
 
                   <CardContent className="p-6">
                     <Box 
@@ -140,8 +136,8 @@ export function TradingProducts() {
                     </Box>
 
                     <Box className="space-y-3 mb-6">
-                      {product.features.map((feature, index) => (
-                        <Box key={index} className="flex items-start gap-2">
+                      {product.features.map((feature, _index) => (
+                        <Box key={feature} className="flex items-start gap-2">
                           <Check className="text-green-400 text-sm mt-0.5" />
                           <Typography variant="body2" className="text-gray-300">
                             {feature}

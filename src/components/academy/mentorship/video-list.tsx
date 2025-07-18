@@ -19,13 +19,12 @@ import {
   alpha,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { VideoCamera } from '@phosphor-icons/react/dist/ssr/VideoCamera';
 import { Certificate } from '@phosphor-icons/react/dist/ssr/Certificate';
 import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
-import { videoService, VideoMetadata } from '@/services/api/video.service';
+import { videoService, type VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 
 interface VideoWithProgress extends VideoMetadata {
@@ -46,7 +45,7 @@ export default function MentorshipVideoList() {
     queryKey: ['mentorship-videos'],
     queryFn: async () => {
       const data = await videoService.getMentorshipVideos();
-      return data.map((video: any, index: number) => {
+      return data.map((video: any, _index: number) => {
         const fileName = video.key.split('/').pop() || '';
         const cleanName = fileName.replace('.mp4', '').replace('mentorias/', '');
         
@@ -55,10 +54,10 @@ export default function MentorshipVideoList() {
         let topic = '';
         
         if (cleanName.includes('mentoria_entradas_parte')) {
-          const partMatch = cleanName.match(/parte_(\d+)(_([a-c]))?/);
+          const partMatch = /parte_(?<partNum>\d+)(?:_(?<partLetter>[a-c]))?/.exec(cleanName);
           if (partMatch) {
-            const partNumber = partMatch[1];
-            const partLetter = partMatch[3] ? partMatch[3].toUpperCase() : '';
+            const partNumber = partMatch.groups?.partNum || '';
+            const partLetter = partMatch.groups?.partLetter ? partMatch.groups.partLetter.toUpperCase() : '';
             formattedTitle = `Estrategias de Entrada - Parte ${partNumber}${partLetter}`;
           } else {
             formattedTitle = 'Estrategias de Entrada';
@@ -90,7 +89,7 @@ export default function MentorshipVideoList() {
             .replace(/mentoria/g, '')
             .trim()
             .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
           topic = 'Trading Avanzado';
         }
@@ -98,7 +97,7 @@ export default function MentorshipVideoList() {
         return {
           ...video,
           title: formattedTitle,
-          topic: topic,
+          topic,
           level: 'Profesional',
         };
       });
@@ -114,7 +113,7 @@ export default function MentorshipVideoList() {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
-      completed: userClass?.completedAt ? true : false,
+      completed: Boolean(userClass?.completedAt),
       progress: userClass?.progress || 0,
     };
   });
@@ -127,7 +126,7 @@ export default function MentorshipVideoList() {
     router.push(`/academy/masterclass/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (video: VideoWithProgress) => {
+  const getVideoDuration = (_video: VideoWithProgress) => {
     // TODO: Get actual duration from video metadata
     // For now, return a placeholder
     return 'Video lesson';
@@ -190,13 +189,13 @@ export default function MentorshipVideoList() {
       <Card>
         <CardContent sx={{ p: 0 }}>
           <List sx={{ p: 0 }}>
-            {videosWithProgress.map((video, index) => (
+            {videosWithProgress.map((video, _index) => (
               <ListItem
                 key={video.key}
                 disablePadding
                 sx={{
                   borderBottom:
-                    index < videosWithProgress.length - 1
+                    _index < videosWithProgress.length - 1
                       ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
                       : 'none',
                 }}
@@ -247,16 +246,15 @@ export default function MentorshipVideoList() {
                         >
                           {video.title}
                         </Typography>
-                        {/* TODO: Show completion status when progress tracking is implemented
-                        {video.completed && (
+                        {/* TODO: Show completion status when progress tracking is implemented */}
+                        {video.completed ? (
                           <Chip
                             label="Completed"
                             size="small"
                             color="success"
                             sx={{ height: 20 }}
                           />
-                        )}
-                        */}
+                        ) : null}
                       </Stack>
                     }
                     secondary={
@@ -267,29 +265,28 @@ export default function MentorshipVideoList() {
                             {getVideoDuration(video)}
                           </Typography>
                         </Box>
-                        {video.topic && (
+                        {video.topic ? (
                           <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <VideoCamera size={14} />
                             <Typography component="span" variant="caption" color="text.secondary">
                               {video.topic}
                             </Typography>
                           </Box>
-                        )}
-                        {video.level && (
+                        ) : null}
+                        {video.level ? (
                           <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Certificate size={14} />
                             <Typography component="span" variant="caption" color="text.secondary">
                               {video.level}
                             </Typography>
                           </Box>
-                        )}
-                        {/* TODO: Show watch progress when tracking is implemented
-                        {video.progress && video.progress > 0 && video.progress < 100 && (
+                        ) : null}
+                        {/* TODO: Show watch progress when tracking is implemented */}
+                        {video.progress && video.progress > 0 && video.progress < 100 ? (
                           <Typography component="span" variant="caption" color="secondary.main">
                             {video.progress}% watched
                           </Typography>
-                        )}
-                        */}
+                        ) : null}
                       </Box>
                     }
                   />

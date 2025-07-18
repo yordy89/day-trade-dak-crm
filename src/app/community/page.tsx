@@ -58,7 +58,7 @@ const recentDiscussions = [
 ];
 
 export default function CommunityPage() {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
 
   return (
     <>
@@ -76,7 +76,7 @@ export default function CommunityPage() {
             <AvatarGroup max={8} sx={{ justifyContent: 'center', mb: 3 }}>
               {[...Array(10)].map((_, i) => (
                 <Avatar
-                  key={i}
+                  key={`avatar-${i}`}
                   src={`/assets/avatar-${i + 1}.png`}
                   alt={`Member ${i + 1}`}
                 />
@@ -115,8 +115,8 @@ export default function CommunityPage() {
               Trending Discussions
             </Typography>
             <Grid container spacing={3}>
-              {recentDiscussions.map((discussion, index) => (
-                <Grid item xs={12} key={index}>
+              {recentDiscussions.map((discussion) => (
+                <Grid item xs={12} key={discussion.title}>
                   <Card>
                     <CardContent>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>

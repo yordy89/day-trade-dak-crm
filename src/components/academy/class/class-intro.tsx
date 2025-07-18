@@ -18,8 +18,6 @@ import {
   ListItemText,
   useTheme,
   alpha,
-  Avatar,
-  AvatarGroup,
 } from '@mui/material';
 import { 
   Users,
@@ -34,7 +32,6 @@ import {
   CheckCircle,
   Certificate,
   Globe,
-  ChatCircle,
   BookOpen,
 } from '@phosphor-icons/react';
 
@@ -82,7 +79,7 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
     t('liveRecorded.features.unlimitedAccess'),
   ];
 
-  const schedule = [
+  const _schedule = [
     { time: '8:00 AM', title: 'Pre-Market Analysis', description: 'Preparación para la apertura del mercado' },
     { time: '9:30 AM', title: 'Trading en Vivo', description: 'Operaciones en tiempo real con explicaciones' },
     { time: '3:00 PM', title: 'Wrap-Up & Q&A', description: 'Revisión del día y preguntas de la comunidad' },
@@ -206,8 +203,8 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
       </Typography>
       
       <Grid container spacing={3} mb={6}>
-        {benefits.map((benefit, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+        {benefits.map((benefit) => (
+          <Grid item xs={12} sm={6} md={3} key={benefit.title}>
             <Card 
               sx={{ 
                 height: '100%',
@@ -324,8 +321,8 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
               {t('liveRecorded.whatIncludes')}
             </Typography>
             <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
-              {features.map((feature, index) => (
-                <ListItem key={index} disableGutters>
+              {features.map((feature) => (
+                <ListItem key={feature} disableGutters>
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.success.main} />
                   </ListItemIcon>

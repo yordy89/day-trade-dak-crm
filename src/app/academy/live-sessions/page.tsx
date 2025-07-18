@@ -29,10 +29,10 @@ export default function ClassesPage(): React.JSX.Element {
   // Check for LIVE_RECORDED subscription with expiration
   const hasSubscriptionAccess = userSubscriptions.some(sub => {
     if (typeof sub === 'string') {
-      return sub === SubscriptionPlan.LIVE_RECORDED;
+      return sub === (SubscriptionPlan.LiveRecorded as string);
     } else if (sub && typeof sub === 'object' && 'plan' in sub) {
       // Check if it's LiveRecorded plan
-      if (sub.plan === SubscriptionPlan.LIVE_RECORDED) {
+      if (sub.plan === (SubscriptionPlan.LiveRecorded as string)) {
         // If no expiresAt field, it's a permanent subscription
         if (!('expiresAt' in sub) || !sub.expiresAt) {
           return true;

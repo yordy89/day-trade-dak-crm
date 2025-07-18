@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import { useClientAuth } from './use-client-auth';
 
 interface MeetingSocketOptions {
@@ -84,7 +85,7 @@ export function useMeetingSocket({
   }, [meetingId, user]);
 
   useEffect(() => {
-    const socket = connect();
+    void connect();
     
     return () => {
       disconnect();

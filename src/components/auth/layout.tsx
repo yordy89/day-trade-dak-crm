@@ -6,7 +6,6 @@ import { Button, Card, IconButton, List, ListItem, ListItemIcon, ListItemText, u
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { 
-  CheckCircle, 
   TrendingUp, 
   ShowChart, 
   Assessment, 
@@ -20,8 +19,6 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
-import { paths } from '@/paths';
-import { DynamicLogo } from '@/components/core/logo';
 import { MainNavbar } from '@/components/landing/main-navbar';
 
 export interface LayoutProps {
@@ -32,7 +29,7 @@ export interface LayoutProps {
 export function Layout({ children }: LayoutProps): React.JSX.Element {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const features = [
     { 
@@ -164,9 +161,9 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           </Typography>
           
           <List sx={{ p: 0 }}>
-            {features.map((feature, index) => (
+            {features.map((feature, _index) => (
               <ListItem 
-                key={index} 
+                key={feature.text} 
                 sx={{ 
                   px: 0,
                   py: 2,

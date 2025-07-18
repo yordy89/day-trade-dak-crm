@@ -32,7 +32,6 @@ import {
   CalendarToday,
   BarChart,
   AutoGraph,
-  Star,
 } from '@mui/icons-material';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -267,7 +266,7 @@ export function ProfessionalNavbar() {
                             }}
                           />
                         </MenuItem>
-                        {index < item.submenu!.length - 1 && <Divider />}
+                        {index < item.submenu!.length - 1 ? <Divider /> : null}
                       </React.Fragment>
                     ))}
                   </Menu>

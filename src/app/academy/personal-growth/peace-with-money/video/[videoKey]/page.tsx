@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Box,
   Container,
@@ -13,20 +13,16 @@ import {
   CircularProgress,
   Chip,
   Grid,
-  LinearProgress,
   useTheme,
   alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
-import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { HandsPraying } from '@phosphor-icons/react/dist/ssr/HandsPraying';
 import { Calendar } from '@phosphor-icons/react/dist/ssr/Calendar';
 import { Sparkle } from '@phosphor-icons/react/dist/ssr/Sparkle';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
-import { videoService } from '@/services/api/video.service';
 import API from '@/lib/axios';
 import { getVideosDescriptions } from '@/data/curso1';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +33,6 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   const { t, i18n } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const [hasWatched, setHasWatched] = useState(false);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -64,7 +59,6 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   
   // Fetch user's progress for this video
   // TODO: Enable when backend endpoints are implemented
-  const userProgress = null;
   
   // Extract video info from key
   const extractVideoInfo = (key: string): { title: string; lessonNumber: number | null; description: string } => {
@@ -87,7 +81,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   const videoInfo = extractVideoInfo(videoKey);
   
   // Handle video progress
-  const handleProgress = (progress: number) => {
+  const handleProgress = (_progress: number) => {
     // TODO: Enable when backend endpoints are implemented
   };
   
@@ -149,23 +143,23 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                 color="secondary"
                 variant="outlined"
               />
-              {videoInfo.lessonNumber && (
+              {videoInfo.lessonNumber ? (
                 <Chip
                   icon={<Calendar size={16} />}
                   label={t('peaceWithMoney.video.day', { day: videoInfo.lessonNumber })}
                   size="small"
                   variant="outlined"
                 />
-              )}
+              ) : null}
               {/* Special badge for specific lessons */}
-              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) && (
+              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) ? (
                 <Chip
                   icon={<Sparkle size={16} />}
                   label={t('peaceWithMoney.video.specialSession')}
                   size="small"
                   color="warning"
                 />
-              )}
+              ) : null}
               {/* TODO: Show duration when metadata is available
               <Chip
                 icon={<Clock size={16} />}
@@ -236,13 +230,13 @@ export default function PeaceWithMoneyVideoPlayerPage() {
               </Typography>
               {videoInfo.description ? (
                 <Stack spacing={2}>
-                  {videoInfo.description.split(';').map((phrase, index) => {
+                  {videoInfo.description.split(';').map((phrase, _index) => {
                     const trimmedPhrase = phrase.trim();
                     if (!trimmedPhrase) return null;
                     
                     return (
                       <Box 
-                        key={index}
+                        key={`phrase-${trimmedPhrase.substring(0, 20)}`}
                         sx={{ 
                           p: 2, 
                           bgcolor: alpha(theme.palette.primary.main, 0.05),
@@ -263,13 +257,11 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                 </Typography>
               )}
               
-              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) && (
-                <Alert severity="info" sx={{ mt: 3 }}>
+              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) ? <Alert severity="info" sx={{ mt: 3 }}>
                   <Typography variant="body2">
                     <strong>{t('peaceWithMoney.video.specialSessionTitle')}</strong> {t('peaceWithMoney.video.specialSessionDescription')}
                   </Typography>
-                </Alert>
-              )}
+                </Alert> : null}
             </CardContent>
           </Card>
         </Grid>
@@ -313,7 +305,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
               </Stack>
               
               {/* Download reminders for special days */}
-              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) && (
+              {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) ? (
                 <Box sx={{ mt: 3 }}>
                   <Alert severity="success">
                     <Typography variant="body2">
@@ -321,7 +313,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                     </Typography>
                   </Alert>
                 </Box>
-              )}
+              ) : null}
             </CardContent>
           </Card>
         </Grid>

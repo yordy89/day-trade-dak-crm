@@ -89,11 +89,12 @@ class EventService {
       const response = await API.get('/events', { params });
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load events.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -102,11 +103,12 @@ class EventService {
       const response = await API.get<Event>(`/events/${eventId}`);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load event details.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -115,11 +117,12 @@ class EventService {
       const response = await API.post<Event>('/events', data);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to create event.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -128,11 +131,12 @@ class EventService {
       const response = await API.put<Event>(`/events/${eventId}`, data);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update event.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -140,26 +144,28 @@ class EventService {
     try {
       await API.delete(`/events/${eventId}`);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to delete event.',
       });
+      throw new Error(apiError.message);
     }
   }
 
-  async getUpcomingEvents(limit: number = 10): Promise<Event[]> {
+  async getUpcomingEvents(limit = 10): Promise<Event[]> {
     try {
       const response = await API.get<Event[]>('/events/upcoming', {
         params: { limit },
       });
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load upcoming events.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -169,11 +175,12 @@ class EventService {
       const response = await API.post<EventRegistration>('/event-registrations', data);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to register for event.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -182,11 +189,12 @@ class EventService {
       const response = await API.get<EventRegistration[]>(`/event-registrations/event/${eventId}`);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load event registrations.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -199,11 +207,12 @@ class EventService {
       const response = await API.get<EventRegistration[]>(endpoint);
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load user registrations.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -214,10 +223,11 @@ class EventService {
       );
       return response.data.isRegistered;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: false,
         logError: true,
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -225,11 +235,12 @@ class EventService {
     try {
       await API.delete(`/event-registrations/${registrationId}`);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to cancel registration.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -260,11 +271,12 @@ class EventService {
         remaining: capacity === 0 ? -1 : Math.max(0, remaining),
       };
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to check event capacity.',
       });
+      throw new Error(apiError.message);
     }
   }
 }

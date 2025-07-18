@@ -83,11 +83,12 @@ export function formatRelativeDate(date: string | Date | null | undefined): stri
     return 'Mañana';
   } else if (diffDays === -1) {
     return 'Ayer';
-  } else if (diffDays > 0 && diffDays < 7) {
-    return `En ${diffDays} días`;
-  } else if (diffDays < 0 && diffDays > -7) {
-    return `Hace ${Math.abs(diffDays)} días`;
-  } else {
-    return formatDate(dateObj);
   }
+  if (diffDays > 0 && diffDays < 7) {
+    return `En ${diffDays} días`;
+  }
+  if (diffDays < 0 && diffDays > -7) {
+    return `Hace ${Math.abs(diffDays)} días`;
+  }
+  return formatDate(dateObj);
 }

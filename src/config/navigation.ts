@@ -79,7 +79,7 @@ export const getNavigationItem = (key: string): NavigationItem | undefined => {
 };
 
 // Helper function to filter navigation items based on authentication
-export const getVisibleNavigation = (isAuthenticated: boolean): NavigationItem[] => {
+export const getVisibleNavigation = (_isAuthenticated: boolean): NavigationItem[] => {
   // All items are visible, but protected routes will redirect if not authenticated
   return mainNavigation;
 };

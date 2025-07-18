@@ -14,7 +14,6 @@ import {
   LinearProgress,
   Chip,
   useTheme,
-  alpha,
   Collapse,
   List,
   ListItem,
@@ -32,19 +31,15 @@ import {
   VolumeOff,
   Fullscreen,
   FullscreenExit,
-  Settings,
-  Speed,
   PictureInPicture,
   Forward10,
   Replay10,
-  Bookmark,
   BookmarkBorder,
   Notes,
   Search,
   PlayCircleOutline,
   Lock,
 } from '@mui/icons-material';
-import { formatDuration } from 'date-fns';
 
 interface VideoInfo {
   id: string;
@@ -102,7 +97,7 @@ export function ProfessionalVideoPlayer({
   const [searchQuery, setSearchQuery] = useState('');
   
   // Control visibility timer
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
+  const controlsTimeoutRef = useRef<number>();
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -153,7 +148,7 @@ export function ProfessionalVideoPlayer({
     if (isPlaying) {
       videoElement.pause();
     } else {
-      videoElement.play();
+      void videoElement.play();
     }
     setIsPlaying(!isPlaying);
   };
@@ -194,12 +189,10 @@ export function ProfessionalVideoPlayer({
 
     if (!isFullscreen) {
       if (container.requestFullscreen) {
-        container.requestFullscreen();
+        void container.requestFullscreen();
       }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
+    } else if (document.exitFullscreen) {
+      void document.exitFullscreen();
     }
     setIsFullscreen(!isFullscreen);
   };
@@ -242,7 +235,7 @@ export function ProfessionalVideoPlayer({
       clearTimeout(controlsTimeoutRef.current);
     }
     
-    controlsTimeoutRef.current = setTimeout(() => {
+    controlsTimeoutRef.current = window.setTimeout(() => {
       if (isPlaying) {
         setShowControls(false);
       }
@@ -284,7 +277,11 @@ export function ProfessionalVideoPlayer({
             borderRadius: 2,
           }}
           onMouseMove={handleMouseMove}
-          onMouseLeave={() => isPlaying && setShowControls(false)}
+          onMouseLeave={() => {
+            if (isPlaying) {
+              setShowControls(false);
+            }
+          }}
         >
           {/* Video Element */}
           <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
@@ -300,9 +297,13 @@ export function ProfessionalVideoPlayer({
               }}
               onClick={togglePlayPause}
             >
-              {captionsUrl && (
-                <track src={captionsUrl} kind="subtitles" label="English" default />
-              )}
+              <track 
+                src={captionsUrl || ''} 
+                kind="captions" 
+                srcLang="en" 
+                label="English" 
+                default 
+              />
             </video>
 
             {/* Controls Overlay */}
@@ -428,7 +429,7 @@ export function ProfessionalVideoPlayer({
                   <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
                     {[0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => (
                       <Chip
-                        key={rate}
+                        key={`rate-${rate}`}
                         label={`${rate}x`}
                         onClick={() => {
                           changePlaybackRate(rate);
@@ -454,25 +455,17 @@ export function ProfessionalVideoPlayer({
                 <Typography variant="h5" fontWeight={700}>
                   {video.title}
                 </Typography>
-                {video.instructor && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                {video.instructor ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                     Instructor: {video.instructor}
-                  </Typography>
-                )}
+                  </Typography> : null}
                 <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-                  {video.category && (
-                    <Chip label={video.category} size="small" />
-                  )}
-                  {video.uploadDate && (
-                    <Typography variant="caption" color="text.secondary">
+                  {video.category ? <Chip label={video.category} size="small" /> : null}
+                  {video.uploadDate ? <Typography variant="caption" color="text.secondary">
                       Uploaded: {video.uploadDate}
-                    </Typography>
-                  )}
-                  {video.views && (
-                    <Typography variant="caption" color="text.secondary">
+                    </Typography> : null}
+                  {video.views ? <Typography variant="caption" color="text.secondary">
                       {video.views.toLocaleString()} views
-                    </Typography>
-                  )}
+                    </Typography> : null}
                 </Stack>
               </Box>
               
@@ -490,11 +483,9 @@ export function ProfessionalVideoPlayer({
               </Stack>
             </Stack>
 
-            {video.description && (
-              <Typography variant="body2" sx={{ mt: 2 }}>
+            {video.description ? <Typography variant="body2" sx={{ mt: 2 }}>
                 {video.description}
-              </Typography>
-            )}
+              </Typography> : null}
 
             {/* Bookmark Section */}
             <Collapse in={showNotes}>
@@ -509,7 +500,11 @@ export function ProfessionalVideoPlayer({
                     placeholder="Add a note..."
                     value={noteText}
                     onChange={(e) => setNoteText(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addBookmark()}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        addBookmark();
+                      }
+                    }}
                   />
                   <Button
                     variant="contained"
@@ -526,8 +521,8 @@ export function ProfessionalVideoPlayer({
                       Bookmarks
                     </Typography>
                     <List dense>
-                      {bookmarks.map((bookmark, index) => (
-                        <ListItem key={index}>
+                      {bookmarks.map((bookmark, _index) => (
+                        <ListItem key={`bookmark-${bookmark.time}-${bookmark.note}`}>
                           <ListItemButton onClick={() => handleSeek(bookmark.time)}>
                             <ListItemText
                               primary={bookmark.note}
@@ -546,7 +541,7 @@ export function ProfessionalVideoPlayer({
       </Box>
 
       {/* Related Videos Sidebar */}
-      {relatedVideos.length > 0 && (
+      {relatedVideos.length > 0 ? (
         <Box sx={{ width: { xs: '100%', lg: 350 } }}>
           <Card>
             <CardContent>
@@ -600,14 +595,14 @@ export function ProfessionalVideoPlayer({
                         />
                       </ListItemButton>
                     </ListItem>
-                    {index < filteredRelatedVideos.length - 1 && <Divider />}
+                    {index < filteredRelatedVideos.length - 1 ? <Divider /> : null}
                   </React.Fragment>
                 ))}
               </List>
             </CardContent>
           </Card>
         </Box>
-      )}
+      ) : null}
     </Box>
   );
 }

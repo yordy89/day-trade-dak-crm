@@ -19,7 +19,6 @@ import {
   FormControl,
   InputLabel,
   Skeleton,
-  Badge,
   useTheme,
   alpha,
   LinearProgress,
@@ -30,7 +29,6 @@ import {
   Lock,
   Search,
   FilterList,
-  Sort,
   ViewModule,
   ViewList,
   CheckCircle,
@@ -40,7 +38,7 @@ import {
   Bookmark,
   BookmarkBorder,
 } from '@mui/icons-material';
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 export interface Video {
   id: string;
@@ -106,7 +104,7 @@ export function ProfessionalVideoList({
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredAndSortedVideos = useMemo(() => {
-    let filtered = videos.filter(video => {
+    const filtered = videos.filter(video => {
       const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         video.description?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || video.category === selectedCategory;
@@ -115,25 +113,26 @@ export function ProfessionalVideoList({
     });
 
     // Sort videos
+    const sorted = [...filtered];
     switch (sortBy) {
       case 'newest':
-        filtered.sort((a, b) => b.uploadDate.getTime() - a.uploadDate.getTime());
+        sorted.sort((a, b) => b.uploadDate.getTime() - a.uploadDate.getTime());
         break;
       case 'oldest':
-        filtered.sort((a, b) => a.uploadDate.getTime() - b.uploadDate.getTime());
+        sorted.sort((a, b) => a.uploadDate.getTime() - b.uploadDate.getTime());
         break;
       case 'popular':
-        filtered.sort((a, b) => b.views - a.views);
+        sorted.sort((a, b) => b.views - a.views);
         break;
       case 'name':
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
         break;
       case 'progress':
-        filtered.sort((a, b) => (b.progress || 0) - (a.progress || 0));
+        sorted.sort((a, b) => (b.progress || 0) - (a.progress || 0));
         break;
     }
 
-    return filtered;
+    return sorted;
   }, [videos, searchQuery, selectedCategory, sortBy]);
 
   const formatDuration = (seconds?: number) => {
@@ -303,7 +302,11 @@ export function ProfessionalVideoList({
                     boxShadow: video.isLocked ? 1 : 6,
                   },
                 }}
-                onClick={() => !video.isLocked && onVideoSelect?.(video)}
+                onClick={() => {
+                  if (!video.isLocked && onVideoSelect) {
+                    onVideoSelect(video);
+                  }
+                }}
               >
                 {/* Thumbnail */}
                 <Box sx={{ position: 'relative' }}>
@@ -482,7 +485,11 @@ export function ProfessionalVideoList({
                 cursor: video.isLocked ? 'not-allowed' : 'pointer',
                 opacity: video.isLocked ? 0.7 : 1,
               }}
-              onClick={() => !video.isLocked && onVideoSelect?.(video)}
+              onClick={() => {
+                if (!video.isLocked && onVideoSelect) {
+                  onVideoSelect(video);
+                }
+              }}
             >
               <CardContent>
                 <Grid container spacing={2} alignItems="center">

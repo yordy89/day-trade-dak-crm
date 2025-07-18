@@ -6,7 +6,6 @@ import {
   Button,
   Grid,
   Card,
-  CardContent,
   Stack,
   Chip,
   Paper,
@@ -14,14 +13,10 @@ import {
   alpha,
 } from '@mui/material';
 import { PlayCircle } from '@phosphor-icons/react/dist/ssr/PlayCircle';
-import { Timer } from '@phosphor-icons/react/dist/ssr/Timer';
 import { Calendar } from '@phosphor-icons/react/dist/ssr/Calendar';
 import { ChartLineUp } from '@phosphor-icons/react/dist/ssr/ChartLineUp';
-import { Users } from '@phosphor-icons/react/dist/ssr/Users';
 import { Trophy } from '@phosphor-icons/react/dist/ssr/Trophy';
 import { BookOpen } from '@phosphor-icons/react/dist/ssr/BookOpen';
-import { Target } from '@phosphor-icons/react/dist/ssr/Target';
-import { Clock } from '@phosphor-icons/react/dist/ssr/Clock';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -95,13 +90,13 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                {hasAccess && daysRemaining !== null && (
+                {hasAccess && daysRemaining !== null && daysRemaining !== undefined ? (
                   <Chip
                     label={t('classes.daysRemaining', { days: daysRemaining })}
                     color={daysRemaining <= 3 ? 'warning' : 'success'}
                     sx={{ mb: 2 }}
                   />
-                )}
+                ) : null}
                 
                 <Typography variant="h2" fontWeight={800} gutterBottom>
                   {t('classes.title')}
@@ -215,7 +210,7 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
 
         <Grid container spacing={4}>
           {features.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid item xs={12} sm={6} md={3} key={feature.title}>
               <MotionCard
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -272,7 +267,7 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
 
           <Grid container spacing={3}>
             {curriculum.map((module, index) => (
-              <Grid item xs={12} md={6} key={index}>
+              <Grid item xs={12} md={6} key={module.title}>
                 <Paper
                   sx={{
                     p: 3,
@@ -353,11 +348,11 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
           >
             {ctaText}
           </Button>
-          {!hasAccess && (
+          {!hasAccess ? (
             <Typography variant="body2" sx={{ mt: 2, opacity: 0.8 }}>
               {t('classes.priceInfo')}
             </Typography>
-          )}
+          ) : null}
         </Container>
       </Box>
     </Box>

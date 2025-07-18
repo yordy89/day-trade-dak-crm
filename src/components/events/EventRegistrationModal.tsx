@@ -46,7 +46,7 @@ interface CustomInputProps {
   isDarkMode: boolean;
   muiTheme: any;
   name: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   endAdornment?: React.ReactNode;
   disabled?: boolean;
   multiline?: boolean;
@@ -78,7 +78,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -156,11 +156,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
         />
         {props.endAdornment}
       </Box>
-      {helperText && (
+      {helperText ? (
         <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
           {helperText}
         </Typography>
-      )}
+      ) : null}
     </FormControl>
   );
 };
@@ -341,7 +341,7 @@ export function EventRegistrationModal({
           </Typography>
           
           <Stack direction="row" spacing={2} alignItems="center">
-            {event.price != null && event.price > 0 && (
+            {event.price !== null && event.price !== undefined && event.price > 0 ? (
               <Chip
                 label={`$${event.price} USD`}
                 sx={{
@@ -352,7 +352,7 @@ export function EventRegistrationModal({
                 }}
                 icon={<TrendingUp />}
               />
-            )}
+            ) : null}
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
               {t('events.registration.modal.completeRegistration')}
             </Typography>
@@ -448,7 +448,7 @@ export function EventRegistrationModal({
             </Grid>
 
             {/* Master Course specific fields */}
-            {event.type === 'master_course' && (
+            {event.type === 'master_course' ? (
               <>
                 <Grid item xs={12}>
                   <Typography 
@@ -497,11 +497,11 @@ export function EventRegistrationModal({
                   />
                 </Grid>
               </>
-            )}
+            ) : null}
 
 
             {/* Payment Options Info */}
-            {event.price && event.price > 0 && (
+            {event.price !== undefined && event.price !== null && event.price > 0 ? (
               <Grid item xs={12}>
                 <Paper
                   elevation={0}
@@ -529,7 +529,7 @@ export function EventRegistrationModal({
                   </Stack>
                 </Paper>
               </Grid>
-            )}
+            ) : null}
 
             {/* Info Box */}
             <Grid item xs={12}>
@@ -570,8 +570,8 @@ export function EventRegistrationModal({
                       }}
                     >
                       {t('events.registration.modal.afterSubmitting')}
-                      {event.type === 'master_course' && ` ${t('events.registration.modal.courseAccess')}`}
-                      {event.type === 'community_event' && ` ${t('events.registration.modal.eventConfirmation')}`}
+                      {event.type === 'master_course' ? ` ${t('events.registration.modal.courseAccess')}` : ''}
+                      {event.type === 'community_event' ? ` ${t('events.registration.modal.eventConfirmation')}` : ''}
                     </Typography>
                   </Box>
                 </Stack>
@@ -637,8 +637,8 @@ export function EventRegistrationModal({
           >
             {isLoading ? (
               t('status.processing')
-            ) : event.price != null && event.price > 0 ? (
-              `${t('events.registration.modal.proceedToPayment')}${event.price}`
+            ) : event.price !== null && event.price !== undefined && event.price > 0 ? (
+              `${t('events.registration.modal.proceedToPayment')} $${event.price}`
             ) : (
               t('events.registration.free.submitButton')
             )}

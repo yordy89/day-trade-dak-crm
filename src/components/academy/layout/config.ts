@@ -1,5 +1,5 @@
 import { type NavItemConfig } from '@/types/nav';
-import { Role, SubscriptionPlan } from '@/types/user';
+import { SubscriptionPlan } from '@/types/user';
 import { paths } from '@/paths';
 import type { TFunction } from 'i18next';
 
@@ -17,14 +17,14 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
     title: t('academy:navigation.masterClasses'),
     href: paths.academy.mentorship,
     icon: 'mentorship',
-    requiredSubscription: SubscriptionPlan.MASTER_CLASES,
+    requiredSubscription: SubscriptionPlan.MasterClases,
   },
   {
     id: 'class',
     title: t('academy:navigation.recordedLiveSessions'),
     href: paths.academy.class,
     icon: 'class',
-    requiredSubscription: SubscriptionPlan.LIVE_RECORDED,
+    requiredSubscription: SubscriptionPlan.LiveRecorded,
   },
   {
     id: 'psicotrading',

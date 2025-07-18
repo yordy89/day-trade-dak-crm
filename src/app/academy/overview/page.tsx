@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { 
   Box, 
-  Container, 
   Typography, 
   Grid, 
   Card, 
@@ -12,18 +11,15 @@ import {
   Button,
   Stack,
   Chip,
-  Avatar,
   LinearProgress,
   useTheme as useMuiTheme,
   alpha,
   IconButton,
-  Skeleton,
 } from '@mui/material';
 import {
   GraduationCap,
   TrendUp,
   Brain,
-  BookOpen,
   Users,
   ChartLine,
   Trophy,
@@ -119,7 +115,7 @@ const ModernProgressCard = ({
             >
               {icon}
             </Box>
-            {trend && (
+            {trend ? (
               <Chip
                 size="small"
                 icon={<TrendUp size={14} />}
@@ -133,7 +129,7 @@ const ModernProgressCard = ({
                   }
                 }}
               />
-            )}
+            ) : null}
           </Box>
           
           <Box>
@@ -225,7 +221,7 @@ const ModernPathCard = ({
       }}
       onClick={() => router.push(path)}
     >
-      {isNew && (
+      {isNew ? (
         <Chip
           label={newLabel}
           size="small"
@@ -240,7 +236,7 @@ const ModernPathCard = ({
             height: 24,
           }}
         />
-      )}
+      ) : null}
       
       <CardContent sx={{ p: 3, height: '100%' }}>
         <Stack spacing={2} height="100%">
@@ -447,7 +443,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
                     mb: 1,
                   }}
                 >
-                  {t('overview.welcome', { name: user?.name?.split(' ')[0] || 'Trader' })}
+                  {t('overview.welcome', { name: user?.firstName || 'Trader' })}
                 </Typography>
                 <Typography variant="h5" color="text.secondary" fontWeight={400}>
                   {t('overview.welcomeSubtitle')}
@@ -615,8 +611,8 @@ export default function AcademyOverviewPage(): React.JSX.Element {
           </Button>
         </Box>
         <Grid container spacing={3}>
-          {learningPaths.map((path, index) => (
-            <Grid item xs={12} sm={6} lg={3} key={index}>
+          {learningPaths.map((path, _index) => (
+            <Grid item xs={12} sm={6} lg={3} key={path.path}>
               <ModernPathCard 
                 {...path} 
                 percentCompletedText={t('overview.completed')} 
@@ -649,8 +645,8 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               </IconButton>
             </Box>
             <Grid container spacing={2}>
-              {recentAchievements.map((achievement, index) => (
-                <Grid item xs={4} key={index}>
+              {recentAchievements.map((achievement, _index) => (
+                <Grid item xs={4} key={achievement.title}>
                   <AchievementBadge {...achievement} />
                 </Grid>
               ))}

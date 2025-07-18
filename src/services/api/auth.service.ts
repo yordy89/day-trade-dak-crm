@@ -1,6 +1,6 @@
 import API from '@/lib/axios';
 import { errorHandler } from '@/lib/error-handler';
-import { User } from '@/types/user';
+import type { User } from '@/types/user';
 import { useAuthStore } from '@/store/auth-store';
 
 export interface SignUpData {
@@ -16,7 +16,7 @@ export interface SignInData {
 }
 
 export interface AuthResponse {
-  access_token: string;
+  access_token: string; // Keep snake_case to match API response
   user: User;
 }
 
@@ -35,17 +35,18 @@ class AuthService {
       const response = await API.post<AuthResponse>('/auth/signup', data);
       
       // Store auth data
-      const { access_token, user } = response.data;
-      useAuthStore.getState().setAuthToken(access_token);
+      const { access_token: accessToken, user } = response.data;
+      useAuthStore.getState().setAuthToken(accessToken);
       useAuthStore.getState().setUser(user);
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to create account. Please try again.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -54,17 +55,18 @@ class AuthService {
       const response = await API.post<AuthResponse>('/auth/login', data);
       
       // Store auth data
-      const { access_token, user } = response.data;
-      useAuthStore.getState().setAuthToken(access_token);
+      const { access_token: accessToken, user } = response.data;
+      useAuthStore.getState().setAuthToken(accessToken);
       useAuthStore.getState().setUser(user);
       
       return response.data;
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Invalid email or password.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -90,11 +92,12 @@ class AuthService {
     try {
       await API.post('/auth/reset-password', data);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to send reset email. Please try again.',
       });
+      throw new Error(apiError.message);
     }
   }
 
@@ -102,31 +105,33 @@ class AuthService {
     try {
       await API.patch('/auth/update-password', data);
     } catch (error) {
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to update password. Please check your current password.',
       });
+      throw new Error(apiError.message);
     }
   }
 
   async refreshToken(): Promise<string> {
     try {
       const response = await API.post<{ access_token: string }>('/auth/refresh');
-      const { access_token } = response.data;
+      const { access_token: accessToken } = response.data;
       
       // Update stored token
-      useAuthStore.getState().setAuthToken(access_token);
+      useAuthStore.getState().setAuthToken(accessToken);
       
-      return access_token;
+      return accessToken;
     } catch (error) {
       // If refresh fails, logout user
       useAuthStore.getState().logout();
       
-      throw errorHandler.handle(error, {
+      const apiError = errorHandler.handle(error, {
         showToast: false,
         logError: true,
       });
+      throw new Error(apiError.message);
     }
   }
 

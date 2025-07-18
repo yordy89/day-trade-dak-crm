@@ -5,10 +5,8 @@ import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/materi
 import {
   Speed,
   Security,
-  BarChart,
   Notifications,
   CloudDone,
-  PhoneIphone,
   Timeline,
   Groups,
   CandlestickChart,
@@ -77,15 +75,15 @@ export function PlatformFeatures() {
             </Typography>
             <Typography variant="body1" className="text-gray-400 mb-6">
               Built by traders, for traders. Our platform combines institutional-grade 
-              technology with an intuitive interface, giving you the edge in today's markets.
+              technology with an intuitive interface, giving you the edge in today&apos;s markets.
             </Typography>
 
             {/* Feature grid */}
             <Grid container spacing={3}>
-              {features.map((feature, index) => {
+              {features.map((feature, _index) => {
                 const Icon = feature.icon;
                 return (
-                  <Grid item xs={12} sm={6} key={index}>
+                  <Grid item xs={12} sm={6} key={_index}>
                     <Box className="flex gap-3">
                       <Box 
                         className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -121,10 +119,10 @@ export function PlatformFeatures() {
                 ALSO INCLUDES:
               </Typography>
               <Box className="grid grid-cols-2 gap-3">
-                {additionalFeatures.map((feature, index) => {
+                {additionalFeatures.map((feature, _index) => {
                   const Icon = feature.icon;
                   return (
-                    <Box key={index} className="flex items-center gap-2">
+                    <Box key={_index} className="flex items-center gap-2">
                       <Icon className="text-gray-500 text-sm" />
                       <Typography variant="body2" className="text-gray-300">
                         {feature.label}

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, CardActions, Button, Chip } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, Button, Chip } from '@mui/material';
 import { CalendarMonth, LocationOn, Group, AccessTime } from '@mui/icons-material';
 import Link from 'next/link';
 import { MainNavbar } from '@/components/landing/main-navbar';
@@ -47,7 +47,7 @@ const events = [
 ];
 
 export default function EventPage() {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
 
   return (
     <>
@@ -77,9 +77,7 @@ export default function EventPage() {
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
                       <Box>
-                        {event.featured && (
-                          <Chip label="FEATURED" color="primary" size="small" sx={{ mb: 1 }} />
-                        )}
+                        {event.featured ? <Chip label="FEATURED" color="primary" size="small" sx={{ mb: 1 }} /> : null}
                         <Typography variant="h5" component="h2" gutterBottom>
                           {event.title}
                         </Typography>

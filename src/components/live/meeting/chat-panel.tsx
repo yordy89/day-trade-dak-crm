@@ -10,7 +10,6 @@ import {
   Paper,
   useTheme,
   alpha,
-  Divider,
 } from '@mui/material';
 import {
   PaperPlaneTilt,

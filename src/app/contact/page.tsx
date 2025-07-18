@@ -44,6 +44,8 @@ interface CustomInputProps {
   multiline?: boolean;
   rows?: number;
   name: string;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({ 
@@ -67,7 +69,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {props.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -232,7 +234,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {props.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -516,7 +518,7 @@ export default function ContactPage() {
     setIsSubmitting(true);
     
     // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise<void>(resolve => { setTimeout(resolve, 2000); });
     
     console.log('Form submitted:', formData);
     setIsSubmitting(false);

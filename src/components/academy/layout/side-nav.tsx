@@ -8,22 +8,18 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
-import { alpha } from '@mui/material/styles';
-import { CaretDown, CaretUp, Crown, Lightning, Lock } from '@phosphor-icons/react';
+import { alpha , useTheme as useMuiTheme } from '@mui/material/styles';
+import { CaretDown, CaretUp, Crown, Lightning } from '@phosphor-icons/react';
 
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
-import { Logo } from '@/components/core/logo';
 import { getNavItems } from './config';
 import { navIcons } from './nav-icons';
 import { Role } from '@/types/user';
-import { mapMembershipName } from '@/lib/memberships';
-import { useTheme as useMuiTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
 export function SideNav(): React.JSX.Element {
@@ -33,20 +29,20 @@ export function SideNav(): React.JSX.Element {
   const { t } = useTranslation('academy');
 
   // Use auth hook for stable values
-  const { user, userSubscriptions, userRole } = useClientAuth();
+  const { userSubscriptions, userRole } = useClientAuth();
 
   return (
     <Box
       sx={{
-        '--NavItem-color': (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[300] : theme.palette.grey[700],
-        '--NavItem-hover-background': (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-        '--NavItem-active-background': (theme) => alpha(theme.palette.primary.main, 0.12),
+        '--NavItem-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[300] : muiTheme.palette.grey[700],
+        '--NavItem-hover-background': (muiTheme) => muiTheme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+        '--NavItem-active-background': () => alpha(theme.palette.primary.main, 0.12),
         '--NavItem-active-color': 'var(--mui-palette-primary-main)',
-        '--NavItem-disabled-color': (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[600] : theme.palette.grey[400],
-        '--NavItem-icon-color': (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[400] : theme.palette.grey[600],
+        '--NavItem-disabled-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[600] : muiTheme.palette.grey[400],
+        '--NavItem-icon-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[400] : muiTheme.palette.grey[600],
         '--NavItem-icon-active-color': 'var(--mui-palette-primary-main)',
-        '--NavItem-icon-disabled-color': (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[400],
-        bgcolor: (theme) => theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default,
+        '--NavItem-icon-disabled-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[700] : muiTheme.palette.grey[400],
+        bgcolor: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
         borderRight: '1px solid',
         borderColor: 'divider',
         color: 'text.primary',
@@ -61,7 +57,7 @@ export function SideNav(): React.JSX.Element {
         width: 'var(--SideNav-width)',
         zIndex: 'var(--SideNav-zIndex)',
         '&::-webkit-scrollbar': { display: 'none' },
-        boxShadow: (theme) => theme.palette.mode === 'dark' ? theme.shadows[8] : theme.shadows[1],
+        boxShadow: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.shadows[8] : muiTheme.shadows[1],
         overflow: 'hidden',
       }}
     >
@@ -78,7 +74,7 @@ export function SideNav(): React.JSX.Element {
         }}
       >
         {/* Floating Symbols */}
-        {['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT', 'SPY', 'QQQ', 'BTC'].map((symbol, index) => (
+        {['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT', 'SPY', 'QQQ', 'BTC'].map((symbol) => (
           <Typography
             key={symbol}
             sx={{
@@ -87,9 +83,9 @@ export function SideNav(): React.JSX.Element {
               fontWeight: 600,
               color: theme.palette.text.primary,
               opacity: isDarkMode ? 0.06 : 0.04,
-              top: `${15 + (index * 12)}%`,
-              left: index % 2 === 0 ? '15%' : '65%',
-              animation: `float${index % 3} ${20 + index * 2}s ease-in-out infinite`,
+              top: `${15 + (symbol.charCodeAt(0) % 8 * 12)}%`,
+              left: symbol.charCodeAt(0) % 2 === 0 ? '15%' : '65%',
+              animation: `float${symbol.charCodeAt(0) % 3} ${20 + symbol.charCodeAt(0) % 10 * 2}s ease-in-out infinite`,
               '@keyframes float0': {
                 '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
                 '33%': { transform: 'translateY(-10px) translateX(5px)' },
@@ -112,18 +108,18 @@ export function SideNav(): React.JSX.Element {
         ))}
         
         {/* Price Changes */}
-        {['+2.4%', '-1.2%', '+0.8%', '+3.1%', '-0.5%'].map((change, index) => (
+        {['+2.4%', '-1.2%', '+0.8%', '+3.1%', '-0.5%'].map((change) => (
           <Typography
-            key={index}
+            key={change}
             sx={{
               position: 'absolute',
               fontSize: '10px',
               fontWeight: 500,
               color: change.startsWith('+') ? theme.palette.success.main : theme.palette.error.main,
               opacity: isDarkMode ? 0.08 : 0.06,
-              top: `${25 + (index * 15)}%`,
+              top: `${25 + (change.charCodeAt(0) % 5 * 15)}%`,
               right: '20%',
-              animation: `drift${index % 2} ${25 + index * 3}s ease-in-out infinite`,
+              animation: `drift${change.charCodeAt(0) % 2} ${25 + change.charCodeAt(0) % 10 * 3}s ease-in-out infinite`,
               '@keyframes drift0': {
                 '0%, 100%': { transform: 'translateX(0px)' },
                 '50%': { transform: 'translateX(-10px)' },
@@ -144,15 +140,15 @@ export function SideNav(): React.JSX.Element {
           { type: 'red', top: '70%', left: '30%' },
           { type: 'green', top: '85%', left: '70%' },
           { type: 'red', top: '20%', left: '85%' },
-        ].map((candle, index) => (
+        ].map((candle) => (
           <Box
-            key={index}
+            key={`${candle.type}-${candle.top}-${candle.left}`}
             sx={{
               position: 'absolute',
               top: candle.top,
               left: candle.left,
               opacity: isDarkMode ? 0.06 : 0.04,
-              animation: `float${index % 3} ${30 + index * 4}s ease-in-out infinite`,
+              animation: `float${candle.top.charCodeAt(0) % 3} ${30 + candle.top.charCodeAt(0) % 10 * 4}s ease-in-out infinite`,
             }}
           >
             {/* Wick */}
@@ -231,19 +227,19 @@ export function SideNav(): React.JSX.Element {
       </Box>
       <Divider sx={{ borderColor: 'divider', position: 'relative', zIndex: 1 }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px', position: 'relative', zIndex: 1 }}>
-        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole} t={t} />
+        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole as Role} t={t} />
       </Box>
       <Divider sx={{ borderColor: 'divider', opacity: 0.5, position: 'relative', zIndex: 1 }} />
       <Box sx={{ p: 3, position: 'relative', zIndex: 1 }}>
         <Paper
           sx={{
             p: 2.5,
-            background: (theme) => 
-              theme.palette.mode === 'dark'
-                ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
-                : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+            background: (muiTheme) => 
+              muiTheme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${alpha(muiTheme.palette.primary.dark, 0.2)} 0%, ${alpha(muiTheme.palette.primary.main, 0.1)} 100%)`
+                : `linear-gradient(135deg, ${alpha(muiTheme.palette.primary.light, 0.15)} 0%, ${alpha(muiTheme.palette.primary.main, 0.05)} 100%)`,
             border: '1px solid',
-            borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+            borderColor: () => alpha(theme.palette.primary.main, 0.2),
           }}
         >
           <Stack spacing={2}>
@@ -266,9 +262,9 @@ export function SideNav(): React.JSX.Element {
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                background: () => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                 '&:hover': {
-                  background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                  background: () => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
                 },
               }}
             >
@@ -336,7 +332,7 @@ function NavItem({
 }: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  const isRestricted =
+  const _isRestricted =
     requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
   const hasChildren = items && items.length > 0;
   const [open, setOpen] = React.useState(false);
@@ -377,7 +373,7 @@ function NavItem({
         sx={{
           alignItems: 'center',
           borderRadius: 2,
-          color: (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[300] : theme.palette.grey[700],
+          color: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[300] : muiTheme.palette.grey[700],
           cursor: 'pointer !important',
           display: 'flex',
           justifyContent: 'space-between',
@@ -389,8 +385,8 @@ function NavItem({
           transition: 'all 0.2s ease',
           position: 'relative',
           '&:hover': {
-            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-            color: (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[100] : theme.palette.grey[900],
+            bgcolor: (muiTheme) => muiTheme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+            color: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[100] : muiTheme.palette.grey[900],
           },
           ...(active && {
             bgcolor: 'var(--NavItem-active-background)',
@@ -419,7 +415,7 @@ function NavItem({
                 flex: '0 0 auto',
                 color: active 
                   ? 'primary.main' 
-                  : (theme) => theme.palette.mode === 'dark' ? theme.palette.grey[400] : theme.palette.grey[600],
+                  : (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[400] : muiTheme.palette.grey[600],
               }}
             >
               <Icon
@@ -434,8 +430,7 @@ function NavItem({
           >
             {title}
           </Typography>
-          {badge && (
-            <Chip
+          {badge ? <Chip
               label={badge}
               size="small"
               sx={{
@@ -449,15 +444,12 @@ function NavItem({
                   px: 1,
                 },
               }}
-            />
-          )}
+            /> : null}
         </Box>
 
-        {hasChildren && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {hasChildren ? <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {open ? <CaretUp size={16} weight="bold" /> : <CaretDown size={16} weight="bold" />}
-          </Box>
-        )}
+          </Box> : null}
       </Box>
 
       {hasChildren && open ? (

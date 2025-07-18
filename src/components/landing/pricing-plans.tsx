@@ -244,8 +244,7 @@ export function PricingPlans() {
                     },
                   }}
                 >
-                  {plan.badge && (
-                    <Box
+                  {plan.badge ? <Box
                       sx={{
                         position: 'absolute',
                         top: -12,
@@ -262,8 +261,7 @@ export function PricingPlans() {
                       }}
                     >
                       {plan.badge}
-                    </Box>
-                  )}
+                    </Box> : null}
 
                   <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
                     {/* Header */}
@@ -287,17 +285,15 @@ export function PricingPlans() {
                           {t('landing:pricing.plans.basic.period')}
                         </Typography>
                       </Box>
-                      {isYearly && (
-                        <Typography variant="body2" color="text.secondary">
+                      {isYearly ? <Typography variant="body2" color="text.secondary">
                           ${price} {t('landing:pricing.plans.basic.billedAnnually')}
-                        </Typography>
-                      )}
+                        </Typography> : null}
                     </Box>
 
                     {/* Features */}
                     <List sx={{ flex: 1, mb: 4 }}>
-                      {plan.features.map((feature, index) => (
-                        <ListItem key={index} sx={{ px: 0, py: 0.5 }}>
+                      {plan.features.map((feature, _index) => (
+                        <ListItem key={_index} sx={{ px: 0, py: 0.5 }}>
                           <ListItemIcon sx={{ minWidth: 32 }}>
                             {feature.included ? (
                               <CheckCircle sx={{ fontSize: 20, color: '#16a34a' }} />

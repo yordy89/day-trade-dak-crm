@@ -3,20 +3,17 @@
 import * as React from 'react';
 import RouterLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuthStore } from '@/store/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
   Button,
   FormControl,
   FormHelperText,
-  InputLabel,
   Link,
   Stack,
   Typography,
   Box,
   IconButton,
-  InputAdornment,
   Divider,
   Checkbox,
   FormControlLabel,
@@ -63,7 +60,7 @@ interface CustomInputProps {
   isDarkMode: boolean;
   muiTheme: any;
   name: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   endAdornment?: React.ReactNode;
 }
 
@@ -89,7 +86,7 @@ const CustomInput = React.memo<CustomInputProps>(({
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required && <span style={{ color: muiTheme.palette.error.main }}>*</span>}
+        {label} {props.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
       </Typography>
       <Box
         sx={{
@@ -156,18 +153,16 @@ const CustomInput = React.memo<CustomInputProps>(({
             },
           }}
         />
-        {endAdornment && (
-          <Box sx={{ pr: 1 }}>
+        {endAdornment ? <Box sx={{ pr: 1 }}>
             {endAdornment}
-          </Box>
-        )}
+          </Box> : null}
       </Box>
-      {helperText && (
-        <FormHelperText>{helperText}</FormHelperText>
-      )}
+      {helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
     </FormControl>
   );
 });
+
+CustomInput.displayName = 'CustomInput';
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
@@ -209,7 +204,7 @@ export function SignInForm(): React.JSX.Element {
         },
       });
     },
-    [login, router, setError, searchParams, t]
+    [login, router, setError, searchParams]
   );
 
   return (
