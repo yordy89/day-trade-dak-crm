@@ -154,8 +154,8 @@ export default function CommunityEventPage() {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: pricing?.currency || 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(price);
   };
 
@@ -282,12 +282,14 @@ export default function CommunityEventPage() {
           sx={{
             position: 'relative',
             color: 'white',
-            py: { xs: 8, md: 12 },
+            py: { xs: 6, sm: 8, md: 12 },
             overflow: 'hidden',
             backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundSize: { xs: 'contain', sm: 'cover' },
+            backgroundPosition: { xs: 'center center', sm: 'center' },
             backgroundRepeat: 'no-repeat',
+            backgroundColor: '#0a0a0a',
+            minHeight: { xs: '80vh', sm: 'auto' },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -310,7 +312,9 @@ export default function CommunityEventPage() {
                     sx={{ 
                       mb: 2, 
                       color: '#22c55e',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)'
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+                      fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                      textAlign: { xs: 'center', md: 'left' }
                     }}
                   >
                     ¡ATENCIÓN TRADERS QUE QUIEREN RESULTADOS REALES!
@@ -319,7 +323,10 @@ export default function CommunityEventPage() {
                     variant="h2" 
                     fontWeight={800}
                     sx={{
-                      textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)'
+                      textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
+                      fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
+                      textAlign: { xs: 'center', md: 'left' },
+                      lineHeight: { xs: 1.2, md: 1.1 }
                     }}
                   >
                     Mentoría Presencial con Mijail Medina
@@ -328,7 +335,9 @@ export default function CommunityEventPage() {
                     variant="h4" 
                     sx={{ 
                       opacity: 0.95,
-                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
+                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)',
+                      fontSize: { xs: '1.25rem', sm: '1.5rem', md: '2rem' },
+                      textAlign: { xs: 'center', md: 'left' }
                     }}
                   >
                     EN VIVO desde Tampa, Florida
@@ -338,39 +347,41 @@ export default function CommunityEventPage() {
                     sx={{ 
                       opacity: 0.9, 
                       mt: 2,
-                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
+                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)',
+                      fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
+                      textAlign: { xs: 'center', md: 'left' }
                     }}
                   >
                     3 días intensivos de inmersión total en el trading profesional
                   </Typography>
                   
                   {/* Event Details */}
-                  <Stack spacing={2} sx={{ mt: 3 }}>
+                  <Stack spacing={2} sx={{ mt: 3, alignItems: { xs: 'center', md: 'flex-start' } }}>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <LocationOn sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1" fontWeight={600}>Tampa, Florida</Typography>
+                      <LocationOn sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
+                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>Tampa, Florida</Typography>
                     </Stack>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <CalendarToday sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1" fontWeight={600}>
+                      <CalendarToday sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
+                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, textAlign: { xs: 'left', sm: 'center' } }}>
                         Jueves – Viernes – Sábado. 25, 26, 27 de Septiembre
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Schedule sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1" fontWeight={600}>
+                      <Schedule sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
+                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, textAlign: { xs: 'left', sm: 'center' } }}>
                         8:30 AM a 12:00 PM (mañanas) | 2:00 PM a 5:30 PM (tardes)
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <School sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1" fontWeight={600}>
+                      <School sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
+                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                         Modalidad: Presencial | Nivel: Avanzado
                       </Typography>
                     </Stack>
                   </Stack>
 
-                  <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+                  <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: { xs: 'center', md: 'flex-start' }, width: '100%' }}>
                     <Button
                       variant="contained"
                       size="large"
@@ -381,10 +392,12 @@ export default function CommunityEventPage() {
                         '&:hover': {
                           backgroundColor: 'grey.100',
                         },
-                        px: 4,
-                        py: 2,
-                        fontSize: '1.1rem',
+                        px: { xs: 3, sm: 4 },
+                        py: { xs: 1.5, sm: 2 },
+                        fontSize: { xs: '1rem', sm: '1.1rem' },
                         fontWeight: 700,
+                        width: { xs: '90%', sm: 'auto' },
+                        maxWidth: { xs: '350px', sm: 'none' }
                       }}
                     >
                       {isProcessing ? (
@@ -463,7 +476,13 @@ export default function CommunityEventPage() {
         {/* Daily Schedule */}
         <Box sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.5), py: 8 }}>
           <Container maxWidth="lg">
-            <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
+            <Typography 
+              variant="h3" 
+              textAlign="center" 
+              fontWeight={700} 
+              mb={6}
+              sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' } }}
+            >
               Programa Completo de 3 Días
             </Typography>
             <Grid container spacing={4}>
@@ -479,14 +498,14 @@ export default function CommunityEventPage() {
                   >
                     <AccordionSummary expandIcon={<ExpandMore />}>
                       <Stack direction="row" spacing={2} alignItems="center" width="100%">
-                        <Avatar sx={{ backgroundColor: day.color, width: 50, height: 50 }}>
+                        <Avatar sx={{ backgroundColor: day.color, width: { xs: 40, sm: 50 }, height: { xs: 40, sm: 50 } }}>
                           {day.icon}
                         </Avatar>
                         <Box flex={1}>
-                          <Typography variant="h5" fontWeight={700} color={day.color}>
+                          <Typography variant="h5" fontWeight={700} color={day.color} sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
                             {day.day}
                           </Typography>
-                          <Typography variant="body1" color="text.secondary">
+                          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                             {day.title}
                           </Typography>
                         </Box>
@@ -599,8 +618,8 @@ export default function CommunityEventPage() {
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3}>
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'primary.main', mx: 'auto' }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'primary.main' }}>
                     <Visibility sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h5" fontWeight={600} textAlign="center">
@@ -616,8 +635,8 @@ export default function CommunityEventPage() {
             
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3}>
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'secondary.main', mx: 'auto' }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'secondary.main' }}>
                     <AttachMoney sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h5" fontWeight={600} textAlign="center">
@@ -633,8 +652,8 @@ export default function CommunityEventPage() {
             
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3}>
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'success.main', mx: 'auto' }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'success.main' }}>
                     <SelfImprovement sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h5" fontWeight={600} textAlign="center">
@@ -878,7 +897,7 @@ export default function CommunityEventPage() {
           <Container maxWidth="lg">
             <Grid container spacing={4}>
               {/* Company Info */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                 <Typography variant="h6" fontWeight={700} gutterBottom color="primary">
                   DayTradeDak
                 </Typography>
@@ -886,13 +905,13 @@ export default function CommunityEventPage() {
                   Tu plataforma de confianza para el trading profesional. 
                   Formación, mentoría y comunidad para traders serios.
                 </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} alignItems="center" justifyContent={{ xs: 'center', md: 'flex-start' }}>
                   <Email sx={{ fontSize: 20, color: 'text.secondary' }} />
                   <Typography variant="body2" color="text.secondary">
                     support@daytradedak.com
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }} justifyContent={{ xs: 'center', md: 'flex-start' }}>
                   <Phone sx={{ fontSize: 20, color: 'text.secondary' }} />
                   <Typography variant="body2" color="text.secondary">
                     +1 (786) 355-1346
@@ -902,14 +921,14 @@ export default function CommunityEventPage() {
 
 
               {/* Social Media */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
                   Síguenos
                 </Typography>
                 <Typography variant="body2" color="text.secondary" paragraph>
                   Únete a nuestra comunidad de traders en las redes sociales
                 </Typography>
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={2} justifyContent={{ xs: 'center', md: 'flex-start' }}>
                   <IconButton
                     component="a"
                     href="https://www.facebook.com/daytradedak/"

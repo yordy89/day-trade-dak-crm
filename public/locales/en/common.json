@@ -630,7 +630,7 @@
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email",
-        "phone": "Phone Number (Optional)",
+        "phone": "Phone Number",
         "emailDisabledHint": "You must register with your account email",
         "eventPreferences": "Event Preferences",
         "dietaryRestrictions": "Dietary Restrictions",

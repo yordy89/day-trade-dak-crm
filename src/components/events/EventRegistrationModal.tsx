@@ -394,11 +394,16 @@ export function EventRegistrationModal({
           maxWidth: '900px',
           width: '95vw',
           height: 'fit-content',
-          maxHeight: 'fit-content',
+          maxHeight: '90vh',
           margin: 'auto',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          '@media (max-width: 600px)': {
+            maxHeight: '85vh',
+            margin: '10px',
+            width: 'calc(100vw - 20px)',
+          },
         },
       }}
     >
@@ -412,6 +417,9 @@ export function EventRegistrationModal({
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
           flexShrink: 0,
+          '@media (max-width: 600px)': {
+            p: 1.5,
+          },
         }}
       >
         <IconButton
@@ -431,7 +439,12 @@ export function EventRegistrationModal({
         </IconButton>
 
         <Stack spacing={1.5} sx={{ pr: 6 }}>
-          <Typography variant="h5" fontWeight={700} sx={{ lineHeight: 1.2 }}>
+          <Typography variant="h5" fontWeight={700} sx={{ 
+            lineHeight: 1.2,
+            '@media (max-width: 600px)': {
+              fontSize: '1.25rem',
+            },
+          }}>
             {t('events.registration.modal.registerFor')} {event.title || event.name}
           </Typography>
           
@@ -462,8 +475,26 @@ export function EventRegistrationModal({
         pb: 0.5,
         backgroundColor: modalBackground,
         flex: '1 1 auto',
-        overflow: 'visible',
+        overflow: 'auto',
         minHeight: 0,
+        maxHeight: 'calc(100vh - 250px)',
+        '@media (max-width: 600px)': {
+          maxHeight: 'calc(100vh - 280px)',
+        },
+        '&::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+          borderRadius: '4px',
+          '&:hover': {
+            background: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
+          },
+        },
       }}>
         <Box component="form" id="event-registration-form">
           <Grid container spacing={0.75}>
@@ -906,7 +937,7 @@ export function EventRegistrationModal({
         borderBottomRightRadius: 12,
         flexShrink: 0,
       }}>
-        <Stack direction="row" spacing={2} alignItems="stretch">
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
           <Button
             onClick={onClose}
             disabled={isLoading}
@@ -921,6 +952,8 @@ export function EventRegistrationModal({
               borderWidth: 2,
               borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
               color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+              order: { xs: 2, sm: 1 },
+              width: { xs: '100%', sm: 'auto' },
               '&:hover': {
                 borderWidth: 2,
                 borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
@@ -931,7 +964,13 @@ export function EventRegistrationModal({
             {t('events.registration.modal.cancel')}
           </Button>
           {event.price !== null && event.price !== undefined && event.price > 0 ? (
-            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: { xs: 2.5, sm: 2 }, 
+              width: '100%',
+              order: { xs: 1, sm: 2 },
+            }}>
               <Button
                 onClick={() => handleSubmit('card')}
                 disabled={isLoading && selectedPaymentMethod !== 'card'}
@@ -942,9 +981,9 @@ export function EventRegistrationModal({
                 sx={{
                   borderRadius: '8px',
                   textTransform: 'none',
-                  py: 1.25,
-                  px: 2.5,
-                  fontSize: '0.95rem',
+                  py: { xs: 1.5, sm: 1.25 },
+                  px: { xs: 2, sm: 2.5 },
+                  fontSize: { xs: '0.9rem', sm: '0.95rem' },
                   fontWeight: 600,
                   background: selectedPaymentMethod === 'card' && isLoading ? buttonBackground : 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -953,6 +992,7 @@ export function EventRegistrationModal({
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 0.5,
+                  minHeight: { xs: '56px', sm: 'auto' },
                   '&:hover': {
                     background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
@@ -976,7 +1016,7 @@ export function EventRegistrationModal({
               </Button>
               
               <Box sx={{ 
-                display: 'flex', 
+                display: { xs: 'none', sm: 'flex' }, 
                 alignItems: 'center', 
                 mx: 0.75,
                 color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
@@ -984,6 +1024,34 @@ export function EventRegistrationModal({
                 fontWeight: 500,
               }}>
                 O
+              </Box>
+              
+              {/* Mobile divider */}
+              <Box sx={{ 
+                display: { xs: 'flex', sm: 'none' },
+                alignItems: 'center',
+                justifyContent: 'center',
+                my: 0.5,
+              }}>
+                <Box sx={{
+                  width: '100%',
+                  height: '1px',
+                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                  position: 'relative',
+                  '&::before': {
+                    content: '"o"',
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: modalBackground,
+                    px: 1.5,
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    textTransform: 'lowercase',
+                  }
+                }} />
               </Box>
               
               <Button
@@ -996,9 +1064,9 @@ export function EventRegistrationModal({
                 sx={{
                   borderRadius: '8px',
                   textTransform: 'none',
-                  py: 1.25,
-                  px: 2.5,
-                  fontSize: '0.95rem',
+                  py: { xs: 1.5, sm: 1.25 },
+                  px: { xs: 2, sm: 2.5 },
+                  fontSize: { xs: '0.9rem', sm: '0.95rem' },
                   fontWeight: 600,
                   background: selectedPaymentMethod === 'klarna' && isLoading ? buttonBackground : 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -1007,6 +1075,7 @@ export function EventRegistrationModal({
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 0.5,
+                  minHeight: { xs: '72px', sm: 'auto' },
                   '&:hover': {
                     background: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)',
                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
@@ -1014,6 +1083,11 @@ export function EventRegistrationModal({
                   },
                   '&:disabled': {
                     opacity: 0.6,
+                  },
+                  '@media (max-width: 600px)': {
+                    '& .MuiButton-startIcon': {
+                      display: 'none',
+                    },
                   },
                 }}
               >
@@ -1064,7 +1138,7 @@ export function EventRegistrationModal({
               )}
             </Button>
           )}
-        </Stack>
+        </Box>
       </Box>
     </Dialog>
   );

@@ -95,24 +95,38 @@ export default function CommunityEventSuccessPage() {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 8 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 } }}>
       <Container maxWidth="lg">
         {/* Success Header */}
-        <Box textAlign="center" mb={6}>
+        <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
           <CheckCircleOutline 
             sx={{ 
-              fontSize: 80, 
+              fontSize: { xs: 60, sm: 70, md: 80 }, 
               color: 'success.main',
               mb: 2
             }} 
           />
-          <Typography variant="h3" gutterBottom fontWeight="bold">
+          <Typography 
+            variant="h3" 
+            gutterBottom 
+            fontWeight="bold"
+            sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' } }}
+          >
             {isSpanish ? '¡Registro Exitoso!' : 'Registration Successful!'}
           </Typography>
-          <Typography variant="h5" color="text.secondary" mb={2}>
+          <Typography 
+            variant="h5" 
+            color="text.secondary" 
+            mb={2}
+            sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' } }}
+          >
             {isSpanish ? 'Bienvenido al Evento Comunitario DayTradeDak 2025' : 'Welcome to DayTradeDak Community Event 2025'}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography 
+            variant="body1" 
+            color="text.secondary"
+            sx={{ fontSize: { xs: '0.95rem', sm: '1rem' }, px: { xs: 2, sm: 0 } }}
+          >
             {isSpanish 
               ? 'Prepárate para una experiencia transformadora en el mundo del trading' 
               : 'Get ready for a transformative experience in the world of trading'}
@@ -145,8 +159,8 @@ export default function CommunityEventSuccessPage() {
         <Grid container spacing={4}>
           {/* Event Details */}
           <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 4, mb: 3 }}>
-              <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'primary.main' }}>
+            <Paper sx={{ p: { xs: 3, sm: 4 }, mb: 3 }}>
+              <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                 {isSpanish ? 'Detalles del Evento' : 'Event Details'}
               </Typography>
               <Divider sx={{ mb: 3 }} />
@@ -245,8 +259,8 @@ export default function CommunityEventSuccessPage() {
             </Paper>
 
             {/* Event Schedule Preview */}
-            <Paper sx={{ p: 4 }}>
-              <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'primary.main' }}>
+            <Paper sx={{ p: { xs: 3, sm: 4 } }}>
+              <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                 {isSpanish ? 'Agenda del Evento' : 'Event Schedule'}
               </Typography>
               <Divider sx={{ mb: 3 }} />
@@ -445,7 +459,7 @@ export default function CommunityEventSuccessPage() {
         </Grid>
 
         {/* Action Button */}
-        <Box mt={6} textAlign="center">
+        <Box mt={{ xs: 4, md: 6 }} textAlign="center">
           <Button
             variant="contained"
             size="large"
@@ -455,7 +469,10 @@ export default function CommunityEventSuccessPage() {
               backgroundColor: 'primary.main',
               '&:hover': {
                 backgroundColor: 'primary.dark'
-              }
+              },
+              px: { xs: 3, sm: 4 },
+              py: { xs: 1.25, sm: 1.5 },
+              fontSize: { xs: '0.95rem', sm: '1rem' }
             }}
           >
             {isSpanish ? 'Ir al Inicio' : 'Go to Home'}
@@ -463,8 +480,8 @@ export default function CommunityEventSuccessPage() {
         </Box>
 
         {/* Success Message */}
-        <Box mt={6} textAlign="center">
-          <Typography variant="body2" color="text.secondary">
+        <Box mt={{ xs: 4, md: 6 }} textAlign="center" px={{ xs: 2, sm: 0 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '0.9rem' } }}>
             {isSpanish 
               ? '¡Nos vemos en Tampa! Prepárate para una experiencia transformadora en el trading 🚀'
               : 'See you in Tampa! Get ready for a transformative trading experience 🚀'}

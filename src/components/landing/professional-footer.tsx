@@ -102,7 +102,7 @@ export function ProfessionalFooter() {
         <Grid container spacing={4} sx={{ mb: 6 }}>
           {/* Company Info */}
           <Grid item xs={12} md={4}>
-            <Box sx={{ mb: 3 }}>
+            <Box sx={{ mb: 3, textAlign: { xs: 'center', md: 'left' } }}>
               <Link href="/" passHref style={{ textDecoration: 'none' }}>
                 <Image
                   src={isDarkMode ? "/assets/logos/day_trade_dak_white_logo.png" : "/assets/logos/day_trade_dak_black_logo.png"}
@@ -113,12 +113,12 @@ export function ProfessionalFooter() {
                 />
               </Link>
             </Box>
-            <Typography variant="body2" sx={{ mb: 3, opacity: isDarkMode ? 0.8 : 0.7, lineHeight: 1.8 }}>
+            <Typography variant="body2" sx={{ mb: 3, opacity: isDarkMode ? 0.8 : 0.7, lineHeight: 1.8, textAlign: { xs: 'center', md: 'left' } }}>
               {t('footer.about.description')}
             </Typography>
             
             {/* Contact Info */}
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <Phone fontSize="small" />
                 <Typography variant="body2">{t('footer.contact.phone')}</Typography>
@@ -134,7 +134,7 @@ export function ProfessionalFooter() {
             </Box>
 
             {/* Social Links */}
-            <Box sx={{ display: 'flex', gap: 0.5, mt: 3 }}>
+            <Box sx={{ display: 'flex', gap: 0.5, mt: 3, justifyContent: { xs: 'center', md: 'flex-start' } }}>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -170,11 +170,12 @@ export function ProfessionalFooter() {
                   fontWeight: 600,
                   mb: 2,
                   color: isDarkMode ? 'white' : '#333333',
+                  textAlign: { xs: 'center', md: 'left' },
                 }}
               >
                 {section.title}
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: { xs: 'center', md: 'flex-start' } }}>
                 {section.links.map((link) => (
                   <MuiLink
                     key={link.label}
@@ -273,13 +274,15 @@ export function ProfessionalFooter() {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
             flexWrap: 'wrap',
-            justifyContent: 'space-between',
+            justifyContent: { xs: 'center', md: 'space-between' },
             alignItems: 'center',
             gap: 2,
+            textAlign: 'center',
           }}
         >
-          <Typography variant="body2" sx={{ opacity: isDarkMode ? 0.6 : 0.7, color: isDarkMode ? 'white' : '#333333' }}>
+          <Typography variant="body2" sx={{ opacity: isDarkMode ? 0.6 : 0.7, color: isDarkMode ? 'white' : '#333333', width: { xs: '100%', md: 'auto' }, textAlign: { xs: 'center', md: 'left' } }}>
             {t('footer.copyright', { year: new Date().getFullYear() })}
           </Typography>
           
