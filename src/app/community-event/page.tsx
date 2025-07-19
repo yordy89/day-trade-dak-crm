@@ -430,10 +430,10 @@ export default function CommunityEventPage() {
                         <LocalOffer sx={{ color: 'primary.main' }} />
                         <Box>
                           <Typography variant="body2" fontWeight={600}>
-                            ¡Opciones de Pago Flexibles Disponibles!
+                            ¡Opciones de Financiamiento Disponibles!
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Paga en 4 cuotas sin intereses con Klarna o en cuotas mensuales con Affirm
+                            Financia tu inversión en educación con Klarna - planes flexibles disponibles
                           </Typography>
                         </Box>
                       </Stack>
