@@ -65,6 +65,7 @@ export interface EventRegistrationData {
     [key: string]: any;
   };
   userId?: string;
+  paymentMethod?: 'card' | 'klarna';
 }
 
 export interface EventCheckoutResponse {

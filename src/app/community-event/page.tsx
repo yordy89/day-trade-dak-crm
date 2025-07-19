@@ -29,7 +29,6 @@ import {
 } from '@mui/material';
 import {
   CheckCircle,
-  Star,
   LocationOn,
   CalendarToday,
   Schedule,
@@ -49,11 +48,10 @@ import {
   CameraAlt,
   RestaurantMenu,
   Instagram,
-  Twitter,
   YouTube,
-  LinkedIn,
   Email,
   Phone,
+  Facebook,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
@@ -61,6 +59,7 @@ import { EventRegistrationModal } from '@/components/events/EventRegistrationMod
 import { eventService } from '@/services/api/event.service';
 import axios from 'axios';
 import { SubscriptionPlan } from '@/types/user';
+import GoogleMap from '@/components/common/GoogleMap';
 
 export default function CommunityEventPage() {
   const theme = useTheme();
@@ -281,27 +280,67 @@ export default function CommunityEventPage() {
         {/* Hero Section */}
         <Box
           sx={{
-            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.95)} 0%, ${alpha(theme.palette.secondary.main, 0.9)} 100%)`,
+            position: 'relative',
             color: 'white',
             py: { xs: 8, md: 12 },
-            position: 'relative',
             overflow: 'hidden',
+            backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+              zIndex: 0,
+            },
           }}
         >
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
             <Grid container spacing={4} alignItems="center">
               <Grid item xs={12} md={8}>
                 <Stack spacing={3}>
-                  <Typography variant="h3" fontWeight={700} color="primary.main" sx={{ mb: 2 }}>
+                  <Typography 
+                    variant="h3" 
+                    fontWeight={700} 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#22c55e',
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)'
+                    }}
+                  >
                     ¡ATENCIÓN TRADERS QUE QUIEREN RESULTADOS REALES!
                   </Typography>
-                  <Typography variant="h2" fontWeight={800}>
+                  <Typography 
+                    variant="h2" 
+                    fontWeight={800}
+                    sx={{
+                      textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)'
+                    }}
+                  >
                     Mentoría Presencial con Mijail Medina
                   </Typography>
-                  <Typography variant="h4" sx={{ opacity: 0.9 }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      opacity: 0.95,
+                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
+                    }}
+                  >
                     EN VIVO desde Tampa, Florida
                   </Typography>
-                  <Typography variant="h5" sx={{ opacity: 0.8, mt: 2 }}>
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      opacity: 0.9, 
+                      mt: 2,
+                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
+                    }}
+                  >
                     3 días intensivos de inmersión total en el trading profesional
                   </Typography>
                   
@@ -668,33 +707,42 @@ export default function CommunityEventPage() {
           </Typography>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 4,
-                  height: 400,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                }}
-              >
-                <Stack spacing={2} textAlign="center">
-                  <LocationOn sx={{ fontSize: 80, color: 'primary.main', mx: 'auto' }} />
-                  <Typography variant="h4" fontWeight={700}>
-                    Tampa, Florida
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary">
-                    Jueves – Viernes – Sábado
-                  </Typography>
-                  <Typography variant="h5" fontWeight={600} color="primary">
-                    25, 26, 27 de Septiembre
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Hotel 5 estrellas con todas las comodidades incluidas
-                  </Typography>
-                </Stack>
-              </Paper>
+              <Stack spacing={3}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 3,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                  }}
+                >
+                  <Stack spacing={2} textAlign="center">
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                      <LocationOn sx={{ fontSize: 40, color: 'primary.main' }} />
+                      <Typography variant="h4" fontWeight={700}>
+                        Tampa, Florida
+                      </Typography>
+                    </Stack>
+                    <Typography variant="h5" fontWeight={600} color="primary">
+                      Hilton Garden Inn Tampa Ybor Historic District
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      1700 E 9th Ave, Tampa, FL 33605
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h6" color="text.secondary">
+                      Jueves – Viernes – Sábado
+                    </Typography>
+                    <Typography variant="h5" fontWeight={600} color="primary">
+                      25, 26, 27 de Septiembre
+                    </Typography>
+                  </Stack>
+                </Paper>
+                <GoogleMap 
+                  location={{ lat: 27.9594, lng: -82.4423 }} // 1700 E 9th Ave, Tampa, FL 33605
+                  zoom={15}
+                  height={300}
+                />
+              </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
               <Stack spacing={3}>
@@ -703,17 +751,17 @@ export default function CommunityEventPage() {
                 </Typography>
                 <List>
                   <ListItem>
-                    <ListItemIcon><Star sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemIcon><School sx={{ color: 'primary.main' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Hotel 5 estrellas" 
-                      secondary="3 noches de alojamiento en habitación de lujo"
+                      primary="3 días intensivos de mentoría presencial" 
+                      secondary="Operación en vivo y entrenamiento con Mijail Medina"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><RestaurantMenu sx={{ color: 'primary.main' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Todas las comidas incluidas" 
-                      secondary="Desayuno, almuerzo y cena gourmet durante los 3 días"
+                      primary="Cena especial del sábado incluida" 
+                      secondary="Evento de networking y celebración con la comunidad"
                     />
                   </ListItem>
                   <ListItem>
@@ -724,10 +772,24 @@ export default function CommunityEventPage() {
                     />
                   </ListItem>
                   <ListItem>
+                    <ListItemIcon><Psychology sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemText 
+                      primary="Módulo de Psicotrading" 
+                      secondary="Técnicas mentales para operar con disciplina"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon><TrendingUp sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemText 
+                      primary="Material y plantillas profesionales" 
+                      secondary="Herramientas para plan de crecimiento y control de riesgo"
+                    />
+                  </ListItem>
+                  <ListItem>
                     <ListItemIcon><CameraAlt sx={{ color: 'primary.main' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Experiencia completa" 
-                      secondary="Actividades recreativas y foto oficial del evento"
+                      primary="Certificado y foto oficial" 
+                      secondary="Reconocimiento de tu participación en el evento"
                     />
                   </ListItem>
                 </List>
@@ -827,13 +889,13 @@ export default function CommunityEventPage() {
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Email sx={{ fontSize: 20, color: 'text.secondary' }} />
                   <Typography variant="body2" color="text.secondary">
-                    info@daytradedak.com
+                    support@daytradedak.com
                   </Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
                   <Phone sx={{ fontSize: 20, color: 'text.secondary' }} />
                   <Typography variant="body2" color="text.secondary">
-                    +1 (555) 123-4567
+                    +1 (786) 355-1346
                   </Typography>
                 </Stack>
               </Grid>
@@ -850,7 +912,22 @@ export default function CommunityEventPage() {
                 <Stack direction="row" spacing={2}>
                   <IconButton
                     component="a"
-                    href="https://instagram.com/daytradedak"
+                    href="https://www.facebook.com/daytradedak/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                      },
+                    }}
+                  >
+                    <Facebook />
+                  </IconButton>
+                  <IconButton
+                    component="a"
+                    href="https://www.instagram.com/daytradedak/"
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
@@ -865,7 +942,7 @@ export default function CommunityEventPage() {
                   </IconButton>
                   <IconButton
                     component="a"
-                    href="https://twitter.com/daytradedak"
+                    href="https://www.tiktok.com/@daytradedak"
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
@@ -874,13 +951,16 @@ export default function CommunityEventPage() {
                         backgroundColor: 'primary.main',
                         color: 'white',
                       },
+                      fontSize: '14px',
+                      fontWeight: 700,
                     }}
+                    title="TikTok"
                   >
-                    <Twitter />
+                    TT
                   </IconButton>
                   <IconButton
                     component="a"
-                    href="https://youtube.com/@daytradedak"
+                    href="https://www.youtube.com/channel/UCYp6JiX1ModSSZnnVLQATiA"
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
@@ -892,21 +972,6 @@ export default function CommunityEventPage() {
                     }}
                   >
                     <YouTube />
-                  </IconButton>
-                  <IconButton
-                    component="a"
-                    href="https://linkedin.com/company/daytradedak"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                      },
-                    }}
-                  >
-                    <LinkedIn />
                   </IconButton>
                 </Stack>
               </Grid>
@@ -926,7 +991,7 @@ export default function CommunityEventPage() {
               >
                 <Typography
                   component="a"
-                  href="/privacy"
+                  href="/terms/terms-conditions#privacy"
                   variant="caption"
                   color="text.secondary"
                   sx={{
@@ -941,7 +1006,7 @@ export default function CommunityEventPage() {
                 </Typography>
                 <Typography
                   component="a"
-                  href="/terms"
+                  href="/terms/terms-conditions#terms"
                   variant="caption"
                   color="text.secondary"
                   sx={{

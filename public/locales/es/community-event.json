@@ -178,5 +178,30 @@
     },
     "viewPlansButton": "Ver Planes de Suscripción",
     "deadline": "Fecha límite de inscripción: 30 de septiembre, 2025"
+  },
+  "registration": {
+    "additionalAttendees": {
+      "title": "Invitados para la Cena del Sábado",
+      "subtitle": "Agrega familiares que asistirán ÚNICAMENTE a la cena especial del sábado 26 de octubre",
+      "adults": "Adultos",
+      "children": "Niños (menores de 12 años)",
+      "adultPrice": "$75 por adulto",
+      "childPrice": "$48 por niño",
+      "addAdult": "Agregar Adulto",
+      "addChild": "Agregar Niño",
+      "guestName": "Nombre del Invitado",
+      "childAge": "Edad",
+      "remove": "Eliminar",
+      "priceBreakdown": {
+        "title": "Desglose de Precio",
+        "baseEvent": "Registro del Evento",
+        "additionalAdults": "Adultos Adicionales",
+        "additionalChildren": "Niños",
+        "total": "Total"
+      },
+      "note": "Nota: Los invitados adicionales SOLO podrán asistir a la cena del sábado. No tendrán acceso a las sesiones de entrenamiento ni a otras actividades del evento.",
+      "maxGuests": "Máximo 10 invitados adicionales permitidos",
+      "noGuests": "Aún no se han agregado invitados adicionales"
+    }
   }
 }

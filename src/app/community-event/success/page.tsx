@@ -40,6 +40,7 @@ import {
 import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { useTranslation } from 'react-i18next';
+import GoogleMap from '@/components/common/GoogleMap';
 
 export default function CommunityEventSuccessPage() {
   const router = useRouter();
@@ -62,33 +63,34 @@ export default function CommunityEventSuccessPage() {
   }, []);
 
   const eventDetails = {
-    name: isSpanish ? 'El Evento de Trading Más Exclusivo del Año' : 'The Most Exclusive Trading Event of the Year',
-    date: isSpanish ? '25-27 de Octubre, 2025' : 'October 25-27, 2025',
-    location: 'Miami, Florida',
-    venue: 'Miami Beach Convention Center',
-    attendees: '200+ Traders',
+    name: isSpanish ? 'Mentoría Presencial con Mijail Medina' : 'In-Person Mentorship with Mijail Medina',
+    date: isSpanish ? '25-27 de Septiembre, 2025' : 'September 25-27, 2025',
+    location: 'Tampa, Florida',
+    venue: 'Hilton Garden Inn Tampa Ybor Historic District',
+    address: '1700 E 9th Ave, Tampa, FL 33605',
+    attendees: isSpanish ? 'Cupo Limitado' : 'Limited Spots',
   };
 
   const eventHighlights = [
     { 
-      title: isSpanish ? 'Trading en Vivo' : 'Live Trading',
-      description: isSpanish ? 'Sesiones de trading en tiempo real con expertos' : 'Real-time trading sessions with experts',
+      title: isSpanish ? '3 días de mentoría presencial' : '3 days of in-person mentorship',
+      description: isSpanish ? 'Operación en vivo y entrenamiento con Mijail Medina' : 'Live trading and training with Mijail Medina',
       icon: <EmojiEvents />
     },
     { 
-      title: isSpanish ? 'Networking Premium' : 'Premium Networking',
-      description: isSpanish ? 'Conecta con traders exitosos de todo el mundo' : 'Connect with successful traders worldwide',
-      icon: <Groups />
-    },
-    { 
-      title: isSpanish ? 'Cenas Exclusivas' : 'Exclusive Dinners',
-      description: isSpanish ? 'Experiencias gastronómicas de alto nivel' : 'High-end dining experiences',
+      title: isSpanish ? 'Cena especial del sábado' : 'Saturday special dinner',
+      description: isSpanish ? 'Evento de networking y celebración con la comunidad' : 'Networking and celebration event with the community',
       icon: <Restaurant />
     },
     { 
-      title: isSpanish ? 'Alojamiento Incluido' : 'Accommodation Included',
-      description: isSpanish ? 'Hotel 5 estrellas durante todo el evento' : '5-star hotel throughout the event',
-      icon: <Hotel />
+      title: isSpanish ? 'Módulo de Psicotrading' : 'Psychotrading Module',
+      description: isSpanish ? 'Técnicas mentales para operar con disciplina' : 'Mental techniques for disciplined trading',
+      icon: <Groups />
+    },
+    { 
+      title: isSpanish ? 'Material profesional incluido' : 'Professional materials included',
+      description: isSpanish ? 'Plantillas para plan de crecimiento y control de riesgo' : 'Templates for growth plan and risk control',
+      icon: <EventAvailable />
     },
   ];
 
@@ -135,8 +137,8 @@ export default function CommunityEventSuccessPage() {
           </Typography>
           <Typography variant="body2">
             {isSpanish 
-              ? 'Te hemos enviado la confirmación de tu registro con todos los detalles del evento, información sobre viajes y alojamiento.'
-              : 'We\'ve sent you a registration confirmation with all event details, travel and accommodation information.'}
+              ? 'Te hemos enviado la confirmación de tu registro con todos los detalles del evento y la información de acceso.'
+              : 'We\'ve sent you a registration confirmation with all event details and access information.'}
           </Typography>
         </Alert>
 
@@ -188,6 +190,9 @@ export default function CommunityEventSuccessPage() {
                           <Typography variant="body2" color="text.secondary">
                             {eventDetails.venue}
                           </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {eventDetails.address}
+                          </Typography>
                         </Box>
                       </Box>
                     </CardContent>
@@ -227,6 +232,16 @@ export default function CommunityEventSuccessPage() {
                   </Grid>
                 ))}
               </Grid>
+
+              {/* Map */}
+              <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+                {isSpanish ? 'Ubicación del Evento' : 'Event Location'}
+              </Typography>
+              <GoogleMap 
+                location={{ lat: 27.9594, lng: -82.4423 }} // 1700 E 9th Ave, Tampa, FL 33605
+                zoom={15}
+                height={300}
+              />
             </Paper>
 
             {/* Event Schedule Preview */}
@@ -242,11 +257,11 @@ export default function CommunityEventSuccessPage() {
                     <EventAvailable sx={{ color: 'primary.main' }} />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Día 1: Bienvenida y Fundamentos' : 'Day 1: Welcome & Fundamentals'}
-                    secondary={isSpanish ? 'Check-in, sesión de apertura, cena de bienvenida' : 'Check-in, opening session, welcome dinner'}
+                    primary={isSpanish ? 'Día 1: Operación en Vivo & Análisis Técnico' : 'Day 1: Live Trading & Technical Analysis'}
+                    secondary={isSpanish ? 'Trading en vivo con el mentor, análisis pre-market' : 'Live trading with mentor, pre-market analysis'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Viernes' : 'Friday'} 
+                    label={isSpanish ? 'Jueves 25' : 'Thursday 25'} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -257,11 +272,11 @@ export default function CommunityEventSuccessPage() {
                     <EmojiEvents sx={{ color: 'primary.main' }} />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Día 2: Trading Intensivo' : 'Day 2: Intensive Trading'}
-                    secondary={isSpanish ? 'Sesiones en vivo, workshops, networking premium' : 'Live sessions, workshops, premium networking'}
+                    primary={isSpanish ? 'Día 2: Entradas Profesionales & Gestión de Riesgo' : 'Day 2: Professional Entries & Risk Management'}
+                    secondary={isSpanish ? 'Segunda sesión de trading, módulos 2, 3 y 4' : 'Second trading session, modules 2, 3 and 4'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Sábado' : 'Saturday'} 
+                    label={isSpanish ? 'Viernes 26' : 'Friday 26'} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -272,11 +287,11 @@ export default function CommunityEventSuccessPage() {
                     <Celebration sx={{ color: 'primary.main' }} />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Día 3: Estrategias Avanzadas y Clausura' : 'Day 3: Advanced Strategies & Closing'}
-                    secondary={isSpanish ? 'Masterclass especial, panel de expertos, cena de gala' : 'Special masterclass, expert panel, gala dinner'}
+                    primary={isSpanish ? 'Día 3: Psicotrading & Celebración' : 'Day 3: Psychotrading & Celebration'}
+                    secondary={isSpanish ? 'Módulo de psicotrading, actividad recreativa y cena especial' : 'Psychotrading module, recreational activity and special dinner'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Domingo' : 'Sunday'} 
+                    label={isSpanish ? 'Sábado 27' : 'Saturday 27'} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -299,8 +314,8 @@ export default function CommunityEventSuccessPage() {
                     <CheckCircleOutline color="success" fontSize="small" />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Confirma tu asistencia' : 'Confirm your attendance'}
-                    secondary={isSpanish ? 'Responde al email de confirmación' : 'Reply to the confirmation email'}
+                    primary={isSpanish ? 'Guarda la fecha' : 'Save the date'}
+                    secondary={isSpanish ? '25-27 de Septiembre en tu calendario' : 'September 25-27 in your calendar'}
                   />
                 </ListItem>
                 <ListItem>
@@ -308,8 +323,8 @@ export default function CommunityEventSuccessPage() {
                     <CheckCircleOutline color="success" fontSize="small" />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Reserva tu vuelo' : 'Book your flight'}
-                    secondary={isSpanish ? 'Te enviamos recomendaciones' : 'We sent you recommendations'}
+                    primary={isSpanish ? 'Planifica tu viaje' : 'Plan your trip'}
+                    secondary={isSpanish ? 'Reserva vuelo y alojamiento con tiempo' : 'Book flight and accommodation in advance'}
                   />
                 </ListItem>
                 <ListItem>
@@ -317,8 +332,8 @@ export default function CommunityEventSuccessPage() {
                     <CheckCircleOutline color="success" fontSize="small" />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Únete al grupo VIP' : 'Join the VIP group'}
-                    secondary={isSpanish ? 'Link exclusivo en tu email' : 'Exclusive link in your email'}
+                    primary={isSpanish ? 'Prepárate para el evento' : 'Prepare for the event'}
+                    secondary={isSpanish ? 'Trae laptop y libreta para tomar notas' : 'Bring laptop and notebook for notes'}
                   />
                 </ListItem>
                 <ListItem>
@@ -326,8 +341,8 @@ export default function CommunityEventSuccessPage() {
                     <CheckCircleOutline color="success" fontSize="small" />
                   </ListItemIcon>
                   <ListItemText 
-                    primary={isSpanish ? 'Prepara tu estrategia' : 'Prepare your strategy'}
-                    secondary={isSpanish ? 'Material pre-evento disponible' : 'Pre-event material available'}
+                    primary={isSpanish ? 'Llega temprano el día 1' : 'Arrive early on day 1'}
+                    secondary={isSpanish ? 'Check-in a las 8:00 AM el jueves' : 'Check-in at 8:00 AM on Thursday'}
                   />
                 </ListItem>
               </List>
@@ -352,7 +367,7 @@ export default function CommunityEventSuccessPage() {
                     </Typography>
                   </Stack>
                   <Typography variant="body2" color="text.secondary">
-                    Miami International Airport (MIA)
+                    Tampa International Airport (TPA)
                   </Typography>
                 </Box>
                 <Box>
@@ -363,10 +378,10 @@ export default function CommunityEventSuccessPage() {
                     </Typography>
                   </Stack>
                   <Typography variant="body2" color="text.secondary">
-                    The Ritz-Carlton, South Beach
+                    Hilton Garden Inn Tampa Ybor Historic District
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {isSpanish ? '* Habitación incluida en tu registro' : '* Room included in your registration'}
+                    {isSpanish ? '* Alojamiento NO incluido - Solo evento' : '* Accommodation NOT included - Event only'}
                   </Typography>
                 </Box>
                 <Box>
@@ -377,7 +392,7 @@ export default function CommunityEventSuccessPage() {
                     </Typography>
                   </Stack>
                   <Typography variant="body2" color="text.secondary">
-                    {isSpanish ? 'Viernes, 3:00 PM - 6:00 PM' : 'Friday, 3:00 PM - 6:00 PM'}
+                    {isSpanish ? 'Jueves, 8:00 AM - 8:30 AM' : 'Thursday, 8:00 AM - 8:30 AM'}
                   </Typography>
                 </Box>
               </Stack>
@@ -403,7 +418,7 @@ export default function CommunityEventSuccessPage() {
                     color: 'primary.main',
                     '&:hover': { bgcolor: 'grey.100' }
                   }}
-                  href="https://wa.me/1234567890"
+                  href="https://wa.me/17863551346"
                   target="_blank"
                 >
                   WhatsApp Support
@@ -420,7 +435,7 @@ export default function CommunityEventSuccessPage() {
                       bgcolor: 'rgba(255,255,255,0.1)' 
                     }
                   }}
-                  href="mailto:events@daytradedak.com"
+                  href="mailto:support@daytradedak.com"
                 >
                   Email Support
                 </Button>
@@ -429,47 +444,30 @@ export default function CommunityEventSuccessPage() {
           </Grid>
         </Grid>
 
-        {/* Action Buttons */}
+        {/* Action Button */}
         <Box mt={6} textAlign="center">
-          <Stack direction="row" spacing={2} justifyContent="center">
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<Home />}
-              onClick={() => router.push('/')}
-              sx={{
-                backgroundColor: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'primary.dark'
-                }
-              }}
-            >
-              {isSpanish ? 'Ir al Inicio' : 'Go to Home'}
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              onClick={() => router.push('/academy/overview')}
-              sx={{
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': {
-                  borderColor: 'primary.dark',
-                  backgroundColor: alpha('#16a34a', 0.04)
-                }
-              }}
-            >
-              {isSpanish ? 'Ver Mi Academia' : 'View My Academy'}
-            </Button>
-          </Stack>
+          <Button
+            variant="contained"
+            size="large"
+            startIcon={<Home />}
+            onClick={() => router.push('/')}
+            sx={{
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark'
+              }
+            }}
+          >
+            {isSpanish ? 'Ir al Inicio' : 'Go to Home'}
+          </Button>
         </Box>
 
         {/* Success Message */}
         <Box mt={6} textAlign="center">
           <Typography variant="body2" color="text.secondary">
             {isSpanish 
-              ? '¡Nos vemos en Miami! Prepárate para una experiencia única 🌴'
-              : 'See you in Miami! Get ready for a unique experience 🌴'}
+              ? '¡Nos vemos en Tampa! Prepárate para una experiencia transformadora en el trading 🚀'
+              : 'See you in Tampa! Get ready for a transformative trading experience 🚀'}
           </Typography>
         </Box>
       </Container>

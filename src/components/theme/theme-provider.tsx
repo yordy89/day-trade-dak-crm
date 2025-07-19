@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import GlobalStyles from '@mui/material/GlobalStyles';
 
 interface ThemeContextType {
   isDarkMode: boolean;
@@ -94,6 +95,34 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused': {
+            outline: 'none !important',
+            boxShadow: 'none !important',
+          },
+          '& input': {
+            '&:focus': {
+              outline: 'none !important',
+              boxShadow: 'none !important',
+            },
+            '&:focus-visible': {
+              outline: 'none !important',
+            },
+          },
+          '& textarea': {
+            '&:focus': {
+              outline: 'none !important',
+              boxShadow: 'none !important',
+            },
+            '&:focus-visible': {
+              outline: 'none !important',
+            },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -176,6 +205,34 @@ const lightTheme = createTheme({
         },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused': {
+            outline: 'none !important',
+            boxShadow: 'none !important',
+          },
+          '& input': {
+            '&:focus': {
+              outline: 'none !important',
+              boxShadow: 'none !important',
+            },
+            '&:focus-visible': {
+              outline: 'none !important',
+            },
+          },
+          '& textarea': {
+            '&:focus': {
+              outline: 'none !important',
+              boxShadow: 'none !important',
+            },
+            '&:focus-visible': {
+              outline: 'none !important',
+            },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -187,8 +244,9 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
     } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(prefersDark);
+      // Default to dark mode
+      setIsDarkMode(true);
+      localStorage.setItem('theme', 'dark');
     }
   }, []);
 
@@ -202,6 +260,43 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
       <MuiThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
         <CssBaseline />
+        <GlobalStyles
+          styles={{
+            '*': {
+              '&:focus': {
+                outline: 'none !important',
+              },
+              '&:focus-visible': {
+                outline: 'none !important',
+              },
+            },
+            'input, textarea, select': {
+              '&:focus': {
+                outline: 'none !important',
+                boxShadow: 'none !important',
+              },
+              '&:focus-visible': {
+                outline: 'none !important',
+                boxShadow: 'none !important',
+              },
+              '&:-webkit-autofill': {
+                '&:focus': {
+                  outline: 'none !important',
+                  boxShadow: 'none !important',
+                },
+              },
+            },
+            '.MuiInputBase-root': {
+              '&.Mui-focused': {
+                outline: 'none !important',
+                boxShadow: 'none !important',
+              },
+            },
+            '.MuiOutlinedInput-notchedOutline': {
+              border: 'none !important',
+            },
+          }}
+        />
         {children}
       </MuiThemeProvider>
     </ThemeContext.Provider>

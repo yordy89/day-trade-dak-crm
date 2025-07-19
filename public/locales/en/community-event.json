@@ -178,5 +178,30 @@
     },
     "viewPlansButton": "View Subscription Plans",
     "deadline": "Registration deadline: September 30, 2025"
+  },
+  "registration": {
+    "additionalAttendees": {
+      "title": "Saturday Dinner Guests",
+      "subtitle": "Add family members who will join ONLY for the special dinner on Saturday, October 26",
+      "adults": "Adults",
+      "children": "Children (under 12)",
+      "adultPrice": "$75 per adult",
+      "childPrice": "$48 per child",
+      "addAdult": "Add Adult",
+      "addChild": "Add Child",
+      "guestName": "Guest Name",
+      "childAge": "Age",
+      "remove": "Remove",
+      "priceBreakdown": {
+        "title": "Price Breakdown",
+        "baseEvent": "Event Registration",
+        "additionalAdults": "Additional Adults",
+        "additionalChildren": "Children",
+        "total": "Total"
+      },
+      "note": "Note: Additional guests can ONLY attend the Saturday dinner event. They will not have access to training sessions or other event activities.",
+      "maxGuests": "Maximum 10 additional guests allowed",
+      "noGuests": "No additional guests added yet"
+    }
   }
 }

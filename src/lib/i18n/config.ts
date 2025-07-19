@@ -36,7 +36,7 @@ void i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: 'es',
     defaultNS: 'common',
     ns: ['common', 'landing', 'communityEvent', 'masterCourse', 'academy'],
     
@@ -48,6 +48,8 @@ void i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
     },
+    
+    lng: 'es', // Force Spanish as default
   });
 
 export default i18n;
