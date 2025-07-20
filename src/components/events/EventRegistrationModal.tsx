@@ -301,7 +301,7 @@ export function EventRegistrationModal({
     try {
       // Validate required fields
       if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber) {
-        toast.error(t('form.validation.requiredFields'));
+        toast.error('Por favor complete todos los campos requeridos');
         setIsLoading(false);
         setSelectedPaymentMethod(null);
         return;
