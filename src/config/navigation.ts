@@ -18,6 +18,12 @@ export const mainNavigation: NavigationItem[] = [
     href: '/academy/overview',
     requiresAuth: true,
   },
+  {
+    key: 'stocks',
+    href: '/stocks',
+    requiresAuth: false,
+    badge: 'LIVE',
+  },
   // {
   //   key: 'tools',
   //   href: '/tools',

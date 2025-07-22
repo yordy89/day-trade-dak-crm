@@ -73,6 +73,9 @@ export default function CommunityEventPage() {
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [event, setEvent] = useState<any>(null);
   const [_isLoadingEvent, _setIsLoadingEvent] = useState(true);
+  
+  // Check if registration is enabled from environment variable
+  const isRegistrationEnabled = process.env.NEXT_PUBLIC_COMMUNITY_EVENT_REGISTRATION_ENABLED === 'true';
 
   useEffect(() => {
     // Check if user has Live Semanal subscription
@@ -386,11 +389,16 @@ export default function CommunityEventPage() {
                       variant="contained"
                       size="large"
                       onClick={handlePurchase}
+                      disabled={!isRegistrationEnabled}
                       sx={{
-                        backgroundColor: 'white',
-                        color: 'primary.main',
+                        backgroundColor: isRegistrationEnabled ? 'white' : 'grey.400',
+                        color: isRegistrationEnabled ? 'primary.main' : 'grey.600',
                         '&:hover': {
-                          backgroundColor: 'grey.100',
+                          backgroundColor: isRegistrationEnabled ? 'grey.100' : 'grey.400',
+                        },
+                        '&.Mui-disabled': {
+                          backgroundColor: 'grey.400',
+                          color: 'grey.600',
                         },
                         px: { xs: 3, sm: 4 },
                         py: { xs: 1.5, sm: 2 },
@@ -407,7 +415,9 @@ export default function CommunityEventPage() {
                           {isLoadingPrice ? (
                             <CircularProgress size={20} color="inherit" />
                           ) : (
-                            `RESERVAR MI LUGAR - ${formatPrice(pricing?.basePrice || 599.99)}`
+                            isRegistrationEnabled 
+                              ? `RESERVAR MI LUGAR - ${formatPrice(pricing?.basePrice || 599.99)}`
+                              : 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
                           )}
                         </>
                       )}
@@ -472,6 +482,30 @@ export default function CommunityEventPage() {
             </Grid>
           </Container>
         </Box>
+
+        {/* Registration Closed Notice */}
+        {!isRegistrationEnabled && (
+          <Box sx={{ py: 2, backgroundColor: alpha(theme.palette.warning.main, 0.1) }}>
+            <Container maxWidth="lg">
+              <Alert 
+                severity="warning" 
+                sx={{ 
+                  fontSize: '1.1rem',
+                  '& .MuiAlert-icon': {
+                    fontSize: '2rem'
+                  }
+                }}
+              >
+                <Typography variant="h6" fontWeight={700} gutterBottom>
+                  ¡Registro Cerrado!
+                </Typography>
+                <Typography variant="body1">
+                  La mentoría presencial ya alcanzó el total de registros. Mantente atento a nuestras redes sociales para futuros eventos.
+                </Typography>
+              </Alert>
+            </Container>
+          </Box>
+        )}
 
         {/* Daily Schedule */}
         <Box sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.5), py: 8 }}>
@@ -862,19 +896,26 @@ export default function CommunityEventPage() {
                 variant="contained"
                 size="large"
                 onClick={handlePurchase}
+                disabled={!isRegistrationEnabled}
                 sx={{
-                  backgroundColor: 'white',
-                  color: 'primary.main',
+                  backgroundColor: isRegistrationEnabled ? 'white' : 'grey.400',
+                  color: isRegistrationEnabled ? 'primary.main' : 'grey.600',
                   fontSize: '1.2rem',
                   py: 2,
                   px: 6,
                   fontWeight: 700,
                   '&:hover': {
-                    backgroundColor: 'grey.100',
+                    backgroundColor: isRegistrationEnabled ? 'grey.100' : 'grey.400',
+                  },
+                  '&.Mui-disabled': {
+                    backgroundColor: 'grey.400',
+                    color: 'grey.600',
                   },
                 }}
               >
-                ASEGURAR MI LUGAR AHORA
+                {isRegistrationEnabled 
+                  ? 'ASEGURAR MI LUGAR AHORA'
+                  : 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'}
               </Button>
             </Box>
             

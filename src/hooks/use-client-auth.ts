@@ -24,7 +24,7 @@ export function useClientAuth() {
       authToken: null,
       isAuthenticated: false,
       userSubscriptions: [],
-      userRole: Role.USER as string,
+      userRole: Role.User as string,
       isLoading: true,
     };
   }
@@ -35,7 +35,7 @@ export function useClientAuth() {
     authToken,
     isAuthenticated,
     userSubscriptions: user?.subscriptions || [],
-    userRole: user?.role || (Role.USER as string),
+    userRole: user?.role || (Role.User as string),
     isLoading: false,
   };
 }

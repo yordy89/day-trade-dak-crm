@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useClientAuth } from '@/hooks/use-client-auth';
 import { Box, Button, Typography } from '@mui/material';
-import { DownloadSimple } from '@phosphor-icons/react';
-
-import { Role, SubscriptionPlan } from '@/types/user';
+import { DownloadSimple, ArrowLeft } from '@phosphor-icons/react';
+import { useModuleAccess } from '@/hooks/use-module-access';
+import { ModuleAccessGuard } from '@/components/guards/ModuleAccessGuard';
+import { ModuleType } from '@/types/module-permission';
 import SuperacionVideoList from '@/components/academy/superation/superacion-video-list';
 import SuperacionIntro from '@/components/academy/superation/superation-intro';
 
@@ -15,32 +15,7 @@ export default function PropositoPage() {
   const [viewVideos, setViewVideos] = useState(false);
   const router = useRouter();
   const { t } = useTranslation('academy');
-
-  const { user, isLoading } = useClientAuth();
-  const userSubscriptions = user?.subscriptions ?? [];
-  const userRole = user?.role || Role.USER;
-  // Check for PEACE_WITH_MONEY subscription with expiration
-  const hasSubscriptionAccess = userSubscriptions.some(sub => {
-    if (typeof sub === 'string') {
-      return sub === (SubscriptionPlan.PeaceWithMoney as string);
-    } else if (sub && typeof sub === 'object' && 'plan' in sub) {
-      // Check if it's Peace with Money plan
-      if (sub.plan === (SubscriptionPlan.PeaceWithMoney as string)) {
-        // If no expiresAt field, it's a permanent subscription
-        if (!('expiresAt' in sub) || !sub.expiresAt) {
-          return true;
-        }
-        // If has expiresAt, check if not expired
-        return new Date(sub.expiresAt) > new Date();
-      }
-    }
-    return false;
-  });
-
-  // Admin always has access
-  const isAdmin = userRole === Role.ADMIN;
-  
-  const hasAccess = hasSubscriptionAccess || isAdmin;
+  const { hasAccess, loading } = useModuleAccess(ModuleType.PeaceWithMoney);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -57,24 +32,67 @@ export default function PropositoPage() {
     }
   };
   
-  // Don&apos;t render until auth is loaded to prevent redirect issues
-  if (isLoading) {
-    return null;
+  // Don't render until auth is loaded to prevent redirect issues
+  if (loading) {
+    return <Box />;
   }
 
+  // Show intro page first, then videos for subscribers
+  if (!viewVideos) {
+    return (
+      <Box sx={{ minHeight: '100vh', width: '100%' }}>
+        <SuperacionIntro 
+          onStart={handleCTA} 
+          ctaText={hasAccess ? t('peaceWithMoney.viewVideos') : t('peaceWithMoney.startTransformation')} 
+        />
+      </Box>
+    );
+  }
+
+  // Show videos for subscribers with module access guard
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header: Title + Download */}
-      <Box
-        sx={{
-          display: !hasAccess || !viewVideos ? 'none' : 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-          flexWrap: 'wrap',
-          gap: 2,
-        }}
-      >
+    <ModuleAccessGuard
+      moduleType={ModuleType.PeaceWithMoney}
+      fallback={
+        <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
+          <Button
+            startIcon={<ArrowLeft size={20} />}
+            onClick={() => setViewVideos(false)}
+            sx={{ mb: 2 }}
+          >
+            {t('peaceWithMoney.backToIntro')}
+          </Button>
+          
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              {t('peaceWithMoney.accessRequired')}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mb={3}>
+              {t('peaceWithMoney.needSubscriptionOrPermission')}
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => router.push('/academy/subscription/plans?highlight=PeaceWithMoney')}
+            >
+              {t('peaceWithMoney.viewPlans')}
+            </Button>
+          </Box>
+        </Box>
+      }
+    >
+      <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
+        {/* Header: Title + Download */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
         <Typography variant="h4" fontWeight="bold">
           {t('navigation.peaceWithMoney')}
         </Typography>
@@ -134,19 +152,18 @@ export default function PropositoPage() {
         </Box>
       </Box>
 
-      {/* Content */}
-      {viewVideos && hasAccess ? (
-        <>
-          <Box sx={{ textAlign: 'left', mb: 2 }}>
-            <Button variant="outlined" onClick={() => setViewVideos(false)}>
-              {t('peaceWithMoney.backToIntro')}
-            </Button>
-          </Box>
-          <SuperacionVideoList courseKey="curso1" />
-        </>
-      ) : (
-        <SuperacionIntro onStart={handleCTA} ctaText={hasAccess ? t('peaceWithMoney.viewVideos') : t('peaceWithMoney.startTransformation')} />
-      )}
-    </Box>
+        {/* Content */}
+        <Box sx={{ textAlign: 'left', mb: 2 }}>
+          <Button 
+            variant="outlined" 
+            startIcon={<ArrowLeft size={20} />}
+            onClick={() => setViewVideos(false)}
+          >
+            {t('peaceWithMoney.backToIntro')}
+          </Button>
+        </Box>
+        <SuperacionVideoList courseKey="curso1" />
+      </Box>
+    </ModuleAccessGuard>
   );
 }

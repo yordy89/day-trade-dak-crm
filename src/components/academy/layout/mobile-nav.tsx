@@ -36,7 +36,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
   const pathname = usePathname();
   const user = useAuthStore(selectUser);
   const userSubscriptions = user?.subscriptions ?? [];
-  const userRole = user?.role || Role.USER;
+  const userRole = user?.role || Role.User;
   const { t } = useTranslation('academy');
   
   // Get nav items with translations
@@ -160,7 +160,7 @@ function NavItem({
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
   const isRestricted =
-    requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.ADMIN;
+    requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.Admin;
   const hasChildren = items && items.length > 0;
   const [open, setOpen] = React.useState(false);
 

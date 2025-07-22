@@ -13,7 +13,7 @@ const user = {
   firstName: 'Sofia',
   lastName: 'Rivers',
   email: 'sofia@devias.io',
-  role: Role.USER,
+  role: Role.User,
   subscriptions: ['Free'],
 } satisfies User;
 

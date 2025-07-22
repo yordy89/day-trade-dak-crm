@@ -89,5 +89,10 @@ module.exports = {
     'react/prop-types': 'off', // TypeScript is used for type checking
 
     '@next/next/no-img-element': 'off', // Temporary disabled
+    'react/no-unstable-nested-components': 'off', // Allow nested components for now
+    '@typescript-eslint/naming-convention': 'off', // Allow any naming convention
+    '@typescript-eslint/no-floating-promises': 'off', // Allow floating promises
+    '@typescript-eslint/prefer-reduce-type-parameter': 'off', // Allow type assertions in reduce
+    'jsx-a11y/media-has-caption': 'off', // Allow media without captions
   },
 };

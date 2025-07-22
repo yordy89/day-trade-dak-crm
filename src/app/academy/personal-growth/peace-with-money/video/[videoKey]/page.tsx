@@ -23,6 +23,9 @@ import { Sparkle } from '@phosphor-icons/react/dist/ssr/Sparkle';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
+import { ProtectedVideoPlayer } from '@/components/academy/shared/protected-video-player';
+import { ModuleType } from '@/types/module-permission';
+import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 import { getVideosDescriptions } from '@/data/curso1';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +36,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   const { t, i18n } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
+  const { hasAccess } = useModuleAccess(ModuleType.PeaceWithMoney);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -203,21 +207,31 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                   height: '100%',
                 }}
               >
-                <ProfessionalVideoPlayer
-                  video={{
-                    id: videoKey,
-                    title: videoInfo.title,
-                    description: t('peaceWithMoney.video.videoDescription', { day: videoInfo.lessonNumber, title: videoInfo.title }),
-                    duration: 0, // Will be set by video player
-                    instructor: t('peaceWithMoney.video.instructor'),
-                    thumbnail: '',
-                  }}
-                  src={finalVideoUrl}
-                  onProgress={handleProgress}
-                  onComplete={() => {
-                    // TODO: Enable when backend endpoints are implemented
-                  }}
-                />
+                {hasAccess ? (
+                  <ProfessionalVideoPlayer
+                    video={{
+                      id: videoKey,
+                      title: videoInfo.title,
+                      description: t('peaceWithMoney.video.videoDescription', { day: videoInfo.lessonNumber, title: videoInfo.title }),
+                      duration: 0, // Will be set by video player
+                      instructor: t('peaceWithMoney.video.instructor'),
+                      thumbnail: '',
+                    }}
+                    src={finalVideoUrl}
+                    onProgress={handleProgress}
+                    onComplete={() => {
+                      // TODO: Enable when backend endpoints are implemented
+                    }}
+                  />
+                ) : (
+                  <ProtectedVideoPlayer
+                    videoId={videoKey}
+                    moduleType={ModuleType.PeaceWithMoney}
+                    videoUrl={finalVideoUrl}
+                    title={videoInfo.title}
+                    description={t('peaceWithMoney.video.videoDescription', { day: videoInfo.lessonNumber, title: videoInfo.title })}
+                  />
+                )}
               </Box>
             </Box>
           </Card>

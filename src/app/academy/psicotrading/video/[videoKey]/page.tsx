@@ -21,6 +21,9 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
+import { ProtectedVideoPlayer } from '@/components/academy/shared/protected-video-player';
+import { ModuleType } from '@/types/module-permission';
+import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 
 export default function PsicoTradingVideoPlayerPage() {
@@ -30,6 +33,7 @@ export default function PsicoTradingVideoPlayerPage() {
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
   const [_hasWatched, _setHasWatched] = useState(false);
+  const { hasAccess } = useModuleAccess(ModuleType.Psicotrading);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -174,21 +178,31 @@ export default function PsicoTradingVideoPlayerPage() {
                   height: '100%',
                 }}
               >
-                <ProfessionalVideoPlayer
-                  video={{
-                    id: videoKey,
-                    title: extractVideoName(videoKey),
-                    description: `PsicoTrading lesson: ${extractVideoName(videoKey)}`,
-                    duration: 0, // Will be set by video player
-                    instructor: t('psicotrading.video.instructor'),
-                    thumbnail: '',
-                  }}
-                  src={finalVideoUrl}
-                  onProgress={handleProgress}
-                  onComplete={() => {
-                    // TODO: Enable when backend endpoints are implemented
-                  }}
-                />
+                {hasAccess ? (
+                  <ProfessionalVideoPlayer
+                    video={{
+                      id: videoKey,
+                      title: extractVideoName(videoKey),
+                      description: `PsicoTrading lesson: ${extractVideoName(videoKey)}`,
+                      duration: 0, // Will be set by video player
+                      instructor: t('psicotrading.video.instructor'),
+                      thumbnail: '',
+                    }}
+                    src={finalVideoUrl}
+                    onProgress={handleProgress}
+                    onComplete={() => {
+                      // TODO: Enable when backend endpoints are implemented
+                    }}
+                  />
+                ) : (
+                  <ProtectedVideoPlayer
+                    videoId={videoKey}
+                    moduleType={ModuleType.Psicotrading}
+                    videoUrl={finalVideoUrl}
+                    title={extractVideoName(videoKey)}
+                    description={`PsicoTrading lesson: ${extractVideoName(videoKey)}`}
+                  />
+                )}
               </Box>
             </Box>
           </Card>

@@ -37,6 +37,8 @@ import { useRouter } from 'next/navigation';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { useModuleAccess } from '@/hooks/use-module-access';
+import { ModuleType } from '@/types/module-permission';
 import { formatDistanceToNow, isAfter, isBefore, addMinutes } from 'date-fns';
 import { MainNavbar } from '@/components/landing/main-navbar';
 import dynamic from 'next/dynamic';
@@ -98,6 +100,7 @@ export default function LivePage() {
   const router = useRouter();
   const { user, authToken, isLoading: authLoading } = useClientAuth();
   const { t: _t } = useTranslation();
+  const { hasAccess: hasModuleAccess, loading: moduleLoading } = useModuleAccess(ModuleType.Live);
   
   const [liveMeetingsData, setLiveMeetingsData] = useState<LiveMeetingsResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -345,7 +348,7 @@ export default function LivePage() {
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading || loading || moduleLoading) {
     return (
       <>
         <MainNavbar />
@@ -393,8 +396,8 @@ export default function LivePage() {
     );
   }
 
-  // No access view
-  if (!liveMeetingsData?.hasAccess) {
+  // No access view - Check both API access and module permission
+  if (!liveMeetingsData?.hasAccess || !hasModuleAccess) {
     return (
       <>
         <MainNavbar />

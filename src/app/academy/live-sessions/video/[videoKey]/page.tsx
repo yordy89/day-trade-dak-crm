@@ -21,6 +21,9 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
+import { ProtectedVideoPlayer } from '@/components/academy/shared/protected-video-player';
+import { ModuleType } from '@/types/module-permission';
+import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 
 export default function ClassVideoPlayerPage() {
@@ -30,6 +33,7 @@ export default function ClassVideoPlayerPage() {
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
   const [_hasWatched, _setHasWatched] = useState(false);
+  const { hasAccess } = useModuleAccess(ModuleType.LiveRecorded);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -182,21 +186,31 @@ export default function ClassVideoPlayerPage() {
                   height: '100%',
                 }}
               >
-                <ProfessionalVideoPlayer
-                  video={{
-                    id: videoKey,
-                    title: extractVideoName(videoKey),
-                    description: `Recorded live session: ${extractVideoName(videoKey)}`,
-                    duration: 0, // Will be set by video player
-                    instructor: 'Trading Academy',
-                    thumbnail: '',
-                  }}
-                  src={finalVideoUrl}
-                  onProgress={handleProgress}
-                  onComplete={() => {
-                    // TODO: Enable when backend endpoints are implemented
-                  }}
-                />
+                {hasAccess ? (
+                  <ProfessionalVideoPlayer
+                    video={{
+                      id: videoKey,
+                      title: extractVideoName(videoKey),
+                      description: `Recorded live session: ${extractVideoName(videoKey)}`,
+                      duration: 0, // Will be set by video player
+                      instructor: 'Trading Academy',
+                      thumbnail: '',
+                    }}
+                    src={finalVideoUrl}
+                    onProgress={handleProgress}
+                    onComplete={() => {
+                      // TODO: Enable when backend endpoints are implemented
+                    }}
+                  />
+                ) : (
+                  <ProtectedVideoPlayer
+                    videoId={videoKey}
+                    moduleType={ModuleType.LiveRecorded}
+                    videoUrl={finalVideoUrl}
+                    title={extractVideoName(videoKey)}
+                    description={`Recorded live session: ${extractVideoName(videoKey)}`}
+                  />
+                )}
               </Box>
             </Box>
           </Card>

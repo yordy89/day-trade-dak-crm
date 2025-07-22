@@ -38,6 +38,7 @@ export enum SubscriptionPlan {
 }
 
 export enum Role {
-  USER = 'user',
-  ADMIN = 'admin',
+  User = 'user',
+  Admin = 'admin',
+  SuperAdmin = 'super_admin',
 }

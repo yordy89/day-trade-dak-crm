@@ -6,8 +6,9 @@ import { ArrowLeft } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
-import { useClientAuth } from '@/hooks/use-client-auth';
-import { SubscriptionPlan, Role } from '@/types/user';
+import { useModuleAccess } from '@/hooks/use-module-access';
+import { ModuleAccessGuard } from '@/components/guards/ModuleAccessGuard';
+import { ModuleType } from '@/types/module-permission';
 import MasterClasesIntro from '@/components/academy/mentorship/masterclases-intro';
 import MentorshipVideoList from '@/components/academy/mentorship/video-list';
 
@@ -15,21 +16,7 @@ export default function MentorshipPage() {
   const router = useRouter();
   const { t } = useTranslation('academy');
   const [viewVideos, setViewVideos] = useState(false);
-  const { user, isLoading } = useClientAuth();
-  const userSubscriptions = user?.subscriptions || [];
-  const userRole = user?.role;
-
-  // Debug logging
-  useEffect(() => {
-    if (!isLoading && user) {
-      console.log('MasterClass Access Check:', {
-        user: user.email,
-        subscriptions: userSubscriptions,
-        userRole,
-        isAdmin: userRole === Role.ADMIN,
-      });
-    }
-  }, [user, userSubscriptions, userRole, isLoading]);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.MasterClasses);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -37,29 +24,6 @@ export default function MentorshipPage() {
       setViewVideos(true);
     }
   }, []);
-  
-  // Check for MASTER_CLASES subscription with expiration
-  const hasSubscriptionAccess = userSubscriptions.some(sub => {
-    if (typeof sub === 'string') {
-      return sub === (SubscriptionPlan.MasterClases as string);
-    } else if (sub && typeof sub === 'object' && 'plan' in sub) {
-      // Check if it's MasterClases plan
-      if (sub.plan === (SubscriptionPlan.MasterClases as string)) {
-        // If no expiresAt field, it's a permanent subscription
-        if (!('expiresAt' in sub) || !sub.expiresAt) {
-          return true;
-        }
-        // If has expiresAt, check if not expired
-        return new Date(sub.expiresAt) > new Date();
-      }
-    }
-    return false;
-  });
-
-  // Admin always has access
-  const isAdmin = userRole === Role.ADMIN;
-  
-  const hasAccess = hasSubscriptionAccess || isAdmin;
 
   const handleCTA = () => {
     if (hasAccess) {
@@ -69,9 +33,9 @@ export default function MentorshipPage() {
     }
   };
 
-  // Don&apos;t render until auth is loaded to prevent showing restricted state prematurely
-  if (isLoading) {
-    return null;
+  // Don't render until auth is loaded to prevent redirect issues
+  if (loading) {
+    return <Box />;
   }
 
   // Show intro page first, then videos for subscribers
@@ -80,31 +44,63 @@ export default function MentorshipPage() {
       <Box sx={{ minHeight: '100vh', width: '100%' }}>
         <MasterClasesIntro 
           onStart={handleCTA}
-          ctaText={hasAccess ? t('masterclass.viewMasterClasses') : t('masterclass.getEliteAccess')}
+          ctaText={hasAccess ? t('masterclass.viewVideos') : t('masterclass.getAccess')}
         />
       </Box>
     );
   }
 
-  // Show videos for subscribers
+  // Show videos for subscribers with module access guard
   return (
-    <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
-      <Box sx={{ mb: 4 }}>
-        <Button
-          startIcon={<ArrowLeft size={20} />}
-          onClick={() => setViewVideos(false)}
-          sx={{ mb: 2 }}
-        >
-          {t('masterclass.back')}
-        </Button>
-        <Typography variant="h4" fontWeight={700} gutterBottom>
-          {t('masterclass.title')}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          {t('masterclass.accessDescription')}
-        </Typography>
+    <ModuleAccessGuard
+      moduleType={ModuleType.MasterClasses}
+      fallback={
+        <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
+          <Button
+            startIcon={<ArrowLeft size={20} />}
+            onClick={() => setViewVideos(false)}
+            sx={{ mb: 2 }}
+          >
+            {t('masterclass.backToIntro')}
+          </Button>
+          
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              {t('masterclass.accessRequired')}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mb={3}>
+              {t('masterclass.needSubscriptionOrPermission')}
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => router.push('/academy/subscription/plans?highlight=MasterClases')}
+            >
+              {t('masterclass.viewPlans')}
+            </Button>
+          </Box>
+        </Box>
+      }
+    >
+      <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
+        <Box sx={{ mb: 4 }}>
+          <Button
+            startIcon={<ArrowLeft size={20} />}
+            onClick={() => setViewVideos(false)}
+            sx={{ mb: 2 }}
+          >
+            {t('masterclass.backToIntro')}
+          </Button>
+          
+          <Typography variant="h4" fontWeight={700} gutterBottom>
+            {t('masterclass.title')}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('masterclass.description')}
+          </Typography>
+        </Box>
+        <MentorshipVideoList />
       </Box>
-      <MentorshipVideoList />
-    </Box>
+    </ModuleAccessGuard>
   );
 }
