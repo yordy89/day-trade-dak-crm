@@ -10,14 +10,10 @@ import {
   Button,
   Stack,
   IconButton,
-  Paper,
   Grid,
   Divider,
-  Alert,
   CircularProgress,
   Avatar,
-  useTheme,
-  alpha,
   Chip,
 } from '@mui/material';
 import {
@@ -32,7 +28,6 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 
 interface EventRegistration {
   _id: string;
@@ -64,8 +59,6 @@ interface AddAttendeesModalProps {
 }
 
 export function AddAttendeesModal({ open, onClose, registration, onSuccess: _onSuccess }: AddAttendeesModalProps) {
-  const theme = useTheme();
-  const { isDarkMode } = useAppTheme();
   const _router = useRouter();
   const [additionalAdults, setAdditionalAdults] = useState(0);
   const [additionalChildren, setAdditionalChildren] = useState(0);
