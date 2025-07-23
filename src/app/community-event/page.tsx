@@ -73,9 +73,15 @@ export default function CommunityEventPage() {
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [event, setEvent] = useState<any>(null);
   const [_isLoadingEvent, _setIsLoadingEvent] = useState(true);
+  const [eventCapacity, setEventCapacity] = useState<{ available: boolean; remaining: number } | null>(null);
+  const [isLoadingCapacity, setIsLoadingCapacity] = useState(true);
   
   // Check if registration is enabled from environment variable
-  const isRegistrationEnabled = process.env.NEXT_PUBLIC_COMMUNITY_EVENT_REGISTRATION_ENABLED === 'true';
+  const isManuallyEnabled = process.env.NEXT_PUBLIC_COMMUNITY_EVENT_REGISTRATION_ENABLED === 'true';
+  
+  // Check both manual enable and capacity availability
+  const isCapacityAvailable = eventCapacity?.available ?? true;
+  const isRegistrationEnabled = isManuallyEnabled && isCapacityAvailable;
 
   useEffect(() => {
     // Check if user has Live Semanal subscription
@@ -98,6 +104,7 @@ export default function CommunityEventPage() {
 
     // Fetch event data and pricing
     const fetchData = async () => {
+      setIsLoadingCapacity(true);
       try {
         // First, get all events and find the community event
         const eventsResponse = await eventService.getEvents({ isActive: true });
@@ -111,6 +118,16 @@ export default function CommunityEventPage() {
             basePrice: communityEvent.price || 599.99, 
             currency: 'usd' 
           });
+          
+          // Check event capacity
+          try {
+            const capacityInfo = await eventService.checkEventCapacity(communityEvent._id);
+            setEventCapacity(capacityInfo);
+          } catch (capacityError) {
+            console.error('Error checking event capacity:', capacityError);
+            // Default to available if capacity check fails
+            setEventCapacity({ available: true, remaining: -1 });
+          }
         } else {
           // Fallback pricing if no event found
           const response = await axios.get(
@@ -126,6 +143,8 @@ export default function CommunityEventPage() {
             price: response.data.basePrice || 599.99,
             requiresActiveSubscription: false,
           });
+          // For default event, assume capacity is available
+          setEventCapacity({ available: true, remaining: -1 });
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -139,9 +158,12 @@ export default function CommunityEventPage() {
           price: 599.99,
           requiresActiveSubscription: false,
         });
+        // Default capacity to available on error
+        setEventCapacity({ available: true, remaining: -1 });
       } finally {
         setIsLoadingPrice(false);
         _setIsLoadingEvent(false);
+        setIsLoadingCapacity(false);
       }
     };
 
@@ -384,6 +406,37 @@ export default function CommunityEventPage() {
                     </Stack>
                   </Stack>
 
+                  {/* Capacity Indicator */}
+                  {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 && (
+                    <Alert 
+                      severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
+                      sx={{ 
+                        mt: 2, 
+                        backgroundColor: alpha(
+                          eventCapacity.remaining <= 10 
+                            ? theme.palette.error.main 
+                            : eventCapacity.remaining <= 25 
+                              ? theme.palette.warning.main 
+                              : theme.palette.info.main, 
+                          0.1
+                        ),
+                        color: 'white',
+                        '& .MuiAlert-icon': {
+                          color: 'white'
+                        }
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight={600}>
+                        {eventCapacity.remaining <= 10 
+                          ? `¡ÚLTIMOS ${eventCapacity.remaining} LUGARES DISPONIBLES!`
+                          : eventCapacity.remaining <= 25
+                            ? `Solo quedan ${eventCapacity.remaining} lugares disponibles`
+                            : `${eventCapacity.remaining} lugares disponibles`
+                        }
+                      </Typography>
+                    </Alert>
+                  )}
+
                   <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: { xs: 'center', md: 'flex-start' }, width: '100%' }}>
                     <Button
                       variant="contained"
@@ -412,12 +465,16 @@ export default function CommunityEventPage() {
                         <CircularProgress size={24} color="inherit" />
                       ) : (
                         <>
-                          {isLoadingPrice ? (
+                          {isLoadingPrice || isLoadingCapacity ? (
                             <CircularProgress size={20} color="inherit" />
                           ) : (
                             isRegistrationEnabled 
                               ? `RESERVAR MI LUGAR - ${formatPrice(pricing?.basePrice || 599.99)}`
-                              : 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                              : !isManuallyEnabled 
+                                ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                                : !isCapacityAvailable
+                                  ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                                  : 'REGISTRO NO DISPONIBLE'
                           )}
                         </>
                       )}
@@ -892,6 +949,37 @@ export default function CommunityEventPage() {
                   Esta mentoría es una inversión en tu futuro como trader profesional
                 </Typography>
               </Alert>
+              
+              {/* Capacity Indicator */}
+              {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 && (
+                <Alert 
+                  severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
+                  icon={false}
+                  sx={{ 
+                    mt: 3,
+                    mb: 3,
+                    textAlign: 'center',
+                    backgroundColor: alpha(
+                      eventCapacity.remaining <= 10 
+                        ? theme.palette.error.main 
+                        : eventCapacity.remaining <= 25 
+                          ? theme.palette.warning.main 
+                          : theme.palette.success.main, 
+                      0.2
+                    ),
+                  }}
+                >
+                  <Typography variant="h6" fontWeight={700}>
+                    {eventCapacity.remaining <= 10 
+                      ? `¡ÚLTIMOS ${eventCapacity.remaining} LUGARES DISPONIBLES!`
+                      : eventCapacity.remaining <= 25
+                        ? `Solo quedan ${eventCapacity.remaining} lugares disponibles`
+                        : `${eventCapacity.remaining} lugares disponibles`
+                    }
+                  </Typography>
+                </Alert>
+              )}
+              
               <Button
                 variant="contained"
                 size="large"
@@ -915,7 +1003,11 @@ export default function CommunityEventPage() {
               >
                 {isRegistrationEnabled 
                   ? 'ASEGURAR MI LUGAR AHORA'
-                  : 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'}
+                  : !isManuallyEnabled 
+                    ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                    : !isCapacityAvailable
+                      ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                      : 'REGISTRO NO DISPONIBLE'}
               </Button>
             </Box>
             
