@@ -60,12 +60,14 @@ import { eventService } from '@/services/api/event.service';
 import axios from 'axios';
 import { SubscriptionPlan } from '@/types/user';
 import GoogleMap from '@/components/common/GoogleMap';
+import { useRouter } from 'next/navigation';
 
 export default function CommunityEventPage() {
   const theme = useTheme();
   const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
   const { t: _t } = useTranslation('communityEvent');
+  const router = useRouter();
   const [isProcessing, _setIsProcessing] = useState(false);
   const [pricing, setPricing] = useState<{ basePrice: number; currency: string } | null>(null);
   const [isLoadingPrice, setIsLoadingPrice] = useState(true);
@@ -478,6 +480,27 @@ export default function CommunityEventPage() {
                           )}
                         </>
                       )}
+                    </Button>
+                    
+                    {/* Manage Registration Button */}
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      onClick={() => router.push('/community-event/manage-registration')}
+                      sx={{
+                        borderColor: 'white',
+                        color: 'white',
+                        '&:hover': {
+                          borderColor: 'grey.300',
+                          backgroundColor: alpha(theme.palette.common.white, 0.1),
+                        },
+                        px: { xs: 3, sm: 4 },
+                        py: { xs: 1.5, sm: 2 },
+                        fontSize: { xs: '1rem', sm: '1.1rem' },
+                        fontWeight: 700,
+                      }}
+                    >
+                      Gestionar Mi Registro
                     </Button>
                   </Stack>
 
@@ -980,35 +1003,57 @@ export default function CommunityEventPage() {
                 </Alert>
               )}
               
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handlePurchase}
-                disabled={!isRegistrationEnabled}
-                sx={{
-                  backgroundColor: isRegistrationEnabled ? 'white' : 'grey.400',
-                  color: isRegistrationEnabled ? 'primary.main' : 'grey.600',
-                  fontSize: '1.2rem',
-                  py: 2,
-                  px: 6,
-                  fontWeight: 700,
-                  '&:hover': {
-                    backgroundColor: isRegistrationEnabled ? 'grey.100' : 'grey.400',
-                  },
-                  '&.Mui-disabled': {
-                    backgroundColor: 'grey.400',
-                    color: 'grey.600',
-                  },
-                }}
-              >
-                {isRegistrationEnabled 
-                  ? 'ASEGURAR MI LUGAR AHORA'
-                  : !isManuallyEnabled 
-                    ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
-                    : !isCapacityAvailable
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handlePurchase}
+                  disabled={!isRegistrationEnabled}
+                  sx={{
+                    backgroundColor: isRegistrationEnabled ? 'white' : 'grey.400',
+                    color: isRegistrationEnabled ? 'primary.main' : 'grey.600',
+                    fontSize: '1.2rem',
+                    py: 2,
+                    px: 6,
+                    fontWeight: 700,
+                    '&:hover': {
+                      backgroundColor: isRegistrationEnabled ? 'grey.100' : 'grey.400',
+                    },
+                    '&.Mui-disabled': {
+                      backgroundColor: 'grey.400',
+                      color: 'grey.600',
+                    },
+                  }}
+                >
+                  {isRegistrationEnabled 
+                    ? 'ASEGURAR MI LUGAR AHORA'
+                    : !isManuallyEnabled 
                       ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
-                      : 'REGISTRO NO DISPONIBLE'}
-              </Button>
+                      : !isCapacityAvailable
+                        ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
+                        : 'REGISTRO NO DISPONIBLE'}
+                </Button>
+                
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => router.push('/community-event/manage-registration')}
+                  sx={{
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    fontSize: '1.2rem',
+                    py: 2,
+                    px: 4,
+                    fontWeight: 700,
+                    '&:hover': {
+                      borderColor: 'rgba(255, 255, 255, 0.6)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    },
+                  }}
+                >
+                  Gestionar Mi Registro
+                </Button>
+              </Stack>
             </Box>
             
             <Typography variant="body1" sx={{ mt: 4, opacity: 0.8 }}>
