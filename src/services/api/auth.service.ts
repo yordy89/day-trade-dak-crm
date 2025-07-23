@@ -50,9 +50,9 @@ class AuthService {
     }
   }
 
-  async signIn(data: SignInData): Promise<AuthResponse> {
+  async signIn(email: string, password: string): Promise<AuthResponse> {
     try {
-      const response = await API.post<AuthResponse>('/auth/login', data);
+      const response = await API.post<AuthResponse>('/auth/login', { email, password });
       
       // Store auth data
       const { access_token: accessToken, user } = response.data;

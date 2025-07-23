@@ -10,7 +10,7 @@ interface LoginCredentials {
 export const useLogin = () => {
   return useMutation<AuthResponse, Error, LoginCredentials>({
     mutationFn: async (credentials: LoginCredentials) => {
-      return authService.signIn(credentials);
+      return authService.signIn(credentials.email, credentials.password);
     },
   });
 };

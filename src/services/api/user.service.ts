@@ -17,7 +17,7 @@ export interface UploadProfileImageData {
 class UserService {
   async getCurrentUser(): Promise<User> {
     try {
-      const response = await API.get<User>('/users/profile');
+      const response = await API.get<User>('/user/profile');
       
       // Don't update store here - let the calling hook handle it
       
@@ -34,7 +34,7 @@ class UserService {
 
   async updateUser(data: UpdateUserData): Promise<User> {
     try {
-      const response = await API.patch<User>('/users/profile', data);
+      const response = await API.patch<User>('/user/profile', data);
       
       // Don't update store here - let the calling hook handle it
       
@@ -55,7 +55,7 @@ class UserService {
       formData.append('profileImage', file);
       
       const response = await API.post<{ imageUrl: string }>(
-        '/users/upload-profile-image',
+        '/user/upload-profile-image',
         formData,
         {
           headers: {
@@ -79,7 +79,7 @@ class UserService {
 
   async updateTradingPhase(phase: number): Promise<User> {
     try {
-      const response = await API.patch<User>('/users/trading-phase', { phase });
+      const response = await API.patch<User>('/user/trading-phase', { phase });
       
       // Don't update store here - let the calling hook handle it
       
@@ -96,7 +96,7 @@ class UserService {
 
   async getSubscriptions(): Promise<string[]> {
     try {
-      const response = await API.get<{ subscriptions: string[] }>('/users/subscriptions');
+      const response = await API.get<{ subscriptions: string[] }>('/user/subscriptions');
       return response.data.subscriptions;
     } catch (error) {
       const apiError = errorHandler.handle(error, {
@@ -110,7 +110,7 @@ class UserService {
 
   async cancelSubscription(subscriptionId: string): Promise<void> {
     try {
-      await API.delete(`/users/subscriptions/${subscriptionId}`);
+      await API.delete(`/user/subscriptions/${subscriptionId}`);
     } catch (error) {
       const apiError = errorHandler.handle(error, {
         showToast: true,

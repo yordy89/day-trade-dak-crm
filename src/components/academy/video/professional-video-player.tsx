@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Typography,
@@ -34,8 +33,6 @@ import {
   PictureInPicture,
   Forward10,
   Replay10,
-  BookmarkBorder,
-  Notes,
   Search,
   PlayCircleOutline,
   Lock,
@@ -66,14 +63,14 @@ interface ProfessionalVideoPlayerProps {
 }
 
 export function ProfessionalVideoPlayer({
-  video,
+  video: _video,
   src,
   captionsUrl,
   onProgress,
   onComplete,
   relatedVideos = [],
-  bookmarks = [],
-  onBookmark,
+  bookmarks: _bookmarks = [],
+  onBookmark: _onBookmark,
 }: ProfessionalVideoPlayerProps) {
   const theme = useTheme();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -92,7 +89,7 @@ export function ProfessionalVideoPlayer({
   
   // UI state
   const [showSettings, setShowSettings] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
+  const [_showNotes, _setShowNotes] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -253,9 +250,9 @@ export function ProfessionalVideoPlayer({
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const addBookmark = () => {
-    if (onBookmark && noteText) {
-      onBookmark(currentTime, noteText);
+  const _addBookmark = () => {
+    if (_onBookmark && noteText) {
+      _onBookmark(currentTime, noteText);
       setNoteText('');
     }
   };
@@ -445,98 +442,6 @@ export function ProfessionalVideoPlayer({
               </Box>
             </Collapse>
           </Box>
-        </Card>
-
-        {/* Video Info */}
-        <Card sx={{ mt: 2 }}>
-          <CardContent>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Box>
-                <Typography variant="h5" fontWeight={700}>
-                  {video.title}
-                </Typography>
-                {video.instructor ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    Instructor: {video.instructor}
-                  </Typography> : null}
-                <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-                  {video.category ? <Chip label={video.category} size="small" /> : null}
-                  {video.uploadDate ? <Typography variant="caption" color="text.secondary">
-                      Uploaded: {video.uploadDate}
-                    </Typography> : null}
-                  {video.views ? <Typography variant="caption" color="text.secondary">
-                      {video.views.toLocaleString()} views
-                    </Typography> : null}
-                </Stack>
-              </Box>
-              
-              <Stack direction="row" spacing={1}>
-                <Tooltip title="Add Bookmark">
-                  <IconButton onClick={() => setShowNotes(!showNotes)}>
-                    <BookmarkBorder />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Notes">
-                  <IconButton>
-                    <Notes />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            </Stack>
-
-            {video.description ? <Typography variant="body2" sx={{ mt: 2 }}>
-                {video.description}
-              </Typography> : null}
-
-            {/* Bookmark Section */}
-            <Collapse in={showNotes}>
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                  Add Bookmark at {formatTime(currentTime)}
-                </Typography>
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    placeholder="Add a note..."
-                    value={noteText}
-                    onChange={(e) => setNoteText(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        addBookmark();
-                      }
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={addBookmark}
-                    disabled={!noteText}
-                  >
-                    Add
-                  </Button>
-                </Stack>
-
-                {bookmarks.length > 0 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                      Bookmarks
-                    </Typography>
-                    <List dense>
-                      {bookmarks.map((bookmark, _index) => (
-                        <ListItem key={`bookmark-${bookmark.time}-${bookmark.note}`}>
-                          <ListItemButton onClick={() => handleSeek(bookmark.time)}>
-                            <ListItemText
-                              primary={bookmark.note}
-                              secondary={formatTime(bookmark.time)}
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Box>
-                )}
-              </Box>
-            </Collapse>
-          </CardContent>
         </Card>
       </Box>
 

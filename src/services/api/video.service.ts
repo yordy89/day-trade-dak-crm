@@ -1,4 +1,5 @@
 import API from '@/lib/axios';
+import ClassesAPI from '@/lib/axios-classes';
 import { errorHandler } from '@/lib/error-handler';
 
 export interface Video {
@@ -188,13 +189,36 @@ class VideoService {
 
   async getClassesVideos(): Promise<VideoMetadata[]> {
     try {
-      const response = await API.get<VideoMetadata[]>('/videos/classesVideos');
+      // Use ClassesAPI for classes-related requests
+      const response = await ClassesAPI.get<VideoMetadata[]>('/videos/classesVideos');
       return response.data;
     } catch (error) {
       const apiError = errorHandler.handle(error, {
         showToast: true,
         logError: true,
         fallbackMessage: 'Failed to load classes videos.',
+      });
+      throw new Error(apiError.message);
+    }
+  }
+
+  async getVideoByKey(videoKey: string): Promise<VideoMetadata | null> {
+    try {
+      // First, get all classes videos
+      const videos = await this.getClassesVideos();
+      
+      // Find the video by key
+      const video = videos.find(v => v.key === videoKey);
+      
+      if (!video) {
+        throw new Error(`Video not found: ${videoKey}`);
+      }
+      return video;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to load video.',
       });
       throw new Error(apiError.message);
     }
