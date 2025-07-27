@@ -243,8 +243,7 @@ export function ProfessionalVideoList({
             </Stack>
 
             {/* Filters */}
-            {showFilters && (
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            {showFilters ? <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <FormControl size="small" sx={{ minWidth: 200 }}>
                   <InputLabel>Category</InputLabel>
                   <Select
@@ -274,8 +273,7 @@ export function ProfessionalVideoList({
                     ))}
                   </Select>
                 </FormControl>
-              </Stack>
-            )}
+              </Stack> : null}
           </Stack>
         </CardContent>
       </Card>
@@ -359,8 +357,7 @@ export function ProfessionalVideoList({
                       left: 8,
                     }}
                   >
-                    {video.isNew && (
-                      <Chip
+                    {video.isNew ? <Chip
                         label="New"
                         size="small"
                         icon={<NewReleases />}
@@ -368,10 +365,8 @@ export function ProfessionalVideoList({
                           backgroundColor: alpha(theme.palette.error.main, 0.9),
                           color: 'white',
                         }}
-                      />
-                    )}
-                    {video.isTrending && (
-                      <Chip
+                      /> : null}
+                    {video.isTrending ? <Chip
                         label="Trending"
                         size="small"
                         icon={<TrendingUp />}
@@ -379,13 +374,11 @@ export function ProfessionalVideoList({
                           backgroundColor: alpha(theme.palette.warning.main, 0.9),
                           color: 'white',
                         }}
-                      />
-                    )}
+                      /> : null}
                   </Stack>
 
                   {/* Duration */}
-                  {video.duration && (
-                    <Chip
+                  {video.duration ? <Chip
                       label={formatDuration(video.duration)}
                       size="small"
                       sx={{
@@ -395,8 +388,7 @@ export function ProfessionalVideoList({
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         color: 'white',
                       }}
-                    />
-                  )}
+                    /> : null}
 
                   {/* Progress Bar */}
                   {video.progress !== undefined && video.progress > 0 && (
@@ -431,19 +423,15 @@ export function ProfessionalVideoList({
                         {video.title}
                       </Typography>
                       
-                      {video.instructor && (
-                        <Typography variant="body2" color="text.secondary">
+                      {video.instructor ? <Typography variant="body2" color="text.secondary">
                           {video.instructor}
-                        </Typography>
-                      )}
+                        </Typography> : null}
                     </Box>
 
                     <Stack>
-                      {video.isCompleted && (
-                        <Tooltip title="Completed">
+                      {video.isCompleted ? <Tooltip title="Completed">
                           <CheckCircle color="success" sx={{ fontSize: 20 }} />
-                        </Tooltip>
-                      )}
+                        </Tooltip> : null}
                       <IconButton
                         size="small"
                         onClick={(e) => {
@@ -504,8 +492,7 @@ export function ProfessionalVideoList({
                           borderRadius: 8,
                         }}
                       />
-                      {video.isLocked && (
-                        <Lock
+                      {video.isLocked ? <Lock
                           sx={{
                             position: 'absolute',
                             top: '50%',
@@ -513,8 +500,7 @@ export function ProfessionalVideoList({
                             transform: 'translate(-50%, -50%)',
                             color: 'white',
                           }}
-                        />
-                      )}
+                        /> : null}
                     </Box>
                   </Grid>
                   
@@ -524,8 +510,7 @@ export function ProfessionalVideoList({
                         <Typography variant="h6" fontWeight={600}>
                           {video.title}
                         </Typography>
-                        {video.description && (
-                          <Typography
+                        {video.description ? <Typography
                             variant="body2"
                             color="text.secondary"
                             sx={{
@@ -538,19 +523,16 @@ export function ProfessionalVideoList({
                             }}
                           >
                             {video.description}
-                          </Typography>
-                        )}
+                          </Typography> : null}
                         
                         <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
                           <Chip label={video.category} size="small" />
-                          {video.duration && (
-                            <Stack direction="row" spacing={0.5} alignItems="center">
+                          {video.duration ? <Stack direction="row" spacing={0.5} alignItems="center">
                               <Schedule sx={{ fontSize: 16 }} />
                               <Typography variant="caption">
                                 {formatDuration(video.duration)}
                               </Typography>
-                            </Stack>
-                          )}
+                            </Stack> : null}
                           <Typography variant="caption" color="text.secondary">
                             {video.views.toLocaleString()} views
                           </Typography>
@@ -579,11 +561,9 @@ export function ProfessionalVideoList({
                       </Box>
                       
                       <Stack direction="row" spacing={1} alignItems="center">
-                        {video.isCompleted && (
-                          <Tooltip title="Completed">
+                        {video.isCompleted ? <Tooltip title="Completed">
                             <CheckCircle color="success" />
-                          </Tooltip>
-                        )}
+                          </Tooltip> : null}
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();

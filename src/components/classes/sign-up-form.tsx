@@ -114,8 +114,7 @@ export default function ClassesSignUpForm() {
         Regístrate para acceder a las clases
       </Typography>
 
-      {error && (
-        <Alert 
+      {error ? <Alert 
           severity="error" 
           sx={{ 
             mb: 3,
@@ -127,8 +126,7 @@ export default function ClassesSignUpForm() {
           }}
         >
           {error}
-        </Alert>
-      )}
+        </Alert> : null}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2.5}>

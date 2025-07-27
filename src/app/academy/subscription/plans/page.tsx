@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, cloneElement } from 'react';
 import {
   Box,
   Container,
@@ -252,7 +252,15 @@ export default function PlansPage() {
   // Get user's active subscriptions
   const activeSubscriptions = user?.subscriptions || [];
   const hasLiveSubscription = activeSubscriptions.some(
-    sub => sub === (SubscriptionPlan.LiveWeeklyManual as string) || sub === (SubscriptionPlan.LiveWeeklyRecurring as string)
+    (sub: any) => {
+      if (typeof sub === 'string') {
+        return sub === (SubscriptionPlan.LiveWeeklyManual as string) || sub === (SubscriptionPlan.LiveWeeklyRecurring as string);
+      }
+      return (sub.plan === SubscriptionPlan.LiveWeeklyManual || sub.plan === SubscriptionPlan.LiveWeeklyRecurring) &&
+             (!sub.status || sub.status === 'active') &&
+             (!sub.expiresAt || new Date(sub.expiresAt) > new Date()) &&
+             (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > new Date());
+    }
   );
 
   // Fetch dynamic prices
@@ -300,7 +308,17 @@ export default function PlansPage() {
     }
 
     // Check if user already has this subscription
-    if (activeSubscriptions.includes(plan as string)) {
+    const hasSubscription = activeSubscriptions.some((sub: any) => {
+      if (typeof sub === 'string') {
+        return sub === (plan as string);
+      }
+      return sub.plan === (plan as string) &&
+             (!sub.status || sub.status === 'active') &&
+             (!sub.expiresAt || new Date(sub.expiresAt) > new Date()) &&
+             (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > new Date());
+    });
+    
+    if (hasSubscription) {
       setError(t('subscriptions.alreadyHaveSubscription'));
       return;
     }
@@ -361,7 +379,15 @@ export default function PlansPage() {
 
   const renderPlanCard = (plan: PricingPlan) => {
     const displayPrice = getDisplayPrice(plan);
-    const isCurrentPlan = activeSubscriptions.includes(plan.id as string);
+    const isCurrentPlan = activeSubscriptions.some((sub: any) => {
+      if (typeof sub === 'string') {
+        return sub === (plan.id as string);
+      }
+      return sub.plan === (plan.id as string) &&
+             (!sub.status || sub.status === 'active') &&
+             (!sub.expiresAt || new Date(sub.expiresAt) > new Date()) &&
+             (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > new Date());
+    });
     const isFree = displayPrice === 0;
     const isHighlighted = highlightedPlan === plan.id;
 
@@ -437,7 +463,7 @@ export default function PlansPage() {
             {/* Header */}
             <Stack spacing={2} alignItems="center" textAlign="center">
               <Box sx={{ color: plan.color, mb: 2 }}>
-                {React.cloneElement(plan.icon as React.ReactElement, { size: 48 })}
+                {cloneElement(plan.icon as React.ReactElement, { size: 48 })}
               </Box>
               <Typography variant="h5" fontWeight={700}>
                 {plan.name}

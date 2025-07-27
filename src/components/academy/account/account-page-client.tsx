@@ -235,8 +235,7 @@ export function AccountPageClient(): React.JSX.Element {
           }}
         >
           {/* Floating elements for premium users */}
-          {isPremium && (
-            <>
+          {isPremium ? <>
               <Crown 
                 size={80} 
                 weight="duotone" 
@@ -257,8 +256,7 @@ export function AccountPageClient(): React.JSX.Element {
                   opacity: 0.1,
                 }}
               />
-            </>
-          )}
+            </> : null}
         </Box>
 
         {/* Profile Info */}

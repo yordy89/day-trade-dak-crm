@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Box, 
   Container, 
@@ -19,7 +19,8 @@ import {
   Stack,
   Chip,
   useTheme,
-  alpha
+  alpha,
+  CircularProgress
 } from '@mui/material';
 import { 
   CheckCircleOutline, 
@@ -41,14 +42,33 @@ import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { useTranslation } from 'react-i18next';
 import GoogleMap from '@/components/common/GoogleMap';
+import axios from 'axios';
 
 export default function CommunityEventSuccessPage() {
   const router = useRouter();
   const theme = useTheme();
   const { i18n } = useTranslation();
   const isSpanish = i18n.language === 'es';
+  const [event, setEvent] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch event data
+    const fetchEventData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/events/community/active`
+        );
+        setEvent(response.data);
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchEventData();
+
     // Trigger confetti animation
     const timer = setTimeout(() => {
       void confetti({
@@ -62,14 +82,62 @@ export default function CommunityEventSuccessPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Format dates for display
+  const formatEventDates = () => {
+    if (!event?.startDate || !event?.endDate) {
+      return isSpanish ? 'Fechas por confirmar' : 'Dates to be confirmed';
+    }
+    
+    const start = new Date(event.startDate);
+    const end = new Date(event.endDate);
+    const options: Intl.DateTimeFormatOptions = { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    };
+    
+    const startFormatted = start.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', options);
+    const endFormatted = end.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', options);
+    
+    return `${startFormatted} - ${endFormatted}`;
+  };
+
+  const formatScheduleDates = () => {
+    if (!event?.startDate) return [];
+    
+    const start = new Date(event.startDate);
+    const dates = [];
+    
+    for (let i = 0; i < 3; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      
+      const dayName = date.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', { weekday: 'long' });
+      const dayNumber = date.getDate();
+      const month = date.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', { month: 'long' });
+      
+      dates.push({
+        dayName: dayName.charAt(0).toUpperCase() + dayName.slice(1),
+        dayNumber,
+        month: month.charAt(0).toUpperCase() + month.slice(1),
+        fullDate: `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${dayNumber}`,
+        label: isSpanish ? `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${dayNumber}` : `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${dayNumber}`
+      });
+    }
+    
+    return dates;
+  };
+
   const eventDetails = {
-    name: isSpanish ? 'Mentoría Presencial con Mijail Medina' : 'In-Person Mentorship with Mijail Medina',
-    date: isSpanish ? '25-27 de Septiembre, 2025' : 'September 25-27, 2025',
-    location: 'Tampa, Florida',
-    venue: 'Hilton Garden Inn Tampa Ybor Historic District',
-    address: '1700 E 9th Ave, Tampa, FL 33605',
+    name: event?.title || (isSpanish ? 'Mentoría Presencial con Mijail Medina' : 'In-Person Mentorship with Mijail Medina'),
+    date: formatEventDates(),
+    location: event?.location || 'Tampa, Florida',
+    venue: event?.metadata?.hotel || 'Hilton Garden Inn Tampa Ybor Historic District',
+    address: event?.metadata?.hotelAddress || '1700 E 9th Ave, Tampa, FL 33605',
     attendees: isSpanish ? 'Cupo Limitado' : 'Limited Spots',
   };
+  
+  const scheduleDates = formatScheduleDates();
 
   const eventHighlights = [
     { 
@@ -93,6 +161,14 @@ export default function CommunityEventSuccessPage() {
       icon: <EventAvailable />
     },
   ];
+
+  if (isLoading) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 } }}>
@@ -252,7 +328,10 @@ export default function CommunityEventSuccessPage() {
                 {isSpanish ? 'Ubicación del Evento' : 'Event Location'}
               </Typography>
               <GoogleMap 
-                location={{ lat: 27.9594, lng: -82.4423 }} // 1700 E 9th Ave, Tampa, FL 33605
+                location={{ 
+                  lat: event?.coordinates?.lat || 27.9594, 
+                  lng: event?.coordinates?.lng || -82.4423 
+                }}
                 zoom={15}
                 height={300}
               />
@@ -275,7 +354,7 @@ export default function CommunityEventSuccessPage() {
                     secondary={isSpanish ? 'Trading en vivo con el mentor, análisis pre-market' : 'Live trading with mentor, pre-market analysis'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Jueves 25' : 'Thursday 25'} 
+                    label={scheduleDates[0]?.label || (isSpanish ? 'Día 1' : 'Day 1')} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -290,7 +369,7 @@ export default function CommunityEventSuccessPage() {
                     secondary={isSpanish ? 'Segunda sesión de trading, módulos 2, 3 y 4' : 'Second trading session, modules 2, 3 and 4'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Viernes 26' : 'Friday 26'} 
+                    label={scheduleDates[1]?.label || (isSpanish ? 'Día 2' : 'Day 2')} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -305,7 +384,7 @@ export default function CommunityEventSuccessPage() {
                     secondary={isSpanish ? 'Módulo de psicotrading, actividad recreativa y cena especial' : 'Psychotrading module, recreational activity and special dinner'}
                   />
                   <Chip 
-                    label={isSpanish ? 'Sábado 27' : 'Saturday 27'} 
+                    label={scheduleDates[2]?.label || (isSpanish ? 'Día 3' : 'Day 3')} 
                     size="small" 
                     color="primary" 
                     variant="outlined"
@@ -329,7 +408,7 @@ export default function CommunityEventSuccessPage() {
                   </ListItemIcon>
                   <ListItemText 
                     primary={isSpanish ? 'Guarda la fecha' : 'Save the date'}
-                    secondary={isSpanish ? '25-27 de Septiembre en tu calendario' : 'September 25-27 in your calendar'}
+                    secondary={eventDetails.date}
                   />
                 </ListItem>
                 <ListItem>
@@ -406,7 +485,7 @@ export default function CommunityEventSuccessPage() {
                     </Typography>
                   </Stack>
                   <Typography variant="body2" color="text.secondary">
-                    {isSpanish ? 'Jueves, 8:00 AM - 8:30 AM' : 'Thursday, 8:00 AM - 8:30 AM'}
+                    {scheduleDates[0] ? `${scheduleDates[0].dayName}, 8:00 AM - 8:30 AM` : (isSpanish ? 'Día 1, 8:00 AM - 8:30 AM' : 'Day 1, 8:00 AM - 8:30 AM')}
                   </Typography>
                 </Box>
               </Stack>

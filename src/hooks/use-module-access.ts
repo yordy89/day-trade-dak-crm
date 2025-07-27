@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import API from '@/lib/axios';
-import { ModuleType, ModuleAccessResponse } from '@/types/module-permission';
+import { type ModuleType, type ModuleAccessResponse } from '@/types/module-permission';
 import { Role } from '@/types/user';
 
 /**
@@ -41,7 +41,7 @@ export function useModuleAccess(moduleType: ModuleType) {
 
       // Check module permissions via API
       const response = await API.get<ModuleAccessResponse>(
-        `/admin/module-permissions/check/${user?._id}/${moduleType}`
+        `/admin/module-permissions/my-access/${moduleType}`
       );
 
       setHasAccess(response.data.hasAccess);
@@ -97,7 +97,7 @@ export function useMultipleModuleAccess(moduleTypes: ModuleType[]) {
         moduleTypes.map(async (moduleType) => {
           try {
             const response = await API.get<ModuleAccessResponse>(
-              `/admin/module-permissions/check/${user?._id}/${moduleType}`
+              `/admin/module-permissions/my-access/${moduleType}`
             );
             return { moduleType, hasAccess: response.data.hasAccess };
           } catch (err) {

@@ -1,54 +1,83 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Stack,
-  Grid,
-  Chip,
-  Alert,
-  CircularProgress,
-  useTheme,
   alpha,
-  Avatar,
-  AvatarGroup,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  useTheme,
+  Tooltip,
+  Chip,
+  Skeleton,
+  useMediaQuery,
   Paper,
   Divider,
+  AvatarGroup,
+  Avatar,
+  Alert,
+  AlertTitle,
+  CircularProgress,
 } from '@mui/material';
 import {
   VideoCamera,
-  Desktop,
+  Clock,
   Users,
   Calendar,
-  Clock,
-  Play,
-  Phone,
-  Envelope,
-  WhatsappLogo,
-  Timer,
+  Warning,
+  Lock,
   CheckCircle,
+  Star,
+  Envelope,
+  Desktop,
   Television,
-  CalendarCheck,
+  SignIn,
+  Crown,
+  Timer,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
-import { useClientAuth } from '@/hooks/use-client-auth';
-import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { features } from '@/config/features';
+import { useTranslation } from 'react-i18next';
+import { MeetingsDisabled } from '@/components/meetings/meetings-disabled';
+import { useClientAuth } from '@/hooks/use-client-auth';
+import { useStableWebSocket } from '@/hooks/use-stable-websocket';
 import { useModuleAccess } from '@/hooks/use-module-access';
 import { ModuleType } from '@/types/module-permission';
 import { formatDistanceToNow, isAfter, isBefore, addMinutes } from 'date-fns';
 import { MainNavbar } from '@/components/landing/main-navbar';
 import dynamic from 'next/dynamic';
 
-// Dynamic import to avoid SSR issues with VideoSDK
-const VideoMeetingRoom = dynamic(
-  () => import('@/components/meetings/video-meeting-room').then(mod => mod.VideoMeetingRoom),
+// Dynamic import to avoid SSR issues
+const UnifiedMeetingRoom = dynamic(
+  () => import('@/components/meetings/unified-meeting-room').then(mod => mod.UnifiedMeetingRoom),
   { 
     ssr: false,
-    loading: () => <CircularProgress />
+    loading: () => (
+      <Box sx={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bgcolor: 'rgba(0, 0, 0, 0.9)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+      }}>
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress size={60} />
+          <Typography variant="h6" color="white">Loading meeting room...</Typography>
+        </Stack>
+      </Box>
+    ),
   }
 );
 
@@ -56,16 +85,22 @@ interface LiveMeetingsResponse {
   hasAccess: boolean;
   user: {
     hasLiveSubscription: boolean;
+    hasLiveWeeklyModuleAccess: boolean;
     allowLiveMeetingAccess: boolean;
     role: string;
   };
-  dailyLiveMeeting: ScheduledSession | null;
+  dailyLiveMeeting?: ScheduledSession;
   otherMeetings: ScheduledSession[];
   supportInfo: {
     email: string;
     phone: string;
     whatsapp: string;
   };
+}
+
+interface PublicLiveMeetingsResponse {
+  dailyLiveMeeting?: ScheduledSession;
+  otherMeetings: ScheduledSession[];
 }
 
 interface ScheduledSession {
@@ -78,13 +113,14 @@ interface ScheduledSession {
   duration: number;
   host: {
     _id: string;
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    profileImage?: string;
   };
   participants: any[];
   status: 'scheduled' | 'live' | 'completed' | 'cancelled';
+  provider?: 'zoom' | 'videosdk' | 'livekit';
+  livekitRoomName?: string;
   isRecurring: boolean;
   maxParticipants: number;
   enableRecording: boolean;
@@ -100,83 +136,343 @@ export default function LivePage() {
   const router = useRouter();
   const { user, authToken, isLoading: authLoading } = useClientAuth();
   const { t: _t } = useTranslation();
-  const { hasAccess: hasModuleAccess, loading: moduleLoading } = useModuleAccess(ModuleType.Live);
+  const { hasAccess: hasModuleAccess, loading: _moduleLoading } = useModuleAccess(ModuleType.LiveWeekly);
   
   const [liveMeetingsData, setLiveMeetingsData] = useState<LiveMeetingsResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [publicMeetingsData, setPublicMeetingsData] = useState<PublicLiveMeetingsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [tokenExpired, setTokenExpired] = useState(false);
   const [timeUntilStart, setTimeUntilStart] = useState<string>('');
-  const [activeMeeting, setActiveMeeting] = useState<{ meetingId: string; roomId: string; isHost: boolean } | null>(null);
+  const [activeMeeting, setActiveMeeting] = useState<(ScheduledSession & { isHost: boolean }) | null>(null);
   const [selectedMeeting, setSelectedMeeting] = useState<ScheduledSession | null>(null);
-
-  // Fetch meetings from API
+  const [_previousLiveMeetings, _setPreviousLiveMeetings] = useState<string[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const socketRef = useRef<any>(null);
+  const isFetchingRef = useRef(false);
+  const lastFetchTimeRef = useRef(0);
+  const fetchMeetingsRef = useRef<any>(null);
+  
+  // Set up stable WebSocket connection for real-time updates
+  const { socket, connected: _connected, on, off } = useStableWebSocket({
+    namespace: '/meetings',
+    onConnect: () => {
+      console.log('Connected to meetings WebSocket');
+      setIsConnected(true);
+    },
+    onDisconnect: () => {
+      console.log('Disconnected from meetings WebSocket');
+      setIsConnected(false);
+    },
+  });
+  
+  // Media query hook
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  
+  // Request notification permission on mount
   useEffect(() => {
-    const fetchMeetings = async () => {
-      if (!user || !authToken) {
-        console.log('No user or auth token available', { user: Boolean(user), authToken: Boolean(authToken) });
-        setError('Please log in to view live sessions');
-        setLoading(false);
-        return;
+    if ('Notification' in window && Notification.permission === 'default') {
+      void Notification.requestPermission();
+    }
+  }, []);
+
+  // Fetch meetings from API with authentication fallback
+  const fetchMeetings = useCallback(async () => {
+    // Prevent concurrent fetches
+    if (isFetchingRef.current) {
+      console.log('[DEBUG] Skipping fetch - already fetching');
+      return;
+    }
+    
+    // Debounce - don't fetch more than once every 2 seconds
+    const now = Date.now();
+    if (now - lastFetchTimeRef.current < 2000) {
+      console.log('[DEBUG] Skipping fetch - too soon since last fetch');
+      return;
+    }
+    
+    lastFetchTimeRef.current = now;
+    isFetchingRef.current = true;
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Try authenticated endpoint first if user is logged in
+      if (authToken && !authLoading) {
+        try {
+          const meetingsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/meetings/live-meetings`, {
+            headers: {
+              Authorization: `Bearer ${authToken}`
+            }
+          });
+          setLiveMeetingsData(meetingsResponse.data);
+          setTokenExpired(false);
+          
+          // Track live meetings and show notifications for new ones
+          const currentLiveMeetings = [
+            ...(meetingsResponse.data.dailyLiveMeeting?.status === 'live' ? [meetingsResponse.data.dailyLiveMeeting._id] : []),
+            ...(meetingsResponse.data.otherMeetings?.filter((m: any) => m.status === 'live').map((m: any) => m._id) || [])
+          ];
+          
+          // Check for new live meetings
+          _setPreviousLiveMeetings(prev => {
+            const newLiveMeetings = currentLiveMeetings.filter(id => !prev.includes(id));
+            if (newLiveMeetings.length > 0 && prev.length > 0) {
+              // Find the meeting details
+              const allMeetings = [
+                ...(meetingsResponse.data.dailyLiveMeeting ? [meetingsResponse.data.dailyLiveMeeting] : []),
+                ...(meetingsResponse.data.otherMeetings || [])
+              ];
+              
+              newLiveMeetings.forEach(meetingId => {
+                const meeting = allMeetings.find((m: any) => m._id === meetingId);
+                if (meeting && 'Notification' in window && Notification.permission === 'granted') {
+                  const notification = new Notification('Live Meeting Started!', {
+                    body: `${meeting.title} is now live. Join now!`,
+                    icon: '/favicon.ico',
+                    tag: meetingId, // Prevent duplicate notifications
+                  });
+                  // Clean up notification after 5 seconds
+                  setTimeout(() => notification.close(), 5000);
+                }
+              });
+            }
+            return currentLiveMeetings;
+          });
+          
+        } catch (err: any) {
+          if (err.response?.status === 401) {
+            // Token expired
+            setTokenExpired(true);
+            // Fall back to public endpoint
+            throw err;
+          } else {
+            throw err;
+          }
+        }
+      }
+
+      // Always fetch public meetings as fallback or for non-authenticated users  
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/meetings/public/live-meetings`);
+      setPublicMeetingsData(response.data);
+
+    } catch (err: any) {
+      console.error('Failed to fetch meetings:', err);
+      setError(err.response?.data?.message || 'Failed to load meetings');
+      // Still try to get public meetings even if authenticated request fails
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/meetings/public/live-meetings`);
+        setPublicMeetingsData(response.data);
+      } catch (publicErr) {
+        console.error('Failed to fetch public meetings:', publicErr);
+      }
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, [authToken, authLoading]); // Remove previousLiveMeetings from dependencies
+
+  // Compute hasAccess based on all available data
+  const hasAccess = liveMeetingsData?.hasAccess || hasModuleAccess || false;
+
+  // Select appropriate meeting on data change
+  useEffect(() => {
+    const allMeetings = liveMeetingsData 
+      ? [...(liveMeetingsData.dailyLiveMeeting ? [liveMeetingsData.dailyLiveMeeting] : []), ...(liveMeetingsData.otherMeetings || [])]
+      : publicMeetingsData 
+        ? [...(publicMeetingsData.dailyLiveMeeting ? [publicMeetingsData.dailyLiveMeeting] : []), ...(publicMeetingsData.otherMeetings || [])]
+        : [];
+    
+    if (!selectedMeeting && allMeetings.length > 0) {
+      // Auto-select first meeting or live meeting
+      const liveMeeting = allMeetings.find(m => m.status === 'live');
+      
+      // First priority: Select a live meeting if any
+      if (liveMeeting) {
+        setSelectedMeeting(liveMeeting);
+      } else if (allMeetings.length > 0) {
+        // Second priority: First available meeting
+        setSelectedMeeting(allMeetings[0]);
+      }
+    }
+    
+    // Update selectedMeeting if its status has changed
+    if (selectedMeeting) {
+      const updatedMeeting = allMeetings.find(m => m._id === selectedMeeting._id);
+      if (updatedMeeting && updatedMeeting.status !== selectedMeeting.status) {
+        // Only update if status actually changed
+        setSelectedMeeting(updatedMeeting);
+      } else if (!updatedMeeting && allMeetings.length > 0) {
+        // Meeting no longer exists, select another one
+        setSelectedMeeting(allMeetings[0]);
+      }
+    }
+  }, [liveMeetingsData, publicMeetingsData]); // Remove selectedMeeting from dependencies
+
+  // Update fetchMeetingsRef when fetchMeetings changes
+  useEffect(() => {
+    fetchMeetingsRef.current = fetchMeetings;
+  }, [fetchMeetings]);
+
+  // WebSocket event handlers
+  useEffect(() => {
+    socketRef.current = socket;
+
+    // Listen for live meeting updates
+    on('live-meeting-update', (data: any) => {
+      console.log('[WEBSOCKET] Live meeting update received:', data);
+      // Refetch meetings when there's an update
+      void fetchMeetingsRef.current();
+    });
+    
+    // Listen for meeting started events
+    on('meeting-started', (data: { meetingId: string; title: string; host: any }) => {
+      console.log('[WEBSOCKET] Meeting started:', data);
+      
+      // Show notification if not the host
+      const hostId = typeof data.host === 'string' ? data.host : data.host._id;
+      if (user && user._id !== hostId) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const notification = new Notification('Meeting Started!', {
+            body: `${data.title} is now live. Click to join!`,
+            icon: '/favicon.ico',
+            tag: data.meetingId,
+          });
+          
+          notification.onclick = () => {
+            // Find the meeting and join
+            const meeting = [...(liveMeetingsData?.otherMeetings || []), liveMeetingsData?.dailyLiveMeeting].find(
+              m => m && m._id === data.meetingId
+            );
+            if (meeting) {
+              handleJoinSession(meeting);
+            }
+            notification.close();
+          };
+        }
       }
       
-      setLoading(true);
-      setError(null);
+      // Refetch to update UI
+      void fetchMeetingsRef.current();
+    });
+
+    on('meeting-status-updated', (data: { meetingId: string; status: string }) => {
+      console.log('[WEBSOCKET] Meeting status updated:', data);
       
-      try {
-        const response = await axios.get('http://localhost:4000/api/v1/meetings/live-meetings', {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
+      // Update the specific meeting status in state without refetching
+      if (data.status === 'completed' || data.status === 'cancelled') {
+        // Update authenticated data
+        setLiveMeetingsData(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            dailyLiveMeeting: prev.dailyLiveMeeting?._id === data.meetingId 
+              ? { ...prev.dailyLiveMeeting, status: data.status as 'scheduled' | 'live' | 'completed' | 'cancelled' }
+              : prev.dailyLiveMeeting,
+            otherMeetings: prev.otherMeetings.map(m => 
+              m._id === data.meetingId ? { ...m, status: data.status as 'scheduled' | 'live' | 'completed' | 'cancelled' } : m
+            )
+          };
         });
         
-        setLiveMeetingsData(response.data);
+        // Update public data
+        setPublicMeetingsData(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            dailyLiveMeeting: prev.dailyLiveMeeting?._id === data.meetingId 
+              ? { ...prev.dailyLiveMeeting, status: data.status as 'scheduled' | 'live' | 'completed' | 'cancelled' }
+              : prev.dailyLiveMeeting,
+            otherMeetings: prev.otherMeetings.map(m => 
+              m._id === data.meetingId ? { ...m, status: data.status as 'scheduled' | 'live' | 'completed' | 'cancelled' } : m
+            )
+          };
+        });
         
-        // Auto-select a meeting if none is selected
-        if (!selectedMeeting) {
-          // First priority: Select a live meeting if any
-          const liveMeeting = response.data.dailyLiveMeeting?.status === 'live' 
-            ? response.data.dailyLiveMeeting 
-            : response.data.otherMeetings?.find((m: any) => m.status === 'live');
-          
-          if (liveMeeting) {
-            setSelectedMeeting(liveMeeting);
-          } else if (response.data.dailyLiveMeeting) {
-            // Second priority: Daily live meeting
-            setSelectedMeeting(response.data.dailyLiveMeeting);
-          } else if (response.data.otherMeetings && response.data.otherMeetings.length > 0) {
-            // Third priority: First available meeting
-            setSelectedMeeting(response.data.otherMeetings[0]);
+        // Update selected meeting if it matches (check inside setState to avoid closure issues)
+        setSelectedMeeting(prev => {
+          if (prev && prev._id === data.meetingId) {
+            console.log('[DEBUG] Updating selected meeting status via meeting-status-updated. ID:', prev._id, 'New status:', data.status);
+            return { ...prev, status: data.status as any };
           }
-        }
-        
-        // Also update selectedMeeting if it no longer exists in the data
-        if (selectedMeeting) {
-          const allMeetings = [
-            ...(response.data.dailyLiveMeeting ? [response.data.dailyLiveMeeting] : []),
-            ...(response.data.otherMeetings || [])
-          ];
-          const stillExists = allMeetings.find((m: any) => m._id === selectedMeeting._id);
-          if (!stillExists && allMeetings.length > 0) {
-            setSelectedMeeting(allMeetings[0]);
-          }
-        }
-      } catch (err: any) {
-        console.error('Failed to fetch meetings:', err);
-        
-        if (err.response?.status === 401) {
-          setError('Your session has expired. Please log in again.');
-          // Optionally redirect to login
-          // router.push('/login');
-        } else {
-          setError(err.response?.data?.message || 'Failed to load meetings');
-        }
-      } finally {
-        setLoading(false);
+          return prev;
+        });
+      } else {
+        // For other status changes, refetch to get latest data
+        void fetchMeetingsRef.current();
       }
-    };
+    });
+    
+    // Listen for meeting ended event
+    on('meeting-ended', (data: { meetingId: string; timestamp: Date }) => {
+      console.log('[WEBSOCKET] Meeting ended event received:', data);
+      
+      // Update UI to show meeting has ended
+      setLiveMeetingsData(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          dailyLiveMeeting: prev.dailyLiveMeeting?._id === data.meetingId 
+            ? { ...prev.dailyLiveMeeting, status: 'completed' }
+            : prev.dailyLiveMeeting,
+          otherMeetings: prev.otherMeetings.map(m => 
+            m._id === data.meetingId ? { ...m, status: 'completed' } : m
+          )
+        };
+      });
+      
+      setPublicMeetingsData(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          dailyLiveMeeting: prev.dailyLiveMeeting?._id === data.meetingId 
+            ? { ...prev.dailyLiveMeeting, status: 'completed' }
+            : prev.dailyLiveMeeting,
+          otherMeetings: prev.otherMeetings.map(m => 
+            m._id === data.meetingId ? { ...m, status: 'completed' } : m
+          )
+        };
+      });
+      
+      // Update selected meeting (check inside setState to avoid closure issues)
+      setSelectedMeeting(prev => {
+        if (prev && prev._id === data.meetingId) {
+          console.log('[DEBUG] Updating selected meeting to completed. ID:', prev._id);
+          console.log('[DEBUG] Previous status:', prev.status);
+          const updated = { ...prev, status: 'completed' as any };
+          console.log('[DEBUG] New status:', updated.status);
+          return updated;
+        }
+        return prev;
+      });
+      
+      // Show notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification('Meeting Ended', {
+          body: 'The live trading session has ended.',
+          icon: '/favicon.ico',
+        });
+        // Clean up notification after 5 seconds
+        setTimeout(() => notification.close(), 5000);
+      }
+    });
 
+    return () => {
+      // Clean up event listeners
+      off('live-meeting-update');
+      off('meeting-status-updated');
+      off('meeting-ended');
+    };
+  }, [on, off]); // Remove fetchMeetings from dependencies
+
+  // Initial fetch - only run once when component mounts or auth changes significantly
+  useEffect(() => {
+    // Skip if we're still loading auth
+    if (authLoading) return;
+    
     void fetchMeetings();
-  }, [user, authToken]);
+  }, [authToken, authLoading]); // Use specific dependencies instead of fetchMeetings
+
 
   // Update countdown timer for selected meeting
   useEffect(() => {
@@ -199,15 +495,17 @@ export default function LivePage() {
   }, [selectedMeeting]);
 
   const handleJoinSession = async (session: ScheduledSession) => {
-    if (!liveMeetingsData?.hasAccess) {
+    // Basic access check - detailed validation will happen in UnifiedMeetingRoom
+    if (!user) {
+      setError('Please log in to join meetings');
       return;
     }
 
-    // Set active meeting to show embedded room
+    // Set active meeting for all providers
     const hostId = typeof session.host === 'string' ? session.host : session.host._id;
+    console.log('[Live Page] Joining meeting:', session);
     setActiveMeeting({
-      meetingId: session._id,  // MongoDB document ID for API calls
-      roomId: session.meetingId,  // VideoSDK room ID
+      ...session,
       isHost: user?._id === hostId,
     });
   };
@@ -220,7 +518,7 @@ export default function LivePage() {
 
     try {
       // Call API to start the meeting
-      const _response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/admin/meetings/${session._id}/start`,
         {},
         {
@@ -230,17 +528,30 @@ export default function LivePage() {
         }
       );
       
-      // Refresh meetings data
-      const meetingsResponse = await axios.get('http://localhost:4000/api/v1/meetings/live-meetings', {
-        headers: {
-          Authorization: `Bearer ${authToken}`
-        }
+      // Update the session with live status
+      const liveSession = { ...session, status: 'live' as const };
+      
+      // Immediately update the local state
+      if (selectedMeeting?._id === session._id) {
+        setSelectedMeeting(liveSession);
+      }
+      
+      // Notify all users via WebSocket that meeting has started
+      if (socket) {
+        socket.emit('meeting-started', {
+          meetingId: session._id,
+          title: session.title,
+          host: session.host,
+        });
+      }
+      
+      // Automatically join the meeting as host
+      console.log('[Live Page] Starting meeting - setting active meeting:', liveSession);
+      setActiveMeeting({
+        ...liveSession,
+        isHost: true, // Host is always true when starting
       });
       
-      setLiveMeetingsData(meetingsResponse.data);
-      
-      // Then join the meeting
-      await handleJoinSession(session);
     } catch (err: any) {
       console.error('Failed to start meeting:', err);
       if (err.response?.status === 401) {
@@ -250,9 +561,11 @@ export default function LivePage() {
       }
     }
   };
-
   const getSessionStatus = (session: ScheduledSession) => {
+    // Always respect the actual status from the database first
     if (session.status === 'live') return 'live';
+    if (session.status === 'completed') return 'ended';
+    if (session.status === 'cancelled') return 'cancelled';
     
     const now = new Date();
     const startTime = new Date(session.scheduledAt);
@@ -264,14 +577,13 @@ export default function LivePage() {
     
     return 'scheduled';
   };
-
   const renderMeetingButton = (session: ScheduledSession, isPrimary = false) => {
     const status = getSessionStatus(session);
     const hostId = typeof session.host === 'string' ? session.host : session.host._id;
     const isHost = user?._id === hostId;
     
     // Show Start button for hosts on scheduled meetings
-    if (isHost && (status === 'scheduled' || status === 'upcoming' || status === 'should_be_live')) {
+    if (isHost && hasAccess && (status === 'scheduled' || status === 'upcoming' || status === 'should_be_live')) {
       return (
         <Button
           fullWidth={!isPrimary}
@@ -279,7 +591,7 @@ export default function LivePage() {
           color="primary"
           size={isPrimary ? "large" : "medium"}
           startIcon={<VideoCamera size={isPrimary ? 24 : 20} weight="fill" />}
-          onClick={() => void handleStartMeeting(session)}
+          onClick={() => handleStartMeeting(session)}
           sx={{
             fontWeight: 600,
           }}
@@ -291,15 +603,41 @@ export default function LivePage() {
     
     switch (status) {
       case 'live':
+        // For guest users or users without access
+        if (!user || !hasAccess) {
+          return (
+            <Button
+              fullWidth={!isPrimary}
+              variant="contained"
+              color="primary"
+              size={isPrimary ? "large" : "medium"}
+              startIcon={<SignIn size={isPrimary ? 24 : 20} />}
+              onClick={() => router.push('/auth/sign-in')}
+              sx={{
+                animation: 'pulse 2s infinite',
+                '@keyframes pulse': {
+                  '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}` },
+                  '70%': { boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}` },
+                  '100%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}` },
+                },
+              }}
+            >
+              {!user ? 'Sign In to Join' : 'Upgrade to Join'}
+            </Button>
+          );
+        }
+        
+        // For authorized users
         return (
           <Button
             fullWidth={!isPrimary}
             variant="contained"
             color="error"
             size={isPrimary ? "large" : "medium"}
-            startIcon={<Play size={isPrimary ? 24 : 20} weight="fill" />}
-            onClick={() => void handleJoinSession(session)}
+            startIcon={<VideoCamera size={isPrimary ? 24 : 20} weight="fill" />}
+            onClick={() => handleJoinSession(session)}
             sx={{
+              fontWeight: 600,
               animation: 'pulse 2s infinite',
               '@keyframes pulse': {
                 '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0.7)}` },
@@ -314,9 +652,9 @@ export default function LivePage() {
       case 'should_be_live':
         return (
           <Chip
-            label="Waiting for Host to Start"
-            icon={<Timer size={20} />}
+            label="Starting Soon..."
             color="warning"
+            icon={<Clock size={16} />}
             size={isPrimary ? "medium" : "small"}
           />
         );
@@ -326,7 +664,7 @@ export default function LivePage() {
             fullWidth={!isPrimary}
             variant="outlined"
             size={isPrimary ? "large" : "medium"}
-            startIcon={<CalendarCheck size={isPrimary ? 24 : 20} />}
+            startIcon={<Clock size={isPrimary ? 20 : 16} />}
             disabled
           >
             {timeUntilStart ? `Starts in ${timeUntilStart}` : 'Starting Soon'}
@@ -347,569 +685,569 @@ export default function LivePage() {
         return null;
     }
   };
-
-  if (authLoading || loading || moduleLoading) {
+  // Mobile session card
+  const renderMobileSessionCard = (session: ScheduledSession) => {
+    const status = getSessionStatus(session);
+    const hostId = typeof session.host === 'string' ? session.host : session.host._id;
+    const hostName = typeof session.host === 'string' ? 'Host' : `${session.host.firstName} ${session.host.lastName}`;
+    const isHost = user?._id === hostId;
+    const isSelected = selectedMeeting?._id === session._id;
+    
     return (
-      <>
-        <MainNavbar />
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-          <CircularProgress />
-        </Box>
-      </>
-    );
-  }
-
-  // Error view
-  if (error) {
-    return (
-      <>
-        <MainNavbar />
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Box textAlign="center" maxWidth={600} mx="auto">
-            <Alert 
-            severity="error" 
-            sx={{ mb: 4 }}
-            action={
-              error.includes('session has expired') ? (
-                <Button color="inherit" size="small" onClick={() => router.push('/login')}>
-                  Login
-                </Button>
-              ) : (
-                <Button color="inherit" size="small" onClick={() => window.location.reload()}>
-                  Retry
-                </Button>
-              )
-            }
-          >
-            {error}
-          </Alert>
-          
-          <Typography variant="h5" gutterBottom>
-            Unable to Load Live Sessions
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Please try refreshing the page or logging in again.
-          </Typography>
-        </Box>
-      </Container>
-      </>
-    );
-  }
-
-  // No access view - Check both API access and module permission
-  if (!liveMeetingsData?.hasAccess || !hasModuleAccess) {
-    return (
-      <>
-        <MainNavbar />
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Box textAlign="center" maxWidth={800} mx="auto">
-            <Television size={120} color={theme.palette.primary.main} style={{ marginBottom: 32 }} />
-          
-          <Typography variant="h3" fontWeight={700} gutterBottom>
-            Join Our Live Trading Community
-          </Typography>
-          
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 6 }}>
-            Get exclusive access to daily live trading sessions, market analysis, and real-time mentorship
-          </Typography>
-          
-          <Paper 
-            elevation={0} 
-            sx={{ 
-              p: 4, 
-              mb: 6, 
-              bgcolor: alpha(theme.palette.primary.main, 0.05),
-              border: `2px solid ${theme.palette.primary.main}`,
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="h5" fontWeight={600} gutterBottom>
-              What You&apos;ll Get Access To:
-            </Typography>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12} md={6}>
-                <Stack spacing={2}>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Daily live trading sessions (Mon-Fri)</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Real-time market analysis</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Live Q&A with expert traders</Typography>
-                  </Box>
-                </Stack>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Stack spacing={2}>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Recorded sessions for replay</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Exclusive trading strategies</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                    <Typography>Community support & mentorship</Typography>
-                  </Box>
-                </Stack>
-              </Grid>
-            </Grid>
-          </Paper>
-          
-          <Typography variant="h6" fontWeight={600} gutterBottom>
-            Contact Our Support Team
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            Get in touch to learn more about joining our live trading community
-          </Typography>
-          
-          <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap">
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<Envelope size={20} />}
-              href={`mailto:${liveMeetingsData?.supportInfo.email || 'support@daytradedak.com'}`}
-            >
-              Email Support
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              startIcon={<Phone size={20} />}
-              href={`tel:${liveMeetingsData?.supportInfo.phone || '+1 (555) 123-4567'}`}
-            >
-              Call Us
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              startIcon={<WhatsappLogo size={20} />}
-              href={`https://wa.me/${liveMeetingsData?.supportInfo.whatsapp?.replace(/\D/g, '') || '15551234567'}`}
-              sx={{ 
-                color: '#25D366',
-                borderColor: '#25D366',
-                '&:hover': {
-                  borderColor: '#128C7E',
-                  bgcolor: alpha('#25D366', 0.05),
-                }
-              }}
-            >
-              WhatsApp
-            </Button>
+      <Card 
+        key={session._id} 
+        onClick={() => setSelectedMeeting(session)}
+        sx={{ 
+          cursor: 'pointer',
+          transition: 'all 0.2s',
+          border: isSelected ? `2px solid ${theme.palette.primary.main}` : '1px solid',
+          borderColor: isSelected ? 'primary.main' : 'divider',
+          ...(isSelected && {
+            boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.1)}`,
+          }),
+        }}
+      >
+        <CardContent sx={{ p: 2 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1}>
+            <Box flex={1}>
+              <Stack direction="row" alignItems="center" gap={1} mb={0.5}>
+                {status === 'live' && (
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: 'error.main',
+                      animation: 'pulse 2s infinite',
+                    }}
+                  />
+                )}
+                <Typography variant="subtitle1" fontWeight={600} noWrap>
+                  {session.title}
+                </Typography>
+              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                Host: {hostName}
+              </Typography>
+            </Box>
+            {isHost && <Chip label="Host" size="small" color="primary" icon={<Crown size={14} />} />}
           </Stack>
-        </Box>
-      </Container>
+          
+          <Stack direction="row" gap={1} mb={2} flexWrap="wrap">
+            <Chip 
+              size="small" 
+              icon={<Calendar size={14} />} 
+              label={new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            />
+            <Chip 
+              size="small" 
+              icon={<Clock size={14} />} 
+              label={`${session.duration} min`}
+            />
+            {session.isRecurring && <Chip size="small" label="Recurring" variant="outlined" />}
+          </Stack>
+          
+          {renderMeetingButton(session)}
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  // Debug logging
+  useEffect(() => {
+    if (selectedMeeting) {
+      console.log('[DEBUG] Selected meeting status:', selectedMeeting.status, selectedMeeting._id);
+    }
+  }, [selectedMeeting]);
+  
+  // Check if meetings feature is disabled - AFTER all hooks
+  if (!features.meetings.enabled) {
+    return (
+      <>
+        <MainNavbar />
+        <MeetingsDisabled />
       </>
     );
   }
-
-  // Has access view
-  const { dailyLiveMeeting, otherMeetings } = liveMeetingsData;
-  const allMeetings = dailyLiveMeeting ? [dailyLiveMeeting, ...otherMeetings] : otherMeetings;
+  
+  // Render active meeting room
+  if (activeMeeting) {
+    return (
+      <UnifiedMeetingRoom
+        meeting={activeMeeting}
+        isHost={activeMeeting.isHost}
+        userName={user ? `${user.firstName} ${user.lastName}` : 'Guest'}
+        onClose={() => {
+          setActiveMeeting(null);
+          void fetchMeetings(); // Refresh meetings after leaving
+        }}
+        onError={(errorMessage) => {
+          setError(errorMessage);
+          setActiveMeeting(null);
+        }}
+      />
+    );
+  }
+  
+  // Get all meetings in a unified array
+  let allMeetings: ScheduledSession[] = [];
+  if (liveMeetingsData) {
+    allMeetings = [
+      ...(liveMeetingsData.dailyLiveMeeting ? [liveMeetingsData.dailyLiveMeeting] : []),
+      ...(liveMeetingsData.otherMeetings || [])
+    ];
+  } else if (publicMeetingsData) {
+    allMeetings = [
+      ...(publicMeetingsData.dailyLiveMeeting ? [publicMeetingsData.dailyLiveMeeting] : []),
+      ...(publicMeetingsData.otherMeetings || [])
+    ];
+  }
+  
   const currentMeeting = selectedMeeting;
 
   return (
     <>
       <MainNavbar />
-      
-      {/* Show video meeting room if active */}
-      {activeMeeting && user ? <VideoMeetingRoom
-          meetingId={activeMeeting.meetingId}
-          roomId={activeMeeting.roomId}
-          isHost={activeMeeting.isHost}
-          userName={`${user.firstName} ${user.lastName}`}
-          onClose={() => setActiveMeeting(null)}
-        /> : null}
-      
-      <Container maxWidth="xl" sx={{ py: 3 }}>
-        {/* Header */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            Live Trading Sessions
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Join live trading sessions, market analysis, and interactive Q&A with experts
-          </Typography>
-        </Box>
+      <Container 
+        maxWidth="xl" 
+        sx={{ 
+          mt: { xs: 9, md: 11 }, 
+          mb: 4,
+          px: { xs: 2, sm: 3, md: 4 },
+        }}
+      >
+        {/* Page Header */}
+        <Stack 
+          direction="row" 
+          alignItems="center" 
+          justifyContent="space-between" 
+          mb={4}
+          flexWrap="wrap"
+          gap={2}
+        >
+          <Box>
+            <Typography variant="h4" fontWeight={700} gutterBottom>
+              Live Trading Sessions
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Join live trading sessions with expert traders
+            </Typography>
+          </Box>
+          
+          <Stack direction="row" alignItems="center" gap={2}>
+            <Chip
+              icon={isConnected ? <CheckCircle size={16} weight="fill" /> : <Warning size={16} />}
+              label={isConnected ? 'Connected' : 'Connecting...'}
+              color={isConnected ? 'success' : 'warning'}
+              variant="outlined"
+              size="small"
+            />
+          </Stack>
+        </Stack>
 
-        {/* Two Column Layout */}
-        <Grid container spacing={3}>
-          {/* Left Column - Meeting Details */}
-          <Grid item xs={12} lg={8}>
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 3, 
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: 2,
-                height: '100%',
-                minHeight: 600,
-              }}
-            >
-              {currentMeeting ? (
-                <Stack spacing={3} height="100%">
-                  {/* Meeting Header */}
-                  <Box>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        {currentMeeting.status === 'live' && (
+        {/* Error Alert */}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+            <AlertTitle>Error</AlertTitle>
+            {error}
+          </Alert>
+        )}
+
+        {/* Token Expired Alert */}
+        {tokenExpired && (
+          <Alert severity="warning" sx={{ mb: 3 }}>
+            <AlertTitle>Session Expired</AlertTitle>
+            Your session has expired. Please refresh the page or sign in again to see your subscription benefits.
+          </Alert>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+              <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Stack gap={2}>
+                <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2 }} />
+                <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2 }} />
+              </Stack>
+            </Grid>
+          </Grid>
+        ) : allMeetings.length === 0 ? (
+          // No meetings available
+          <Card sx={{ p: 6, textAlign: 'center' }}>
+            <VideoCamera size={64} weight="thin" style={{ marginBottom: 16, opacity: 0.5 }} />
+            <Typography variant="h6" gutterBottom>
+              No Live Sessions Available
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Check back later for upcoming trading sessions
+            </Typography>
+          </Card>
+        ) : (
+          <Grid container spacing={3}>
+            {/* Desktop Layout */}
+            {isDesktop ? (
+              <>
+                {/* Main Content - Selected Meeting */}
+                <Grid item xs={12} md={8}>
+                  <Card sx={{ height: '100%', minHeight: 500 }}>
+                    <CardContent sx={{ height: '100%', p: 0 }}>
+                      {currentMeeting ? (
+                        <Stack height="100%">
+                          {/* Meeting Header */}
+                          <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                {currentMeeting.status === 'live' && (
+                                  <Box
+                                    sx={{
+                                      width: 12,
+                                      height: 12,
+                                      borderRadius: '50%',
+                                      bgcolor: 'error.main',
+                                      animation: 'pulse 2s infinite',
+                                    }}
+                                  />
+                                )}
+                                <Typography variant="h5" fontWeight={600}>
+                                  {currentMeeting.title}
+                                </Typography>
+                              </Stack>
+                              
+                              {/* Action Button */}
+                              {renderMeetingButton(currentMeeting, true)}
+                            </Stack>
+                            
+                            {currentMeeting.description ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                {currentMeeting.description}
+                              </Typography> : null}
+                          </Box>
+                          
+                          {/* Meeting Details */}
+                          <Box sx={{ p: 3, flex: 1 }}>
+                            <Grid container spacing={3}>
+                              <Grid item xs={12} sm={6}>
+                                <Stack spacing={2}>
+                                  <Box>
+                                    <Typography variant="overline" color="text.secondary" gutterBottom>
+                                      Host
+                                    </Typography>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                      <Avatar sx={{ width: 32, height: 32 }}>
+                                        {typeof currentMeeting.host === 'string' ? 'H' : currentMeeting.host.firstName.charAt(0)}
+                                      </Avatar>
+                                      <Typography variant="body1">
+                                        {typeof currentMeeting.host === 'string' ? 'Host' : `${currentMeeting.host.firstName} ${currentMeeting.host.lastName}`}
+                                      </Typography>
+                                    </Stack>
+                                  </Box>
+                                  
+                                  <Box>
+                                    <Typography variant="overline" color="text.secondary" gutterBottom>
+                                      Schedule
+                                    </Typography>
+                                    <Stack spacing={0.5}>
+                                      <Typography variant="body2">
+                                        <Calendar size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                        {new Date(currentMeeting.scheduledAt).toLocaleDateString()}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        <Clock size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                        {new Date(currentMeeting.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        <Timer size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                        {currentMeeting.duration} minutes
+                                      </Typography>
+                                    </Stack>
+                                  </Box>
+                                </Stack>
+                              </Grid>
+                              
+                              <Grid item xs={12} sm={6}>
+                                <Stack spacing={2}>
+                                  <Box>
+                                    <Typography variant="overline" color="text.secondary" gutterBottom>
+                                      Meeting Type
+                                    </Typography>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                      <Chip 
+                                        size="small" 
+                                        label={currentMeeting.meetingType.replace(/_/g, ' ').toUpperCase()} 
+                                        color={currentMeeting.meetingType === 'daily_live' ? 'primary' : 'default'}
+                                      />
+                                      {currentMeeting.meetingType === 'daily_live' && (
+                                        <Tooltip title="Daily live trading sessions">
+                                          <Star size={16} weight="fill" color={theme.palette.warning.main} />
+                                        </Tooltip>
+                                      )}
+                                    </Stack>
+                                  </Box>
+                                  
+                                  <Box>
+                                    <Typography variant="overline" color="text.secondary" gutterBottom>
+                                      Participants
+                                    </Typography>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                      <Users size={20} />
+                                      <Typography variant="body2">
+                                        {currentMeeting.attendees?.length || 0} / {currentMeeting.maxParticipants}
+                                      </Typography>
+                                      {currentMeeting.attendees && currentMeeting.attendees.length > 0 ? <AvatarGroup max={3} sx={{ ml: 1 }}>
+                                          {currentMeeting.attendees.map((attendee: any, idx: number) => (
+                                            <Avatar key={idx} sx={{ width: 24, height: 24 }}>
+                                              {attendee.firstName?.charAt(0) || '?'}
+                                            </Avatar>
+                                          ))}
+                                        </AvatarGroup> : null}
+                                    </Stack>
+                                  </Box>
+                                </Stack>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                          
+                          {/* Meeting Features */}
+                          <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider' }}>
+                            <Typography variant="overline" color="text.secondary" gutterBottom>
+                              Meeting Features
+                            </Typography>
+                            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
+                              {currentMeeting.enableScreenShare ? <Chip icon={<Desktop size={14} />} label="Screen Share" size="small" /> : null}
+                              {currentMeeting.enableRecording ? <Chip icon={<Television size={14} />} label="Recording" size="small" /> : null}
+                              {currentMeeting.enableChat ? <Chip icon={<Envelope size={14} />} label="Chat" size="small" /> : null}
+                              {currentMeeting.whiteboardEnabled ? <Chip icon={<CheckCircle size={14} />} label="Whiteboard" size="small" /> : null}
+                            </Stack>
+                          </Box>
+                          {/* Countdown or Status */}
+                          {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart ? <Box 
+                              sx={{ 
+                                p: 2, 
+                                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                borderRadius: 1,
+                                textAlign: 'center'
+                              }}
+                            >
+                              <Typography variant="body2" color="primary" fontWeight={600}>
+                                Starting in {timeUntilStart}
+                              </Typography>
+                            </Box> : null}
+                        </Stack>
+                      ) : (
+                        <Box 
+                          display="flex" 
+                          flexDirection="column"
+                          alignItems="center" 
+                          justifyContent="center" 
+                          height="100%"
+                          gap={3}
+                        >
                           <Box
                             sx={{
-                              px: 2,
-                              py: 0.5,
-                              bgcolor: 'error.main',
-                              color: 'white',
-                              borderRadius: 1,
-                              fontWeight: 600,
-                              fontSize: '0.75rem',
+                              width: 120,
+                              height: 120,
+                              borderRadius: '50%',
+                              bgcolor: alpha(theme.palette.primary.main, 0.1),
                               display: 'flex',
                               alignItems: 'center',
-                              gap: 1,
-                              animation: 'pulse 2s infinite',
+                              justifyContent: 'center',
                             }}
                           >
-                            <Box
-                              sx={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: '50%',
-                                bgcolor: 'white',
-                                animation: 'blink 1s infinite',
-                              }}
-                            />
-                            LIVE NOW
+                            <VideoCamera size={64} weight="thin" color={theme.palette.primary.main} />
                           </Box>
-                        )}
-                        <Typography variant="h5" fontWeight={700}>
-                          {currentMeeting.title}
-                        </Typography>
-                      </Stack>
-                      
-                      {/* Action Button */}
-                      {renderMeetingButton(currentMeeting, true)}
-                    </Stack>
-                    
-                    {currentMeeting.description ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        {currentMeeting.description}
-                      </Typography> : null}
-                  </Box>
-
-                  <Divider />
-
-                  {/* Meeting Info Grid */}
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={2}>
-                        {/* Host Info */}
-                        <Box>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            HOST
+                          <Typography variant="h6" color="text.secondary">
+                            Select a meeting to view details
                           </Typography>
-                          <Stack direction="row" spacing={1.5} alignItems="center">
-                            <Avatar 
-                              src={currentMeeting.host.profileImage} 
-                              sx={{ width: 40, height: 40 }}
-                            >
-                              {currentMeeting.host.firstName?.charAt(0) || currentMeeting.host.email.charAt(0)}
-                            </Avatar>
-                            <Box>
-                              <Typography variant="body2" fontWeight={600}>
-                                {currentMeeting.host.firstName} {currentMeeting.host.lastName}
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {currentMeeting.host.email}
-                              </Typography>
-                            </Box>
-                          </Stack>
                         </Box>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
 
-                        {/* Schedule */}
-                        <Box>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            SCHEDULE
-                          </Typography>
-                          <Stack spacing={0.5}>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              <Calendar size={16} color={theme.palette.text.secondary} />
-                              <Typography variant="body2">
-                                {new Date(currentMeeting.scheduledAt).toLocaleDateString('en-US', {
-                                  weekday: 'long',
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                })}
-                              </Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              <Clock size={16} color={theme.palette.text.secondary} />
-                              <Typography variant="body2">
-                                {new Date(currentMeeting.scheduledAt).toLocaleTimeString([], { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })} ({currentMeeting.duration} minutes)
-                              </Typography>
-                            </Stack>
-                          </Stack>
-                        </Box>
-                      </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={2}>
-                        {/* Meeting Type */}
-                        <Box>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            MEETING TYPE
-                          </Typography>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <Television size={20} color={theme.palette.primary.main} />
-                            <Typography variant="body2" fontWeight={500}>
-                              {currentMeeting.meetingType.replace(/_/g, ' ').toUpperCase()}
+                {/* Sidebar - Meeting List */}
+                <Grid item xs={12} md={4}>
+                  <Stack spacing={2}>
+                    {/* Access Status Card */}
+                    {!loading && (
+                      <Card>
+                        <CardContent>
+                          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+                            <Typography variant="subtitle1" fontWeight={600}>
+                              Your Access
                             </Typography>
-                            {currentMeeting.isRecurring ? <Chip label="Recurring" size="small" variant="outlined" /> : null}
-                          </Stack>
-                        </Box>
-
-                        {/* Participants */}
-                        <Box>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            PARTICIPANTS
-                          </Typography>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <Users size={20} color={theme.palette.text.secondary} />
-                            <Typography variant="body2">
-                              {currentMeeting.attendees?.length || 0} / {currentMeeting.maxParticipants}
-                            </Typography>
-                            {currentMeeting.attendees && currentMeeting.attendees.length > 0 ? <AvatarGroup max={3} sx={{ ml: 1 }}>
-                                {currentMeeting.attendees.map((attendee: any, idx: number) => (
-                                  <Avatar key={idx} sx={{ width: 24, height: 24 }}>
-                                    {attendee.firstName?.charAt(0) || '?'}
-                                  </Avatar>
-                                ))}
-                              </AvatarGroup> : null}
-                          </Stack>
-                        </Box>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-
-                  {/* Features */}
-                  <Box sx={{ mt: 'auto' }}>
-                    <Typography variant="caption" color="text.secondary" gutterBottom>
-                      MEETING FEATURES
-                    </Typography>
-                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
-                      {currentMeeting.enableScreenShare ? <Chip icon={<Desktop size={14} />} label="Screen Share" size="small" /> : null}
-                      {currentMeeting.enableRecording ? <Chip icon={<Television size={14} />} label="Recording" size="small" /> : null}
-                      {currentMeeting.enableChat ? <Chip icon={<Envelope size={14} />} label="Chat" size="small" /> : null}
-                      {currentMeeting.whiteboardEnabled ? <Chip icon={<CheckCircle size={14} />} label="Whiteboard" size="small" /> : null}
-                    </Stack>
-                  </Box>
-
-                  {/* Countdown or Status */}
-                  {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart ? <Box 
-                      sx={{ 
-                        p: 2, 
-                        bgcolor: alpha(theme.palette.primary.main, 0.1),
-                        borderRadius: 1,
-                        textAlign: 'center'
-                      }}
-                    >
-                      <Typography variant="body2" color="primary" fontWeight={600}>
-                        Starting in {timeUntilStart}
-                      </Typography>
-                    </Box> : null}
-                </Stack>
-              ) : (
-                <Box 
-                  display="flex" 
-                  flexDirection="column"
-                  alignItems="center" 
-                  justifyContent="center" 
-                  height="100%"
-                  gap={3}
-                >
-                  <Box
-                    sx={{
-                      width: 120,
-                      height: 120,
-                      borderRadius: '50%',
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Television size={60} color={theme.palette.primary.main} weight="duotone" />
-                  </Box>
-                  
-                  <Box textAlign="center" maxWidth={400}>
-                    <Typography variant="h6" gutterBottom fontWeight={600}>
-                      No Meeting Selected
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" paragraph>
-                      {allMeetings.length > 0 
-                        ? 'Select a meeting from the list to view details and join the session.'
-                        : 'No meetings are currently scheduled. Check back later or contact support for assistance.'}
-                    </Typography>
-                    
-                    {allMeetings.length === 0 && (
-                      <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          startIcon={<Envelope size={16} />}
-                          href={`mailto:${liveMeetingsData?.supportInfo.email || 'support@daytradedak.com'}`}
-                        >
-                          Contact Support
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          startIcon={<WhatsappLogo size={16} />}
-                          href={`https://wa.me/${liveMeetingsData?.supportInfo.whatsapp?.replace(/\D/g, '') || '15551234567'}`}
-                          sx={{ 
-                            color: '#25D366',
-                            borderColor: '#25D366',
-                            '&:hover': {
-                              borderColor: '#128C7E',
-                              bgcolor: alpha('#25D366', 0.05),
-                            }
-                          }}
-                        >
-                          WhatsApp
-                        </Button>
-                      </Stack>
-                    )}
-                  </Box>
-                </Box>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* Right Column - Meeting List */}
-          <Grid item xs={12} lg={4}>
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: 2,
-                overflow: 'hidden',
-                height: '100%',
-                maxHeight: 600,
-              }}
-            >
-              <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
-                <Typography variant="h6" fontWeight={600}>
-                  Today&apos;s Meetings
-                </Typography>
-              </Box>
-              
-              <Box sx={{ overflow: 'auto', maxHeight: 'calc(100% - 60px)' }}>
-                {allMeetings.map((meeting) => (
-                  <Box
-                    key={meeting._id}
-                    onClick={() => setSelectedMeeting(meeting)}
-                    sx={{
-                      p: 2,
-                      cursor: 'pointer',
-                      borderBottom: `1px solid ${theme.palette.divider}`,
-                      bgcolor: selectedMeeting?._id === meeting._id ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
-                      '&:hover': {
-                        bgcolor: alpha(theme.palette.primary.main, 0.04),
-                      },
-                      transition: 'background-color 0.2s',
-                    }}
-                  >
-                    <Stack spacing={1}>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between">
-                        <Box flex={1}>
-                          <Typography variant="body2" fontWeight={600} noWrap>
-                            {meeting.title}
-                          </Typography>
-                          <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
-                            <Clock size={14} color={theme.palette.text.secondary} />
-                            <Typography variant="caption" color="text.secondary">
-                              {new Date(meeting.scheduledAt).toLocaleTimeString([], { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </Typography>
-                            {meeting.status === 'live' && (
+                            {hasAccess ? (
                               <Chip 
-                                label="LIVE" 
+                                icon={<CheckCircle size={16} weight="fill" />} 
+                                label="Active" 
+                                color="success" 
                                 size="small" 
-                                color="error" 
-                                sx={{ 
-                                  height: 18,
-                                  fontSize: '0.65rem',
-                                  fontWeight: 700,
-                                }}
+                              />
+                            ) : (
+                              <Chip 
+                                icon={<Lock size={16} />} 
+                                label="Limited" 
+                                color="warning" 
+                                size="small" 
                               />
                             )}
                           </Stack>
-                        </Box>
-                        {meeting._id === dailyLiveMeeting?._id && (
-                          <Chip 
-                            label="Daily" 
-                            size="small" 
-                            color="primary" 
-                            variant="outlined"
-                            sx={{ ml: 1 }}
-                          />
-                        )}
-                      </Stack>
-                      
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Avatar 
-                          src={meeting.host.profileImage} 
-                          sx={{ width: 20, height: 20 }}
-                        >
-                          {meeting.host.firstName?.charAt(0) || meeting.host.email.charAt(0)}
-                        </Avatar>
-                        <Typography variant="caption" color="text.secondary" noWrap>
-                          {meeting.host.firstName} {meeting.host.lastName}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-                  </Box>
-                ))}
-                
-                {allMeetings.length === 0 && (
-                  <Box p={4} textAlign="center">
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: '50%',
-                        bgcolor: alpha(theme.palette.text.secondary, 0.1),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mx: 'auto',
-                        mb: 2,
-                      }}
-                    >
-                      <CalendarCheck size={30} color={theme.palette.text.secondary} weight="duotone" />
-                    </Box>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      No meetings scheduled
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Check back later for updates
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            </Paper>
+                          
+                          {!hasAccess && (
+                            <Stack spacing={1}>
+                              <Typography variant="body2" color="text.secondary">
+                                Upgrade your subscription to join live trading sessions
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                fullWidth
+                                startIcon={<Crown size={20} />}
+                                onClick={() => router.push('/products')}
+                                sx={{ mt: 1 }}
+                              >
+                                View Subscriptions
+                              </Button>
+                            </Stack>
+                          )}
+                          
+                          {hasAccess && liveMeetingsData?.user && (
+                            <Stack spacing={0.5}>
+                              {liveMeetingsData.user.hasLiveSubscription && (
+                                <Typography variant="caption" color="success.main">
+                                  ✓ Live Subscription Active
+                                </Typography>
+                              )}
+                              {liveMeetingsData.user.hasLiveWeeklyModuleAccess && (
+                                <Typography variant="caption" color="success.main">
+                                  ✓ Live Weekly Module Access
+                                </Typography>
+                              )}
+                              {liveMeetingsData.user.allowLiveMeetingAccess && (
+                                <Typography variant="caption" color="success.main">
+                                  ✓ Special Access Granted
+                                </Typography>
+                              )}
+                            </Stack>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Meeting List */}
+                    <Card>
+                      <CardHeader 
+                        title="Available Sessions" 
+                        titleTypographyProps={{ variant: 'h6' }}
+                        sx={{ pb: 1 }}
+                      />
+                      <Divider />
+                      <CardContent sx={{ p: 0 }}>
+                        <Stack>
+                          {allMeetings.map((session) => {
+                            const status = getSessionStatus(session);
+                            const hostId = typeof session.host === 'string' ? session.host : session.host._id;
+                            const hostName = typeof session.host === 'string' ? 'Host' : `${session.host.firstName} ${session.host.lastName}`;
+                            const isHost = user?._id === hostId;
+                            const isSelected = selectedMeeting?._id === session._id;
+                            
+                            return (
+                              <Paper
+                                key={session._id}
+                                onClick={() => setSelectedMeeting(session)}
+                                sx={{
+                                  p: 2,
+                                  cursor: 'pointer',
+                                  borderRadius: 0,
+                                  borderBottom: 1,
+                                  borderColor: 'divider',
+                                  transition: 'all 0.2s',
+                                  ...(isSelected && {
+                                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                    borderLeft: `4px solid ${theme.palette.primary.main}`,
+                                  }),
+                                  '&:hover': {
+                                    bgcolor: 'action.hover',
+                                  },
+                                  '&:last-child': {
+                                    borderBottom: 0,
+                                  },
+                                }}
+                              >
+                                <Stack spacing={1}>
+                                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                      {status === 'live' && (
+                                        <Box
+                                          sx={{
+                                            width: 8,
+                                            height: 8,
+                                            borderRadius: '50%',
+                                            bgcolor: 'error.main',
+                                            animation: 'pulse 2s infinite',
+                                          }}
+                                        />
+                                      )}
+                                      <Typography variant="subtitle2" fontWeight={600}>
+                                        {session.title}
+                                      </Typography>
+                                    </Stack>
+                                    {isHost && (
+                                      <Chip 
+                                        label="Host" 
+                                        size="small" 
+                                        color="primary" 
+                                        sx={{ height: 20 }}
+                                        icon={<Crown size={12} />}
+                                      />
+                                    )}
+                                  </Stack>
+                                  
+                                  <Stack direction="row" alignItems="center" spacing={2}>
+                                    <Typography variant="caption" color="text.secondary">
+                                      <Clock size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                      {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                      Host: {hostName}
+                                    </Typography>
+                                  </Stack>
+                                  
+                                  <Box sx={{ mt: 1 }}>
+                                    {renderMeetingButton(session)}
+                                  </Box>
+                                </Stack>
+                              </Paper>
+                            );
+                          })}
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  </Stack>
+                </Grid>
+              </>
+            ) : (
+              /* Mobile Layout */
+              <Grid item xs={12}>
+                <Stack spacing={2}>
+                  {/* Access Status for Mobile */}
+                  {!loading && !hasAccess && (
+                    <Alert severity="info" action={
+                      <Button color="inherit" size="small" onClick={() => router.push('/products')}>
+                        Upgrade
+                      </Button>
+                    }>
+                      Upgrade to join live trading sessions
+                    </Alert>
+                  )}
+                  
+                  {/* Mobile Meeting Cards */}
+                  {allMeetings.map(renderMobileSessionCard)}
+                </Stack>
+              </Grid>
+            )}
           </Grid>
-        </Grid>
+        )}
       </Container>
     </>
   );

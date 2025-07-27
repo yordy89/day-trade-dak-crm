@@ -274,8 +274,7 @@ export default function ManageRegistrationPage() {
           )}
 
           {/* Registration Results */}
-          {searched && (
-            <Box sx={{ mt: 4, flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+          {searched ? <Box sx={{ mt: 4, flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
               {/* Search Again Button */}
               <Box mb={4} textAlign="center">
                 <Button
@@ -416,16 +415,14 @@ export default function ManageRegistrationPage() {
                             </Typography>
                           </Box>
                           
-                          {registration.canAddAttendees && (
-                            <Button
+                          {registration.canAddAttendees ? <Button
                               variant="contained"
                               startIcon={<Add />}
                               onClick={() => handleAddAttendees(registration)}
                               sx={{ minWidth: 200 }}
                             >
                               Agregar Invitados
-                            </Button>
-                          )}
+                            </Button> : null}
                         </Stack>
                       </Stack>
                     </CardContent>
@@ -433,14 +430,12 @@ export default function ManageRegistrationPage() {
                 </Grid>
               ))}
             </Grid>
-            </Box>
-          )}
+            </Box> : null}
         </Container>
       </Box>
 
       {/* Add Attendees Modal */}
-      {selectedRegistration && (
-        <AddAttendeesModal
+      {selectedRegistration ? <AddAttendeesModal
           open={isAddAttendeesModalOpen}
           onClose={() => {
             setIsAddAttendeesModalOpen(false);
@@ -453,8 +448,7 @@ export default function ManageRegistrationPage() {
             // Refresh registrations
             handleSearch();
           }}
-        />
-      )}
+        /> : null}
     </Box>
   );
 }

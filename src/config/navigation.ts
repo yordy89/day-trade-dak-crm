@@ -1,3 +1,5 @@
+import { features } from './features';
+
 export interface NavigationItem {
   key: string;
   href?: string;
@@ -5,9 +7,10 @@ export interface NavigationItem {
   requiresAuth?: boolean;
   icon?: string;
   badge?: string;
+  featureFlag?: keyof typeof features;
 }
 
-export const mainNavigation: NavigationItem[] = [
+const allNavigationItems: NavigationItem[] = [
   {
     key: 'home',
     href: '/',
@@ -45,6 +48,7 @@ export const mainNavigation: NavigationItem[] = [
     key: 'live',
     href: '/live',
     requiresAuth: true,
+    featureFlag: 'meetings',
   },
   {
     key: 'event',
@@ -78,6 +82,15 @@ export const mainNavigation: NavigationItem[] = [
     requiresAuth: false,
   },
 ];
+
+// Filter navigation items based on feature flags
+export const mainNavigation: NavigationItem[] = allNavigationItems.filter(item => {
+  if (item.featureFlag) {
+    const feature = features[item.featureFlag];
+    return feature?.enabled;
+  }
+  return true;
+});
 
 // Helper function to get navigation item by key
 export const getNavigationItem = (key: string): NavigationItem | undefined => {

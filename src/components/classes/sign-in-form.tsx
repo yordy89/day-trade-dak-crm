@@ -94,8 +94,7 @@ export default function ClassesSignInForm() {
         Accede a tu cuenta para ver las clases
       </Typography>
 
-      {error && (
-        <Alert 
+      {error ? <Alert 
           severity="error" 
           sx={{ 
             mb: 3,
@@ -107,8 +106,7 @@ export default function ClassesSignInForm() {
           }}
         >
           {error}
-        </Alert>
-      )}
+        </Alert> : null}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>

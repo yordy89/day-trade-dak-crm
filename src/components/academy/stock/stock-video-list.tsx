@@ -39,7 +39,7 @@ const StockVideoList: React.FC = () => {
     >
       {videos?.map((video: StockVideo) => (
         <Box key={video.key} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption -- Video element has captions */}
+          { }
           <video
             controls
             controlsList="nodownload"

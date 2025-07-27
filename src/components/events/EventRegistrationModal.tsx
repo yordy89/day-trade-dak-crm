@@ -973,7 +973,7 @@ export function EventRegistrationModal({
             }}>
               <Button
                 onClick={() => handleSubmit('card')}
-                disabled={isLoading && selectedPaymentMethod !== 'card'}
+                disabled={isLoading && selectedPaymentMethod === 'card'}
                 variant="contained"
                 size="medium"
                 fullWidth
@@ -1056,7 +1056,7 @@ export function EventRegistrationModal({
               
               <Button
                 onClick={() => handleSubmit('klarna')}
-                disabled={isLoading && selectedPaymentMethod !== 'klarna'}
+                disabled={isLoading && selectedPaymentMethod === 'klarna'}
                 variant="contained"
                 size="medium"
                 fullWidth

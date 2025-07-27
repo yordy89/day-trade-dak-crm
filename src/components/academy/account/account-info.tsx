@@ -93,7 +93,15 @@ export function AccountInfo(): React.JSX.Element {
   };
 
   const isDarkMode = theme.palette.mode === 'dark';
-  const isPremium = user?.activeSubscriptions && user.activeSubscriptions.length > 0;
+  const activeSubscriptions = user?.subscriptions?.filter((sub: any) => {
+    if (typeof sub === 'string') {
+      return true; // Legacy string subscriptions
+    }
+    return (!sub.status || sub.status === 'active') &&
+           (!sub.expiresAt || new Date(sub.expiresAt) > new Date()) &&
+           (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > new Date());
+  }) || [];
+  const isPremium = activeSubscriptions.length > 0;
 
   if (isLoading) return (
     <Card sx={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -178,7 +186,7 @@ export function AccountInfo(): React.JSX.Element {
             <Stack direction="row" spacing={3} justifyContent="center" sx={{ mt: 2 }}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h6" fontWeight={700} color="primary.main">
-                  {user?.activeSubscriptions?.length || 0}
+                  {activeSubscriptions.length}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   Planes Activos
@@ -205,12 +213,14 @@ export function AccountInfo(): React.JSX.Element {
             </Typography>
           </Stack>
 
-          {user?.activeSubscriptions && user.activeSubscriptions.length > 0 ? (
+          {activeSubscriptions.length > 0 ? (
             <Stack spacing={1.5}>
-              {user.activeSubscriptions
-                .map((plan) => (
+              {activeSubscriptions
+                .map((sub: any) => {
+                  const planName = typeof sub === 'string' ? sub : sub.plan;
+                  return (
                   <Paper
-                    key={plan}
+                    key={planName}
                     sx={{
                       p: 2,
                       border: '1px solid',
@@ -226,7 +236,7 @@ export function AccountInfo(): React.JSX.Element {
                         <CheckCircle size={24} weight="duotone" color={theme.palette.success.main} />
                         <Box>
                           <Typography fontWeight={600}>
-                            {mapMembershipName(plan as SubscriptionPlan)}
+                            {mapMembershipName(planName as SubscriptionPlan)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             Activo
@@ -238,7 +248,7 @@ export function AccountInfo(): React.JSX.Element {
                         color="error"
                         variant="text"
                         onClick={() => {
-                          setSelectedPlan(plan);
+                          setSelectedPlan(planName);
                           setIsDialogOpen(true);
                         }}
                         sx={{ 
@@ -252,7 +262,8 @@ export function AccountInfo(): React.JSX.Element {
                       </Button>
                     </Stack>
                   </Paper>
-                ))}
+                  );
+                })}
             </Stack>
           ) : (
             <Paper

@@ -223,11 +223,9 @@ export function EnhancedSubscriptionManagerV2() {
         Choose Your Trading Journey
       </Typography>
       
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+      {error ? <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
-        </Alert>
-      )}
+        </Alert> : null}
       
       {hasLiveSubscription() ? (
         <Alert severity="success" sx={{ mb: 3 }}>

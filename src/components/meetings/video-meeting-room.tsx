@@ -29,6 +29,7 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [meetingToken, setMeetingToken] = useState<string | null>(null);
+  const [useZoom, setUseZoom] = useState(false);
   const { authToken, isLoading: authLoading, user } = useClientAuth();
   const router = useRouter();
 
@@ -68,9 +69,25 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
           }
         );
         
-        const { token } = response.data;
-        setMeetingToken(token);
-        setLoading(false);
+        const { token, useZoom: isZoom, zoomUrl: url } = response.data;
+        
+        if (isZoom && url) {
+          // If using Zoom, redirect to Zoom URL
+          setUseZoom(true);
+          setLoading(false);
+          
+          // Open Zoom in new window
+          window.open(url, '_blank', 'noopener,noreferrer');
+          
+          // Close the modal after a short delay
+          setTimeout(() => {
+            onClose();
+          }, 1500);
+        } else {
+          // Use VideoSDK as before
+          setMeetingToken(token);
+          setLoading(false);
+        }
       } catch (err: any) {
         console.error('Failed to fetch meeting token:', err);
         if (err.response?.status === 401) {
@@ -83,7 +100,7 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
     };
 
     void fetchMeetingToken();
-  }, [meetingId, authToken, authLoading]);
+  }, [meetingId, authToken, authLoading, onClose]);
 
   const handleLeaveMeeting = async () => {
     try {
@@ -124,8 +141,11 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
         <Stack spacing={2} alignItems="center">
           <CircularProgress size={60} />
           <Typography variant="h6" color="white">
-            Joining meeting...
+            {useZoom ? 'Opening Zoom...' : 'Joining meeting...'}
           </Typography>
+          {useZoom ? <Typography variant="body2" color="white" sx={{ opacity: 0.8 }}>
+              If Zoom doesn&apos;t open automatically, check your popup blocker
+            </Typography> : null}
         </Stack>
       </Box>
     );
@@ -174,7 +194,8 @@ export function VideoMeetingRoom({ meetingId, roomId, userName, isHost, onClose 
     );
   }
 
-  if (!meetingToken || !user) {
+  // Don't render VideoSDK components if using Zoom
+  if (useZoom || (!meetingToken || !user)) {
     return null;
   }
 

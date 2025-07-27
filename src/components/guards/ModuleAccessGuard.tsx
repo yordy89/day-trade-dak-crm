@@ -1,6 +1,6 @@
 import React from 'react';
 import { useModuleAccess } from '@/hooks/use-module-access';
-import { ModuleType } from '@/types/module-permission';
+import { type ModuleType } from '@/types/module-permission';
 import { Box, CircularProgress, Alert, Button } from '@mui/material';
 import { Lock } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';

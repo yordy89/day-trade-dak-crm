@@ -69,8 +69,8 @@ export default function ClasesVideoListStandalone({ onBack }: ClasesVideoListSta
   const sortedVideos = [...videos].sort((a, b) => {
     const titleA = extractVideoTitle(a.key);
     const titleB = extractVideoTitle(b.key);
-    const orderA = parseInt(titleA.match(/\d+/)?.[0] || '0');
-    const orderB = parseInt(titleB.match(/\d+/)?.[0] || '0');
+    const orderA = parseInt((/\d+/.exec(titleA))?.[0] || '0');
+    const orderB = parseInt((/\d+/.exec(titleB))?.[0] || '0');
     return orderA - orderB;
   });
 

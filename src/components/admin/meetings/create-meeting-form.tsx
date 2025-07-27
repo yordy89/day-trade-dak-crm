@@ -125,11 +125,9 @@ export function CreateMeetingForm({ open, onClose, onSuccess }: CreateMeetingFor
       <DialogTitle>Create New Meeting</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          {error && (
-            <Alert severity="error" onClose={() => setError(null)}>
+          {error ? <Alert severity="error" onClose={() => setError(null)}>
               {error}
-            </Alert>
-          )}
+            </Alert> : null}
           <TextField
             label="Meeting Title"
             fullWidth

@@ -40,9 +40,9 @@ export function SubscriptionGuard({
       return false;
     });
 
-    // ✅ Allow admins to access all pages
-    if (userRole === (Role.Admin as string) || hasSubscriptionAccess) {
-      setIsChecking(false); // Admins & users with a valid subscription can proceed
+    // ✅ Allow super_admin or users with valid subscription to access
+    if (userRole === (Role.SuperAdmin as string) || hasSubscriptionAccess) {
+      setIsChecking(false); // Super admins & users with a valid subscription can proceed
     } else {
       router.replace(paths.academy.subscriptions.plans); // Redirect unauthorized users
     }

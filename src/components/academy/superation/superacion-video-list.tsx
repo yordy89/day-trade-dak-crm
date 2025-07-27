@@ -218,15 +218,13 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
                           >
                             {t('peaceWithMoney.video.dayTitle', { day: video.lessonNumber, title: video.title })}
                           </Typography>
-                          {isSpecialDay && (
-                            <Chip
+                          {isSpecialDay ? <Chip
                               icon={<Sparkle size={14} />}
                               label={t('peaceWithMoney.video.selfInquiry')}
                               size="small"
                               color="warning"
                               sx={{ height: 20 }}
-                            />
-                          )}
+                            /> : null}
                           {/* TODO: Show completion status when progress tracking is implemented
                           {video.completed && (
                             <Chip
@@ -253,14 +251,12 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
                               {t('peaceWithMoney.title')}
                             </Typography>
                           </Box>
-                          {video.lessonNumber && (
-                            <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          {video.lessonNumber ? <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                               <Calendar size={14} />
                               <Typography component="span" variant="caption" color="text.secondary">
                                 {t('peaceWithMoney.video.dayOf21', { day: video.lessonNumber })}
                               </Typography>
-                            </Box>
-                          )}
+                            </Box> : null}
                           {/* TODO: Show watch progress when tracking is implemented
                           {video.progress && video.progress > 0 && video.progress < 100 && (
                             <Typography component="span" variant="caption" color="secondary.main">

@@ -83,8 +83,7 @@ export default function ClasesIntroStandalone({
       }}
     >
       {/* Logout button - only show when authenticated */}
-      {isAuthenticated && (
-        <Box
+      {isAuthenticated ? <Box
           sx={{
             position: 'absolute',
             top: 16,
@@ -107,8 +106,7 @@ export default function ClasesIntroStandalone({
           >
             Cerrar Sesión
           </Button>
-        </Box>
-      )}
+        </Box> : null}
 
       {/* Background gradient effect */}
       <Box
@@ -140,13 +138,11 @@ export default function ClasesIntroStandalone({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                {hasAccess && (
-                  <Chip
+                {hasAccess ? <Chip
                     label="Acceso Activo"
                     color="success"
                     sx={{ mb: 2 }}
-                  />
-                )}
+                  /> : null}
                 
                 <Typography
                   variant="h2"

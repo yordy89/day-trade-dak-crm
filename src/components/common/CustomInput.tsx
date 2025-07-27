@@ -181,15 +181,13 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           endAdornment={props.endAdornment}
         />
       </Box>
-      {helperText && (
-        <Typography 
+      {helperText ? <Typography 
           variant="caption" 
           color={error ? 'error' : 'text.secondary'} 
           sx={{ mt: 1, display: 'block' }}
         >
           {helperText}
-        </Typography>
-      )}
+        </Typography> : null}
     </FormControl>
   );
 };

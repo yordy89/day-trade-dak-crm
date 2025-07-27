@@ -108,11 +108,11 @@ export default function CommunityEventPage() {
     const fetchData = async () => {
       setIsLoadingCapacity(true);
       try {
-        // First, get all events and find the community event
-        const eventsResponse = await eventService.getEvents({ isActive: true });
-        const communityEvent = eventsResponse.data.find(
-          (e: any) => e.type === 'community_event'
+        // Get the active community event
+        const communityEventResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/events/community/active`
         );
+        const communityEvent = communityEventResponse.data;
         
         if (communityEvent) {
           setEvent(communityEvent);
@@ -186,119 +186,308 @@ export default function CommunityEventPage() {
     }).format(price);
   };
 
-  const daySchedule = [
-    {
-      day: 'DÍA 1 - Jueves 25 de Septiembre',
-      title: 'Operación en Vivo & Análisis Técnico',
-      icon: <TrendingUp />,
-      color: '#16a34a',
-      morning: {
-        title: 'MAÑANA - Operación en Vivo con el Mentor',
-        time: '8:30 AM - 12:00 PM',
-        activities: [
-          'Revisión del calendario económico y noticias clave',
-          'Selección de activos con potencial (watchlist real)',
-          'Análisis técnico y definición de zonas estratégicas',
-          'Entrada justificada, clara y explicada paso a paso',
-          'Gestión profesional del trade en vivo',
-          'Comentarios mentales del mentor durante la operación',
-          'Reflexión post-trade: ¿Qué se respetó? ¿Qué se aprendió?',
-        ],
-      },
-      afternoon: {
-        title: 'TARDE - Módulo 1: Análisis Técnico Pre-Market',
-        time: '2:00 PM - 5:30 PM',
-        activities: [
-          'Cómo interpretar el comportamiento del mercado',
-          'Identificación de soportes, resistencias, liquidez y volumen',
-          'Lectura de gráficos en varias temporalidades',
-          'Construcción de un plan de acción diario',
-          'Cómo evitar la improvisación con una estructura clara',
-          'Ejercicio práctico: Análisis pre-market con feedback en vivo',
-        ],
-      },
-    },
-    {
-      day: 'DÍA 2 - Viernes 26 de Septiembre',
-      title: 'Entradas Profesionales & Gestión de Riesgo',
-      icon: <BarChart />,
-      color: '#3b82f6',
-      morning: {
-        title: 'MAÑANA - Segunda Sesión de Trading en Vivo',
-        time: '8:30 AM - 12:00 PM',
-        activities: [
-          'Aplicación práctica de lo aprendido el día anterior',
-          'Identificación de nuevas oportunidades en tiempo real',
-          'Análisis de correlaciones entre activos',
-          'Manejo de posiciones múltiples',
-          'Control emocional bajo presión del mercado',
-          'Evaluación y ajuste de estrategias en vivo',
-        ],
-      },
-      afternoon: {
-        title: 'TARDE - Módulos 2, 3 y 4',
-        time: '2:00 PM - 5:30 PM',
-        modules: [
-          {
-            name: 'Módulo 2: Entradas Profesionales',
-            content: [
-              'Tipos de entrada: ruptura, pullback y rebote',
-              'Confirmaciones visuales y contextuales',
-              'Lectura del precio y comportamiento del volumen',
-              'Cómo filtrar entradas de bajo nivel',
-              'Checklist de entrada profesional',
+  // Format date for display
+  const _formatEventDate = (date: Date | string) => {
+    const eventDate = new Date(date);
+    return eventDate.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  // Get Spanish day name
+  const getDayName = (date: Date | string) => {
+    const eventDate = new Date(date);
+    return eventDate.toLocaleDateString('es-ES', { weekday: 'long' })
+      .charAt(0).toUpperCase() + eventDate.toLocaleDateString('es-ES', { weekday: 'long' }).slice(1);
+  };
+
+  // Get day and month
+  const getDayMonth = (date: Date | string) => {
+    const eventDate = new Date(date);
+    return eventDate.toLocaleDateString('es-ES', { 
+      day: 'numeric', 
+      month: 'long' 
+    });
+  };
+
+  // Get formatted date range for display
+  const getDateRangeDisplay = () => {
+    if (!event?.startDate || !event?.endDate) {
+      return 'Fechas por confirmar';
+    }
+    
+    const start = new Date(event.startDate);
+    const end = new Date(event.endDate);
+    
+    const _startDay = start.getDate();
+    const month = start.toLocaleDateString('es-ES', { month: 'long' });
+    const year = start.getFullYear();
+    
+    const dayNames = [];
+    const days = [];
+    const current = new Date(start);
+    while (current <= end) {
+      dayNames.push(getDayName(current));
+      days.push(current.getDate());
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return `${dayNames.join(' – ')}. ${days.join(', ')} de ${month.charAt(0).toUpperCase() + month.slice(1)} ${year}`;
+  };
+
+  // Generate dynamic schedule based on event dates
+  const generateDynamicSchedule = () => {
+    if (!event?.startDate || !event?.endDate) {
+      // Return default schedule if no dates
+      return [
+        {
+          day: 'DÍA 1 - Jueves',
+          title: 'Operación en Vivo & Análisis Técnico',
+          icon: <TrendingUp />,
+          color: '#16a34a',
+          morning: {
+            title: 'MAÑANA - Operación en Vivo con el Mentor',
+            time: '8:30 AM - 12:00 PM',
+            activities: [
+              'Revisión del calendario económico y noticias clave',
+              'Selección de activos con potencial (watchlist real)',
+              'Análisis técnico y definición de zonas estratégicas',
+              'Entrada justificada, clara y explicada paso a paso',
+              'Gestión profesional del trade en vivo',
+              'Comentarios mentales del mentor durante la operación',
+              'Reflexión post-trade: ¿Qué se respetó? ¿Qué se aprendió?',
             ],
           },
-          {
-            name: 'Módulo 3: Gestión de Riesgo',
-            content: [
-              'Cálculo de riesgo por operación basado en tu capital',
-              'Cómo definir el tamaño de posición ideal',
-              'Uso correcto del stop loss y take profits',
-              'Planificación mensual de crecimiento de cuenta',
+          afternoon: {
+            title: 'TARDE - Módulo 1: Análisis Técnico Pre-Market',
+            time: '2:00 PM - 5:30 PM',
+            activities: [
+              'Cómo interpretar el comportamiento del mercado',
+              'Identificación de soportes, resistencias, liquidez y volumen',
+              'Lectura de gráficos en varias temporalidades',
+              'Construcción de un plan de acción diario',
+              'Cómo evitar la improvisación con una estructura clara',
+              'Ejercicio práctico: Análisis pre-market con feedback en vivo',
             ],
           },
-          {
-            name: 'Módulo 4: Precisión Bajo Presión',
-            content: [
-              'Cuándo reforzar una entrada ya abierta',
-              'Cómo distinguir entre pullback y nueva oportunidad',
-              'Simulación de entradas con feedback en tiempo real',
+        },
+        {
+          day: 'DÍA 2 - Viernes',
+          title: 'Entradas Profesionales & Gestión de Riesgo',
+          icon: <BarChart />,
+          color: '#3b82f6',
+          morning: {
+            title: 'MAÑANA - Segunda Sesión de Trading en Vivo',
+            time: '8:30 AM - 12:00 PM',
+            activities: [
+              'Aplicación práctica de lo aprendido el día anterior',
+              'Identificación de nuevas oportunidades en tiempo real',
+              'Análisis de correlaciones entre activos',
+              'Manejo de posiciones múltiples',
+              'Control emocional bajo presión del mercado',
+              'Evaluación y ajuste de estrategias en vivo',
             ],
           },
-        ],
+          afternoon: {
+            title: 'TARDE - Módulos 2, 3 y 4',
+            time: '2:00 PM - 5:30 PM',
+            modules: [
+              {
+                name: 'Módulo 2: Entradas Profesionales',
+                content: [
+                  'Tipos de entrada: ruptura, pullback y rebote',
+                  'Confirmaciones visuales y contextuales',
+                  'Lectura del precio y comportamiento del volumen',
+                  'Cómo filtrar entradas de bajo nivel',
+                  'Checklist de entrada profesional',
+                ],
+              },
+              {
+                name: 'Módulo 3: Gestión de Riesgo',
+                content: [
+                  'Cálculo de riesgo por operación basado en tu capital',
+                  'Cómo definir el tamaño de posición ideal',
+                  'Uso correcto del stop loss y take profits',
+                  'Planificación mensual de crecimiento de cuenta',
+                ],
+              },
+              {
+                name: 'Módulo 4: Precisión Bajo Presión',
+                content: [
+                  'Cuándo reforzar una entrada ya abierta',
+                  'Cómo distinguir entre pullback y nueva oportunidad',
+                  'Simulación de entradas con feedback en tiempo real',
+                ],
+              },
+            ],
+          },
+        },
+        {
+          day: 'DÍA 3 - Sábado',
+          title: 'Psicotrading & Celebración',
+          icon: <Psychology />,
+          color: '#f59e0b',
+          morning: {
+            title: 'MAÑANA - Módulo Especial: Psicotrading',
+            time: '8:30 AM - 12:00 PM',
+            activities: [
+              'Cómo eliminar el miedo a perder y la ansiedad por ganar',
+              'Técnicas mentales para mantener la calma bajo presión',
+              'Identificar patrones mentales que sabotean tus trades',
+              'Construcción de un ritual mental pre-sesión',
+              'Disciplina emocional en entornos de incertidumbre',
+              'Ejercicio guiado: Visualización del "Yo Trader" profesional',
+            ],
+          },
+          afternoon: {
+            title: 'TARDE - Actividad Recreativa & Cierre',
+            time: '2:00 PM - 5:30 PM',
+            activities: [
+              'Actividad relajante (comida y experiencia grupal)',
+              'Conversaciones abiertas con el mentor y compañeros',
+              'Círculo de visión: ¿A dónde voy como trader después de esto?',
+              'Foto oficial y cierre inspirador',
+              'Networking y creación de lazos con la comunidad',
+            ],
+          },
+        },
+      ];
+    }
+
+    const scheduleTemplate = [
+      {
+        title: 'Operación en Vivo & Análisis Técnico',
+        icon: <TrendingUp />,
+        color: '#16a34a',
+        morning: {
+          title: 'MAÑANA - Operación en Vivo con el Mentor',
+          time: '8:30 AM - 12:00 PM',
+          activities: [
+            'Revisión del calendario económico y noticias clave',
+            'Selección de activos con potencial (watchlist real)',
+            'Análisis técnico y definición de zonas estratégicas',
+            'Entrada justificada, clara y explicada paso a paso',
+            'Gestión profesional del trade en vivo',
+            'Comentarios mentales del mentor durante la operación',
+            'Reflexión post-trade: ¿Qué se respetó? ¿Qué se aprendió?',
+          ],
+        },
+        afternoon: {
+          title: 'TARDE - Módulo 1: Análisis Técnico Pre-Market',
+          time: '2:00 PM - 5:30 PM',
+          activities: [
+            'Cómo interpretar el comportamiento del mercado',
+            'Identificación de soportes, resistencias, liquidez y volumen',
+            'Lectura de gráficos en varias temporalidades',
+            'Construcción de un plan de acción diario',
+            'Cómo evitar la improvisación con una estructura clara',
+            'Ejercicio práctico: Análisis pre-market con feedback en vivo',
+          ],
+        },
       },
-    },
-    {
-      day: 'DÍA 3 - Sábado 27 de Septiembre',
-      title: 'Psicotrading & Celebración',
-      icon: <Psychology />,
-      color: '#f59e0b',
-      morning: {
-        title: 'MAÑANA - Módulo Especial: Psicotrading',
-        time: '8:30 AM - 12:00 PM',
-        activities: [
-          'Cómo eliminar el miedo a perder y la ansiedad por ganar',
-          'Técnicas mentales para mantener la calma bajo presión',
-          'Identificar patrones mentales que sabotean tus trades',
-          'Construcción de un ritual mental pre-sesión',
-          'Disciplina emocional en entornos de incertidumbre',
-          'Ejercicio guiado: Visualización del "Yo Trader" profesional',
-        ],
+      {
+        title: 'Entradas Profesionales & Gestión de Riesgo',
+        icon: <BarChart />,
+        color: '#3b82f6',
+        morning: {
+          title: 'MAÑANA - Segunda Sesión de Trading en Vivo',
+          time: '8:30 AM - 12:00 PM',
+          activities: [
+            'Aplicación práctica de lo aprendido el día anterior',
+            'Identificación de nuevas oportunidades en tiempo real',
+            'Análisis de correlaciones entre activos',
+            'Manejo de posiciones múltiples',
+            'Control emocional bajo presión del mercado',
+            'Evaluación y ajuste de estrategias en vivo',
+          ],
+        },
+        afternoon: {
+          title: 'TARDE - Módulos 2, 3 y 4',
+          time: '2:00 PM - 5:30 PM',
+          modules: [
+            {
+              name: 'Módulo 2: Entradas Profesionales',
+              content: [
+                'Tipos de entrada: ruptura, pullback y rebote',
+                'Confirmaciones visuales y contextuales',
+                'Lectura del precio y comportamiento del volumen',
+                'Cómo filtrar entradas de bajo nivel',
+                'Checklist de entrada profesional',
+              ],
+            },
+            {
+              name: 'Módulo 3: Gestión de Riesgo',
+              content: [
+                'Cálculo de riesgo por operación basado en tu capital',
+                'Cómo definir el tamaño de posición ideal',
+                'Uso correcto del stop loss y take profits',
+                'Planificación mensual de crecimiento de cuenta',
+              ],
+            },
+            {
+              name: 'Módulo 4: Precisión Bajo Presión',
+              content: [
+                'Cuándo reforzar una entrada ya abierta',
+                'Cómo distinguir entre pullback y nueva oportunidad',
+                'Simulación de entradas con feedback en tiempo real',
+              ],
+            },
+          ],
+        },
       },
-      afternoon: {
-        title: 'TARDE - Actividad Recreativa & Cierre',
-        time: '2:00 PM - 5:30 PM',
-        activities: [
-          'Actividad relajante (comida y experiencia grupal)',
-          'Conversaciones abiertas con el mentor y compañeros',
-          'Círculo de visión: ¿A dónde voy como trader después de esto?',
-          'Foto oficial y cierre inspirador',
-          'Networking y creación de lazos con la comunidad',
-        ],
+      {
+        title: 'Psicotrading & Celebración',
+        icon: <Psychology />,
+        color: '#f59e0b',
+        morning: {
+          title: 'MAÑANA - Módulo Especial: Psicotrading',
+          time: '8:30 AM - 12:00 PM',
+          activities: [
+            'Cómo eliminar el miedo a perder y la ansiedad por ganar',
+            'Técnicas mentales para mantener la calma bajo presión',
+            'Identificar patrones mentales que sabotean tus trades',
+            'Construcción de un ritual mental pre-sesión',
+            'Disciplina emocional en entornos de incertidumbre',
+            'Ejercicio guiado: Visualización del "Yo Trader" profesional',
+          ],
+        },
+        afternoon: {
+          title: 'TARDE - Actividad Recreativa & Cierre',
+          time: '2:00 PM - 5:30 PM',
+          activities: [
+            'Actividad relajante (comida y experiencia grupal)',
+            'Conversaciones abiertas con el mentor y compañeros',
+            'Círculo de visión: ¿A dónde voy como trader después de esto?',
+            'Foto oficial y cierre inspirador',
+            'Networking y creación de lazos con la comunidad',
+          ],
+        },
       },
-    },
-  ];
+    ];
+
+    const start = new Date(event.startDate);
+    const dynamicSchedule = [];
+    
+    for (let i = 0; i < 3 && i < scheduleTemplate.length; i++) {
+      const currentDate = new Date(start);
+      currentDate.setDate(start.getDate() + i);
+      
+      const dayName = getDayName(currentDate);
+      const dayMonth = getDayMonth(currentDate);
+      
+      dynamicSchedule.push({
+        ...scheduleTemplate[i],
+        day: `DÍA ${i + 1} - ${dayName} ${dayMonth}`,
+      });
+    }
+    
+    return dynamicSchedule;
+  };
+
+  const daySchedule = generateDynamicSchedule();
 
   return (
     <>
@@ -356,7 +545,7 @@ export default function CommunityEventPage() {
                       lineHeight: { xs: 1.2, md: 1.1 }
                     }}
                   >
-                    Mentoría Presencial con Mijail Medina
+                    {event?.title || 'Mentoría Presencial con Mijail Medina'}
                   </Typography>
                   <Typography 
                     variant="h4" 
@@ -367,7 +556,7 @@ export default function CommunityEventPage() {
                       textAlign: { xs: 'center', md: 'left' }
                     }}
                   >
-                    EN VIVO desde Tampa, Florida
+                    EN VIVO desde {event?.location || 'Tampa, Florida'}
                   </Typography>
                   <Typography 
                     variant="h5" 
@@ -386,12 +575,12 @@ export default function CommunityEventPage() {
                   <Stack spacing={2} sx={{ mt: 3, alignItems: { xs: 'center', md: 'flex-start' } }}>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <LocationOn sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
-                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>Tampa, Florida</Typography>
+                      <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>{event?.location || 'Tampa, Florida'}</Typography>
                     </Stack>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <CalendarToday sx={{ color: 'primary.main', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
                       <Typography variant="body1" fontWeight={600} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, textAlign: { xs: 'left', sm: 'center' } }}>
-                        Jueves – Viernes – Sábado. 25, 26, 27 de Septiembre
+                        {getDateRangeDisplay()}
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={2} alignItems="center">
@@ -409,8 +598,7 @@ export default function CommunityEventPage() {
                   </Stack>
 
                   {/* Capacity Indicator */}
-                  {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 && (
-                    <Alert 
+                  {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 ? <Alert 
                       severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
                       sx={{ 
                         mt: 2, 
@@ -436,8 +624,7 @@ export default function CommunityEventPage() {
                             : `${eventCapacity.remaining} lugares disponibles`
                         }
                       </Typography>
-                    </Alert>
-                  )}
+                    </Alert> : null}
 
                   <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: { xs: 'center', md: 'flex-start' }, width: '100%' }}>
                     <Button
@@ -603,7 +790,7 @@ export default function CommunityEventPage() {
               {daySchedule.map((day) => (
                 <Grid item xs={12} key={day.day}>
                   <Accordion 
-                    defaultExpanded={day.day === 'DÍA 1 - Jueves 25 de Septiembre'}
+                    defaultExpanded={day.day.includes('DÍA 1')}
                     sx={{
                       backgroundColor: alpha(day.color, 0.05),
                       borderLeft: `4px solid ${day.color}`,
@@ -862,11 +1049,8 @@ export default function CommunityEventPage() {
                       1700 E 9th Ave, Tampa, FL 33605
                     </Typography>
                     <Divider sx={{ my: 2 }} />
-                    <Typography variant="h6" color="text.secondary">
-                      Jueves – Viernes – Sábado
-                    </Typography>
                     <Typography variant="h5" fontWeight={600} color="primary">
-                      25, 26, 27 de Septiembre
+                      {getDateRangeDisplay()}
                     </Typography>
                   </Stack>
                 </Paper>
@@ -974,8 +1158,7 @@ export default function CommunityEventPage() {
               </Alert>
               
               {/* Capacity Indicator */}
-              {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 && (
-                <Alert 
+              {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 ? <Alert 
                   severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
                   icon={false}
                   sx={{ 
@@ -1000,8 +1183,7 @@ export default function CommunityEventPage() {
                         : `${eventCapacity.remaining} lugares disponibles`
                     }
                   </Typography>
-                </Alert>
-              )}
+                </Alert> : null}
               
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
                 <Button

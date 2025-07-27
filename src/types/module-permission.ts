@@ -8,7 +8,6 @@ export enum ModuleType {
   CommunityEvents = 'communityEvents',
   VipEvents = 'vipEvents',
   MasterCourse = 'masterCourse',
-  Live = 'live',
 }
 
 export interface ModuleAccessResponse {
@@ -27,5 +26,4 @@ export const MODULE_DISPLAY_NAMES: Record<ModuleType, { es: string; en: string }
   [ModuleType.CommunityEvents]: { es: 'Eventos Comunitarios', en: 'Community Events' },
   [ModuleType.VipEvents]: { es: 'Eventos VIP', en: 'VIP Events' },
   [ModuleType.MasterCourse]: { es: 'Master Course', en: 'Master Course' },
-  [ModuleType.Live]: { es: 'Live Trading', en: 'Live Trading' },
 }
