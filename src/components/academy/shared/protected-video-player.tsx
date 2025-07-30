@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useModuleAccess } from '@/hooks/use-module-access';
 import type { ModuleType } from '@/types/module-permission';
+import { HLSVideoPlayer } from './hls-video-player';
 
 interface ProtectedVideoPlayerProps {
   videoId: string;
@@ -104,23 +105,24 @@ export function ProtectedVideoPlayer({
   }
 
   // User has access - render the video player
+  const videoSrc = videoUrl || `/api/videos/${videoId}`;
+  
   return (
-    <Box sx={{ position: 'relative', paddingTop: '56.25%', bgcolor: 'black', borderRadius: 2, overflow: 'hidden' }}>
-      <video
-        controls
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-        }}
-        poster={thumbnailUrl}
-      >
-        <source src={videoUrl || `/api/videos/${videoId}`} type="video/mp4" />
-        <track kind="captions" />
-        {t('video.notSupported')}
-      </video>
-    </Box>
+    <HLSVideoPlayer
+      src={videoSrc}
+      poster={thumbnailUrl}
+      autoplay={false}
+      controls
+      fluid
+      responsive
+      qualityLevels
+      onProgress={(percent) => {
+        // You can track video progress here
+        console.log(`Video progress: ${percent.toFixed(2)}%`);
+      }}
+      onError={(error) => {
+        console.error('Video playback error:', error);
+      }}
+    />
   );
 }

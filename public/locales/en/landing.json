@@ -466,7 +466,12 @@
       "title": "Stay Updated with Market Insights",
       "subtitle": "Get daily market analysis and trading tips delivered to your inbox",
       "placeholder": "Enter your email",
-      "button": "Subscribe"
+      "button": "Subscribe",
+      "success": "Thank you for subscribing! You'll receive our latest updates soon.",
+      "errors": {
+        "invalidEmail": "Please enter a valid email address",
+        "generic": "Something went wrong. Please try again later."
+      }
     },
     "copyright": "© {year} DayTradeDak. All rights reserved.",
     "riskWarning": "Risk Warning: Trading involves substantial risk and may result in the loss of your invested capital. Past performance is not indicative of future results."

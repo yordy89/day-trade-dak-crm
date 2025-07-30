@@ -29,21 +29,24 @@ import {
 } from '@mui/icons-material';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useLogout } from '@/hooks/use-logout';
 import { mainNavigation } from '@/config/navigation';
 import { TopBar } from '@/components/landing/top-bar';
+import { useSettings } from '@/services/api/settings.service';
 
 export function MainNavbar() {
   const { isDarkMode, toggleTheme } = useTheme();
   const { i18n, t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, user } = useClientAuth();
   const logout = useLogout();
   const isMobile = useMediaQuery('(max-width:960px)');
+  const { data: settings } = useSettings();
   
   // Normalize language code to avoid hydration mismatch
   const normalizedLang = i18n.language?.split('-')[0] || 'en';
@@ -107,24 +110,57 @@ export function MainNavbar() {
     router.push('/');
   };
 
+  const isActiveRoute = (href: string | undefined) => {
+    if (!href) return false;
+    
+    // For home page
+    if (href === '/' && pathname === '/') return true;
+    
+    // For other pages, check if pathname starts with href
+    if (href !== '/' && pathname.startsWith(href)) return true;
+    
+    return false;
+  };
+
   const renderDesktopMenu = () => (
-    <Box sx={{ flexGrow: 1, display: { xs: 'none', lg: 'flex' }, gap: 1 }}>
+    <Box sx={{ flexGrow: 1, display: { xs: 'none', lg: 'flex' }, gap: 0.5, justifyContent: 'center' }}>
       {mainNavigation.map((item) => (
         <Button
           key={item.key}
           onClick={() => handleNavClick(item)}
-          endIcon={item.external ? <OpenInNew sx={{ fontSize: 16 }} /> : null}
+          endIcon={item.external ? <OpenInNew sx={{ fontSize: 14 }} /> : null}
           sx={{
             color: isDarkMode ? 'white' : 'black',
             textTransform: 'none',
-            fontSize: '15px',
+            fontSize: '14px',
             fontWeight: 500,
-            px: 2,
+            px: 1.5,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
             cursor: 'pointer',
             position: 'relative',
+            transition: 'all 0.3s ease',
             '&:hover': {
               backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
             },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: isActiveRoute(item.href) ? '80%' : '0',
+              height: '2px',
+              backgroundColor: item.key === 'live' ? '#ef4444' : '#16a34a',
+              transition: 'width 0.3s ease',
+            },
+            '&:hover::after': {
+              width: '80%',
+            },
+            ...(isActiveRoute(item.href) && {
+              fontWeight: 600,
+              color: item.key === 'live' ? '#ef4444' : (isDarkMode ? '#16a34a' : '#15803d'),
+            }),
             ...(item.key === 'live' && {
               color: '#ef4444',
               '&::before': {
@@ -146,17 +182,17 @@ export function MainNavbar() {
             <Box
               sx={{
                 position: 'absolute',
-                top: -4,
-                right: -4,
+                top: -6,
+                right: -8,
                 backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : '#ef4444',
                 color: 'white',
-                fontSize: '9px',
+                fontSize: '8px',
                 fontWeight: 700,
-                px: 0.75,
-                py: 0.25,
-                borderRadius: '10px',
+                px: 0.5,
+                py: 0.2,
+                borderRadius: '8px',
                 lineHeight: 1,
-                minWidth: '28px',
+                minWidth: '24px',
                 textAlign: 'center',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
               }}
@@ -183,8 +219,11 @@ export function MainNavbar() {
     >
       <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Image
-          src={isDarkMode ? "/assets/logos/day_trade_dak_white_logo.png" : "/assets/logos/day_trade_dak_black_logo.png"}
-          alt="DayTradeDak"
+          src={isDarkMode 
+            ? (settings?.branding?.logo_dark_url || "/assets/logos/day_trade_dak_white_logo.png")
+            : (settings?.branding?.logo_light_url || "/assets/logos/day_trade_dak_black_logo.png")
+          }
+          alt={settings?.branding?.company_name || "DayTradeDak"}
           width={120}
           height={35}
           style={{ 
@@ -326,8 +365,11 @@ export function MainNavbar() {
           <Link href="/" passHref style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 6 }}>
               <Image
-                src={isDarkMode ? "/assets/logos/day_trade_dak_white_logo.png" : "/assets/logos/day_trade_dak_black_logo.png"}
-                alt="DayTradeDak"
+                src={isDarkMode 
+            ? (settings?.branding?.logo_dark_url || "/assets/logos/day_trade_dak_white_logo.png")
+            : (settings?.branding?.logo_light_url || "/assets/logos/day_trade_dak_black_logo.png")
+          }
+                alt={settings?.branding?.company_name || "DayTradeDak"}
                 width={180}
                 height={50}
                 style={{ 

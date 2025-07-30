@@ -30,6 +30,10 @@ import {
 import { MainNavbar } from '@/components/landing/main-navbar';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/components/theme/theme-provider';
+import { useSettings } from '@/services/api/settings.service';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
+import { contactService } from '@/services/api/contact.service';
+import { Snackbar, Alert } from '@mui/material';
 
 interface CustomInputProps {
   icon: React.ReactNode;
@@ -128,6 +132,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           {...props}
           multiline={multiline}
           rows={rows}
+          className="autofill-input"
           onFocus={(e) => {
             setIsFocused(true);
             props.onFocus?.(e);
@@ -173,8 +178,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
             '& input, & textarea': {
               padding: '0 0 0 8px',
               backgroundColor: 'transparent',
-              color: isDarkMode ? 'rgba(255, 255, 255, 0.87) !important' : 'rgba(0, 0, 0, 0.87) !important',
-              WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.87) !important' : 'rgba(0, 0, 0, 0.87) !important',
+              color: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
+              WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
               outline: 'none !important',
               border: 'none !important',
               '&:focus': {
@@ -186,8 +191,17 @@ const CustomInput: React.FC<CustomInputProps> = ({
                 WebkitBoxShadow: isDarkMode 
                   ? '0 0 0 1000px rgba(255, 255, 255, 0.08) inset !important'
                   : '0 0 0 1000px rgba(0, 0, 0, 0.04) inset !important',
-                WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.87) !important' : 'rgba(0, 0, 0, 0.87) !important',
-                caretColor: isDarkMode ? 'rgba(255, 255, 255, 0.87) !important' : 'rgba(0, 0, 0, 0.87) !important',
+                WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
+                caretColor: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
+                transition: 'background-color 5000s ease-in-out 0s',
+                backgroundColor: 'transparent !important',
+              },
+              '&:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
+                WebkitBoxShadow: isDarkMode 
+                  ? '0 0 0 1000px rgba(255, 255, 255, 0.08) inset !important'
+                  : '0 0 0 1000px rgba(0, 0, 0, 0.04) inset !important',
+                WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
+                backgroundColor: 'transparent !important',
               },
             },
             '& input::placeholder, & textarea::placeholder': {
@@ -461,7 +475,17 @@ export default function ContactPage() {
   const { t, i18n } = useTranslation();
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
+  const { data: settings } = useSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -474,19 +498,21 @@ export default function ContactPage() {
     {
       icon: <Email sx={{ fontSize: 32 }} />,
       titleKey: 'contact.info.email.title',
-      details: 'support@daytradedk.com',
+      details: settings?.contact?.contact_email || 'support@daytradedk.com',
       actionKey: 'contact.info.email.action',
+      href: `mailto:${settings?.contact?.contact_email || 'support@daytradedk.com'}`,
     },
     {
       icon: <Phone sx={{ fontSize: 32 }} />,
       titleKey: 'contact.info.phone.title',
-      details: '+1 (800) 123-4567',
+      details: settings?.contact?.contact_phone || '+1 (800) 123-4567',
       actionKey: 'contact.info.phone.action',
+      href: `tel:${settings?.contact?.contact_phone?.replace(/[^0-9+]/g, '') || '+18001234567'}`,
     },
     {
       icon: <LocationOn sx={{ fontSize: 32 }} />,
       titleKey: 'contact.info.office.title',
-      details: 'Miami, FL 33131',
+      details: settings?.contact?.contact_address || 'Miami, FL 33131',
       actionKey: 'contact.info.office.action',
     },
     {
@@ -517,26 +543,47 @@ export default function ContactPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise<void>(resolve => { setTimeout(resolve, 2000); });
-    
-    console.log('Form submitted:', formData);
-    setIsSubmitting(false);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      inquiryType: '',
-      message: '',
-    });
+    try {
+      const _result = await contactService.submitContactForm({
+        ...formData,
+        inquiryType: formData.inquiryType as any,
+      });
+      
+      setSnackbar({
+        open: true,
+        message: t('contact.form.successMessage', 'Your message has been sent successfully! We will get back to you soon.'),
+        severity: 'success',
+      });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        inquiryType: '',
+        message: '',
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: t('contact.form.errorMessage', 'Failed to send message. Please try again later.'),
+        severity: 'error',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
     <>
       <MainNavbar />
-      <Box sx={{ pt: 18, pb: 10, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+      <Box 
+        sx={{ pt: 18, pb: 10, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}
+      >
         {/* Animated Trading Background */}
         <Box
           sx={{
@@ -667,7 +714,11 @@ export default function ContactPage() {
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                       {info.detailsKey ? t(info.detailsKey) : info.details}
                     </Typography>
-                    <Button variant="outlined" size="small">
+                    <Button 
+                      variant="outlined" 
+                      size="small"
+                      {...(info.href ? { component: 'a', href: info.href } : {})}
+                    >
                       {t(info.actionKey)}
                     </Button>
                   </CardContent>
@@ -907,6 +958,23 @@ export default function ContactPage() {
           </Grid>
         </Container>
       </Box>
+      <ProfessionalFooter />
+      
+      {/* Success/Error Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

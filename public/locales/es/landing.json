@@ -466,7 +466,12 @@
       "title": "Mantente Actualizado con Información del Mercado",
       "subtitle": "Recibe análisis diario del mercado y consejos de trading en tu bandeja de entrada",
       "placeholder": "Ingresa tu correo",
-      "button": "Suscribirse"
+      "button": "Suscribirse",
+      "success": "¡Gracias por suscribirte! Pronto recibirás nuestras últimas actualizaciones.",
+      "errors": {
+        "invalidEmail": "Por favor ingresa un correo electrónico válido",
+        "generic": "Algo salió mal. Por favor intenta de nuevo más tarde."
+      }
     },
     "copyright": "© {year} DayTradeDak. Todos los derechos reservados.",
     "riskWarning": "Advertencia de Riesgo: El trading implica un riesgo sustancial y puede resultar en la pérdida de tu capital invertido. El rendimiento pasado no es indicativo de resultados futuros."

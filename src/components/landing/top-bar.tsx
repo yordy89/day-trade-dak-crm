@@ -16,12 +16,15 @@ import {
   TrendingUp,
   TrendingDown
 } from '@mui/icons-material';
+import { SiTiktok } from 'react-icons/si';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useTranslation } from 'react-i18next';
+import { useSettings } from '@/services/api/settings.service';
 
 export function TopBar() {
   const _theme = useTheme();
   const { t } = useTranslation();
+  const { data: settings } = useSettings();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [marketOpen, setMarketOpen] = useState(false);
   const [marketData] = useState({
@@ -55,13 +58,43 @@ export function TopBar() {
     })} EST`;
   };
 
-  const socialLinks = [
-    { icon: <Facebook sx={{ fontSize: 14 }} />, href: 'https://facebook.com/daytradedk', label: 'Facebook' },
-    { icon: <Twitter sx={{ fontSize: 14 }} />, href: 'https://twitter.com/daytradedk', label: 'Twitter' },
-    { icon: <Instagram sx={{ fontSize: 14 }} />, href: 'https://instagram.com/daytradedk', label: 'Instagram' },
-    { icon: <LinkedIn sx={{ fontSize: 14 }} />, href: 'https://linkedin.com/company/daytradedk', label: 'LinkedIn' },
-    { icon: <YouTube sx={{ fontSize: 14 }} />, href: 'https://youtube.com/@daytradedk', label: 'YouTube' },
-  ];
+  const socialLinks = React.useMemo(() => {
+    const links = [];
+    const socialMedia = settings?.social_media;
+    
+    if (!socialMedia) {
+      // Fallback to default links
+      return [
+        { icon: <Facebook sx={{ fontSize: 14 }} />, href: 'https://facebook.com/daytradedk', label: 'Facebook' },
+        { icon: <Twitter sx={{ fontSize: 14 }} />, href: 'https://twitter.com/daytradedk', label: 'Twitter' },
+        { icon: <Instagram sx={{ fontSize: 14 }} />, href: 'https://instagram.com/daytradedk', label: 'Instagram' },
+        { icon: <LinkedIn sx={{ fontSize: 14 }} />, href: 'https://linkedin.com/company/daytradedk', label: 'LinkedIn' },
+        { icon: <YouTube sx={{ fontSize: 14 }} />, href: 'https://youtube.com/@daytradedk', label: 'YouTube' },
+        { icon: <SiTiktok size={14} />, href: 'https://www.tiktok.com/@daytradedk', label: 'TikTok' },
+      ];
+    }
+    
+    if (socialMedia.facebook_url) {
+      links.push({ icon: <Facebook sx={{ fontSize: 14 }} />, href: socialMedia.facebook_url, label: 'Facebook' });
+    }
+    if (socialMedia.twitter_url) {
+      links.push({ icon: <Twitter sx={{ fontSize: 14 }} />, href: socialMedia.twitter_url, label: 'Twitter' });
+    }
+    if (socialMedia.instagram_url) {
+      links.push({ icon: <Instagram sx={{ fontSize: 14 }} />, href: socialMedia.instagram_url, label: 'Instagram' });
+    }
+    if (socialMedia.linkedin_url) {
+      links.push({ icon: <LinkedIn sx={{ fontSize: 14 }} />, href: socialMedia.linkedin_url, label: 'LinkedIn' });
+    }
+    if (socialMedia.youtube_url) {
+      links.push({ icon: <YouTube sx={{ fontSize: 14 }} />, href: socialMedia.youtube_url, label: 'YouTube' });
+    }
+    if (socialMedia.tiktok_url) {
+      links.push({ icon: <SiTiktok size={14} />, href: socialMedia.tiktok_url, label: 'TikTok' });
+    }
+    
+    return links;
+  }, [settings]);
 
   return (
     <Box
@@ -237,7 +270,7 @@ export function TopBar() {
               }}>
                 <Email sx={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.5)' }} />
                 <MuiLink
-                  href="mailto:support@daytradedk.com"
+                  href={`mailto:${settings?.contact?.contact_email || 'support@daytradedk.com'}`}
                   sx={{
                     color: 'rgba(255, 255, 255, 0.7)',
                     textDecoration: 'none',
@@ -249,7 +282,7 @@ export function TopBar() {
                     },
                   }}
                 >
-                  support@daytradedk.com
+                  {settings?.contact?.contact_email || 'support@daytradedk.com'}
                 </MuiLink>
               </Box>
 
@@ -264,7 +297,7 @@ export function TopBar() {
               }}>
                 <Phone sx={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.5)' }} />
                 <MuiLink
-                  href="tel:+17274861603"
+                  href={`tel:${settings?.contact?.contact_phone?.replace(/[^0-9+]/g, '') || '+17274861603'}`}
                   sx={{
                     color: 'rgba(255, 255, 255, 0.7)',
                     textDecoration: 'none',
@@ -276,7 +309,7 @@ export function TopBar() {
                     },
                   }}
                 >
-                  +1 (727) 486 1603
+                  {settings?.contact?.contact_phone || '+1 (727) 486 1603'}
                 </MuiLink>
               </Box>
 

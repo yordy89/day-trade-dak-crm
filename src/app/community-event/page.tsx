@@ -25,7 +25,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton,
 } from '@mui/material';
 import {
   CheckCircle,
@@ -47,24 +46,18 @@ import {
   Groups,
   CameraAlt,
   RestaurantMenu,
-  Instagram,
-  YouTube,
-  Email,
-  Phone,
-  Facebook,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
-import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { EventRegistrationModal } from '@/components/events/EventRegistrationModal';
 import { eventService } from '@/services/api/event.service';
 import axios from 'axios';
 import { SubscriptionPlan } from '@/types/user';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRouter } from 'next/navigation';
+import { CommunityEventFooter } from '@/components/community-event/CommunityEventFooter';
 
 export default function CommunityEventPage() {
   const theme = useTheme();
-  const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
   const { t: _t } = useTranslation('communityEvent');
   const router = useRouter();
@@ -490,15 +483,15 @@ export default function CommunityEventPage() {
   const daySchedule = generateDynamicSchedule();
 
   return (
-    <>
-      {/* Header removed for unique page appearance */}
-      <Box sx={{ minHeight: '100vh' }}>
+    <div className="min-h-screen">
+      <main>
         {/* Hero Section */}
         <Box
           sx={{
             position: 'relative',
             color: 'white',
-            py: { xs: 6, sm: 8, md: 12 },
+            pt: { xs: 10, sm: 12, md: 16 },
+            pb: { xs: 6, sm: 8, md: 12 },
             overflow: 'hidden',
             backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
             backgroundSize: { xs: 'contain', sm: 'cover' },
@@ -506,6 +499,7 @@ export default function CommunityEventPage() {
             backgroundRepeat: 'no-repeat',
             backgroundColor: '#0a0a0a',
             minHeight: { xs: '80vh', sm: 'auto' },
+            mt: { xs: 8, sm: 10, md: 0 },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -1245,161 +1239,10 @@ export default function CommunityEventPage() {
           </Container>
         </Box>
 
-        {/* Simple Footer */}
-        <Box
-          component="footer"
-          sx={{
-            backgroundColor: isDarkMode ? '#1a1a1a' : '#f5f5f5',
-            py: 6,
-            borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-          }}
-        >
-          <Container maxWidth="lg">
-            <Grid container spacing={4}>
-              {/* Company Info */}
-              <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                <Typography variant="h6" fontWeight={700} gutterBottom color="primary">
-                  DayTradeDak
-                </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
-                  Tu plataforma de confianza para el trading profesional. 
-                  Formación, mentoría y comunidad para traders serios.
-                </Typography>
-                <Stack direction="row" spacing={1} alignItems="center" justifyContent={{ xs: 'center', md: 'flex-start' }}>
-                  <Email sx={{ fontSize: 20, color: 'text.secondary' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    support@daytradedak.com
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }} justifyContent={{ xs: 'center', md: 'flex-start' }}>
-                  <Phone sx={{ fontSize: 20, color: 'text.secondary' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    +1 (786) 355-1346
-                  </Typography>
-                </Stack>
-              </Grid>
-
-
-              {/* Social Media */}
-              <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Síguenos
-                </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
-                  Únete a nuestra comunidad de traders en las redes sociales
-                </Typography>
-                <Stack direction="row" spacing={2} justifyContent={{ xs: 'center', md: 'flex-start' }}>
-                  <IconButton
-                    component="a"
-                    href="https://www.facebook.com/daytradedak/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                      },
-                    }}
-                  >
-                    <Facebook />
-                  </IconButton>
-                  <IconButton
-                    component="a"
-                    href="https://www.instagram.com/daytradedak/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                      },
-                    }}
-                  >
-                    <Instagram />
-                  </IconButton>
-                  <IconButton
-                    component="a"
-                    href="https://www.tiktok.com/@daytradedak"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                      },
-                      fontSize: '14px',
-                      fontWeight: 700,
-                    }}
-                    title="TikTok"
-                  >
-                    TT
-                  </IconButton>
-                  <IconButton
-                    component="a"
-                    href="https://www.youtube.com/channel/UCYp6JiX1ModSSZnnVLQATiA"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                      },
-                    }}
-                  >
-                    <YouTube />
-                  </IconButton>
-                </Stack>
-              </Grid>
-            </Grid>
-
-            {/* Copyright */}
-            <Divider sx={{ my: 4 }} />
-            <Box textAlign="center">
-              <Typography variant="body2" color="text.secondary">
-                © {new Date().getFullYear()} DayTradeDak. Todos los derechos reservados.
-              </Typography>
-              <Stack
-                direction="row"
-                spacing={2}
-                justifyContent="center"
-                sx={{ mt: 1 }}
-              >
-                <Typography
-                  component="a"
-                  href="/terms/terms-conditions#privacy"
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{
-                    textDecoration: 'none',
-                    '&:hover': { color: 'primary.main' },
-                  }}
-                >
-                  Política de Privacidad
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  •
-                </Typography>
-                <Typography
-                  component="a"
-                  href="/terms/terms-conditions#terms"
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{
-                    textDecoration: 'none',
-                    '&:hover': { color: 'primary.main' },
-                  }}
-                >
-                  Términos y Condiciones
-                </Typography>
-              </Stack>
-            </Box>
-          </Container>
-        </Box>
-      </Box>
+      </main>
+      
+      {/* Community Event Footer */}
+      <CommunityEventFooter />
       
       {/* Event Registration Modal */}
       {event ? (
@@ -1411,6 +1254,6 @@ export default function CommunityEventPage() {
           userEmail={user?.email}
         />
       ) : null}
-    </>
+    </div>
   );
 }

@@ -36,13 +36,17 @@ interface _VideoWithProgress extends VideoMetadata {
   progress?: number;
 }
 
-// Helper function to extract title from video key
-function extractVideoTitle(key: string): string {
-  // Extract filename from path
+// Helper function to extract title from video
+function extractVideoTitle(video: VideoMetadata & { title?: string }): string {
+  // Use the title from API if available
+  if (video.title) {
+    return video.title;
+  }
+  
+  // Fallback to extracting from key
+  const key = video.key;
   const filename = key.split('/').pop() || key;
-  // Remove extension and format
-  const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg)$/i, '');
-  // Replace underscores with spaces and capitalize
+  const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg|m3u8)$/i, '');
   return nameWithoutExt
     .replace(/_/g, ' ')
     .replace(/clase/gi, 'Clase')
@@ -67,8 +71,8 @@ export default function ClasesVideoListStandalone({ onBack }: ClasesVideoListSta
   };
 
   const sortedVideos = [...videos].sort((a, b) => {
-    const titleA = extractVideoTitle(a.key);
-    const titleB = extractVideoTitle(b.key);
+    const titleA = extractVideoTitle(a);
+    const titleB = extractVideoTitle(b);
     const orderA = parseInt((/\d+/.exec(titleA))?.[0] || '0');
     const orderB = parseInt((/\d+/.exec(titleB))?.[0] || '0');
     return orderA - orderB;
@@ -257,7 +261,7 @@ export default function ClasesVideoListStandalone({ onBack }: ClasesVideoListSta
                       <ListItemText
                         primary={
                           <Typography variant="h6" fontWeight={600} sx={{ color: 'white' }}>
-                            {extractVideoTitle(video.key)}
+                            {extractVideoTitle(video)}
                           </Typography>
                         }
                         secondary={

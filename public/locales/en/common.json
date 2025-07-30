@@ -382,6 +382,8 @@
       "messagePlaceholder": "Tell us how we can help you...",
       "send": "Send Message",
       "sending": "Sending...",
+      "successMessage": "Your message has been sent successfully! We will get back to you soon.",
+      "errorMessage": "Failed to send message. Please try again later.",
       "validation": {
         "requiredFields": "Please fill in all required fields"
       }

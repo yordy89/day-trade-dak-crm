@@ -382,6 +382,8 @@
       "messagePlaceholder": "Cuéntanos cómo podemos ayudarte...",
       "send": "Enviar Mensaje",
       "sending": "Enviando...",
+      "successMessage": "¡Tu mensaje ha sido enviado exitosamente! Te responderemos pronto.",
+      "errorMessage": "Error al enviar el mensaje. Por favor intenta más tarde.",
       "validation": {
         "requiredFields": "Por favor complete todos los campos requeridos"
       }

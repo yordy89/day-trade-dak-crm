@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -11,6 +11,10 @@ import {
   Divider,
   Button,
   TextField,
+  Skeleton,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Facebook,
@@ -23,10 +27,12 @@ import {
   Phone,
   LocationOn,
 } from '@mui/icons-material';
+import { SiTiktok } from 'react-icons/si';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useTranslation } from 'react-i18next';
+import { useSettings, processCopyrightText } from '@/services/api/settings.service';
 
 const getFooterLinks = (t: any) => ({
   trading: {
@@ -71,19 +77,115 @@ const getFooterLinks = (t: any) => ({
   },
 });
 
-const socialLinks = [
-  { icon: Facebook, href: 'https://facebook.com/daytradedak', label: 'Facebook' },
-  { icon: Twitter, href: 'https://twitter.com/daytradedak', label: 'Twitter' },
-  { icon: LinkedIn, href: 'https://linkedin.com/company/daytradedak', label: 'LinkedIn' },
-  { icon: YouTube, href: 'https://youtube.com/daytradedak', label: 'YouTube' },
-  { icon: Instagram, href: 'https://instagram.com/daytradedak', label: 'Instagram' },
-  { icon: Telegram, href: 'https://t.me/daytradedak', label: 'Telegram' },
-];
-
 export function ProfessionalFooter() {
   const { isDarkMode } = useTheme();
   const { t } = useTranslation('landing');
   const footerLinks = getFooterLinks(t);
+  const { data: settings, isLoading } = useSettings();
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
+  const handleSubscribe = async () => {
+    if (!email?.includes('@')) {
+      setSnackbar({
+        open: true,
+        message: t('footer.newsletter.errors.invalidEmail'),
+        severity: 'error',
+      });
+      return;
+    }
+
+    setIsSubscribing(true);
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSnackbar({
+          open: true,
+          message: t('footer.newsletter.success'),
+          severity: 'success',
+        });
+        setEmail('');
+      } else {
+        setSnackbar({
+          open: true,
+          message: data.message || t('footer.newsletter.errors.generic'),
+          severity: 'error',
+        });
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: t('footer.newsletter.errors.generic'),
+        severity: 'error',
+      });
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // Build social links from settings
+  const socialLinks = React.useMemo(() => {
+    if (!settings?.social_media) {
+      return [
+        { icon: Facebook, href: 'https://facebook.com/daytradedak', label: 'Facebook', key: 'facebook_url' },
+        { icon: Twitter, href: 'https://twitter.com/daytradedak', label: 'Twitter', key: 'twitter_url' },
+        { icon: LinkedIn, href: 'https://linkedin.com/company/daytradedak', label: 'LinkedIn', key: 'linkedin_url' },
+        { icon: YouTube, href: 'https://youtube.com/daytradedak', label: 'YouTube', key: 'youtube_url' },
+        { icon: Instagram, href: 'https://instagram.com/daytradedak', label: 'Instagram', key: 'instagram_url' },
+        { icon: Telegram, href: 'https://t.me/daytradedak', label: 'Telegram', key: 'telegram_url' },
+        { icon: SiTiktok, href: 'https://www.tiktok.com/@daytradedak', label: 'TikTok', key: 'tiktok_url', isCustomIcon: true },
+      ];
+    }
+
+    const links = [];
+    const socialMedia = settings.social_media;
+    
+    if (socialMedia.facebook_url) {
+      links.push({ icon: Facebook, href: socialMedia.facebook_url, label: 'Facebook' });
+    }
+    if (socialMedia.twitter_url) {
+      links.push({ icon: Twitter, href: socialMedia.twitter_url, label: 'Twitter' });
+    }
+    if (socialMedia.linkedin_url) {
+      links.push({ icon: LinkedIn, href: socialMedia.linkedin_url, label: 'LinkedIn' });
+    }
+    if (socialMedia.youtube_url) {
+      links.push({ icon: YouTube, href: socialMedia.youtube_url, label: 'YouTube' });
+    }
+    if (socialMedia.instagram_url) {
+      links.push({ icon: Instagram, href: socialMedia.instagram_url, label: 'Instagram' });
+    }
+    if (socialMedia.telegram_url) {
+      links.push({ icon: Telegram, href: socialMedia.telegram_url, label: 'Telegram' });
+    }
+    if (socialMedia.tiktok_url) {
+      links.push({ icon: SiTiktok, href: socialMedia.tiktok_url, label: 'TikTok', isCustomIcon: true });
+    }
+    
+    return links;
+  }, [settings]);
 
   return (
     <Box
@@ -93,6 +195,7 @@ export function ProfessionalFooter() {
         color: isDarkMode ? 'white' : '#333333',
         pt: 8,
         pb: 4,
+        mt: { xs: 8, sm: 10, md: 12 },
         borderTop: '1px solid',
         borderColor: isDarkMode ? 'rgba(22, 163, 74, 0.2)' : 'rgba(22, 163, 74, 0.3)',
       }}
@@ -104,32 +207,45 @@ export function ProfessionalFooter() {
           <Grid item xs={12} md={4}>
             <Box sx={{ mb: 3, textAlign: { xs: 'center', md: 'left' } }}>
               <Link href="/" passHref style={{ textDecoration: 'none' }}>
-                <Image
-                  src={isDarkMode ? "/assets/logos/day_trade_dak_white_logo.png" : "/assets/logos/day_trade_dak_black_logo.png"}
-                  alt="DayTradeDak"
-                  width={200}
-                  height={60}
-                  style={{ objectFit: 'contain' }}
-                />
+                {isLoading ? (
+                  <Skeleton variant="rectangular" width={200} height={60} />
+                ) : (
+                  <Image
+                    src={isDarkMode 
+                      ? (settings?.branding?.logo_dark_url || "/assets/logos/day_trade_dak_white_logo.png")
+                      : (settings?.branding?.logo_light_url || "/assets/logos/day_trade_dak_black_logo.png")
+                    }
+                    alt={settings?.branding?.company_name || "DayTradeDak"}
+                    width={200}
+                    height={60}
+                    style={{ objectFit: 'contain' }}
+                  />
+                )}
               </Link>
             </Box>
             <Typography variant="body2" sx={{ mb: 3, opacity: isDarkMode ? 0.8 : 0.7, lineHeight: 1.8, textAlign: { xs: 'center', md: 'left' } }}>
-              {t('footer.about.description')}
+              {settings?.footer?.footer_company_description || t('footer.about.description')}
             </Typography>
             
             {/* Contact Info */}
             <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <Phone fontSize="small" />
-                <Typography variant="body2">{t('footer.contact.phone')}</Typography>
+                <Typography variant="body2">
+                  {settings?.contact?.contact_phone || t('footer.contact.phone')}
+                </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <Email fontSize="small" />
-                <Typography variant="body2">{t('footer.contact.email')}</Typography>
+                <Typography variant="body2">
+                  {settings?.contact?.contact_email || t('footer.contact.email')}
+                </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <LocationOn fontSize="small" />
-                <Typography variant="body2">{t('footer.contact.address')}</Typography>
+                <Typography variant="body2">
+                  {settings?.contact?.contact_address || t('footer.contact.address')}
+                </Typography>
               </Box>
             </Box>
 
@@ -154,7 +270,11 @@ export function ProfessionalFooter() {
                       },
                     }}
                   >
-                    <Icon fontSize="small" />
+                    {social.isCustomIcon ? (
+                      <Icon size={18} />
+                    ) : (
+                      <Icon fontSize="small" />
+                    )}
                   </IconButton>
                 );
               })}
@@ -204,12 +324,13 @@ export function ProfessionalFooter() {
         {/* Newsletter */}
         <Box
           sx={{
-            backgroundColor: isDarkMode ? 'rgba(22, 163, 74, 0.1)' : 'rgba(22, 163, 74, 0.05)',
+            backgroundColor: isDarkMode ? 'rgba(22, 163, 74, 0.08)' : 'rgba(22, 163, 74, 0.05)',
             borderRadius: 2,
             p: 4,
             mb: 6,
             border: '1px solid',
-            borderColor: isDarkMode ? 'rgba(22, 163, 74, 0.2)' : 'rgba(22, 163, 74, 0.1)',
+            borderColor: isDarkMode ? 'rgba(22, 163, 74, 0.3)' : 'rgba(22, 163, 74, 0.1)',
+            boxShadow: isDarkMode ? '0 4px 12px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.05)',
           }}
         >
           <Grid container spacing={3} alignItems="center">
@@ -228,40 +349,109 @@ export function ProfessionalFooter() {
                   placeholder={t('footer.newsletter.placeholder')}
                   variant="outlined"
                   size="small"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !isSubscribing) {
+                      handleSubscribe();
+                    }
+                  }}
+                  disabled={isSubscribing}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      color: isDarkMode ? 'white' : '#333333',
+                      color: isDarkMode ? '#000000' : '#333333',
+                      backgroundColor: '#ffffff !important',
+                      borderRadius: '8px',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                       '& fieldset': {
-                        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                        borderWidth: '1px',
                       },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(22, 163, 74, 0.3)',
+                      '&:hover': {
+                        backgroundColor: '#ffffff !important',
+                        '& fieldset': {
+                          borderColor: '#16a34a',
+                        },
                       },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#16a34a',
+                      '&.Mui-focused': {
+                        backgroundColor: '#ffffff !important',
+                        '& fieldset': {
+                          borderColor: '#16a34a !important',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '&.Mui-disabled': {
+                        opacity: 0.6,
+                        backgroundColor: '#f5f5f5 !important',
                       },
                     },
                     '& .MuiInputBase-input': {
-                      color: isDarkMode ? 'white' : '#333333',
+                      color: '#000000 !important',
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      padding: '12px 14px',
+                      backgroundColor: 'transparent !important',
                       '&::placeholder': {
-                        color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                        opacity: 1,
+                        color: 'rgba(0, 0, 0, 0.6) !important',
+                        opacity: '1 !important',
+                      },
+                      // Force autofill styles
+                      '&:-webkit-autofill': {
+                        WebkitBoxShadow: '0 0 0 1000px #ffffff inset !important',
+                        WebkitTextFillColor: '#000000 !important',
+                        caretColor: '#000000 !important',
+                      },
+                      '&:-webkit-autofill:hover': {
+                        WebkitBoxShadow: '0 0 0 1000px #ffffff inset !important',
+                        WebkitTextFillColor: '#000000 !important',
+                        caretColor: '#000000 !important',
+                      },
+                      '&:-webkit-autofill:focus': {
+                        WebkitBoxShadow: '0 0 0 1000px #ffffff inset !important',
+                        WebkitTextFillColor: '#000000 !important',
+                        caretColor: '#000000 !important',
+                      },
+                      '&:-webkit-autofill:active': {
+                        WebkitBoxShadow: '0 0 0 1000px #ffffff inset !important',
+                        WebkitTextFillColor: '#000000 !important',
+                        caretColor: '#000000 !important',
                       },
                     },
                   }}
                 />
                 <Button
                   variant="contained"
+                  onClick={handleSubscribe}
+                  disabled={isSubscribing}
                   sx={{
                     background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                     color: 'white',
                     px: 3,
+                    py: 1.5,
+                    minWidth: 120,
+                    height: '48px',
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     '&:hover': {
                       background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+                    },
+                    '&.Mui-disabled': {
+                      opacity: 0.7,
+                      boxShadow: 'none',
                     },
                   }}
                 >
-                  {t('footer.newsletter.button')}
+                  {isSubscribing ? (
+                    <CircularProgress size={20} sx={{ color: 'white' }} />
+                  ) : (
+                    t('footer.newsletter.button')
+                  )}
                 </Button>
               </Box>
             </Grid>
@@ -283,7 +473,7 @@ export function ProfessionalFooter() {
           }}
         >
           <Typography variant="body2" sx={{ opacity: isDarkMode ? 0.6 : 0.7, color: isDarkMode ? 'white' : '#333333', width: { xs: '100%', md: 'auto' }, textAlign: { xs: 'center', md: 'left' } }}>
-            {t('footer.copyright', { year: new Date().getFullYear() })}
+            {processCopyrightText(settings?.footer?.footer_copyright_text || t('footer.copyright', { year: new Date().getFullYear() }))}
           </Typography>
           
           <Typography variant="caption" sx={{ opacity: isDarkMode ? 0.5 : 0.6, color: isDarkMode ? 'white' : '#333333', maxWidth: 600, textAlign: 'center' }}>
@@ -291,6 +481,21 @@ export function ProfessionalFooter() {
           </Typography>
         </Box>
       </Container>
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

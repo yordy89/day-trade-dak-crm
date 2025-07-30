@@ -17,17 +17,21 @@ import { useClassesAuth } from '@/hooks/use-classes-auth';
 import { videoService } from '@/services/api/video.service';
 import { ProfessionalVideoPlayer } from '@/components/academy/video/professional-video-player';
 
-// Helper function to extract title from video key
-function extractVideoTitle(key: string): string {
-  // Extract filename from path
+// Helper function to extract title from video
+function extractVideoTitle(video: any): string {
+  // Use the title from API if available
+  if (video?.title) {
+    return video.title;
+  }
+  
+  // Fallback to extracting from key
+  const key = video?.key || '';
   const filename = key.split('/').pop() || key;
-  // Remove extension and format
-  const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg)$/i, '');
-  // Replace underscores with spaces and capitalize
+  const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg|m3u8)$/i, '');
   return nameWithoutExt
     .replace(/_/g, ' ')
     .replace(/clase/gi, 'Clase')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .replace(/\b\w/g, (char: string) => char.toUpperCase());
 }
 
 export default function ClassesVideoPage() {
@@ -229,7 +233,7 @@ export default function ClassesVideoPage() {
             <Box sx={{ mt: 4, textAlign: 'center' }}>
               <Stack spacing={3} alignItems="center">
                 <Typography variant="h4" fontWeight={700} sx={{ color: 'white' }}>
-                  {extractVideoTitle(videoKey) || 'Clase de Trading'}
+                  {extractVideoTitle(videoData) || 'Clase de Trading'}
                 </Typography>
                 
                 <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.7), maxWidth: 600 }}>
@@ -299,7 +303,7 @@ export default function ClassesVideoPage() {
         ) : (
           <Box>
             <Typography variant="h4" fontWeight={700} gutterBottom sx={{ color: 'white', mb: 4 }}>
-              {extractVideoTitle(videoKey)}
+              {extractVideoTitle(videoData)}
             </Typography>
             
             <Stack direction={{ xs: 'column', lg: 'row' }} spacing={4} alignItems="stretch">
@@ -309,7 +313,7 @@ export default function ClassesVideoPage() {
                   <ProfessionalVideoPlayer
                     video={{
                       id: videoKey,
-                      title: extractVideoTitle(videoKey),
+                      title: extractVideoTitle(videoData),
                       description: 'Clase de trading profesional',
                       category: 'Classes',
                     }}

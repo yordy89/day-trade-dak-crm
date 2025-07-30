@@ -250,6 +250,17 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
+  // Apply dark class to document root
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   const toggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
@@ -286,6 +297,32 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
                 },
               },
             },
+            // Dark mode autofill styles
+            ...(isDarkMode ? {
+              'input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active': {
+                WebkitBoxShadow: '0 0 0 1000px rgba(255, 255, 255, 0.08) inset !important',
+                WebkitTextFillColor: '#ffffff !important',
+                color: '#ffffff !important',
+                caretColor: '#ffffff !important',
+              },
+              'textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active': {
+                WebkitBoxShadow: '0 0 0 1000px rgba(255, 255, 255, 0.08) inset !important',
+                WebkitTextFillColor: '#ffffff !important',
+                color: '#ffffff !important',
+                caretColor: '#ffffff !important',
+              },
+            } : {
+              'input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active': {
+                WebkitBoxShadow: '0 0 0 1000px rgba(0, 0, 0, 0.04) inset !important',
+                WebkitTextFillColor: 'rgba(0, 0, 0, 0.87) !important',
+                color: 'rgba(0, 0, 0, 0.87) !important',
+              },
+              'textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active': {
+                WebkitBoxShadow: '0 0 0 1000px rgba(0, 0, 0, 0.04) inset !important',
+                WebkitTextFillColor: 'rgba(0, 0, 0, 0.87) !important',
+                color: 'rgba(0, 0, 0, 0.87) !important',
+              },
+            }),
             '.MuiInputBase-root': {
               '&.Mui-focused': {
                 outline: 'none !important',

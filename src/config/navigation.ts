@@ -21,12 +21,12 @@ const allNavigationItems: NavigationItem[] = [
     href: '/academy/overview',
     requiresAuth: true,
   },
-  {
-    key: 'stocks',
-    href: '/stocks',
-    requiresAuth: false,
-    badge: 'LIVE',
-  },
+  // {
+  //   key: 'stocks',
+  //   href: '/stocks',
+  //   requiresAuth: false,
+  //   badge: 'LIVE',
+  // },
   // {
   //   key: 'tools',
   //   href: '/tools',
@@ -50,11 +50,11 @@ const allNavigationItems: NavigationItem[] = [
     requiresAuth: true,
     featureFlag: 'meetings',
   },
-  {
-    key: 'event',
-    href: '/events/680fe27154c9b64e54e2424f',
-    requiresAuth: false,
-  },
+  // {
+  //   key: 'event',
+  //   href: '/events/680fe27154c9b64e54e2424f',
+  //   requiresAuth: false,
+  // },
   {
     key: 'shop',
     href: 'https://www.etsy.com/shop/DayTradeDak', // TODO: Replace with actual Etsy shop URL
