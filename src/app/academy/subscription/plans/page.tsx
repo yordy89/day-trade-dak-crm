@@ -91,8 +91,8 @@ const getLivePlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.LiveWeeklyRecurring,
     name: t('subscriptions.plans.liveWeeklyAuto.name'),
-    price: 51.99,
-    originalPrice: 53.99,
+    price: 53.99,
+    originalPrice: undefined,
     period: t('subscriptions.perWeek'),
     billingCycle: 'weekly',
     description: t('subscriptions.plans.liveWeeklyAuto.description'),
@@ -108,7 +108,7 @@ const getLivePlans = (t: any): PricingPlan[] => [
       { text: t('subscriptions.bestValuePerWeek'), included: true },
     ],
     duration: t('subscriptions.automaticRenewal'),
-    tag: t('subscriptions.save10'),
+    tag: t('subscriptions.bestOption'),
   },
 ];
 
@@ -390,6 +390,13 @@ export default function PlansPage() {
     });
     const isFree = displayPrice === 0;
     const isHighlighted = highlightedPlan === plan.id;
+    
+    // Check Live Weekly access permission
+    const isLiveWeeklyPlan = [
+      SubscriptionPlan.LiveWeeklyManual,
+      SubscriptionPlan.LiveWeeklyRecurring,
+    ].includes(plan.id);
+    const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
 
     return (
       <Box
@@ -398,11 +405,28 @@ export default function PlansPage() {
         sx={{ 
           position: 'relative', 
           height: '100%',
-          pt: (plan.popular || plan.tag || isHighlighted) ? 2 : 0,
+          pt: (needsPermission || plan.popular || plan.tag || isHighlighted) ? 2 : 0,
         }}
       >
         {/* Badge - Outside the Card */}
-        {(plan.popular || plan.tag || isHighlighted) ? <Chip
+        {needsPermission ? (
+          <Chip
+            label={t('subscriptions.requiresPermission')}
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: 'grey.600',
+              color: 'white',
+              fontWeight: 600,
+              px: 2,
+              zIndex: 10,
+            }}
+          />
+        ) : (plan.popular || plan.tag || isHighlighted) ? (
+          <Chip
             label={isHighlighted ? '✨ RECOMENDADO PARA TI' : plan.tag || 'MÁS POPULAR'}
             size="small"
             sx={{
@@ -422,7 +446,8 @@ export default function PlansPage() {
                 '75%': { transform: 'translateX(-50%) rotate(5deg)' },
               },
             }}
-          /> : null}
+          />
+        ) : null}
         
         <Card
           elevation={0}
@@ -430,13 +455,13 @@ export default function PlansPage() {
             height: '100%',
             borderRadius: 3,
             border: '2px solid',
-            borderColor: isHighlighted ? plan.color : plan.popular ? plan.color : 'divider',
+            borderColor: needsPermission ? 'grey.400' : (isHighlighted ? plan.color : plan.popular ? plan.color : 'divider'),
             position: 'relative',
             transition: 'all 0.3s ease',
             backgroundColor: theme.palette.background.paper,
-            opacity: isCurrentPlan ? 0.8 : 1,
-            boxShadow: isHighlighted ? `0 0 20px ${alpha(plan.color, 0.3)}` : 'none',
-            animation: isHighlighted ? 'pulse 2s ease-in-out infinite' : 'none',
+            opacity: needsPermission ? 0.7 : (isCurrentPlan ? 0.8 : 1),
+            boxShadow: isHighlighted && !needsPermission ? `0 0 20px ${alpha(plan.color, 0.3)}` : 'none',
+            animation: isHighlighted && !needsPermission ? 'pulse 2s ease-in-out infinite' : 'none',
             '@keyframes pulse': {
               '0%': {
                 transform: 'scale(1)',
@@ -458,8 +483,8 @@ export default function PlansPage() {
             },
           }}
         >
-          <CardContent sx={{ p: 4 }}>
-          <Stack spacing={3}>
+          <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+          <Stack spacing={{ xs: 2, sm: 3 }}>
             {/* Header */}
             <Stack spacing={2} alignItems="center" textAlign="center">
               <Box sx={{ color: plan.color, mb: 2 }}>
@@ -554,18 +579,22 @@ export default function PlansPage() {
             {/* CTA Button */}
             <Button
               fullWidth
-              variant={plan.popular || isFree ? 'contained' : 'outlined'}
+              variant={needsPermission ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
               onClick={() => handleSubscribe(plan.id)}
-              disabled={isCurrentPlan || loadingPlan === plan.id}
+              disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission}
               sx={{
-                borderColor: plan.color,
-                color: plan.popular || isFree ? 'white' : plan.color,
-                backgroundColor: plan.popular || isFree ? plan.color : 'transparent',
+                borderColor: needsPermission ? 'grey.400' : plan.color,
+                color: needsPermission ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
+                backgroundColor: needsPermission ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
                 py: 1.5,
                 fontWeight: 600,
                 '&:hover': {
-                  borderColor: plan.color,
-                  backgroundColor: plan.popular || isFree ? plan.color : alpha(plan.color, 0.08),
+                  borderColor: needsPermission ? 'grey.400' : plan.color,
+                  backgroundColor: needsPermission ? 'transparent' : (plan.popular || isFree ? plan.color : alpha(plan.color, 0.08)),
+                },
+                '&.Mui-disabled': {
+                  borderColor: needsPermission ? 'grey.400' : undefined,
+                  color: needsPermission ? 'text.disabled' : undefined,
                 },
               }}
             >
@@ -573,6 +602,8 @@ export default function PlansPage() {
                 ? t('subscriptions.processing')
                 : isCurrentPlan
                 ? t('subscriptions.currentPlan')
+                : needsPermission
+                ? t('subscriptions.contactSupportForAccess')
                 : isFree
                 ? t('subscriptions.activateFree')
                 : t('subscriptions.startNow')}
@@ -585,22 +616,25 @@ export default function PlansPage() {
   };
 
   const filteredPlans = (() => {
+    // Filter out CLASSES plan temporarily
+    const filteredFixedPlans = FIXED_PLANS.filter(plan => plan.id !== SubscriptionPlan.CLASSES);
+    
     switch (selectedView) {
       case 'live':
         return LIVE_PLANS;
       case 'monthly':
         return MONTHLY_PLANS;
       case 'fixed':
-        return FIXED_PLANS;
+        return filteredFixedPlans;
       default:
-        return [...LIVE_PLANS, ...MONTHLY_PLANS, ...FIXED_PLANS];
+        return [...LIVE_PLANS, ...MONTHLY_PLANS, ...filteredFixedPlans];
     }
   })();
 
   return (
     <Box>
       {/* Hero Section */}
-      <Box sx={{ textAlign: 'center', pt: 12, pb: 8 }}>
+      <Box sx={{ textAlign: 'center', pt: { xs: 6, sm: 8, md: 12 }, pb: { xs: 4, sm: 6, md: 8 } }}>
         <Container maxWidth="xl">
           <Typography
             variant="overline"
@@ -610,11 +644,12 @@ export default function PlansPage() {
               letterSpacing: 1.5,
               display: 'block',
               mb: 2,
+              fontSize: { xs: '0.7rem', sm: '0.75rem' },
             }}
           >
             {t('subscriptions.pricingAndSubscriptions')}
           </Typography>
-          <Typography variant="h2" fontWeight={800} sx={{ mb: 3 }}>
+          <Typography variant="h2" fontWeight={800} sx={{ mb: 3, fontSize: { xs: '2rem', sm: '2.5rem', md: '3.75rem' } }}>
             {t('subscriptions.investInYour', 'Invest in your')}{' '}
             <span
               style={{
@@ -626,15 +661,15 @@ export default function PlansPage() {
               {t('subscriptions.financialEducation', 'Financial Education')}
             </span>
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 6, maxWidth: 800, mx: 'auto' }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 6, maxWidth: 800, mx: 'auto', fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' }, px: { xs: 2, sm: 0 } }}>
             {t('subscriptions.subtitle')}
           </Typography>
         </Container>
       </Box>
 
       {/* Filter Section */}
-      <Container maxWidth="xl" sx={{ mb: 6 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Container maxWidth="xl" sx={{ mb: { xs: 3, sm: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', overflowX: 'auto', px: { xs: 1, sm: 0 } }}>
           <ToggleButtonGroup
             value={selectedView}
             exclusive
@@ -643,13 +678,15 @@ export default function PlansPage() {
               backgroundColor: theme.palette.action.hover,
               borderRadius: 2,
               p: 0.5,
+              minWidth: 'fit-content',
               '& .MuiToggleButton-root': {
-                px: 3,
-                py: 1.5,
+                px: { xs: 1.5, sm: 2, md: 3 },
+                py: { xs: 1, sm: 1.5 },
                 borderRadius: 1.5,
                 border: 'none',
                 textTransform: 'none',
                 fontWeight: 600,
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
                 color: theme.palette.text.secondary,
                 '&.Mui-selected': {
                   backgroundColor: theme.palette.background.paper,
@@ -663,19 +700,27 @@ export default function PlansPage() {
             }}
           >
             <ToggleButton value="all" aria-label="todos">
-              {t('subscriptions.allPlans')}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {t('subscriptions.allPlans')}
+              </Box>
             </ToggleButton>
             <ToggleButton value="live" aria-label="live">
-              <Lightning size={20} style={{ marginRight: 8 }} />
-              {t('subscriptions.liveTrading')}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Lightning size={20} style={{ marginRight: 8 }} />
+                <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>{t('subscriptions.liveTrading')}</Box>
+              </Box>
             </ToggleButton>
             <ToggleButton value="monthly" aria-label="mensual">
-              <Calendar size={20} style={{ marginRight: 8 }} />
-              {t('subscriptions.monthlyBilling')}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Calendar size={20} style={{ marginRight: 8 }} />
+                <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>{t('subscriptions.monthlyBilling')}</Box>
+              </Box>
             </ToggleButton>
             <ToggleButton value="fixed" aria-label="fijo">
-              <Certificate size={20} style={{ marginRight: 8 }} />
-              {t('account.oneTimePayment')}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Certificate size={20} style={{ marginRight: 8 }} />
+                <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>{t('account.oneTimePayment')}</Box>
+              </Box>
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
@@ -703,12 +748,12 @@ export default function PlansPage() {
                selectedView === 'monthly' ? t('subscriptions.monthlySubscriptions') : t('account.oneTimePayment')}
             </Typography>
             <Box sx={{ mt: 4, mb: 2, overflow: 'visible' }}>
-              <Grid container spacing={3} sx={{ overflow: 'visible' }}>
+              <Grid container spacing={{ xs: 2, sm: 3, md: 3 }} sx={{ overflow: 'visible' }}>
                 {filteredPlans.map((plan) => (
                   <Grid 
                     item 
                     xs={12} 
-                    sm={6}
+                    md={6}
                     lg={4}
                     key={plan.id}
                     sx={{ overflow: 'visible' }}
@@ -733,9 +778,9 @@ export default function PlansPage() {
           </Alert> : null}
 
         {/* Trust Indicators */}
-        <Box sx={{ mt: 10, textAlign: 'center' }}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} sm={4}>
+        <Box sx={{ mt: { xs: 6, sm: 8, md: 10 }, textAlign: 'center' }}>
+          <Grid container spacing={{ xs: 3, sm: 4 }}>
+            <Grid item xs={12} md={4}>
               <Certificate size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
               <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
                 {t('subscriptions.trustedByTraders')}
@@ -744,7 +789,7 @@ export default function PlansPage() {
                 {t('subscriptions.trustedByTradersDesc')}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} md={4}>
               <Calendar size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
               <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
                 {t('subscriptions.flexibleAccess')}
@@ -753,7 +798,7 @@ export default function PlansPage() {
                 {t('subscriptions.flexibleAccessDesc')}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} md={4}>
               <Lightning size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
               <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
                 {t('subscriptions.cancelAnytime')}

@@ -45,53 +45,107 @@ export default function MentorshipVideoList() {
     queryKey: ['mentorship-videos'],
     queryFn: async () => {
       const data = await videoService.getMentorshipVideos();
-      return data.map((video: any, _index: number) => {
-        const fileName = video.key.split('/').pop() || '';
-        const cleanName = fileName.replace('.mp4', '').replace('mentorias/', '');
+      
+      // Filter to get only unique mentoria folders (deduplicate by folder name)
+      const uniqueVideos = new Map<string, any>();
+      
+      data.forEach((video: any) => {
+        // Extract the folder name from the path structure
+        // Example: hsl-daytradedak-videos/mentorias/mentoria_1/1080p/playlist.m3u8
+        // or: hsl-daytradedak-videos/mentorias/mentoria_1/master.m3u8
+        const pathParts = video.key.split('/');
+        const mentoriaFolder = pathParts[2] || ''; // This gets "mentoria_1", "mentoria_2_iwm", etc.
         
-        // Format title based on file name patterns
+        // Prefer master.m3u8 over quality-specific files
+        if (!uniqueVideos.has(mentoriaFolder)) {
+          uniqueVideos.set(mentoriaFolder, video);
+        } else {
+          const existingVideo = uniqueVideos.get(mentoriaFolder);
+          // Always prefer master.m3u8 as it contains all quality levels
+          if (video.key.includes('master.m3u8')) {
+            uniqueVideos.set(mentoriaFolder, video);
+          } else if (!existingVideo.key.includes('master.m3u8')) {
+            // If neither is master.m3u8, prefer higher quality
+            if (video.key.includes('1080p') && !existingVideo.key.includes('1080p')) {
+              uniqueVideos.set(mentoriaFolder, video);
+            } else if (video.key.includes('720p') && !existingVideo.key.includes('1080p') && !existingVideo.key.includes('720p')) {
+              uniqueVideos.set(mentoriaFolder, video);
+            }
+          }
+        }
+      });
+      
+      // Convert Map values back to array and continue with the mapping
+      return Array.from(uniqueVideos.values()).map((video: any) => {
+        // Extract the folder name from the path structure again
+        const pathParts = video.key.split('/');
+        const mentoriaFolder = pathParts[2] || '';
+        
+        // Format title based on folder name patterns
         let formattedTitle = '';
         let topic = '';
         
-        if (cleanName.includes('mentoria_entradas_parte')) {
-          const partMatch = /parte_(?<partNum>\d+)(?:_(?<partLetter>[a-c]))?/.exec(cleanName);
+        if (mentoriaFolder.includes('mentoria_entradas_parte')) {
+          const partMatch = /parte_(?<partNum>\d+)(?:_(?<partLetter>[a-c]))?/.exec(mentoriaFolder);
           if (partMatch) {
             const partNumber = partMatch.groups?.partNum || '';
             const partLetter = partMatch.groups?.partLetter ? partMatch.groups.partLetter.toUpperCase() : '';
-            formattedTitle = `Estrategias de Entrada - Parte ${partNumber}${partLetter}`;
+            formattedTitle = `Mentoría Entradas - Parte ${partNumber}${partLetter}`;
           } else {
-            formattedTitle = 'Estrategias de Entrada';
+            formattedTitle = 'Mentoría Entradas';
           }
           topic = 'Puntos de Entrada';
-        } else if (cleanName.includes('mentoria_medias_moviles')) {
-          formattedTitle = 'Medias Móviles Avanzadas';
-          topic = 'Análisis Técnico';
-        } else if (cleanName.includes('mentoria_para_manejar_cuentas')) {
-          const num = cleanName.includes('_2') ? ' 2' : '';
-          formattedTitle = `Gestión de Cuentas${num}`;
-          topic = 'Risk Management';
-        } else if (cleanName.includes('mentoria_de_refuerzos')) {
-          formattedTitle = 'Sesión de Refuerzo';
-          topic = 'Conceptos Clave';
-        } else if (cleanName.includes('mentoria_preguntas_respuestas')) {
-          formattedTitle = 'Preguntas y Respuestas';
-          topic = 'Q&A Profesional';
-        } else if (cleanName === 'mentoria_1') {
-          formattedTitle = 'Introducción al Trading Profesional';
+        } else if (mentoriaFolder === 'mentoria_1') {
+          formattedTitle = 'Mentoría 1';
           topic = 'Fundamentos';
-        } else if (cleanName === 'mentoria_2_iwm') {
-          formattedTitle = 'Trading con IWM';
+        } else if (mentoriaFolder === 'mentoria_2_iwm') {
+          formattedTitle = 'Mentoría 2 IWM';
           topic = 'Análisis de ETFs';
+        } else if (mentoriaFolder === 'mentoria_contexto_general') {
+          formattedTitle = 'Mentoría Contexto General';
+          topic = 'Análisis de Mercado';
+        } else if (mentoriaFolder === 'mentoria_de_refuerzos') {
+          formattedTitle = 'Mentoría de Refuerzos';
+          topic = 'Conceptos Clave';
+        } else if (mentoriaFolder.includes('mentoria_medias_moviles')) {
+          formattedTitle = 'Mentoría Medias Móviles';
+          topic = 'Análisis Técnico';
+        } else if (mentoriaFolder.includes('mentoria_para_manejar_cuentas')) {
+          const num = mentoriaFolder.includes('_2') ? ' 2' : '';
+          formattedTitle = `Mentoría Manejo de Cuentas${num}`;
+          topic = 'Risk Management';
+        } else if (mentoriaFolder.includes('mentoria_preguntas_respuestas')) {
+          formattedTitle = 'Mentoría Preguntas y Respuestas';
+          topic = 'Q&A Profesional';
         } else {
-          // Default formatting
-          formattedTitle = cleanName
+          // Default formatting - clean up the folder name
+          formattedTitle = mentoriaFolder
+            .replace(/mentoria_/g, 'Mentoría ')
             .replace(/_/g, ' ')
-            .replace(/mentoria/g, '')
             .trim()
             .split(' ')
             .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
+          
+          // If it doesn't start with "Mentoría", add it
+          if (!formattedTitle.startsWith('Mentoría')) {
+            formattedTitle = 'Mentoría ' + formattedTitle;
+          }
+          
           topic = 'Trading Avanzado';
+        }
+        
+        // Determine sort order based on content
+        let sortOrder = 999;
+        if (mentoriaFolder === 'mentoria_1') sortOrder = 1;
+        else if (mentoriaFolder === 'mentoria_2_iwm') sortOrder = 2;
+        else if (mentoriaFolder === 'mentoria_contexto_general') sortOrder = 3;
+        else if (mentoriaFolder === 'mentoria_de_refuerzos') sortOrder = 4;
+        else if (mentoriaFolder.includes('mentoria_entradas_parte')) {
+          const partMatch = /parte_(\d+)/.exec(mentoriaFolder);
+          if (partMatch) {
+            sortOrder = 10 + parseInt(partMatch[1]);
+          }
         }
         
         return {
@@ -99,8 +153,9 @@ export default function MentorshipVideoList() {
           title: formattedTitle,
           topic,
           level: 'Profesional',
+          sortOrder,
         };
-      });
+      }).sort((a, b) => a.sortOrder - b.sortOrder);
     },
   });
 

@@ -221,7 +221,7 @@ export function UnifiedMeetingRoom({
   };
 
   const handleUpgrade = () => {
-    router.push('/products');
+    router.push('/academy/subscription/plans?view=monthly');
   };
 
   if (loading || authLoading) {

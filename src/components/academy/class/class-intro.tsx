@@ -156,7 +156,7 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary">
-              {t('liveRecorded.moreThan100Classes')}
+              {t('liveRecorded.growingLibrary')}
             </Typography>
           </Stack>
 
@@ -366,10 +366,10 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
               </Box>
               <Box>
                 <Typography fontWeight={600} gutterBottom>
-                  {t('liveRecorded.multipleStrategies')}
+                  {t('liveRecorded.multipleApproaches')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {t('liveRecorded.multipleStrategiesDesc')}
+                  {t('liveRecorded.multipleApproachesDesc')}
                 </Typography>
               </Box>
             </Stack>
@@ -381,15 +381,15 @@ export default function ClassIntro({ onStart, ctaText }: ClassIntroProps) {
       <Paper sx={{ p: 4, mb: 6, textAlign: 'center', border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h5" fontWeight={700} mb={3}>
           <Certificate size={28} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-          {t('liveRecorded.learnFromProfessionals')}
+          {t('liveRecorded.learnFromMijailAndCommunity')}
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          {t('liveRecorded.learnFromProfessionalsDesc')}
+          {t('liveRecorded.learnFromMijailAndCommunityDesc')}
         </Typography>
         <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-          <Chip icon={<BookOpen size={16} />} label={t('liveRecorded.10YearsExperience')} variant="outlined" />
-          <Chip icon={<ChartLine size={16} />} label={t('liveRecorded.thousandsSuccessfulTrades')} variant="outlined" />
-          <Chip icon={<Users size={16} />} label={t('liveRecorded.hundredsStudents')} variant="outlined" />
+          <Chip icon={<BookOpen size={16} />} label={t('liveRecorded.expertMentor')} variant="outlined" />
+          <Chip icon={<ChartLine size={16} />} label={t('liveRecorded.realExperience')} variant="outlined" />
+          <Chip icon={<Users size={16} />} label={t('liveRecorded.activeCommunitySupport')} variant="outlined" />
         </Stack>
       </Paper>
 

@@ -1,24 +1,32 @@
 'use client';
 
-import * as React from 'react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+
+// Navigation and Footer
+import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
+
+// DayTradeDak Accurate Components
+import { DayTradeDakHero } from '@/components/landing/daytradedak-hero';
+import { DayTradeDakServices } from '@/components/landing/daytradedak-services';
+import { DayTradeDakLiveClasses } from '@/components/landing/daytradedak-live-classes';
+import { DayTradeDakPricingV2 } from '@/components/landing/daytradedak-pricing-v2';
+// import { DayTradeDakTestimonials } from '@/components/landing/daytradedak-testimonials'; // Hidden for now
+import { DayTradeDakCTA } from '@/components/landing/daytradedak-cta';
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Redirect to community-event page
-    router.push('/community-event');
-  }, [router]);
-
-  // Show loading state while redirecting
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirigiendo...</p>
-      </div>
+    <div className="min-h-screen">
+      <MainNavbar />
+      <main>
+        <DayTradeDakHero />
+        <DayTradeDakServices />
+        <DayTradeDakLiveClasses />
+        <DayTradeDakPricingV2 />
+        {/* <DayTradeDakTestimonials /> Hidden for now - will be included later */}
+        <DayTradeDakCTA />
+      </main>
+      <ProfessionalFooter />
     </div>
   );
 }

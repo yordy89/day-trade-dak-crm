@@ -52,15 +52,22 @@ export default function ClasesVideoList() {
   });
   */
 
-  // Extract video name from S3 key
-  const extractVideoName = (key: string): string => {
-    const parts = key.split('/');
+  // Extract video name from S3 key or use title from API
+  const extractVideoName = (video: VideoMetadata & { title?: string }): string => {
+    // Use the title from API if available
+    if (video.title) {
+      return video.title;
+    }
+    
+    // Fallback to extracting from key
+    const parts = video.key.split('/');
     const filename = parts[parts.length - 1];
     // Remove file extension
-    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-    // Replace underscores with spaces and capitalize words
+    const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg|m3u8)$/i, '');
+    // Replace underscores with spaces, clean up "clase" word, and capitalize
     return nameWithoutExt
       .replace(/_/g, ' ')
+      .replace(/clase/gi, 'Clase')
       .replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
@@ -263,7 +270,7 @@ export default function ClasesVideoList() {
                             color: 'text.primary',
                           }}
                         >
-                          {t('classes.lessons')} {index + 1}: {extractVideoName(video.key)}
+                          {extractVideoName(video)}
                         </Typography>
                         {/* TODO: Show completion status when progress tracking is implemented
                         {video.completed && (

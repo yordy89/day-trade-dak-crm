@@ -1,37 +1,38 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container, Chip } from '@mui/material';
-import Link from 'next/link';
+import { Box, Container, Typography, Button, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
 import MuiLink from '@mui/material/Link';
+import Link from 'next/link';
 import { 
   Email, 
   Phone, 
-  AccessTime,
   Facebook,
   Twitter,
   Instagram,
   LinkedIn,
   YouTube,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  AccessTime
 } from '@mui/icons-material';
 import { SiTiktok } from 'react-icons/si';
 import { useTheme } from '@/components/theme/theme-provider';
-import { useTranslation } from 'react-i18next';
 import { useSettings } from '@/services/api/settings.service';
 
 export function TopBar() {
-  const _theme = useTheme();
-  const { t } = useTranslation();
+  const { } = useTheme();
+  const muiTheme = useMuiTheme();
   const { data: settings } = useSettings();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
   const [currentTime, setCurrentTime] = useState(new Date());
   const [marketOpen, setMarketOpen] = useState(false);
   const [marketData] = useState({
     index: 'DAK Index',
     value: 247.83,
     change: 1.91,
-    changePercent: 0.78
+    changePercent: 0.78,
+    isPositive: true
   });
 
   useEffect(() => {
@@ -39,23 +40,24 @@ export function TopBar() {
       const now = new Date();
       setCurrentTime(now);
       
-      // Check if market is open (9:30 AM - 4:00 PM EST)
+      // Check if market is open (9:30 AM - 4:00 PM EST, Monday-Friday)
       const hours = now.getUTCHours() - 5; // Convert to EST
       const minutes = now.getUTCMinutes();
       const time = hours * 100 + minutes;
-      setMarketOpen(time >= 930 && time < 1600 && now.getDay() > 0 && now.getDay() < 6);
+      const dayOfWeek = now.getDay();
+      setMarketOpen(time >= 930 && time < 1600 && dayOfWeek > 0 && dayOfWeek < 6);
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
 
   const formatTime = (date: Date) => {
-    return `${date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
       timeZone: 'America/New_York'
-    })} EST`;
+    }) + ' EST';
   };
 
   const socialLinks = React.useMemo(() => {
@@ -96,13 +98,16 @@ export function TopBar() {
     return links;
   }, [settings]);
 
-  return (
-    <Box
+  // Mobile version - simplified
+  if (isMobile) {
+    return (
+      <Box
         sx={{
           backgroundColor: '#0a0a0a',
-          color: 'white',
+          color: 'rgba(255, 255, 255, 0.8)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          fontSize: '0.8rem',
+          fontSize: '0.7rem',
+          height: 32,
         }}
       >
         <Container maxWidth={false}>
@@ -111,222 +116,310 @@ export function TopBar() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              height: 36,
-              px: 2,
+              height: 32,
+              px: 1,
             }}
           >
-            {/* Left Section - Market Info */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {/* Market Status */}
+            {/* Left - Market Status */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: 0.5,
-                borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-                pr: 2,
               }}>
                 <Box sx={{ 
-                  width: 6, 
-                  height: 6, 
+                  width: 5, 
+                  height: 5, 
                   borderRadius: '50%',
-                  backgroundColor: marketOpen ? '#10b981' : '#ef4444',
+                  backgroundColor: marketOpen ? '#10b981' : '#6b7280',
                   animation: marketOpen ? 'pulse 2s infinite' : 'none',
+                  '@keyframes pulse': {
+                    '0%, 100%': { opacity: 1 },
+                    '50%': { opacity: 0.5 },
+                  },
                 }} />
+                <Typography variant="caption" sx={{ 
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}>
+                  MERCADO: {marketOpen ? 'ABIERTO' : 'CERRADO'}
+                </Typography>
+              </Box>
+
+              {/* Market Data */}
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.5,
+              }}>
+                <Typography variant="caption" sx={{ 
+                  fontSize: '0.65rem',
+                  opacity: 0.7,
+                }}>
+                  DAK:
+                </Typography>
+                <Typography variant="caption" sx={{ 
+                  fontSize: '0.7rem',
+                  fontWeight: 600,
+                }}>
+                  ${marketData.value.toFixed(0)}
+                </Typography>
                 <Typography
                   variant="caption"
                   sx={{
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  {t('topBar.market')}: {marketOpen ? t('topBar.open') : t('topBar.closed')}
-                </Typography>
-              </Box>
-
-              {/* Market Index */}
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1,
-                borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-                pr: 2,
-              }}>
-                <Typography variant="caption" sx={{ 
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '0.75rem',
-                }}>
-                  {marketData.index}:
-                </Typography>
-                <Typography variant="caption" sx={{ 
-                  fontWeight: 600,
-                  fontSize: '0.8rem',
-                }}>
-                  ${marketData.value.toFixed(2)}
-                </Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 0.25,
-                  px: 0.75,
-                  py: 0.25,
-                  borderRadius: 0.5,
-                  backgroundColor: marketData.change > 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                }}>
-                  {marketData.change > 0 ? (
-                    <TrendingUp sx={{ fontSize: 12, color: '#10b981' }} />
-                  ) : (
-                    <TrendingDown sx={{ fontSize: 12, color: '#ef4444' }} />
-                  )}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: marketData.change > 0 ? '#10b981' : '#ef4444',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    {marketData.change > 0 ? '+' : ''}{marketData.change.toFixed(2)} ({marketData.changePercent.toFixed(2)}%)
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Live Updates Button */}
-              <Link href="/live" style={{ textDecoration: 'none' }}>
-                <Chip
-                  label={t('topBar.liveUpdates')}
-                  size="small"
-                  sx={{
-                    height: 22,
-                    fontSize: '0.7rem',
+                    color: marketData.isPositive ? '#10b981' : '#ef4444',
                     fontWeight: 600,
-                    backgroundColor: '#10b981',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: '#059669',
-                    },
-                    cursor: 'pointer',
-                    '& .MuiChip-label': {
-                      px: 1.5,
-                    },
-                  }}
-                />
-              </Link>
-            </Box>
-
-            {/* Center Section - Social Media */}
-            <Box sx={{ 
-              display: { xs: 'none', lg: 'flex' }, 
-              alignItems: 'center', 
-              gap: 0,
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
-            }}>
-              {socialLinks.map((social, index) => (
-                <React.Fragment key={social.label}>
-                  <MuiLink
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      p: 0.5,
-                      transition: 'all 0.2s',
-                      '&:hover': {
-                        color: 'white',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      },
-                    }}
-                    aria-label={social.label}
-                  >
-                    {social.icon}
-                  </MuiLink>
-                  {index < socialLinks.length - 1 && (
-                    <Box sx={{ 
-                      width: '1px', 
-                      height: 14, 
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      mx: 0.5,
-                    }} />
-                  )}
-                </React.Fragment>
-              ))}
-            </Box>
-
-            {/* Right Section - Contact Info and Time */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-              {/* Email */}
-              <Box sx={{ 
-                display: { xs: 'none', md: 'flex' }, 
-                alignItems: 'center', 
-                gap: 0.5,
-                borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-                pr: 2,
-                mr: 2,
-              }}>
-                <Email sx={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.5)' }} />
-                <MuiLink
-                  href={`mailto:${settings?.contact?.contact_email || 'support@daytradedk.com'}`}
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    textDecoration: 'none',
-                    fontSize: '0.75rem',
-                    transition: 'color 0.2s',
-                    '&:hover': {
-                      color: 'white',
-                      textDecoration: 'underline',
-                    },
+                    fontSize: '0.65rem',
                   }}
                 >
-                  {settings?.contact?.contact_email || 'support@daytradedk.com'}
-                </MuiLink>
-              </Box>
-
-              {/* Phone */}
-              <Box sx={{ 
-                display: { xs: 'none', lg: 'flex' }, 
-                alignItems: 'center', 
-                gap: 0.5,
-                borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-                pr: 2,
-                mr: 2,
-              }}>
-                <Phone sx={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.5)' }} />
-                <MuiLink
-                  href={`tel:${settings?.contact?.contact_phone?.replace(/[^0-9+]/g, '') || '+17274861603'}`}
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    textDecoration: 'none',
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    transition: 'color 0.2s',
-                    '&:hover': {
-                      color: 'white',
-                    },
-                  }}
-                >
-                  {settings?.contact?.contact_phone || '+1 (727) 486 1603'}
-                </MuiLink>
-              </Box>
-
-              {/* Current Time */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <AccessTime sx={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.5)' }} />
-                <Typography variant="caption" sx={{ 
-                  fontSize: '0.75rem',
-                  fontWeight: 500,
-                  color: 'rgba(255, 255, 255, 0.7)',
-                }}>
-                  {formatTime(currentTime)}
+                  {marketData.isPositive ? '+' : ''}{marketData.changePercent}%
                 </Typography>
               </Box>
             </Box>
+
+            {/* Right - Live Button */}
+            <Link href="/live" style={{ textDecoration: 'none' }}>
+              <Button
+                size="small"
+                sx={{
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  fontSize: '0.6rem',
+                  fontWeight: 600,
+                  px: 1,
+                  py: 0.25,
+                  minHeight: 'auto',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: '#059669',
+                  },
+                }}
+              >
+                Actualizaciones
+                en Vivo
+              </Button>
+            </Link>
           </Box>
         </Container>
       </Box>
+    );
+  }
+
+  // Desktop version - full featured
+  return (
+    <Box
+      sx={{
+        backgroundColor: '#0a0a0a',
+        color: 'rgba(255, 255, 255, 0.8)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        fontSize: '0.75rem',
+        height: 36,
+      }}
+    >
+      <Container maxWidth={false}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            height: 36,
+            px: 2,
+          }}
+        >
+          {/* Left Section - Market Status and Contact */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Market Status Indicator */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 0.5,
+            }}>
+              <Box sx={{ 
+                width: 6, 
+                height: 6, 
+                borderRadius: '50%',
+                backgroundColor: marketOpen ? '#10b981' : '#6b7280',
+                animation: marketOpen ? 'pulse 2s infinite' : 'none',
+                '@keyframes pulse': {
+                  '0%, 100%': { opacity: 1 },
+                  '50%': { opacity: 0.5 },
+                },
+              }} />
+              <Typography variant="caption" sx={{ 
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                MERCADO: {marketOpen ? 'ABIERTO' : 'CERRADO'}
+              </Typography>
+            </Box>
+
+            {/* Market Index */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              px: 1.5,
+              borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRight: '1px solid rgba(255, 255, 255, 0.2)',
+            }}>
+              <Typography variant="caption" sx={{ 
+                fontSize: '0.7rem',
+                opacity: 0.7,
+              }}>
+                {marketData.index}:
+              </Typography>
+              <Typography variant="caption" sx={{ 
+                fontSize: '0.75rem',
+                fontWeight: 600,
+              }}>
+                ${marketData.value.toFixed(2)}
+              </Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.25,
+              }}>
+                {marketData.isPositive ? (
+                  <TrendingUp sx={{ fontSize: 12, color: '#10b981' }} />
+                ) : (
+                  <TrendingDown sx={{ fontSize: 12, color: '#ef4444' }} />
+                )}
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: marketData.isPositive ? '#10b981' : '#ef4444',
+                    fontWeight: 600,
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  {marketData.isPositive ? '+' : ''}{marketData.change} ({marketData.changePercent}%)
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Live Updates Button */}
+            <Link href="/live" style={{ textDecoration: 'none' }}>
+              <Button
+                size="small"
+                sx={{
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  px: 1.5,
+                  py: 0.5,
+                  minHeight: 'auto',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: '#059669',
+                  },
+                }}
+              >
+                Actualizaciones en Vivo
+              </Button>
+            </Link>
+          </Box>
+
+          {/* Center Section - Social Media Icons */}
+          <Box sx={{ 
+            display: { xs: 'none', lg: 'flex' }, 
+            alignItems: 'center', 
+            gap: 1,
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}>
+            {socialLinks.map((social) => (
+              <MuiLink
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    color: 'white',
+                    transform: 'translateY(-2px)',
+                  },
+                }}
+                aria-label={social.label}
+              >
+                {social.icon}
+              </MuiLink>
+            ))}
+          </Box>
+
+          {/* Right Section - Contact Info and Time */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Email */}
+            <Box sx={{ 
+              display: { xs: 'none', md: 'flex' }, 
+              alignItems: 'center', 
+              gap: 0.5,
+            }}>
+              <Email sx={{ fontSize: 12, opacity: 0.5 }} />
+              <MuiLink
+                href={`mailto:${settings?.contact?.contact_email || 'support@daytradedak.com'}`}
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  textDecoration: 'none',
+                  fontSize: '0.7rem',
+                  '&:hover': {
+                    color: 'white',
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                {settings?.contact?.contact_email || 'support@daytradedak.com'}
+              </MuiLink>
+            </Box>
+
+            {/* Phone */}
+            <Box sx={{ 
+              display: { xs: 'none', lg: 'flex' }, 
+              alignItems: 'center', 
+              gap: 0.5,
+              px: 2,
+              borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRight: '1px solid rgba(255, 255, 255, 0.2)',
+            }}>
+              <Phone sx={{ fontSize: 12, opacity: 0.5 }} />
+              <MuiLink
+                href={`tel:${settings?.contact?.contact_phone?.replace(/[^0-9+]/g, '') || '+17863551346'}`}
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  textDecoration: 'none',
+                  fontSize: '0.7rem',
+                  fontWeight: 500,
+                  '&:hover': {
+                    color: 'white',
+                  },
+                }}
+              >
+                {settings?.contact?.contact_phone || '+1 (786) 355-1346'}
+              </MuiLink>
+            </Box>
+
+            {/* Current Time */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <AccessTime sx={{ fontSize: 12, opacity: 0.5 }} />
+              <Typography variant="caption" sx={{ 
+                fontSize: '0.7rem',
+                fontWeight: 500,
+                color: 'rgba(255, 255, 255, 0.7)',
+              }}>
+                {formatTime(currentTime)}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 }

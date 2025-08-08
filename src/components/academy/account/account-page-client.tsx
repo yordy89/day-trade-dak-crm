@@ -25,6 +25,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
+  Alert,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Camera,
@@ -72,17 +75,32 @@ function TabPanel(props: TabPanelProps) {
 export function AccountPageClient(): React.JSX.Element {
   const theme = useTheme();
   const _isDarkMode = theme.palette.mode === 'dark';
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { user } = useClientAuth();
   const setUser = useAuthStore.getState().setUser;
   const queryClient = useQueryClient();
   const { t } = useTranslation('academy');
+  const [mounted, setMounted] = React.useState(false);
   
   const [tabValue, setTabValue] = React.useState(0);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
   const [isEditing, setIsEditing] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [selectedPlan, setSelectedPlan] = React.useState<string | null>(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = React.useState(false);
+  const [snackbar, setSnackbar] = React.useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'warning' | 'info';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
   
   // Form state
   const [formData, setFormData] = React.useState({
@@ -145,6 +163,38 @@ export function AccountPageClient(): React.JSX.Element {
     },
   });
 
+  // Update password mutation
+  const updatePasswordMutation = useMutation({
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+      const response = await API.put('/auth/update-password', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Clear password fields
+      setFormData({
+        ...formData,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      // Show success message
+      setSnackbar({
+        open: true,
+        message: t('account.passwordUpdatedSuccessfully'),
+        severity: 'success',
+      });
+    },
+    onError: (error: any) => {
+      // Show error message
+      const errorMessage = error.response?.data?.message || t('account.passwordUpdateError');
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: 'error',
+      });
+    },
+  });
+
   // Handle file upload
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
@@ -177,6 +227,42 @@ export function AccountPageClient(): React.JSX.Element {
       lastName: formData.lastName,
       phone: formData.phone,
       address: formData.address,
+    });
+  };
+
+  const handleUpdatePassword = () => {
+    // Validate password fields
+    if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+      setSnackbar({
+        open: true,
+        message: t('account.pleaseFillAllFields'),
+        severity: 'warning',
+      });
+      return;
+    }
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      setSnackbar({
+        open: true,
+        message: t('account.passwordsDoNotMatch'),
+        severity: 'warning',
+      });
+      return;
+    }
+
+    if (formData.newPassword.length < 6) {
+      setSnackbar({
+        open: true,
+        message: t('account.passwordTooShort'),
+        severity: 'warning',
+      });
+      return;
+    }
+
+    // Submit password change
+    updatePasswordMutation.mutate({
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
     });
   };
 
@@ -394,52 +480,130 @@ export function AccountPageClient(): React.JSX.Element {
       </Paper>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3, borderRadius: 2 }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Stack 
-            direction="row" 
-            spacing={0}
-            sx={{ 
-              overflowX: 'auto',
-              '&::-webkit-scrollbar': { display: 'none' },
-              scrollbarWidth: 'none',
-            }}
-          >
-            {[
-              { icon: <User size={20} />, label: t('account.personalInfo') },
-              { icon: <CreditCard size={20} />, label: t('navigation.subscriptions') },
-              { icon: <LockKey size={20} />, label: t('settings.privacy.title') },
-              { icon: <Bell size={20} />, label: t('settings.notifications.title') },
-            ].map((tab, index) => (
-              <Button
-                key={tab.label}
-                onClick={() => setTabValue(index)}
-                sx={{
-                  minHeight: 64,
-                  px: 3,
-                  borderRadius: 0,
-                  borderBottom: '3px solid',
-                  borderBottomColor: tabValue === index ? 'primary.main' : 'transparent',
-                  color: tabValue === index ? 'primary.main' : 'text.secondary',
-                  fontWeight: tabValue === index ? 600 : 500,
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
+      {mounted && (
+        <Paper sx={{ mb: 3, borderRadius: 2 }}>
+          {isMobile ? (
+            /* Mobile Tabs - Using simple buttons to avoid Tabs component issues */
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Stack 
+                direction="row" 
+                spacing={0}
+                sx={{ 
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  '&::-webkit-scrollbar': { 
+                    height: '4px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    bgcolor: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                    borderRadius: '2px',
                   },
                 }}
-                startIcon={tab.icon}
               >
-                {tab.label}
-              </Button>
-            ))}
-          </Stack>
-        </Box>
-      </Paper>
+                {[
+                  { icon: <User size={18} />, label: t('academy:account.info') },
+                  { icon: <CreditCard size={18} />, label: t('academy:navigation.subscriptions') },
+                  { icon: <LockKey size={18} />, label: t('academy:settings.privacy.short') },
+                  { icon: <Bell size={18} />, label: t('academy:settings.notifications.short') },
+                ].map((tab, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => setTabValue(index)}
+                    sx={{
+                      minHeight: 56,
+                      px: 2,
+                      minWidth: 'auto',
+                      flexShrink: 0,
+                      borderRadius: 0,
+                      borderBottom: '3px solid',
+                      borderBottomColor: tabValue === index ? 'primary.main' : 'transparent',
+                      color: tabValue === index ? 'primary.main' : 'text.secondary',
+                      fontWeight: tabValue === index ? 600 : 500,
+                      textTransform: 'none',
+                      whiteSpace: 'nowrap',
+                      fontSize: '0.875rem',
+                      '&:hover': {
+                        bgcolor: 'action.hover',
+                      },
+                      '& .MuiButton-startIcon': {
+                        marginRight: 0.5,
+                        marginLeft: 0,
+                      },
+                    }}
+                    startIcon={tab.icon}
+                  >
+                    {tab.label}
+                  </Button>
+                ))}
+              </Stack>
+            </Box>
+          ) : (
+          /* Desktop Tabs using Buttons */
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Stack 
+              direction="row" 
+              spacing={0}
+              sx={{ 
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                '&::-webkit-scrollbar': { 
+                  height: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  bgcolor: 'transparent',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                  borderRadius: '2px',
+                  '&:hover': {
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
+                  },
+                },
+              }}
+            >
+              {[
+                { icon: <User size={20} />, label: t('academy:account.personalInfo') },
+                { icon: <CreditCard size={20} />, label: t('academy:navigation.subscriptions') },
+                { icon: <LockKey size={20} />, label: t('academy:settings.privacy.title') },
+                { icon: <Bell size={20} />, label: t('academy:settings.notifications.title') },
+              ].map((tab, index) => (
+                <Button
+                  key={tab.label}
+                  onClick={() => setTabValue(index)}
+                  sx={{
+                    minHeight: 64,
+                    px: 3,
+                    minWidth: 'auto',
+                    flexShrink: 0,
+                    borderRadius: 0,
+                    borderBottom: '3px solid',
+                    borderBottomColor: tabValue === index ? 'primary.main' : 'transparent',
+                    color: tabValue === index ? 'primary.main' : 'text.secondary',
+                    fontWeight: tabValue === index ? 600 : 500,
+                    textTransform: 'none',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                  startIcon={tab.icon}
+                >
+                  {tab.label}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
+          )}
+        </Paper>
+      )}
 
       {/* Tab Panels */}
       <TabPanel value={tabValue} index={0}>
         <Card>
-          <CardContent sx={{ p: 4 }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
               <Typography variant="h6" fontWeight={600}>
                 {t('account.personalInfo')}
@@ -454,8 +618,8 @@ export function AccountPageClient(): React.JSX.Element {
               </Button>
             </Stack>
 
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label={t('account.firstName')}
@@ -502,7 +666,7 @@ export function AccountPageClient(): React.JSX.Element {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label={t('account.lastName')}
@@ -549,7 +713,7 @@ export function AccountPageClient(): React.JSX.Element {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label={t('account.email')}
@@ -595,7 +759,7 @@ export function AccountPageClient(): React.JSX.Element {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label={t('account.phone')}
@@ -717,7 +881,7 @@ export function AccountPageClient(): React.JSX.Element {
               });
 
               return activeSubscriptions.length > 0 ? (
-                <Grid container spacing={2}>
+                <Grid container spacing={{ xs: 2, sm: 2 }}>
                   {activeSubscriptions.map((subscription: any) => {
                     const plan = typeof subscription === 'string' ? subscription : subscription.plan;
                     const expiresAt = typeof subscription === 'object' ? subscription.expiresAt : null;
@@ -735,7 +899,7 @@ export function AccountPageClient(): React.JSX.Element {
                     ].includes(plan as SubscriptionPlan);
                     
                     return (
-                    <Grid item xs={12} md={6} key={plan}>
+                    <Grid item xs={12} lg={6} key={plan}>
                       <Card
                         sx={{
                           border: '2px solid',
@@ -760,7 +924,7 @@ export function AccountPageClient(): React.JSX.Element {
                         >
                           {t('account.active')}
                         </Box>
-                        <CardContent sx={{ p: 3 }}>
+                        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
                             <Crown size={32} weight="duotone" color={theme.palette.warning.main} />
                             <Box>
@@ -916,7 +1080,7 @@ export function AccountPageClient(): React.JSX.Element {
                     
                     return (
                       <Card key={`expired-${plan}`} sx={{ opacity: 0.7 }}>
-                        <CardContent sx={{ p: 2 }}>
+                        <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Stack direction="row" spacing={2} alignItems="center">
                               <Clock size={24} weight="duotone" color={theme.palette.grey[500]} />
@@ -949,11 +1113,11 @@ export function AccountPageClient(): React.JSX.Element {
 
       <TabPanel value={tabValue} index={2}>
         <Card>
-          <CardContent sx={{ p: 4 }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Typography variant="h6" fontWeight={600} mb={3}>
               {t('account.changePassword')}
             </Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -1001,7 +1165,7 @@ export function AccountPageClient(): React.JSX.Element {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   type={showPassword ? 'text' : 'password'}
@@ -1055,7 +1219,7 @@ export function AccountPageClient(): React.JSX.Element {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   type="password"
@@ -1106,6 +1270,8 @@ export function AccountPageClient(): React.JSX.Element {
                 <Button 
                   variant="contained" 
                   size="large"
+                  onClick={handleUpdatePassword}
+                  disabled={updatePasswordMutation.isPending}
                   sx={{
                     py: 1.5,
                     px: 4,
@@ -1118,7 +1284,7 @@ export function AccountPageClient(): React.JSX.Element {
                     },
                   }}
                 >
-                  {t('account.updatePassword')}
+                  {updatePasswordMutation.isPending ? t('common.loading') : t('account.updatePassword')}
                 </Button>
               </Grid>
             </Grid>
@@ -1128,7 +1294,7 @@ export function AccountPageClient(): React.JSX.Element {
 
       <TabPanel value={tabValue} index={3}>
         <Card>
-          <CardContent sx={{ p: 4 }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Typography variant="h6" fontWeight={600} mb={3}>
               Preferencias de Notificaciones
             </Typography>
@@ -1190,6 +1356,22 @@ export function AccountPageClient(): React.JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

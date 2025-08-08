@@ -578,7 +578,8 @@
         "passwordRequired": "Password must be at least 6 characters",
         "termsRequired": "You must accept the terms and conditions",
         "signupFailed": "Sign-up failed"
-      }
+      },
+      "success": "Account created successfully! Please sign in to continue."
     },
     "layout": {
       "startJourney": {

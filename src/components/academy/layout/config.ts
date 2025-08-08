@@ -4,6 +4,7 @@ import { paths } from '@/paths';
 import type { TFunction } from 'i18next';
 
 export const getNavItems = (t: TFunction): NavItemConfig[] => [
+  { id: 'home', title: t('academy:navigation.home'), href: paths.home, icon: 'house' },
   { id: 'overview', title: t('academy:navigation.dashboard'), href: paths.academy.overview, icon: 'chart-pie' },
   { 
     id: 'courses', 

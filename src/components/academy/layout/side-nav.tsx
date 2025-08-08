@@ -4,15 +4,33 @@ import * as React from 'react';
 import RouterLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useClientAuth } from '@/hooks/use-client-auth';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Chip from '@mui/material/Chip';
-import { alpha , useTheme as useMuiTheme } from '@mui/material/styles';
-import { CaretDown, CaretUp, Crown, Lightning } from '@phosphor-icons/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  Typography,
+  Paper,
+  Chip,
+  IconButton,
+  useMediaQuery,
+  Collapse,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import { SafeDrawer } from '@/components/ui/safe-drawer';
+import { alpha, useTheme as useMuiTheme } from '@mui/material/styles';
+import { 
+  CaretDown, 
+  CaretUp, 
+  Crown, 
+  Lightning,
+  List as MenuIcon,
+  X as CloseIcon 
+} from '@phosphor-icons/react';
 
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
@@ -22,175 +40,91 @@ import { navIcons } from './nav-icons';
 import { Role } from '@/types/user';
 import { useTranslation } from 'react-i18next';
 
+// Export the context and provider for mobile menu state
+export const MobileMenuContext = React.createContext<{
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+}>({
+  mobileOpen: false,
+  setMobileOpen: () => {},
+});
+
+export function useMobileMenu() {
+  return React.useContext(MobileMenuContext);
+}
+
 export function SideNav(): React.JSX.Element {
   const pathname = usePathname();
   const theme = useMuiTheme();
   const isDarkMode = theme.palette.mode === 'dark';
   const { t } = useTranslation('academy');
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   // Use auth hook for stable values
   const { userSubscriptions, userRole } = useClientAuth();
 
-  return (
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  // Provide the mobile menu state to children
+  React.useEffect(() => {
+    // @ts-ignore
+    if (window.toggleAcademyMobileMenu) {
+      // @ts-ignore
+      window.toggleAcademyMobileMenu = handleDrawerToggle;
+    }
+  }, [mobileOpen]);
+
+  // Add global function for toggling menu
+  React.useEffect(() => {
+    // @ts-ignore
+    window.toggleAcademyMobileMenu = () => {
+      setMobileOpen(prev => !prev);
+    };
+    
+    return () => {
+      // @ts-ignore
+      delete window.toggleAcademyMobileMenu;
+    };
+  }, []);
+
+  const sidebarContent = (
     <Box
       sx={{
-        '--NavItem-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[300] : muiTheme.palette.grey[700],
-        '--NavItem-hover-background': (muiTheme) => muiTheme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-        '--NavItem-active-background': () => alpha(theme.palette.primary.main, 0.12),
-        '--NavItem-active-color': 'var(--mui-palette-primary-main)',
-        '--NavItem-disabled-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[600] : muiTheme.palette.grey[400],
-        '--NavItem-icon-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[400] : muiTheme.palette.grey[600],
-        '--NavItem-icon-active-color': 'var(--mui-palette-primary-main)',
-        '--NavItem-icon-disabled-color': (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[700] : muiTheme.palette.grey[400],
-        bgcolor: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-        borderRight: '1px solid',
-        borderColor: 'divider',
-        color: 'text.primary',
-        display: { xs: 'none', lg: 'flex' },
+        display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        left: 0,
-        maxWidth: '100%',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        top: 0,
-        width: 'var(--SideNav-width)',
-        zIndex: 'var(--SideNav-zIndex)',
-        '&::-webkit-scrollbar': { display: 'none' },
-        boxShadow: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.shadows[8] : muiTheme.shadows[1],
-        overflow: 'hidden',
+        bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+        borderRight: '1px solid',
+        borderColor: 'divider',
       }}
     >
-      {/* Floating Stock Symbols Background Effect */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: 'none',
-          overflow: 'hidden',
+      {/* Logo Section */}
+      <Box 
+        sx={{ 
+          p: 3, 
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
         }}
       >
-        {/* Floating Symbols */}
-        {['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT', 'SPY', 'QQQ', 'BTC'].map((symbol) => (
-          <Typography
-            key={symbol}
-            sx={{
-              position: 'absolute',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: theme.palette.text.primary,
-              opacity: isDarkMode ? 0.06 : 0.04,
-              top: `${15 + (symbol.charCodeAt(0) % 8 * 12)}%`,
-              left: symbol.charCodeAt(0) % 2 === 0 ? '15%' : '65%',
-              animation: `float${symbol.charCodeAt(0) % 3} ${20 + symbol.charCodeAt(0) % 10 * 2}s ease-in-out infinite`,
-              '@keyframes float0': {
-                '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
-                '33%': { transform: 'translateY(-10px) translateX(5px)' },
-                '66%': { transform: 'translateY(5px) translateX(-5px)' },
-              },
-              '@keyframes float1': {
-                '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
-                '33%': { transform: 'translateY(10px) translateX(-5px)' },
-                '66%': { transform: 'translateY(-5px) translateX(5px)' },
-              },
-              '@keyframes float2': {
-                '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
-                '33%': { transform: 'translateY(-5px) translateX(-5px)' },
-                '66%': { transform: 'translateY(10px) translateX(5px)' },
-              },
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Box 
+            component={RouterLink} 
+            href={paths.home} 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              textDecoration: 'none',
             }}
           >
-            {symbol}
-          </Typography>
-        ))}
-        
-        {/* Price Changes */}
-        {['+2.4%', '-1.2%', '+0.8%', '+3.1%', '-0.5%'].map((change) => (
-          <Typography
-            key={change}
-            sx={{
-              position: 'absolute',
-              fontSize: '10px',
-              fontWeight: 500,
-              color: change.startsWith('+') ? theme.palette.success.main : theme.palette.error.main,
-              opacity: isDarkMode ? 0.08 : 0.06,
-              top: `${25 + (change.charCodeAt(0) % 5 * 15)}%`,
-              right: '20%',
-              animation: `drift${change.charCodeAt(0) % 2} ${25 + change.charCodeAt(0) % 10 * 3}s ease-in-out infinite`,
-              '@keyframes drift0': {
-                '0%, 100%': { transform: 'translateX(0px)' },
-                '50%': { transform: 'translateX(-10px)' },
-              },
-              '@keyframes drift1': {
-                '0%, 100%': { transform: 'translateX(0px)' },
-                '50%': { transform: 'translateX(10px)' },
-              },
-            }}
-          >
-            {change}
-          </Typography>
-        ))}
-        
-        {/* Candlesticks */}
-        {[
-          { type: 'green', top: '40%', left: '45%' },
-          { type: 'red', top: '70%', left: '30%' },
-          { type: 'green', top: '85%', left: '70%' },
-          { type: 'red', top: '20%', left: '85%' },
-        ].map((candle) => (
-          <Box
-            key={`${candle.type}-${candle.top}-${candle.left}`}
-            sx={{
-              position: 'absolute',
-              top: candle.top,
-              left: candle.left,
-              opacity: isDarkMode ? 0.06 : 0.04,
-              animation: `float${candle.top.charCodeAt(0) % 3} ${30 + candle.top.charCodeAt(0) % 10 * 4}s ease-in-out infinite`,
-            }}
-          >
-            {/* Wick */}
-            <Box
-              sx={{
-                width: '1px',
-                height: '20px',
-                bgcolor: candle.type === 'green' ? theme.palette.success.main : theme.palette.error.main,
-                margin: '0 auto',
-              }}
-            />
-            {/* Body */}
-            <Box
-              sx={{
-                width: '8px',
-                height: '12px',
-                bgcolor: candle.type === 'green' ? theme.palette.success.main : theme.palette.error.main,
-                mt: '-16px',
-                borderRadius: '1px',
-              }}
-            />
-          </Box>
-        ))}
-      </Box>
-      <Box sx={{ height: 64, display: 'flex', flexDirection: 'column', justifyContent: 'center', px: 3, position: 'relative', zIndex: 1 }}>
-        <Box 
-          component={RouterLink} 
-          href={paths.home} 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            justifyContent: 'center',
-            textDecoration: 'none',
-            mb: 0.5,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography 
               variant="h5" 
               sx={{ 
-                fontWeight: 500,
-                color: isDarkMode ? 'white' : theme.palette.grey[800],
+                fontWeight: 700,
+                color: isDarkMode ? '#ffffff' : '#000000',
                 letterSpacing: '0.02em',
                 fontSize: '1.3rem',
               }}
@@ -204,52 +138,95 @@ export function SideNav(): React.JSX.Element {
                 color: theme.palette.primary.main,
                 letterSpacing: '0.02em',
                 fontSize: '1.3rem',
+                ml: 0.5,
               }}
             >
               DAK
             </Typography>
           </Box>
-        </Box>
-        <Divider sx={{ width: 60, mx: 'auto', borderColor: 'primary.main', opacity: 0.5, mb: 1 }} />
+          {/* Close button for mobile */}
+          {isMobile && (
+            <IconButton
+              onClick={handleDrawerToggle}
+              sx={{
+                color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+              }}
+            >
+              <CloseIcon size={20} />
+            </IconButton>
+          )}
+        </Stack>
         <Typography 
           variant="caption" 
           align="center" 
+          display="block"
           sx={{ 
-            color: 'text.secondary',
+            color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
             letterSpacing: '0.08em',
             fontWeight: 500,
             textTransform: 'uppercase',
             fontSize: '0.7rem',
+            mt: 1,
           }}
         >
           {t('navigation.tradingAcademy')}
         </Typography>
       </Box>
-      <Divider sx={{ borderColor: 'divider', position: 'relative', zIndex: 1 }} />
-      <Box component="nav" sx={{ flex: '1 1 auto', p: '12px', position: 'relative', zIndex: 1 }}>
-        <NavItemList pathname={pathname} userSubscriptions={userSubscriptions} userRole={userRole as Role} t={t} />
+
+      {/* Navigation Items */}
+      <Box 
+        component="nav" 
+        sx={{ 
+          flex: '1 1 auto', 
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          p: 2,
+          bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            bgcolor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            bgcolor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+            borderRadius: '3px',
+            '&:hover': {
+              bgcolor: isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
+            },
+          },
+        }}
+      >
+        <NavItemList 
+          pathname={pathname} 
+          userSubscriptions={userSubscriptions} 
+          userRole={userRole as Role} 
+          t={t}
+          onItemClick={() => isMobile && setMobileOpen(false)}
+        />
       </Box>
-      <Divider sx={{ borderColor: 'divider', opacity: 0.5, position: 'relative', zIndex: 1 }} />
-      <Box sx={{ p: 3, position: 'relative', zIndex: 1 }}>
+
+      {/* Premium Upgrade Section */}
+      <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff' }}>
         <Paper
+          elevation={0}
           sx={{
-            p: 2.5,
-            background: (muiTheme) => 
-              muiTheme.palette.mode === 'dark'
-                ? `linear-gradient(135deg, ${alpha(muiTheme.palette.primary.dark, 0.2)} 0%, ${alpha(muiTheme.palette.primary.main, 0.1)} 100%)`
-                : `linear-gradient(135deg, ${alpha(muiTheme.palette.primary.light, 0.15)} 0%, ${alpha(muiTheme.palette.primary.main, 0.05)} 100%)`,
+            p: 2,
+            background: isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
+              : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
             border: '1px solid',
-            borderColor: () => alpha(theme.palette.primary.main, 0.2),
+            borderColor: alpha(theme.palette.primary.main, 0.2),
           }}
         >
-          <Stack spacing={2}>
+          <Stack spacing={1.5}>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Crown size={24} color="var(--mui-palette-primary-main)" weight="fill" />
-              <Typography variant="subtitle2" fontWeight={600}>
+              <Crown size={20} color={theme.palette.primary.main} weight="fill" />
+              <Typography variant="subtitle2" fontWeight={600} color={isDarkMode ? '#ffffff' : '#000000'}>
                 {t('navigation.becomePremium')}
               </Typography>
             </Stack>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color={isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'}>
               {t('navigation.unlockFeatures')}
             </Typography>
             <Button
@@ -259,12 +236,14 @@ export function SideNav(): React.JSX.Element {
               size="small"
               fullWidth
               startIcon={<Lightning size={16} />}
+              onClick={() => isMobile && setMobileOpen(false)}
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                background: () => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                bgcolor: theme.palette.primary.main,
+                color: '#ffffff',
                 '&:hover': {
-                  background: () => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                  bgcolor: theme.palette.primary.dark,
                 },
               }}
             >
@@ -275,6 +254,64 @@ export function SideNav(): React.JSX.Element {
       </Box>
     </Box>
   );
+
+  // Export the toggle function for external use
+  React.useEffect(() => {
+    // @ts-ignore
+    window.academySidebarToggle = handleDrawerToggle;
+    return () => {
+      // @ts-ignore
+      delete window.academySidebarToggle;
+    };
+  }, []);
+
+  if (isMobile) {
+    return (
+      <SafeDrawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 280,
+            bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+          },
+        }}
+      >
+        {sidebarContent}
+      </SafeDrawer>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: { xs: 'none', lg: 'block' },
+        width: 'var(--SideNav-width)',
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 1200,
+        bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+        boxShadow: theme.shadows[4],
+      }}
+    >
+      {sidebarContent}
+    </Box>
+  );
+}
+
+interface NavItemListProps {
+  pathname: string;
+  userSubscriptions: string[];
+  userRole: Role;
+  t: any;
+  onItemClick?: () => void;
 }
 
 function NavItemList({
@@ -282,19 +319,24 @@ function NavItemList({
   userSubscriptions,
   userRole,
   t,
-}: {
-  pathname: string;
-  userSubscriptions: string[];
-  userRole: Role;
-  t: any;
-}): React.JSX.Element {
+  onItemClick,
+}: NavItemListProps): React.JSX.Element {
+  const theme = useMuiTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const navItems = getNavItems(t);
+  
+  // Filter items based on role and mobile visibility
   const filteredItems = navItems.filter(
-    (item) => !item.requiredRole || item.requiredRole === userRole
+    (item) => {
+      // Filter out home item on desktop
+      if (item.id === 'home' && !isMobile) return false;
+      // Check role requirements
+      return !item.requiredRole || item.requiredRole === userRole;
+    }
   );
 
   return (
-    <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0 }}>
+    <List sx={{ p: 0 }}>
       {filteredItems.map((item) => (
         <NavItem
           key={item.id}
@@ -303,9 +345,10 @@ function NavItemList({
           userSubscriptions={userSubscriptions}
           userRole={userRole}
           items={item.items}
+          onItemClick={onItemClick}
         />
       ))}
-    </Stack>
+    </List>
   );
 }
 
@@ -314,6 +357,7 @@ interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   userSubscriptions: string[];
   userRole: Role;
   items?: NavItemConfig[];
+  onItemClick?: () => void;
 }
 
 function NavItem({
@@ -329,168 +373,137 @@ function NavItem({
   userSubscriptions,
   userRole,
   items,
+  onItemClick,
 }: NavItemProps): React.JSX.Element {
+  const theme = useMuiTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
-  const _isRestricted =
-    requiredSubscription && !userSubscriptions.includes(requiredSubscription) && userRole !== Role.Admin;
   const hasChildren = items && items.length > 0;
   const [open, setOpen] = React.useState(false);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = () => {
     if (hasChildren) {
-      event.preventDefault();
       setOpen(!open);
+    } else if (onItemClick && href) {
+      onItemClick();
     }
   };
 
-  let linkProps = {};
-  if (href && !hasChildren) {
-    if (external) {
-      linkProps = {
-        component: 'a',
-        href,
-        target: '_blank',
-        rel: 'noreferrer',
-      };
-    } else {
-      linkProps = {
-        component: RouterLink,
-        href,
-      };
-    }
-  } else {
-    linkProps = {
-      component: 'span',
-    };
-  }
-
-  return (
-    <li>
-      <Box
-        {...linkProps}
-        onClick={handleClick}
-        sx={{
-          alignItems: 'center',
-          borderRadius: 2,
-          color: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[300] : muiTheme.palette.grey[700],
-          cursor: 'pointer !important',
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 1.5,
-          px: 2,
-          py: 1.5,
-          mx: 1,
-          textDecoration: 'none',
-          transition: 'all 0.2s ease',
-          position: 'relative',
-          '&:hover': {
-            bgcolor: (muiTheme) => muiTheme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-            color: (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[100] : muiTheme.palette.grey[900],
+  const content = (
+    <ListItemButton
+      component={href && !hasChildren ? RouterLink : 'div'}
+      href={href && !hasChildren ? href : undefined}
+      onClick={handleClick}
+      disabled={disabled}
+      sx={{
+        borderRadius: 1,
+        mb: 0.5,
+        color: isDarkMode ? '#ffffff' : '#000000',
+        bgcolor: active 
+          ? alpha(theme.palette.primary.main, isDarkMode ? 0.2 : 0.1)
+          : 'transparent',
+        '&:hover': {
+          bgcolor: active
+            ? alpha(theme.palette.primary.main, isDarkMode ? 0.25 : 0.15)
+            : isDarkMode 
+              ? 'rgba(255,255,255,0.08)' 
+              : 'rgba(0,0,0,0.04)',
+        },
+        '&.Mui-disabled': {
+          opacity: 0.5,
+        },
+        position: 'relative',
+        ...(active && {
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 3,
+            height: '60%',
+            borderRadius: '0 3px 3px 0',
+            bgcolor: theme.palette.primary.main,
           },
-          ...(active && {
-            bgcolor: 'var(--NavItem-active-background)',
-            color: 'var(--NavItem-active-color)',
-            fontWeight: 600,
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              left: -12,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 4,
-              height: '70%',
-              borderRadius: '0 4px 4px 0',
-              bgcolor: 'primary.main',
-            },
-          }),
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {Icon ? (
-            <Box 
+        }),
+      }}
+    >
+      {Icon && (
+        <ListItemIcon 
+          sx={{ 
+            minWidth: 40,
+            color: active 
+              ? theme.palette.primary.main
+              : isDarkMode 
+                ? 'rgba(255,255,255,0.7)' 
+                : 'rgba(0,0,0,0.6)',
+          }}
+        >
+          <Icon size={20} weight={active ? 'fill' : 'regular'} />
+        </ListItemIcon>
+      )}
+      <ListItemText 
+        primary={
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography 
+              variant="body2" 
               sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                flex: '0 0 auto',
+                fontWeight: active ? 600 : 500,
                 color: active 
-                  ? 'primary.main' 
-                  : (muiTheme) => muiTheme.palette.mode === 'dark' ? muiTheme.palette.grey[400] : muiTheme.palette.grey[600],
+                  ? theme.palette.primary.main
+                  : isDarkMode 
+                    ? 'rgba(255,255,255,0.9)' 
+                    : 'rgba(0,0,0,0.8)',
               }}
             >
-              <Icon
-                size={22}
-                weight={active ? 'fill' : 'regular'}
-              />
-            </Box>
-          ) : null }
-          <Typography
-            component="span"
-            sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
-          >
-            {title}
-          </Typography>
-          {badge ? <Chip
-              label={badge}
-              size="small"
-              sx={{
-                ml: 1,
-                height: 20,
-                fontSize: '0.65rem',
-                fontWeight: 700,
-                backgroundColor: 'primary.main',
-                color: 'primary.contrastText',
-                '& .MuiChip-label': {
-                  px: 1,
-                },
-              }}
-            /> : null}
-        </Box>
-
-        {hasChildren ? <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {open ? <CaretUp size={16} weight="bold" /> : <CaretDown size={16} weight="bold" />}
-          </Box> : null}
-      </Box>
-
-      {hasChildren && open ? (
-        <Stack component="ul" spacing={0.5} sx={{ listStyle: 'none', pl: 2, mt: 1, position: 'relative' }}>
-          {items.map((subItem) => (
-            <Box key={subItem.id} sx={{ position: 'relative' }}>
-              <Box
+              {title}
+            </Typography>
+            {badge && (
+              <Chip
+                label={badge}
+                size="small"
                 sx={{
-                  position: 'absolute',
-                  left: 0,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '16px',
-                  height: '1px',
-                  bgcolor: 'divider',
-                  opacity: 0.5,
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    left: 0,
-                    top: -8,
-                    width: '1px',
-                    height: '16px',
-                    bgcolor: 'divider',
-                    opacity: 0.5,
-                  }
+                  height: 18,
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  bgcolor: theme.palette.primary.main,
+                  color: '#ffffff',
                 }}
               />
-              <Box sx={{ pl: 2.5 }}>
-                <NavItem
-                  {...subItem}
-                  pathname={pathname}
-                  userSubscriptions={userSubscriptions}
-                  userRole={userRole}
-                  items={subItem.items}
-                />
-              </Box>
-            </Box>
-          ))}
-        </Stack>
-      ) : null}
-    </li>
+            )}
+          </Box>
+        }
+      />
+      {hasChildren && (
+        <Box sx={{ color: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)' }}>
+          {open ? <CaretUp size={16} /> : <CaretDown size={16} />}
+        </Box>
+      )}
+    </ListItemButton>
   );
+
+  if (hasChildren) {
+    return (
+      <ListItem disablePadding sx={{ display: 'block' }}>
+        {content}
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding sx={{ pl: 4 }}>
+            {items?.map((child) => (
+              <NavItem
+                key={child.id}
+                pathname={pathname}
+                {...child}
+                userSubscriptions={userSubscriptions}
+                userRole={userRole}
+                onItemClick={onItemClick}
+              />
+            ))}
+          </List>
+        </Collapse>
+      </ListItem>
+    );
+  }
+
+  return <ListItem disablePadding>{content}</ListItem>;
 }

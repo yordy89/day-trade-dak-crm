@@ -1,18 +1,22 @@
 {
   "hero": {
-    "badge": "🔥 #1 Trading Education Platform",
-    "title": "Master Trading with",
-    "titleHighlight": "Professional Education",
-    "subtitle": "Join 50,000+ successful traders. Learn proven strategies, get real-time signals, and transform your financial future with expert mentorship.",
+    "badge": "Trading Education Platform",
+    "title": "Master Day Trading with",
+    "titleHighlight": "Professional Guidance",
+    "subtitle": "Join live daily trading sessions, comprehensive courses, and exclusive mentorship programs designed to transform your trading journey.",
     "cta": {
-      "startTrial": "Start Free Trial",
-      "watchDemo": "Watch Demo"
+      "startLearning": "Start Learning Today",
+      "viewMasterCourse": "View Master Course"
     },
     "stats": {
-      "activeStudents": "Active Students",
-      "successRate": "Success Rate",
-      "videoLessons": "Video Lessons",
-      "liveSupport": "Live Support"
+      "videoCourses": "Video Courses",
+      "videoCourses_value": "8+",
+      "liveClasses": "Daily Live Classes",
+      "liveClasses_value": "Daily",
+      "mentorships": "Mentorships",
+      "mentorships_value": "17+",
+      "courseLanguage": "Course Language",
+      "courseLanguage_value": "Spanish"
     },
     "liveMarket": {
       "title": "Live Market Data",
@@ -26,44 +30,165 @@
         "verifiedSignals": "Verified signals",
         "accuracy": "95% accuracy"
       }
+    },
+    "featureCards": {
+      "liveClasses": {
+        "title": "Live Daily Trading Classes",
+        "badge": "MON-FRI",
+        "description": "Join our expert traders every weekday for live market analysis and real-time trading strategies."
+      },
+      "videoLibrary": {
+        "title": "Comprehensive Video Library",
+        "subtitle": "8 Courses + 17 Mentorships",
+        "description": "Access our complete collection of trading courses and personalized mentorship sessions."
+      },
+      "exclusiveEvents": {
+        "title": "Exclusive Events",
+        "badge": "LIMITED SEATS",
+        "description": "Attend master courses and community events for intensive, hands-on trading education."
+      }
     }
   },
   "services": {
-    "label": "WHAT WE OFFER",
+    "label": "OUR SERVICES",
     "title": "Everything You Need to",
-    "titleHighlight": "Succeed",
-    "subtitle": "From education to live trading signals, we provide all the tools and resources you need to become a profitable trader.",
+    "titleHighlight": "Succeed in Trading",
+    "subtitle": "From daily live sessions to comprehensive courses and exclusive events, we provide all the tools and education you need.",
     "items": {
-      "signals": {
-        "title": "Live Trading Signals",
-        "description": "Get real-time buy/sell alerts from professional traders with 95% accuracy rate."
+      "liveClasses": {
+        "title": "Live Daily Classes",
+        "description": "Join live trading sessions every weekday with real-time market analysis and strategy discussions.",
+        "features": ["Monday to Friday", "Real-time analysis", "Interactive Q&A"],
+        "badge": "LIVE NOW"
       },
-      "academy": {
-        "title": "Trading Academy",
-        "description": "Comprehensive courses from beginner to advanced with 500+ video lessons."
+      "videoCourses": {
+        "title": "Video Courses",
+        "description": "Access 8 comprehensive trading courses covering everything from basics to advanced strategies.",
+        "features": ["8 Full courses", "Lifetime access", "Downloadable resources"]
       },
-      "masterClasses": {
-        "title": "Master Classes",
-        "description": "Elite trading classes with experienced professionals to accelerate your success."
+      "mentorships": {
+        "title": "Personal Mentorships",
+        "description": "17+ specialized mentorship videos providing personalized guidance for your trading journey.",
+        "features": ["17 Mentorships", "Expert guidance", "Practical examples"]
+      },
+      "masterCourse": {
+        "title": "Master Course",
+        "description": "Intensive trading education program with comprehensive curriculum and hands-on practice.",
+        "features": ["Complete program", "Certificate included", "Community access"],
+        "badge": "POPULAR"
+      },
+      "communityEvents": {
+        "title": "Community Events",
+        "description": "Exclusive in-person events and workshops for intensive learning and networking.",
+        "features": ["Limited seats", "Networking", "Hands-on workshops"],
+        "badge": "LIMITED"
       },
       "psychology": {
         "title": "Trading Psychology",
-        "description": "Master your emotions and develop the mindset of successful traders."
+        "description": "Master the mental aspects of trading with our specialized psicotrading curriculum.",
+        "features": ["Emotional control", "Decision making", "Risk psychology"]
+      }
+    },
+    "platformFeatures": {
+      "flexibleSchedule": {
+        "title": "Flexible Schedule",
+        "description": "Access content anytime, anywhere"
       },
-      "analysis": {
-        "title": "Market Analysis",
-        "description": "Daily technical and fundamental analysis of major markets and stocks."
+      "bilingualSupport": {
+        "title": "Bilingual Support",
+        "description": "Available in English and Spanish"
       },
-      "library": {
-        "title": "Resource Library",
-        "description": "Access exclusive trading books, strategies, and research materials."
+      "spanishContent": {
+        "title": "Spanish Content",
+        "description": "All courses and videos in Spanish"
       }
     },
     "cta": {
-      "learnMore": "Learn More",
-      "assessment": "Not sure where to start? Take our free trading assessment",
-      "takeAssessment": "Take Free Assessment"
+      "learnMore": "Learn More"
     }
+  },
+  "liveClasses": {
+    "badge": "LIVE WEEKDAYS",
+    "badgeLive": "LIVE NOW",
+    "title": "Daily Live",
+    "titleHighlight": "Trading Classes",
+    "subtitle": "Join us every weekday for live market analysis, real-time trading, and interactive learning sessions.",
+    "features": {
+      "liveMarketAnalysis": {
+        "title": "Live Market Analysis",
+        "description": "Real-time trading decisions explained as markets move"
+      },
+      "interactiveSessions": {
+        "title": "Interactive Sessions",
+        "description": "Ask questions and get instant feedback from experienced traders"
+      },
+      "tradeAlong": {
+        "title": "Trade Along",
+        "description": "See actual trades being placed and managed in real-time"
+      },
+      "consistentSchedule": {
+        "title": "Consistent Schedule",
+        "description": "Monday through Friday, same time, building your trading routine"
+      }
+    },
+    "weeklySchedule": {
+      "title": "Weekly Schedule",
+      "subtitle": "Join our daily trading sessions and special events throughout the week",
+      "badge": "8:45 AM - 11:00 AM EST",
+      "morningTime": "8:45 AM - 11:00 AM EST",
+      "afternoonTime": "5:00 PM EST",
+      "youtubeTime": "6:00 PM EST",
+      "today": "TODAY",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday"
+      },
+      "dailySession": {
+        "title": "Daily Live Trading Sessions",
+        "days": "Monday to Friday",
+        "preMarket": "Pre-Market Analysis",
+        "preMarketDesc": "Comprehensive market analysis, opportunity identification, and daily strategy preparation",
+        "marketOpen": "Market Open & Live Trading",
+        "marketOpenDesc": "Real-time trade execution with detailed explanations of every decision",
+        "qa": "Q&A Session",
+        "qaDesc": "Addressing questions, analyzing trades, and providing personalized guidance"
+      },
+      "specialSessions": {
+        "title": "Special Sessions"
+      },
+      "sessions": {
+        "marketPrep": {
+          "title": "Pre-Market Analysis & Live Trading",
+          "description": "Comprehensive market analysis starting at 8:45 AM, live trading execution at market open (9:30 AM), followed by interactive Q&A session."
+        },
+        "liveTrading": {
+          "title": "Live Trading & Market Analysis",
+          "description": "Full market analysis from 8:45 AM, live trade execution starting at 9:30 AM, and Q&A session until 11:00 AM."
+        },
+        "mentorship": {
+          "title": "Exclusive Group Mentorship",
+          "description": "Personalized mentorship session focusing on advanced strategies, trading psychology, and professional trader development."
+        },
+        "youtubeLive": {
+          "title": "Public YouTube Live Stream",
+          "description": "Open community live stream featuring market analysis, educational strategies, and special Q&A session."
+        },
+        "weeklyWrapup": {
+          "title": "Weekly Wrap-up & Q&A",
+          "description": "Review of weekly trades, market outlook, and interactive Q&A session."
+        }
+      },
+      "instructor": "DayTradeDak Team"
+    },
+    "cta": {
+      "joinLiveClassNow": "Join Live Class Now",
+      "viewLiveClasses": "View Live Classes",
+      "subscribe": "Subscribe to Live Classes"
+    },
+    "footer": "All classes are conducted in Spanish. Platform interface available in English and Spanish."
   },
   "liveTrading": {
     "label": "LIVE TRADING",
@@ -377,10 +502,36 @@
     ],
     "title": "Ready to Start Your",
     "titleHighlight": "Trading Journey?",
-    "subtitle": "Join 50,000+ traders who are already profiting from our proven strategies and expert guidance.",
+    "subtitle": "Join thousands of traders who are improving their skills and achieving consistent results with our proven education system.",
+    "benefits": [
+      "Access to daily live trading sessions",
+      "Comprehensive video course library (Spanish)",
+      "Expert mentorship and guidance",
+      "Interface available in English and Spanish",
+      "Active trading community",
+      "All educational content in Spanish"
+    ],
     "buttons": {
-      "startTrial": "Start Free Trial",
-      "viewPricing": "View Pricing"
+      "getStartedToday": "Get Started Today",
+      "viewMasterCourse": "View Master Course"
+    },
+    "statsCards": {
+      "noHiddenFees": {
+        "title": "No Hidden Fees",
+        "description": "Transparent pricing with no surprises. Cancel anytime."
+      },
+      "startToday": {
+        "title": "Start Today",
+        "description": "Immediate access to all content after signup."
+      },
+      "expertSupport": {
+        "title": "Expert Support",
+        "description": "Get help when you need it from our experienced team."
+      }
+    },
+    "questions": {
+      "text": "Have questions about our programs?",
+      "contact": "Contact Our Team"
     },
     "stats": {
       "successRate": {
@@ -550,6 +701,12 @@
     },
     "dakIndex": "DAK Index",
     "est": "EST"
+  },
+  "testimonials": {
+    "label": "STUDENT SUCCESS",
+    "title": "What Our",
+    "titleHighlight": "Traders Say",
+    "subtitle": "Real experiences from our community of traders who are achieving their goals."
   },
   "common": {
     "viewAll": "View All →",

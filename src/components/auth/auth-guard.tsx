@@ -12,7 +12,6 @@ interface AuthGuardProps {
 // List of public routes that don't require authentication
 const publicRoutes = [
   '/',
-  '/products',
   '/blog',
   '/about',
   '/contact',

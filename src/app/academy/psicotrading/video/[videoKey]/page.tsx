@@ -11,12 +11,9 @@ import {
   Stack,
   Alert,
   CircularProgress,
-  Chip,
-  Grid,
-  useTheme,
+  alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Brain } from '@phosphor-icons/react/dist/ssr/Brain';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +24,6 @@ import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 
 export default function PsicoTradingVideoPlayerPage() {
-  const theme = useTheme();
   const router = useRouter();
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
@@ -64,12 +60,35 @@ export default function PsicoTradingVideoPlayerPage() {
   
   // Extract video name from key
   const extractVideoName = (key: string): string => {
-    const parts = key.split('/');
-    const filename = parts[parts.length - 1];
-    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-    return nameWithoutExt
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+    // Extract the folder name from the path structure
+    // Example: hsl-daytradedak-videos/PsicoTrading/Mentoria 1/360p/playlist.m3u8
+    const pathParts = key.split('/');
+    const mentoriaFolder = pathParts[2] || ''; // This gets "Mentoria 1", "Mentoria Introductoria", etc.
+    
+    // Format title based on folder name
+    let formattedTitle = '';
+    
+    if (mentoriaFolder === 'Mentoria Introductoria') {
+      formattedTitle = 'Mentoría Introductoria';
+    } else if (mentoriaFolder.startsWith('Mentoria ')) {
+      // Extract number from "Mentoria 1", "Mentoria 2", etc.
+      const match = /Mentoria (?<number>\d+)/.exec(mentoriaFolder);
+      if (match?.groups) {
+        const number = match.groups.number;
+        formattedTitle = `Mentoría ${number}`;
+      } else {
+        formattedTitle = mentoriaFolder.replace('Mentoria', 'Mentoría');
+      }
+    } else {
+      // Default formatting - fallback to filename
+      const filename = pathParts[pathParts.length - 1];
+      const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
+      formattedTitle = nameWithoutExt
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    
+    return formattedTitle;
   };
   
   // Handle video progress
@@ -111,176 +130,128 @@ export default function PsicoTradingVideoPlayerPage() {
   }
   
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3 }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#0a0a0a',
+        position: 'relative',
+      }}
+    >
+      {/* Background gradient */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+          opacity: 0.3,
+          zIndex: 0,
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: 4 }}>
+        {/* Header */}
         <Button
           startIcon={<ArrowLeft size={20} />}
           onClick={() => router.push('/academy/psicotrading#videos')}
-          sx={{ mb: 2 }}
+          sx={{ 
+            mb: 4,
+            color: 'white',
+            '&:hover': {
+              backgroundColor: alpha('#ffffff', 0.1),
+            },
+          }}
         >
           {t('psicotrading.video.backToPsicoTrading')}
         </Button>
-        
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-          <Brain size={32} weight="duotone" color={theme.palette.primary.main} />
-          <Box flex={1}>
-            <Typography variant="h4" gutterBottom>
-              {extractVideoName(videoKey)}
-            </Typography>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Chip
-                icon={<Brain size={16} />}
-                label={t('psicotrading.video.psicoTrading')}
-                size="small"
-                color="primary"
-                variant="outlined"
-              />
-              {/* TODO: Show duration when metadata is available
-              <Chip
-                icon={<Clock size={16} />}
-                label="Duration will update when video loads"
-                size="small"
-                variant="outlined"
-              />
-              */}
-              {/* TODO: Show completed status when progress tracking is implemented
-              {(userProgress?.completedAt || hasWatched) && (
-                <Chip
-                  icon={<CheckCircle size={16} />}
-                  label="Completed"
-                  size="small"
-                  color="success"
-                />
-              )}
-              */}
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h3" fontWeight={700} sx={{ color: 'white', mb: 2 }}>
+            {extractVideoName(videoKey)}
+          </Typography>
+          <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.7) }}>
+            {t('psicotrading.video.psicoTrading')}
+          </Typography>
+        </Box>
       
-      {/* Video Player */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <Card
-            sx={{
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              boxShadow: theme.shadows[8],
-            }}
-          >
-            <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                {hasAccess ? (
-                  <ProfessionalVideoPlayer
-                    video={{
-                      id: videoKey,
-                      title: extractVideoName(videoKey),
-                      description: `PsicoTrading lesson: ${extractVideoName(videoKey)}`,
-                      duration: 0, // Will be set by video player
-                      instructor: t('psicotrading.video.instructor'),
-                      thumbnail: '',
-                    }}
-                    src={finalVideoUrl}
-                    onProgress={handleProgress}
-                    onComplete={() => {
-                      // TODO: Enable when backend endpoints are implemented
-                    }}
-                  />
-                ) : (
-                  <ProtectedVideoPlayer
-                    videoId={videoKey}
-                    moduleType={ModuleType.Psicotrading}
-                    videoUrl={finalVideoUrl}
-                    title={extractVideoName(videoKey)}
-                    description={`PsicoTrading lesson: ${extractVideoName(videoKey)}`}
-                  />
-                )}
-              </Box>
-            </Box>
-          </Card>
-          
-          {/* Video Description */}
-          <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('psicotrading.video.aboutTitle')}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {t('psicotrading.video.aboutDescription')}
-              </Typography>
-              
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  {t('psicotrading.video.keyLearningPoints')}
-                </Typography>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('psicotrading.video.points.understanding')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('psicotrading.video.points.managing')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('psicotrading.video.points.developing')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('psicotrading.video.points.building')}
-                  </Typography>
-                </Stack>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+        {/* Video Player */}
+        <Box
+          sx={{
+            backgroundColor: '#000',
+            borderRadius: 2,
+            overflow: 'hidden',
+            aspectRatio: '16/9',
+            mb: 4,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          {hasAccess ? (
+            <ProfessionalVideoPlayer
+              video={{
+                id: videoKey,
+                title: extractVideoName(videoKey),
+                description: 'Esta mentoría de PsicoTrading te ayudará a desarrollar la mentalidad correcta para el trading. Aprende a controlar tus emociones, manejar el estrés y tomar decisiones racionales en el mercado.',
+                duration: 0, // Will be set by video player
+                instructor: t('psicotrading.video.instructor'),
+                thumbnail: '',
+              }}
+              src={finalVideoUrl}
+              onProgress={handleProgress}
+              onComplete={() => {
+                // TODO: Enable when backend endpoints are implemented
+              }}
+            />
+          ) : (
+            <ProtectedVideoPlayer
+              videoId={videoKey}
+              moduleType={ModuleType.Psicotrading}
+              videoUrl={finalVideoUrl}
+              title={extractVideoName(videoKey)}
+              description="Esta mentoría de PsicoTrading te ayudará a desarrollar la mentalidad correcta para el trading."
+            />
+          )}
+        </Box>
         
-        {/* Sidebar */}
-        <Grid item xs={12} lg={4}>
-          {/* Psychology Tips Card */}
-          <Card>
-            <CardContent>
-              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
-                <Brain size={28} weight="duotone" color={theme.palette.primary.main} />
-                <Typography variant="h6">
-                  {t('psicotrading.video.psychologyTips')}
+        {/* Video Info Card */}
+        <Card 
+          sx={{ 
+            backgroundColor: alpha('#ffffff', 0.05),
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${alpha('#22c55e', 0.2)}`,
+          }}
+        >
+          <CardContent>
+            <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
+              {t('psicotrading.video.aboutTitle')}
+            </Typography>
+            <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.8), mb: 3 }}>
+              Esta mentoría de PsicoTrading te ayudará a desarrollar la mentalidad correcta para el trading. Aprende a controlar tus emociones, manejar el estrés y tomar decisiones racionales en el mercado.
+            </Typography>
+            
+            <Box>
+              <Typography variant="subtitle1" sx={{ color: 'white', mb: 2 }}>
+                {t('psicotrading.video.keyLearningPoints')}
+              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • Comprender la psicología del trader y cómo afecta tus decisiones
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • Manejar las emociones durante las operaciones de trading
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • Desarrollar disciplina y paciencia en el mercado
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • Construir confianza y resiliencia mental
                 </Typography>
               </Stack>
-              <Stack spacing={2}>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    🧠 {t('psicotrading.video.tips.mentalPrep.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('psicotrading.video.tips.mentalPrep.description')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    📝 {t('psicotrading.video.tips.takeNotes.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('psicotrading.video.tips.takeNotes.description')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    🎯 {t('psicotrading.video.tips.practice.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('psicotrading.video.tips.practice.description')}
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Container>
+            </Box>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 }

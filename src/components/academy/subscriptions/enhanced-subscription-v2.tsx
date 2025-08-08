@@ -246,6 +246,11 @@ export function EnhancedSubscriptionManagerV2() {
                 const price = getPlanPrice(plan.planId);
                 const subscribed = isSubscribed(plan.planId);
                 const IconComponent = getIcon(plan.uiMetadata.icon);
+                const isLiveWeeklyPlan = [
+                  'LiveWeeklyManual',
+                  'LiveWeeklyRecurring',
+                ].includes(plan.planId);
+                const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
                 
                 return (
                   <Grid item xs={12} md={6} key={plan.planId}>
@@ -254,10 +259,23 @@ export function EnhancedSubscriptionManagerV2() {
                         height: '100%',
                         position: 'relative',
                         border: plan.uiMetadata.popular ? '2px solid' : '1px solid',
-                        borderColor: plan.uiMetadata.popular ? plan.uiMetadata.color : 'divider',
+                        borderColor: needsPermission ? 'grey.400' : (plan.uiMetadata.popular ? plan.uiMetadata.color : 'divider'),
+                        opacity: needsPermission ? 0.8 : 1,
                       }}
                     >
-                      {plan.uiMetadata.badge ? (
+                      {needsPermission ? (
+                        <Chip
+                          label="Requires Permission"
+                          size="small"
+                          sx={{
+                            position: 'absolute',
+                            top: -12,
+                            right: 20,
+                            backgroundColor: 'grey.600',
+                            color: 'white',
+                          }}
+                        />
+                      ) : plan.uiMetadata.badge ? (
                         <Chip
                           label={plan.uiMetadata.badge}
                           size="small"
@@ -321,25 +339,37 @@ export function EnhancedSubscriptionManagerV2() {
                               ✓ Active
                             </Button>
                           ) : (
-                            <Button
-                              variant="contained"
-                              fullWidth
-                              onClick={() => subscribe({ plan: plan.planId as SubscriptionPlan })}
-                              disabled={processingPlan === plan.planId || !user}
-                              sx={{
-                                backgroundColor: plan.uiMetadata.color,
-                                '&:hover': {
-                                  backgroundColor: plan.uiMetadata.color,
-                                  filter: 'brightness(0.9)',
-                                },
-                              }}
-                            >
-                              {processingPlan === plan.planId ? (
-                                <CircularProgress size={24} sx={{ color: 'white' }} />
-                              ) : (
-                                'Subscribe'
-                              )}
-                            </Button>
+                            (() => {
+                              const isLiveWeeklyPlan = [
+                                'LiveWeeklyManual',
+                                'LiveWeeklyRecurring',
+                              ].includes(plan.planId);
+                              const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
+                              
+                              return (
+                                <Button
+                                  variant="contained"
+                                  fullWidth
+                                  onClick={() => subscribe({ plan: plan.planId as SubscriptionPlan })}
+                                  disabled={processingPlan === plan.planId || !user || needsPermission}
+                                  sx={{
+                                    backgroundColor: needsPermission ? 'grey.500' : plan.uiMetadata.color,
+                                    '&:hover': {
+                                      backgroundColor: needsPermission ? 'grey.500' : plan.uiMetadata.color,
+                                      filter: needsPermission ? 'none' : 'brightness(0.9)',
+                                    },
+                                  }}
+                                >
+                                  {processingPlan === plan.planId ? (
+                                    <CircularProgress size={24} sx={{ color: 'white' }} />
+                                  ) : needsPermission ? (
+                                    'Contact Support for Access'
+                                  ) : (
+                                    'Subscribe'
+                                  )}
+                                </Button>
+                              );
+                            })()
                           )}
                         </Stack>
                       </CardContent>

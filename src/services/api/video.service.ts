@@ -122,8 +122,19 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/classVideos');
       return response.data;
     } catch (error) {
+      // Check if it's an access denied error
+      const isAccessError = error && typeof error === 'object' && 'response' in error && 
+        error.response && typeof error.response === 'object' && 'status' in error.response &&
+        (error.response.status === 403 || error.response.status === 401);
+      
+      if (isAccessError) {
+        // Return empty array for access denied to avoid breaking the UI
+        console.warn('Access denied for class videos - user may not have permission');
+        return [];
+      }
+      
       const apiError = errorHandler.handle(error, {
-        showToast: true,
+        showToast: false, // Don't show toast for access errors
         logError: true,
         fallbackMessage: 'Failed to load class videos.',
       });
@@ -136,8 +147,19 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/mentorshipVideos');
       return response.data;
     } catch (error) {
+      // Check if it's an access denied error
+      const isAccessError = error && typeof error === 'object' && 'response' in error && 
+        error.response && typeof error.response === 'object' && 'status' in error.response &&
+        (error.response.status === 403 || error.response.status === 401);
+      
+      if (isAccessError) {
+        // Return empty array for access denied to avoid breaking the UI
+        console.warn('Access denied for mentorship videos - user may not have permission');
+        return [];
+      }
+      
       const apiError = errorHandler.handle(error, {
-        showToast: true,
+        showToast: false, // Don't show toast for access errors
         logError: true,
         fallbackMessage: 'Failed to load mentorship videos.',
       });
@@ -164,8 +186,19 @@ class VideoService {
       const response = await API.get<VideoMetadata[]>('/videos/psicotradingVideos');
       return response.data;
     } catch (error) {
+      // Check if it's an access denied error
+      const isAccessError = error && typeof error === 'object' && 'response' in error && 
+        error.response && typeof error.response === 'object' && 'status' in error.response &&
+        (error.response.status === 403 || error.response.status === 401);
+      
+      if (isAccessError) {
+        // Return empty array for access denied to avoid breaking the UI
+        console.warn('Access denied for PsicoTrading videos - user may not have permission');
+        return [];
+      }
+      
       const apiError = errorHandler.handle(error, {
-        showToast: true,
+        showToast: false, // Don't show toast for access errors
         logError: true,
         fallbackMessage: 'Failed to load psicotrading videos.',
       });

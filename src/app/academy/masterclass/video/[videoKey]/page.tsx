@@ -11,13 +11,9 @@ import {
   Stack,
   Alert,
   CircularProgress,
-  Chip,
-  Grid,
-  useTheme,
   alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { Crown } from '@phosphor-icons/react/dist/ssr/Crown';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +24,6 @@ import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 
 export default function MentorshipVideoPlayerPage() {
-  const theme = useTheme();
   const router = useRouter();
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
@@ -64,12 +59,64 @@ export default function MentorshipVideoPlayerPage() {
   
   // Extract video name from key
   const extractVideoName = (key: string): string => {
-    const parts = key.split('/');
-    const filename = parts[parts.length - 1];
-    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-    return nameWithoutExt
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+    // Extract the folder name from the path structure
+    // Example: hsl-daytradedak-videos/mentorias/mentoria_1/1080p/playlist.m3u8
+    const pathParts = key.split('/');
+    const mentoriaFolder = pathParts[2] || ''; // This gets "mentoria_1", "mentoria_2_iwm", etc.
+    
+    // Format title based on folder name patterns
+    let formattedTitle = '';
+    
+    if (mentoriaFolder.includes('mentoria_entradas_parte')) {
+      const partMatch = /parte_(?<partNum>\d+)(?:_(?<partLetter>[a-c]))?/.exec(mentoriaFolder);
+      if (partMatch) {
+        const partNumber = partMatch.groups?.partNum || '';
+        const partLetter = partMatch.groups?.partLetter ? partMatch.groups.partLetter.toUpperCase() : '';
+        formattedTitle = `Mentoría Entradas - Parte ${partNumber}${partLetter}`;
+      } else {
+        formattedTitle = 'Mentoría Entradas';
+      }
+    } else if (mentoriaFolder === 'mentoria_1') {
+      formattedTitle = 'Mentoría 1';
+    } else if (mentoriaFolder === 'mentoria_2_iwm') {
+      formattedTitle = 'Mentoría 2 IWM';
+    } else if (mentoriaFolder === 'mentoria_contexto_general') {
+      formattedTitle = 'Mentoría Contexto General';
+    } else if (mentoriaFolder === 'mentoria_de_refuerzos') {
+      formattedTitle = 'Mentoría de Refuerzos';
+    } else if (mentoriaFolder.includes('mentoria_medias_moviles')) {
+      formattedTitle = 'Mentoría Medias Móviles';
+    } else if (mentoriaFolder.includes('mentoria_para_manejar_cuentas')) {
+      const num = mentoriaFolder.includes('_2') ? ' 2' : '';
+      formattedTitle = `Mentoría Manejo de Cuentas${num}`;
+    } else if (mentoriaFolder.includes('mentoria_preguntas_respuestas')) {
+      formattedTitle = 'Mentoría Preguntas y Respuestas';
+    } else {
+      // Default formatting - clean up the folder name
+      formattedTitle = mentoriaFolder
+        .replace(/mentoria_/g, 'Mentoría ')
+        .replace(/_/g, ' ')
+        .trim()
+        .split(' ')
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      // If it doesn't start with "Mentoría", add it
+      if (!formattedTitle.startsWith('Mentoría')) {
+        formattedTitle = 'Mentoría ' + formattedTitle;
+      }
+    }
+    
+    // If we still get "Playlist" or empty, try extracting from the whole path
+    if (!formattedTitle || formattedTitle.toLowerCase().includes('playlist')) {
+      const filename = pathParts[pathParts.length - 1];
+      const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
+      formattedTitle = nameWithoutExt
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    
+    return formattedTitle;
   };
   
   // Handle video progress
@@ -111,160 +158,129 @@ export default function MentorshipVideoPlayerPage() {
   }
   
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3 }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#0a0a0a',
+        position: 'relative',
+      }}
+    >
+      {/* Background gradient */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+          opacity: 0.3,
+          zIndex: 0,
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: { xs: 2, sm: 3, md: 4 } }}>
+        {/* Header */}
         <Button
           startIcon={<ArrowLeft size={20} />}
           onClick={() => router.push('/academy/masterclass#videos')}
-          sx={{ mb: 2 }}
+          sx={{ 
+            mb: { xs: 2, sm: 3, md: 4 },
+            color: 'white',
+            fontSize: { xs: '0.875rem', sm: '1rem' },
+            '&:hover': {
+              backgroundColor: alpha('#ffffff', 0.1),
+            },
+          }}
         >
           {t('masterclass.video.backToMasterClasses')}
         </Button>
-        
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-          <Crown size={32} weight="duotone" color={theme.palette.secondary.main} />
-          <Box flex={1}>
-            <Typography variant="h4" gutterBottom>
-              {extractVideoName(videoKey)}
-            </Typography>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Chip
-                icon={<Crown size={16} />}
-                label={t('masterclass.video.eliteContent')}
-                size="small"
-                color="secondary"
-                variant="outlined"
-              />
-              {/* TODO: Show duration when metadata is available
-              <Chip
-                icon={<Clock size={16} />}
-                label="Duration will update when video loads"
-                size="small"
-                variant="outlined"
-              />
-              */}
-              {/* TODO: Show completed status when progress tracking is implemented
-              {(userProgress?.completedAt || hasWatched) && (
-                <Chip
-                  icon={<CheckCircle size={16} />}
-                  label="Completed"
-                  size="small"
-                  color="success"
-                />
-              )}
-              */}
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+
+        <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
+          <Typography variant="h3" fontWeight={700} sx={{ color: 'white', mb: 2, fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem' } }}>
+            {extractVideoName(videoKey)}
+          </Typography>
+          <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.7), fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+            Master Clase Elite - {t('masterclass.video.eliteContent')}
+          </Typography>
+        </Box>
       
-      {/* Video Player */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <Card
-            sx={{
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              boxShadow: theme.shadows[8],
-            }}
-          >
-            <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                {hasAccess ? (
-                  <ProfessionalVideoPlayer
-                    video={{
-                      id: videoKey,
-                      title: extractVideoName(videoKey),
-                      description: `Master class elite: ${extractVideoName(videoKey)}`,
-                      duration: 0, // Will be set by video player
-                      instructor: 'Trading Academy Elite',
-                      thumbnail: '',
-                    }}
-                    src={finalVideoUrl}
-                    onProgress={handleProgress}
-                    onComplete={() => {
-                      // TODO: Enable when backend endpoints are implemented
-                    }}
-                  />
-                ) : (
-                  <ProtectedVideoPlayer
-                    videoId={videoKey}
-                    moduleType={ModuleType.MasterClasses}
-                    videoUrl={finalVideoUrl}
-                    title={extractVideoName(videoKey)}
-                    description={`Master class elite: ${extractVideoName(videoKey)}`}
-                  />
-                )}
-              </Box>
-            </Box>
-          </Card>
-          
-          {/* Video Description */}
-          <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('masterclass.video.aboutTitle')}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {t('masterclass.video.aboutDescription')}
-              </Typography>
-              
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  {t('masterclass.video.keyTopics')}
-                </Typography>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('masterclass.video.topics.analysis')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('masterclass.video.topics.risk')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('masterclass.video.topics.psychology')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('masterclass.video.topics.caseStudies')}
-                  </Typography>
-                </Stack>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+        {/* Video Player */}
+        <Box
+          sx={{
+            backgroundColor: '#000',
+            borderRadius: 2,
+            overflow: 'hidden',
+            aspectRatio: '16/9',
+            mb: 4,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          {hasAccess ? (
+            <ProfessionalVideoPlayer
+              video={{
+                id: videoKey,
+                title: extractVideoName(videoKey),
+                description: t('masterclass.video.aboutDescription'),
+                duration: 0, // Will be set by video player
+                instructor: 'Trading Academy Elite',
+                thumbnail: '',
+              }}
+              src={finalVideoUrl}
+              onProgress={handleProgress}
+              onComplete={() => {
+                // TODO: Enable when backend endpoints are implemented
+              }}
+            />
+          ) : (
+            <ProtectedVideoPlayer
+              videoId={videoKey}
+              moduleType={ModuleType.MasterClasses}
+              videoUrl={finalVideoUrl}
+              title={extractVideoName(videoKey)}
+              description={t('masterclass.video.aboutDescription')}
+            />
+          )}
+        </Box>
         
-        {/* Sidebar */}
-        <Grid item xs={12} lg={4}>
-          {/* Elite Content Card */}
-          <Card>
-            <CardContent>
-              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
-                <Crown size={28} weight="duotone" color={theme.palette.secondary.main} />
-                <Typography variant="h6">
-                  {t('masterclass.video.eliteContent')}
+        {/* Video Info Card */}
+        <Card 
+          sx={{ 
+            backgroundColor: alpha('#ffffff', 0.05),
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${alpha('#22c55e', 0.2)}`,
+          }}
+        >
+          <CardContent>
+            <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
+              {t('masterclass.video.aboutTitle')}
+            </Typography>
+            <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.8), mb: 3 }}>
+              {t('masterclass.video.aboutDescription')}
+            </Typography>
+            
+            <Box>
+              <Typography variant="subtitle1" sx={{ color: 'white', mb: 2 }}>
+                {t('masterclass.video.keyTopics')}
+              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('masterclass.video.topics.analysis')}
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('masterclass.video.topics.risk')}
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('masterclass.video.topics.psychology')}
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('masterclass.video.topics.caseStudies')}
                 </Typography>
               </Stack>
-              <Typography variant="body2" color="text.secondary">
-                {t('masterclass.video.eliteDescription')}
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Alert severity="info" sx={{ bgcolor: alpha(theme.palette.secondary.main, 0.1) }}>
-                  <Typography variant="body2">
-                    💡 {t('masterclass.video.proTip')}
-                  </Typography>
-                </Alert>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Container>
+            </Box>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 }

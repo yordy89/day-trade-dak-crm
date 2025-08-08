@@ -1,18 +1,22 @@
 {
   "hero": {
-    "badge": "🔥 Plataforma #1 de Educación en Trading",
-    "title": "Domina el Trading con",
-    "titleHighlight": "Educación Profesional",
-    "subtitle": "Únete a más de 50,000 traders exitosos. Aprende estrategias comprobadas, recibe señales en tiempo real y transforma tu futuro financiero con mentoría experta.",
+    "badge": "Plataforma de Educación en Trading",
+    "title": "Domina el Day Trading con",
+    "titleHighlight": "Guía Profesional",
+    "subtitle": "Únete a sesiones diarias de trading en vivo, cursos completos y programas exclusivos de mentoría diseñados para transformar tu camino en el trading.",
     "cta": {
-      "startTrial": "Iniciar Prueba Gratis",
-      "watchDemo": "Ver Demo"
+      "startLearning": "Comienza a Aprender Hoy",
+      "viewMasterCourse": "Ver Curso Maestro"
     },
     "stats": {
-      "activeStudents": "Estudiantes Activos",
-      "successRate": "Tasa de Éxito",
-      "videoLessons": "Video Lecciones",
-      "liveSupport": "Soporte en Vivo"
+      "videoCourses": "Video Cursos",
+      "videoCourses_value": "8+",
+      "liveClasses": "Clases en Vivo Diarias",
+      "liveClasses_value": "Diario",
+      "mentorships": "Mentorías",
+      "mentorships_value": "17+",
+      "courseLanguage": "Idioma de Cursos",
+      "courseLanguage_value": "Español"
     },
     "liveMarket": {
       "title": "Datos del Mercado en Vivo",
@@ -26,44 +30,165 @@
         "verifiedSignals": "Señales verificadas",
         "accuracy": "95% de precisión"
       }
+    },
+    "featureCards": {
+      "liveClasses": {
+        "title": "Clases de Trading Diarias en Vivo",
+        "badge": "LUN-VIE",
+        "description": "Únete a nuestros traders expertos cada día de la semana para análisis de mercado en vivo y estrategias de trading en tiempo real."
+      },
+      "videoLibrary": {
+        "title": "Biblioteca de Videos Completa",
+        "subtitle": "8 Cursos + 17 Mentorías",
+        "description": "Accede a nuestra colección completa de cursos de trading y sesiones de mentoría personalizadas."
+      },
+      "exclusiveEvents": {
+        "title": "Eventos Exclusivos",
+        "badge": "CUPOS LIMITADOS",
+        "description": "Asiste a cursos maestros y eventos comunitarios para una educación intensiva y práctica en trading."
+      }
     }
   },
   "services": {
-    "label": "LO QUE OFRECEMOS",
+    "label": "NUESTROS SERVICIOS",
     "title": "Todo lo que Necesitas para",
-    "titleHighlight": "Tener Éxito",
-    "subtitle": "Desde educación hasta señales de trading en vivo, proporcionamos todas las herramientas y recursos que necesitas para convertirte en un trader rentable.",
+    "titleHighlight": "Tener Éxito en el Trading",
+    "subtitle": "Desde sesiones diarias en vivo hasta cursos completos y eventos exclusivos, proporcionamos todas las herramientas y educación que necesitas.",
     "items": {
-      "signals": {
-        "title": "Señales de Trading en Vivo",
-        "description": "Recibe alertas de compra/venta en tiempo real de traders profesionales con 95% de precisión."
+      "liveClasses": {
+        "title": "Clases Diarias en Vivo",
+        "description": "Únete a sesiones de trading en vivo cada día de la semana con análisis de mercado en tiempo real y discusiones de estrategias.",
+        "features": ["Lunes a Viernes", "Análisis en tiempo real", "Preguntas y respuestas interactivas"],
+        "badge": "EN VIVO AHORA"
       },
-      "academy": {
-        "title": "Academia de Trading",
-        "description": "Cursos completos desde principiante hasta avanzado con más de 500 video lecciones."
+      "videoCourses": {
+        "title": "Video Cursos",
+        "description": "Accede a 8 cursos completos de trading que cubren todo desde lo básico hasta estrategias avanzadas.",
+        "features": ["8 cursos completos", "Acceso de por vida", "Recursos descargables"]
       },
-      "masterClasses": {
-        "title": "Master Classes",
-        "description": "Clases de trading elite con profesionales experimentados para acelerar tu éxito."
+      "mentorships": {
+        "title": "Mentorías Personalizadas",
+        "description": "17+ videos de mentoría especializados que brindan orientación personalizada para tu viaje en el trading.",
+        "features": ["17 Mentorías", "Orientación experta", "Ejemplos prácticos"]
+      },
+      "masterCourse": {
+        "title": "Curso Maestro",
+        "description": "Programa intensivo de educación en trading con un currículo completo y práctica práctica.",
+        "features": ["Programa completo", "Certificado incluido", "Acceso a la comunidad"],
+        "badge": "POPULAR"
+      },
+      "communityEvents": {
+        "title": "Eventos Comunitarios",
+        "description": "Eventos y talleres presenciales exclusivos para aprendizaje intensivo y networking.",
+        "features": ["Cupos limitados", "Networking", "Talleres prácticos"],
+        "badge": "LIMITADO"
       },
       "psychology": {
         "title": "Psicología del Trading",
-        "description": "Domina tus emociones y desarrolla la mentalidad de los traders exitosos."
+        "description": "Domina los aspectos mentales del trading con nuestro currículo especializado de psicotrading.",
+        "features": ["Control emocional", "Toma de decisiones", "Psicología del riesgo"]
+      }
+    },
+    "platformFeatures": {
+      "flexibleSchedule": {
+        "title": "Horario Flexible",
+        "description": "Accede al contenido en cualquier momento y lugar"
       },
-      "analysis": {
-        "title": "Análisis del Mercado",
-        "description": "Análisis técnico y fundamental diario de los principales mercados y acciones."
+      "bilingualSupport": {
+        "title": "Soporte Bilingüe",
+        "description": "Disponible en inglés y español"
       },
-      "library": {
-        "title": "Biblioteca de Recursos",
-        "description": "Accede a libros exclusivos de trading, estrategias y materiales de investigación."
+      "spanishContent": {
+        "title": "Contenido en Español",
+        "description": "Todos los cursos y videos en español"
       }
     },
     "cta": {
-      "learnMore": "Aprende Más",
-      "assessment": "¿No sabes por dónde empezar? Realiza nuestra evaluación gratuita de trading",
-      "takeAssessment": "Realizar Evaluación Gratis"
+      "learnMore": "Aprende Más"
     }
+  },
+  "liveClasses": {
+    "badge": "EN VIVO DE LUNES A VIERNES",
+    "badgeLive": "EN VIVO AHORA",
+    "title": "Clases Diarias",
+    "titleHighlight": "de Trading en Vivo",
+    "subtitle": "Únete a nosotros todos los días de la semana para análisis de mercado en vivo, trading en tiempo real y sesiones de aprendizaje interactivas.",
+    "features": {
+      "liveMarketAnalysis": {
+        "title": "Análisis de Mercado en Vivo",
+        "description": "Decisiones de trading en tiempo real explicadas mientras los mercados se mueven"
+      },
+      "interactiveSessions": {
+        "title": "Sesiones Interactivas",
+        "description": "Haz preguntas y obtén retroalimentación instantánea de traders experimentados"
+      },
+      "tradeAlong": {
+        "title": "Opera Junto a Nosotros",
+        "description": "Ve operaciones reales siendo colocadas y gestionadas en tiempo real"
+      },
+      "consistentSchedule": {
+        "title": "Horario Consistente",
+        "description": "De lunes a viernes, a la misma hora, construyendo tu rutina de trading"
+      }
+    },
+    "weeklySchedule": {
+      "title": "Horario Semanal",
+      "subtitle": "Únete a nuestras sesiones diarias de trading y eventos especiales durante la semana",
+      "badge": "8:45 AM - 11:00 AM EST",
+      "morningTime": "8:45 AM - 11:00 AM EST",
+      "afternoonTime": "5:00 PM EST",
+      "youtubeTime": "6:00 PM EST",
+      "today": "HOY",
+      "days": {
+        "monday": "Lunes",
+        "tuesday": "Martes",
+        "wednesday": "Miércoles",
+        "thursday": "Jueves",
+        "friday": "Viernes"
+      },
+      "dailySession": {
+        "title": "Sesiones Diarias de Trading en Vivo",
+        "days": "Lunes a Viernes",
+        "preMarket": "Análisis Pre-Mercado",
+        "preMarketDesc": "Análisis exhaustivo del mercado, identificación de oportunidades y preparación de estrategias del día",
+        "marketOpen": "Apertura del Mercado y Trading en Vivo",
+        "marketOpenDesc": "Ejecución de operaciones en tiempo real con explicaciones detalladas de cada decisión",
+        "qa": "Sesión de Preguntas y Respuestas",
+        "qaDesc": "Resolución de dudas, análisis de operaciones y orientación personalizada"
+      },
+      "specialSessions": {
+        "title": "Sesiones Especiales"
+      },
+      "sessions": {
+        "marketPrep": {
+          "title": "Análisis Pre-Mercado y Trading en Vivo",
+          "description": "Análisis exhaustivo del mercado desde las 8:45 AM, apertura del mercado a las 9:30 AM con operaciones en vivo, seguido de sesión interactiva de preguntas y respuestas."
+        },
+        "liveTrading": {
+          "title": "Trading en Vivo y Análisis del Mercado",
+          "description": "Análisis completo del mercado desde las 8:45 AM, ejecución de operaciones en vivo a partir de las 9:30 AM, y resolución de dudas hasta las 11:00 AM."
+        },
+        "mentorship": {
+          "title": "Mentoría Grupal Exclusiva",
+          "description": "Sesión de mentoría personalizada para profundizar en estrategias avanzadas, psicología del trading y desarrollo profesional del trader."
+        },
+        "youtubeLive": {
+          "title": "Live Público en YouTube",
+          "description": "Transmisión en vivo abierta a la comunidad con análisis del mercado, estrategias educativas y sesión especial de preguntas."
+        },
+        "weeklyWrapup": {
+          "title": "Resumen Semanal y Preguntas",
+          "description": "Revisión de operaciones semanales, perspectiva del mercado y sesión interactiva de preguntas y respuestas."
+        }
+      },
+      "instructor": "Equipo DayTradeDak"
+    },
+    "cta": {
+      "joinLiveClassNow": "Unirse a la Clase en Vivo Ahora",
+      "viewLiveClasses": "Ver Clases en Vivo",
+      "subscribe": "Suscribirse a Clases en Vivo"
+    },
+    "footer": "Todas las clases se imparten en español. La interfaz de la plataforma está disponible en inglés y español."
   },
   "liveTrading": {
     "label": "TRADING EN VIVO",
@@ -377,10 +502,36 @@
     ],
     "title": "¿Listo para Comenzar tu",
     "titleHighlight": "Viaje en el Trading?",
-    "subtitle": "Únete a más de 50,000 traders que ya están obteniendo ganancias con nuestras estrategias comprobadas y orientación experta.",
+    "subtitle": "Únete a miles de traders que están mejorando sus habilidades y logrando resultados consistentes con nuestro sistema educativo probado.",
+    "benefits": [
+      "Acceso a sesiones diarias de trading en vivo",
+      "Biblioteca completa de cursos en video (Español)",
+      "Mentoría y orientación experta",
+      "Interfaz disponible en inglés y español",
+      "Comunidad activa de traders",
+      "Todo el contenido educativo en español"
+    ],
     "buttons": {
-      "startTrial": "Iniciar Prueba Gratis",
-      "viewPricing": "Ver Precios"
+      "getStartedToday": "Comienza Hoy",
+      "viewMasterCourse": "Ver Curso Maestro"
+    },
+    "statsCards": {
+      "noHiddenFees": {
+        "title": "Sin Tarifas Ocultas",
+        "description": "Precios transparentes sin sorpresas. Cancela cuando quieras."
+      },
+      "startToday": {
+        "title": "Comienza Hoy",
+        "description": "Acceso inmediato a todo el contenido después del registro."
+      },
+      "expertSupport": {
+        "title": "Soporte Experto",
+        "description": "Obtén ayuda cuando la necesites de nuestro equipo experimentado."
+      }
+    },
+    "questions": {
+      "text": "¿Tienes preguntas sobre nuestros programas?",
+      "contact": "Contacta a Nuestro Equipo"
     },
     "stats": {
       "successRate": {
@@ -550,6 +701,12 @@
     },
     "dakIndex": "Índice DAK",
     "est": "EST"
+  },
+  "testimonials": {
+    "label": "ÉXITO ESTUDIANTIL",
+    "title": "Lo Que Dicen Nuestros",
+    "titleHighlight": "Traders",
+    "subtitle": "Experiencias reales de nuestra comunidad de traders que están logrando sus objetivos."
   },
   "common": {
     "viewAll": "Ver Todo →",

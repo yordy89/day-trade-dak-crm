@@ -21,6 +21,7 @@ import {
   Paper,
   useTheme as useMuiTheme,
   alpha,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Sun,
@@ -37,6 +38,7 @@ import {
   Sparkle,
   House,
   VideoCamera,
+  List as MenuIcon,
 } from '@phosphor-icons/react';
 import { paths } from '@/paths';
 import { useMutation } from '@tanstack/react-query';
@@ -67,6 +69,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
   const { user } = useClientAuth();
   const logout = useLogout();
   const { t, i18n } = useTranslation('academy');
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [langAnchorEl, setLangAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -121,6 +124,14 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
   const handleLogout = () => {
     handleMenuClose();
     logoutMutation.mutate();
+  };
+
+  const handleMobileMenuToggle = () => {
+    // @ts-ignore
+    if (window.academySidebarToggle) {
+      // @ts-ignore
+      window.academySidebarToggle();
+    }
   };
 
   const getUserInitials = () => {
@@ -273,7 +284,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
           </Box>
         ))}
       </Box>
-      <Box sx={{ px: 3, height: 64, display: 'flex', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+      <Box sx={{ px: { xs: 2, sm: 3 }, height: 64, display: 'flex', alignItems: 'center', position: 'relative', zIndex: 1 }}>
         <Stack
           direction="row"
           spacing={2}
@@ -285,12 +296,29 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
         >
           {/* Left Section - Page Title with Navigation */}
           <Stack direction="row" spacing={2} alignItems="center">
-            {/* Home Button */}
+            {/* Mobile Hamburger Menu */}
+            <IconButton
+              onClick={handleMobileMenuToggle}
+              sx={{
+                width: 40,
+                height: 40,
+                display: { xs: 'flex', lg: 'none' },
+                bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                '&:hover': {
+                  bgcolor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                },
+              }}
+            >
+              <MenuIcon size={20} weight="regular" />
+            </IconButton>
+            
+            {/* Home Button on Desktop */}
             <IconButton
               onClick={() => router.push('/')}
               sx={{
                 width: 40,
                 height: 40,
+                display: { xs: 'none', lg: 'flex' },
                 bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
                 '&:hover': {
                   bgcolor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
@@ -301,7 +329,7 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
             </IconButton>
             
             <Box>
-              <Typography variant="h5" fontWeight={700} color="text.primary">
+              <Typography variant="h5" fontWeight={700} color="text.primary" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
                 {pageTitle}
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -344,10 +372,14 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
               sx={{
                 color: 'text.primary',
                 bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                px: 2,
+                px: { xs: 1, sm: 2 },
                 py: 1,
                 borderRadius: 2,
                 fontWeight: 500,
+                minWidth: { xs: 'auto', sm: '80px' },
+                '& .MuiButton-startIcon': {
+                  display: { xs: 'none', sm: 'inherit' },
+                },
                 '&:hover': {
                   bgcolor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
                 },
@@ -378,28 +410,17 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
               sx={{
                 width: 40,
                 height: 40,
+                display: { xs: 'none', sm: 'flex' },
                 bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
                 '&:hover': {
                   bgcolor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
                 },
               }}
             >
-              <Badge 
-                badgeContent={3} 
-                color="error"
-                sx={{
-                  '& .MuiBadge-badge': {
-                    fontSize: '0.65rem',
-                    height: 16,
-                    minWidth: 16,
-                  }
-                }}
-              >
-                <Bell size={20} weight="duotone" />
-              </Badge>
+              <Bell size={20} weight="duotone" />
             </IconButton>
 
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, opacity: 0.3 }} />
+            <Divider orientation="vertical" flexItem sx={{ mx: { xs: 0.5, sm: 1 }, opacity: 0.3, display: { xs: 'none', sm: 'flex' } }} />
 
             {/* User Menu Button */}
             <Button

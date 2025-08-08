@@ -11,36 +11,39 @@ import {
   Button,
   Stack,
   Chip,
-  LinearProgress,
+  Skeleton,
   useTheme as useMuiTheme,
   alpha,
-  IconButton,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from '@mui/material';
 import {
   GraduationCap,
-  TrendUp,
   Brain,
   Users,
-  ChartLine,
   Trophy,
-  Clock,
   ArrowRight,
   PlayCircle,
-  CheckCircle,
-  Star,
-  Target,
-  Sparkle,
-  ChalkboardTeacher,
-  Lightning,
-  Fire,
   Calendar,
   Crown,
+  VideoCamera,
+  Books,
+  ChartLine,
+  CreditCard,
+  CalendarCheck,
+  Info,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { paths } from '@/paths';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import API from '@/lib/axios';
 
 // Modern gradient background
 const ModernBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
@@ -62,25 +65,22 @@ const ModernBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
   />
 );
 
-// Modern progress card
-const ModernProgressCard = ({ 
+// Stats Card Component
+const StatsCard = ({ 
   title, 
   value, 
-  total, 
   icon, 
   color,
-  trend,
-  progressLabel = 'Progress',
+  subtitle,
+  loading = false,
 }: { 
   title: string; 
-  value: number; 
-  total: number; 
+  value: string | number; 
   icon: React.ReactNode; 
   color: string;
-  trend?: number;
-  progressLabel?: string;
+  subtitle?: string;
+  loading?: boolean;
 }) => {
-  const progress = (value / total) * 100;
   const theme = useMuiTheme();
   
   return (
@@ -98,7 +98,7 @@ const ModernProgressCard = ({
         }
       }}
     >
-      <CardContent sx={{ p: 3 }}>
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack spacing={2}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box
@@ -115,57 +115,29 @@ const ModernProgressCard = ({
             >
               {icon}
             </Box>
-            {trend ? (
-              <Chip
-                size="small"
-                icon={<TrendUp size={14} />}
-                label={`+${trend}%`}
-                sx={{
-                  bgcolor: alpha(theme.palette.success.main, 0.1),
-                  color: 'success.main',
-                  fontWeight: 600,
-                  '& .MuiChip-icon': {
-                    color: 'success.main',
-                  }
-                }}
-              />
-            ) : null}
           </Box>
           
           <Box>
-            <Typography variant="h3" fontWeight={800} color={color}>
-              {value}
-              <Typography component="span" variant="h5" color="text.secondary" sx={{ ml: 1 }}>
-                / {total}
-              </Typography>
-            </Typography>
-            <Typography variant="body2" color="text.secondary" fontWeight={500}>
-              {title}
-            </Typography>
-          </Box>
-          
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-              <Typography variant="caption" color="text.secondary">
-                {progressLabel}
-              </Typography>
-              <Typography variant="caption" fontWeight={600} color={color}>
-                {Math.round(progress)}%
-              </Typography>
-            </Box>
-            <LinearProgress 
-              variant="determinate" 
-              value={progress} 
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                bgcolor: alpha(color, 0.1),
-                '& .MuiLinearProgress-bar': {
-                  bgcolor: color,
-                  borderRadius: 3,
-                }
-              }}
-            />
+            {loading ? (
+              <>
+                <Skeleton variant="text" width={60} height={40} />
+                <Skeleton variant="text" width={120} />
+              </>
+            ) : (
+              <>
+                <Typography variant="h3" fontWeight={800} color={color}>
+                  {value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                  {title}
+                </Typography>
+                {subtitle && (
+                  <Typography variant="caption" color="text.secondary">
+                    {subtitle}
+                  </Typography>
+                )}
+              </>
+            )}
           </Box>
         </Stack>
       </CardContent>
@@ -173,70 +145,67 @@ const ModernProgressCard = ({
   );
 };
 
-// Modern learning path card
-const ModernPathCard = ({ 
+// Content Access Card
+const ContentAccessCard = ({ 
   title, 
   description,
   icon, 
   path,
   color,
-  isNew = false,
-  progress = 0,
-  percentCompletedText = 'completed',
-  newLabel = 'NEW',
-  exploreLabel = 'Explore',
+  available,
+  locked = false,
 }: { 
   title: string;
   description: string;
   icon: React.ReactNode;
   path: string;
   color: string;
-  isNew?: boolean;
-  progress?: number;
-  percentCompletedText?: string;
-  newLabel?: string;
-  exploreLabel?: string;
+  available: boolean;
+  locked?: boolean;
 }) => {
   const router = useRouter();
   const theme = useMuiTheme();
+  const { t } = useTranslation('academy');
   
   return (
     <Card 
       sx={{ 
         height: '100%',
-        cursor: 'pointer',
+        cursor: available ? 'pointer' : 'not-allowed',
         position: 'relative',
         overflow: 'visible',
         border: '1px solid',
         borderColor: 'divider',
+        opacity: available ? 1 : 0.7,
         transition: 'all 0.3s ease',
-        '&:hover': {
+        '&:hover': available ? {
           transform: 'translateY(-8px)',
           boxShadow: theme.shadows[12],
           borderColor: alpha(color, 0.3),
           '& .hover-arrow': {
             transform: 'translateX(4px)',
           }
-        }
+        } : {}
       }}
-      onClick={() => router.push(path)}
+      onClick={() => available && router.push(path)}
     >
-      {isNew ? (
+      {locked && (
         <Chip
-          label={newLabel}
+          icon={<Crown size={14} />}
+          label={t('overview.premiumOnly')}
           size="small"
           sx={{
             position: 'absolute',
             top: -10,
             right: 16,
-            bgcolor: 'error.main',
+            bgcolor: 'warning.main',
             color: 'white',
             fontWeight: 600,
             fontSize: '0.7rem',
             height: 24,
           }}
         />
-      ) : null}
+      )}
       
       <CardContent sx={{ p: 3, height: '100%' }}>
         <Stack spacing={2} height="100%">
@@ -249,7 +218,7 @@ const ModernPathCard = ({
               alignItems: 'center',
               justifyContent: 'center',
               background: `linear-gradient(135deg, ${alpha(color, 0.15)} 0%, ${alpha(color, 0.05)} 100%)`,
-              color,
+              color: available ? color : 'text.disabled',
               mb: 1,
             }}
           >
@@ -265,74 +234,15 @@ const ModernPathCard = ({
             </Typography>
           </Box>
           
-          {progress > 0 && (
-            <Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={progress} 
-                sx={{
-                  height: 4,
-                  borderRadius: 2,
-                  bgcolor: alpha(color, 0.1),
-                  '& .MuiLinearProgress-bar': {
-                    bgcolor: color,
-                    borderRadius: 2,
-                  }
-                }}
-              />
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                {progress}% {percentCompletedText}
-              </Typography>
-            </Box>
-          )}
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', color, fontWeight: 600 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: available ? color : 'text.disabled', fontWeight: 600 }}>
             <Typography variant="button" sx={{ mr: 1 }}>
-              {exploreLabel}
+              {available ? t('overview.explore') : t('overview.locked')}
             </Typography>
-            <ArrowRight size={20} className="hover-arrow" style={{ transition: 'transform 0.2s' }} />
+            {available && <ArrowRight size={20} className="hover-arrow" style={{ transition: 'transform 0.2s' }} />}
           </Box>
         </Stack>
       </CardContent>
     </Card>
-  );
-};
-
-// Achievement badge
-const AchievementBadge = ({ icon, title, date }: { icon: React.ReactNode; title: string; date: string }) => {
-  const theme = useMuiTheme();
-  
-  return (
-    <Paper
-      sx={{
-        p: 2,
-        textAlign: 'center',
-        border: '2px solid',
-        borderColor: theme.palette.warning.main,
-        background: alpha(theme.palette.warning.main, 0.05),
-      }}
-    >
-      <Box
-        sx={{
-          width: 64,
-          height: 64,
-          margin: '0 auto',
-          mb: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: theme.palette.warning.main,
-        }}
-      >
-        {icon}
-      </Box>
-      <Typography variant="subtitle2" fontWeight={600}>
-        {title}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {date}
-      </Typography>
-    </Paper>
   );
 };
 
@@ -341,70 +251,99 @@ export default function AcademyOverviewPage(): React.JSX.Element {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const { user } = useClientAuth();
-  const { t } = useTranslation('academy');
+  const { t, i18n } = useTranslation('academy');
   
-  // Add CSS animation for pulse effect
-  React.useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-        50% {
-          transform: scale(1.2);
-          opacity: 0.7;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+  // Fetch user's event registrations
+  const { data: eventRegistrations, isLoading: eventsLoading } = useQuery({
+    queryKey: ['user-events', user?._id],
+    queryFn: async () => {
+      if (!user?._id) return [];
+      const response = await API.get(`/event-registrations/user/${user._id}`);
+      return response.data;
+    },
+    enabled: Boolean(user?._id),
+  });
+  
+  // Fetch upcoming events
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ['upcoming-events'],
+    queryFn: async () => {
+      try {
+        // Use the regular events endpoint with filters for active and future events
+        const response = await API.get('/events', {
+          params: {
+            isActive: true,
+            limit: 5,
+            // Only get events from today onwards
+            startDate: new Date().toISOString(),
+          }
+        });
+        return response.data.data || response.data.events || [];
+      } catch (error) {
+        console.error('Failed to fetch upcoming events:', error);
+        // Return empty array on error to prevent breaking the UI
+        return [];
       }
-    `;
-    document.head.appendChild(style);
+    },
+  });
+  
+  // Fetch available videos count (as a proxy for content)
+  const { data: videoStats } = useQuery({
+    queryKey: ['video-stats'],
+    queryFn: async () => {
+      // Return static counts for now to avoid permission errors
+      // These will be replaced with actual API calls when permissions are properly configured
+      return {
+        classVideos: 12, // Basic classes available to all users
+        mentorshipVideos: hasPremiumAccess ? 8 : 0,
+        psicotradingVideos: hasPremiumAccess ? 15 : 0,
+      };
+    },
+  });
+  
+  // Calculate real stats
+  const memberDays = user?.createdAt 
+    ? Math.floor((new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
     
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
+  const activeSubscriptions = user?.subscriptions?.filter((sub: any) => {
+    if (typeof sub === 'string') return true;
+    if (sub && typeof sub === 'object' && 'expiresAt' in sub) {
+      return !sub.expiresAt || new Date(sub.expiresAt) > new Date();
+    }
+    return false;
+  }) || [];
   
-  // Mock data - replace with real data from API
-  const stats = {
-    coursesCompleted: 3,
-    totalCourses: 12,
-    hoursLearned: 24,
-    totalHours: 100,
-    achievements: 5,
-    totalAchievements: 20,
-    analysisCompleted: 15,
-    totalAnalysis: 50,
-  };
+  const hasLiveAccess = user?.allowLiveMeetingAccess || user?.allowLiveWeeklyAccess || false;
+  const hasPremiumAccess = activeSubscriptions.length > 0;
   
-  const learningPaths = [
+  // Content access based on subscriptions
+  const contentAccess = [
     {
       title: t('overview.tradingCourses.title'),
       description: t('overview.tradingCourses.description'),
       icon: <GraduationCap size={32} weight="duotone" />,
       path: paths.academy.courses,
       color: theme.palette.primary.main,
-      progress: 25,
-    },
-    {
-      title: t('overview.mentorship.title'),
-      description: t('overview.mentorship.description'),
-      icon: <ChalkboardTeacher size={32} weight="duotone" />,
-      path: paths.academy.mentorship,
-      color: theme.palette.info.main,
-      isNew: true,
+      available: true, // Basic courses available to all
     },
     {
       title: t('overview.liveClasses.title'),
       description: t('overview.liveClasses.description'),
-      icon: <Users size={32} weight="duotone" />,
+      icon: <VideoCamera size={32} weight="duotone" />,
       path: paths.academy.class,
-      color: theme.palette.secondary.main,
-      progress: 60,
+      color: theme.palette.error.main,
+      available: hasLiveAccess,
+      locked: !hasLiveAccess,
+    },
+    {
+      title: t('overview.mentorship.title'),
+      description: t('overview.mentorship.description'),
+      icon: <Users size={32} weight="duotone" />,
+      path: paths.academy.mentorship,
+      color: theme.palette.info.main,
+      available: hasPremiumAccess,
+      locked: !hasPremiumAccess,
     },
     {
       title: t('overview.psicoTradingElite.title'),
@@ -412,13 +351,9 @@ export default function AcademyOverviewPage(): React.JSX.Element {
       icon: <Brain size={32} weight="duotone" />,
       path: paths.academy.psicotrading,
       color: theme.palette.success.main,
+      available: hasPremiumAccess,
+      locked: !hasPremiumAccess,
     },
-  ];
-  
-  const recentAchievements = [
-    { icon: <Fire size={40} weight="fill" />, title: t('overview.firstStreak'), date: t('overview.daysAgo', { days: 2 }) },
-    { icon: <Target size={40} weight="fill" />, title: t('overview.tenAnalysis'), date: t('overview.weekAgo') },
-    { icon: <Trophy size={40} weight="fill" />, title: t('overview.courseCompleted'), date: t('overview.weeksAgo', { weeks: 2 }) },
   ];
   
   return (
@@ -427,7 +362,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
       
       {/* Hero Section */}
       <Box sx={{ mb: 6 }}>
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={{ xs: 3, sm: 4 }} alignItems="center">
           <Grid item xs={12} md={8}>
             <Stack spacing={3}>
               <Box>
@@ -452,35 +387,39 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
                 <Chip 
-                  icon={<Fire size={16} />} 
-                  label={t('overview.daysStreak', { days: 7 })}
+                  icon={<Calendar size={16} />} 
+                  label={t('overview.memberFor', { days: memberDays })}
                   sx={{ 
-                    bgcolor: alpha(theme.palette.error.main, 0.1),
-                    color: 'error.main',
+                    bgcolor: alpha(theme.palette.primary.main, 0.1),
+                    color: 'primary.main',
                     fontWeight: 600,
-                    '& .MuiChip-icon': { color: 'error.main' }
+                    '& .MuiChip-icon': { color: 'primary.main' }
                   }}
                 />
-                <Chip 
-                  icon={<Lightning size={16} />} 
-                  label={t('overview.hoursLearning', { hours: stats.hoursLearned })}
-                  sx={{ 
-                    bgcolor: alpha(theme.palette.warning.main, 0.1),
-                    color: 'warning.main',
-                    fontWeight: 600,
-                    '& .MuiChip-icon': { color: 'warning.main' }
-                  }}
-                />
-                <Chip 
-                  icon={<Trophy size={16} />} 
-                  label={t('overview.achievements', { count: stats.achievements })}
-                  sx={{ 
-                    bgcolor: alpha(theme.palette.success.main, 0.1),
-                    color: 'success.main',
-                    fontWeight: 600,
-                    '& .MuiChip-icon': { color: 'success.main' }
-                  }}
-                />
+                {hasPremiumAccess && (
+                  <Chip 
+                    icon={<Crown size={16} />} 
+                    label={t('overview.premiumMember')}
+                    sx={{ 
+                      bgcolor: alpha(theme.palette.warning.main, 0.1),
+                      color: 'warning.main',
+                      fontWeight: 600,
+                      '& .MuiChip-icon': { color: 'warning.main' }
+                    }}
+                  />
+                )}
+                {user?.tradingPhase && (
+                  <Chip 
+                    icon={<ChartLine size={16} />} 
+                    label={t('overview.tradingPhase', { phase: user.tradingPhase })}
+                    sx={{ 
+                      bgcolor: alpha(theme.palette.success.main, 0.1),
+                      color: 'success.main',
+                      fontWeight: 600,
+                      '& .MuiChip-icon': { color: 'success.main' }
+                    }}
+                  />
+                )}
               </Stack>
               
               <Button
@@ -499,7 +438,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
                   }
                 }}
               >
-                {t('overview.continueLearning')}
+                {t('overview.exploreCourses')}
               </Button>
             </Stack>
           </Grid>
@@ -508,126 +447,101 @@ export default function AcademyOverviewPage(): React.JSX.Element {
             <Box
               sx={{
                 position: 'relative',
-                height: 300,
                 display: { xs: 'none', md: 'flex' },
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <ChartLine 
-                size={200} 
-                weight="duotone" 
-                color={alpha(theme.palette.primary.main, 0.1)}
-              />
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                <Sparkle
-                  size={40}
-                  weight="fill"
-                  color={theme.palette.warning.main}
-                  style={{
-                    position: 'absolute',
-                    top: -20,
-                    right: -20,
-                    animation: 'pulse 2s infinite',
+              {user?.profileImage ? (
+                <Avatar
+                  src={user.profileImage}
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    border: '4px solid',
+                    borderColor: theme.palette.primary.main,
                   }}
                 />
-              </Box>
+              ) : (
+                <Avatar
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    bgcolor: theme.palette.primary.main,
+                    fontSize: '4rem',
+                  }}
+                >
+                  {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                </Avatar>
+              )}
             </Box>
           </Grid>
         </Grid>
       </Box>
       
-      {/* Progress Cards */}
+      {/* Real Stats Cards */}
       <Box sx={{ mb: 6 }}>
         <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
-          {t('overview.yourProgress')}
+          {t('overview.yourAccount')}
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} lg={3}>
-            <ModernProgressCard
-              title={t('overview.coursesCompleted')}
-              value={stats.coursesCompleted}
-              total={stats.totalCourses}
-              icon={<GraduationCap size={24} weight="bold" />}
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
+          <Grid item xs={6} lg={3}>
+            <StatsCard
+              title={t('overview.activeSubscriptions')}
+              value={activeSubscriptions.length}
+              icon={<CreditCard size={24} weight="bold" />}
               color={theme.palette.primary.main}
-              trend={15}
-              progressLabel={t('stats.progress')}
+              subtitle={activeSubscriptions.length > 0 ? t('overview.premiumAccess') : t('overview.freeAccount')}
             />
           </Grid>
-          <Grid item xs={12} sm={6} lg={3}>
-            <ModernProgressCard
-              title={t('overview.studyHours')}
-              value={stats.hoursLearned}
-              total={stats.totalHours}
-              icon={<Clock size={24} weight="bold" />}
+          <Grid item xs={6} lg={3}>
+            <StatsCard
+              title={t('overview.eventsRegistered')}
+              value={eventRegistrations?.length || 0}
+              icon={<CalendarCheck size={24} weight="bold" />}
               color={theme.palette.info.main}
-              trend={8}
-              progressLabel={t('stats.progress')}
+              loading={eventsLoading}
             />
           </Grid>
-          <Grid item xs={12} sm={6} lg={3}>
-            <ModernProgressCard
-              title={t('overview.achievementsEarned')}
-              value={stats.achievements}
-              total={stats.totalAchievements}
+          <Grid item xs={6} lg={3}>
+            <StatsCard
+              title={t('overview.contentAvailable')}
+              value={videoStats ? videoStats.classVideos + videoStats.mentorshipVideos + videoStats.psicotradingVideos : '...'}
+              icon={<Books size={24} weight="bold" />}
+              color={theme.palette.success.main}
+              subtitle={t('overview.videosAndCourses')}
+            />
+          </Grid>
+          <Grid item xs={6} lg={3}>
+            <StatsCard
+              title={t('overview.tradingLevel')}
+              value={user?.tradingPhase || 1}
               icon={<Trophy size={24} weight="bold" />}
               color={theme.palette.warning.main}
-              progressLabel={t('stats.progress')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} lg={3}>
-            <ModernProgressCard
-              title={t('overview.analysisCompleted')}
-              value={stats.analysisCompleted}
-              total={stats.totalAnalysis}
-              icon={<Target size={24} weight="bold" />}
-              color={theme.palette.success.main}
-              trend={25}
-              progressLabel={t('stats.progress')}
+              subtitle={t('overview.currentPhase')}
             />
           </Grid>
         </Grid>
       </Box>
       
-      {/* Learning Paths */}
+      {/* Content Access */}
       <Box sx={{ mb: 6 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" fontWeight={700}>
-            {t('overview.learningPaths')}
-          </Typography>
-          <Button
-            endIcon={<ArrowRight size={20} />}
-            sx={{ color: 'text.secondary' }}
-            onClick={() => router.push(paths.academy.subscriptions.plans)}
-          >
-            {t('overview.viewAll')}
-          </Button>
-        </Box>
-        <Grid container spacing={3}>
-          {learningPaths.map((path, _index) => (
-            <Grid item xs={12} sm={6} lg={3} key={path.path}>
-              <ModernPathCard 
-                {...path} 
-                percentCompletedText={t('overview.completed')} 
-                newLabel={t('overview.new')}
-                exploreLabel={t('overview.explore')}
-              />
+        <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
+          {t('overview.contentLibrary')}
+        </Typography>
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
+          {contentAccess.map((content) => (
+            <Grid item xs={12} md={6} lg={3} key={content.path}>
+              <ContentAccessCard {...content} />
             </Grid>
           ))}
         </Grid>
       </Box>
       
-      {/* Recent Achievements & Next Steps */}
-      <Grid container spacing={4}>
-        {/* Recent Achievements */}
-        <Grid item xs={12} md={6}>
+      {/* Two Column Layout */}
+      <Grid container spacing={{ xs: 3, sm: 4 }}>
+        {/* Subscription Status */}
+        <Grid item xs={12} lg={6}>
           <Paper
             sx={{
               p: 4,
@@ -636,133 +550,151 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               borderColor: 'divider',
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h5" fontWeight={700}>
-                {t('overview.recentAchievements')}
-              </Typography>
-              <IconButton size="small">
-                <Star size={20} />
-              </IconButton>
-            </Box>
-            <Grid container spacing={2}>
-              {recentAchievements.map((achievement, _index) => (
-                <Grid item xs={4} key={achievement.title}>
-                  <AchievementBadge {...achievement} />
-                </Grid>
-              ))}
-            </Grid>
-            <Button
-              fullWidth
-              sx={{ mt: 3 }}
-              endIcon={<ArrowRight size={20} />}
-            >
-              {t('overview.viewAllAchievements')}
-            </Button>
+            <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
+              {t('overview.subscriptionStatus')}
+            </Typography>
+            
+            {activeSubscriptions.length > 0 ? (
+              <Stack spacing={2}>
+                {activeSubscriptions.map((sub: any, index: number) => {
+                  const planName = typeof sub === 'string' ? sub : sub.plan;
+                  const expiresAt = typeof sub === 'object' && sub.expiresAt ? new Date(sub.expiresAt) : null;
+                  
+                  return (
+                    <Card key={index} variant="outlined" sx={{ p: 2 }}>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Crown size={24} color={theme.palette.warning.main} weight="fill" />
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="subtitle1" fontWeight={600}>
+                            {planName}
+                          </Typography>
+                          {expiresAt && (
+                            <Typography variant="caption" color="text.secondary">
+                              {t('overview.expiresOn', { 
+                                date: expiresAt.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')
+                              })}
+                            </Typography>
+                          )}
+                        </Box>
+                        <Chip 
+                          label={t('overview.active')} 
+                          color="success" 
+                          size="small"
+                        />
+                      </Stack>
+                    </Card>
+                  );
+                })}
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => router.push(paths.academy.subscriptions.plans)}
+                  endIcon={<ArrowRight size={20} />}
+                >
+                  {t('overview.manageSubscriptions')}
+                </Button>
+              </Stack>
+            ) : (
+              <Stack spacing={3} alignItems="center" sx={{ py: 4 }}>
+                <Info size={48} color={theme.palette.text.secondary} />
+                <Typography variant="body1" color="text.secondary" textAlign="center">
+                  {t('overview.noActiveSubscriptions')}
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<Crown size={20} />}
+                  onClick={() => router.push(paths.academy.subscriptions.plans)}
+                  sx={{
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                  }}
+                >
+                  {t('overview.viewPlans')}
+                </Button>
+              </Stack>
+            )}
           </Paper>
         </Grid>
         
-        {/* Next Steps */}
-        <Grid item xs={12} md={6}>
+        {/* Upcoming Events */}
+        <Grid item xs={12} lg={6}>
           <Paper
             sx={{
               p: 4,
               height: '100%',
               border: '1px solid',
               borderColor: 'divider',
-              background: isDarkMode
-                ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.05)} 0%, transparent 100%)`
-                : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.05)} 0%, transparent 100%)`,
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h5" fontWeight={700}>
-                {t('quickActions.title')}
-              </Typography>
-              <IconButton size="small">
-                <Calendar size={20} />
-              </IconButton>
-            </Box>
-            <Stack spacing={2}>
-              <Card
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: alpha(theme.palette.primary.main, 0.04),
-                  }
-                }}
+            <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
+              {t('overview.upcomingEvents')}
+            </Typography>
+            
+            {upcomingEvents && upcomingEvents.length > 0 ? (
+              <List sx={{ p: 0 }}>
+                {upcomingEvents.slice(0, 3).map((event: any) => (
+                  <React.Fragment key={event._id}>
+                    <ListItem 
+                      sx={{ 
+                        px: 0, 
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) }
+                      }}
+                      onClick={() => router.push(`/events/${event._id}`)}
+                    >
+                      <ListItemIcon>
+                        <Calendar size={24} color={theme.palette.primary.main} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={event.title}
+                        secondary={new Date(event.date).toLocaleDateString(
+                          i18n.language === 'es' ? 'es-ES' : 'en-US',
+                          { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+                        )}
+                      />
+                      {event.isPremium && (
+                        <Chip 
+                          icon={<Crown size={14} />} 
+                          label="VIP" 
+                          size="small" 
+                          color="warning"
+                        />
+                      )}
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))}
+              </List>
+            ) : (
+              <Stack spacing={3} alignItems="center" sx={{ py: 4 }}>
+                <Calendar size={48} color={theme.palette.text.secondary} />
+                <Typography variant="body1" color="text.secondary" textAlign="center">
+                  {t('overview.noUpcomingEvents')}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  onClick={() => router.push('/events')}
+                  endIcon={<ArrowRight size={20} />}
+                >
+                  {t('overview.browseEvents')}
+                </Button>
+              </Stack>
+            )}
+            
+            {upcomingEvents && upcomingEvents.length > 3 && (
+              <Button
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={() => router.push('/events')}
+                endIcon={<ArrowRight size={20} />}
               >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <CheckCircle size={24} color={theme.palette.success.main} weight="fill" />
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      {t('quickActions.completeModule')}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('quickActions.lessonsRemaining', { count: 2 })}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Card>
-              
-              <Card
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: alpha(theme.palette.primary.main, 0.04),
-                  }
-                }}
-              >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <PlayCircle size={24} color={theme.palette.primary.main} weight="fill" />
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      {t('quickActions.joinLiveClass')}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('courses.advancedStrategies.title')} - 2:00 PM EST
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Card>
-              
-              <Card
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: alpha(theme.palette.primary.main, 0.04),
-                  }
-                }}
-              >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Brain size={24} color={theme.palette.secondary.main} weight="fill" />
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      {t('quickActions.tryPsicoTrading')}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('quickActions.firstSessionFree')}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Card>
-            </Stack>
+                {t('overview.viewAllEvents', { count: upcomingEvents.length })}
+              </Button>
+            )}
           </Paper>
         </Grid>
       </Grid>
       
-      {/* CTA Section */}
+      {/* Quick Actions */}
       <Paper
         sx={{
           mt: 6,
@@ -775,54 +707,46 @@ export default function AcademyOverviewPage(): React.JSX.Element {
           borderColor: alpha(theme.palette.primary.main, 0.2),
         }}
       >
-        <Lightning
-          size={80}
-          weight="duotone"
-          style={{
-            position: 'absolute',
-            top: -20,
-            right: -20,
-            opacity: 0.1,
-            color: theme.palette.primary.main,
-            transform: 'rotate(-15deg)',
-          }}
-        />
         <Stack spacing={3} alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>
-          <Chip
-            icon={<Sparkle size={16} />}
-            label={t('overview.trending')}
-            color="primary"
-            sx={{ fontWeight: 600 }}
-          />
           <Typography variant="h4" fontWeight={800}>
-            {t('subscriptions.title')}
+            {t('overview.readyToLearnMore')}
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
-            {t('subscriptions.subtitle')}
+            {t('overview.exploreOurContent')}
           </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            startIcon={<Crown size={20} />}
-            onClick={() => router.push(paths.academy.subscriptions.plans)}
-            sx={{
-              px: 5,
-              py: 2,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-              '&:hover': {
-                background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                transform: 'translateY(-2px)',
-                boxShadow: theme.shadows[8],
-              }
-            }}
-          >
-            {t('account.upgradeSubscription')}
-          </Button>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<PlayCircle size={20} />}
+              onClick={() => router.push(paths.academy.courses)}
+              sx={{
+                px: 4,
+                py: 1.5,
+                fontWeight: 600,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+              }}
+            >
+              {t('overview.startLearning')}
+            </Button>
+            {!hasPremiumAccess && (
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<Crown size={20} />}
+                onClick={() => router.push(paths.academy.subscriptions.plans)}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontWeight: 600,
+                }}
+              >
+                {t('overview.upgradeToPremium')}
+              </Button>
+            )}
+          </Stack>
         </Stack>
       </Paper>
     </Box>
   );
 }
-

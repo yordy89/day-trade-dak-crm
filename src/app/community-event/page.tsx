@@ -54,7 +54,8 @@ import axios from 'axios';
 import { SubscriptionPlan } from '@/types/user';
 import GoogleMap from '@/components/common/GoogleMap';
 import { useRouter } from 'next/navigation';
-import { CommunityEventFooter } from '@/components/community-event/CommunityEventFooter';
+import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 
 export default function CommunityEventPage() {
   const theme = useTheme();
@@ -484,13 +485,14 @@ export default function CommunityEventPage() {
 
   return (
     <div className="min-h-screen">
+      <MainNavbar />
       <main>
         {/* Hero Section */}
         <Box
           sx={{
             position: 'relative',
             color: 'white',
-            pt: { xs: 10, sm: 12, md: 16 },
+            pt: { xs: 12, sm: 14, md: 18 },
             pb: { xs: 6, sm: 8, md: 12 },
             overflow: 'hidden',
             backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
@@ -499,7 +501,7 @@ export default function CommunityEventPage() {
             backgroundRepeat: 'no-repeat',
             backgroundColor: '#0a0a0a',
             minHeight: { xs: '80vh', sm: 'auto' },
-            mt: { xs: 8, sm: 10, md: 0 },
+            mt: { xs: 0, sm: 0, md: 0 },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -1241,8 +1243,8 @@ export default function CommunityEventPage() {
 
       </main>
       
-      {/* Community Event Footer */}
-      <CommunityEventFooter />
+      {/* Professional Footer */}
+      <ProfessionalFooter />
       
       {/* Event Registration Modal */}
       {event ? (

@@ -811,7 +811,7 @@ export default function LivePage() {
       <Container 
         maxWidth="xl" 
         sx={{ 
-          mt: { xs: 9, md: 11 }, 
+          mt: { xs: 12, md: 14 }, 
           mb: 4,
           px: { xs: 2, sm: 3, md: 4 },
         }}
@@ -1103,7 +1103,7 @@ export default function LivePage() {
                                 variant="contained"
                                 fullWidth
                                 startIcon={<Crown size={20} />}
-                                onClick={() => router.push('/products')}
+                                onClick={() => router.push('/academy/subscription/plans?view=monthly')}
                                 sx={{ mt: 1 }}
                               >
                                 View Subscriptions
@@ -1233,7 +1233,7 @@ export default function LivePage() {
                   {/* Access Status for Mobile */}
                   {!loading && !hasAccess && (
                     <Alert severity="info" action={
-                      <Button color="inherit" size="small" onClick={() => router.push('/products')}>
+                      <Button color="inherit" size="small" onClick={() => router.push('/academy/subscription/plans?view=monthly')}>
                         Upgrade
                       </Button>
                     }>

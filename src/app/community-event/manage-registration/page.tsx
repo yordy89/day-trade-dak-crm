@@ -34,6 +34,8 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { CustomInput } from '@/components/common/CustomInput';
+import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 
 interface EventRegistration {
   _id: string;
@@ -118,23 +120,26 @@ export default function ManageRegistrationPage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Hero Section with gradient background like community-event */}
-      <Box
-        sx={{
-          position: 'relative',
-          color: 'white',
-          overflow: 'hidden',
-          backgroundColor: '#0a0a0a',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
+    <div className="min-h-screen">
+      <MainNavbar />
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Hero Section with gradient background like community-event */}
+        <Box
+          sx={{
+            position: 'relative',
+            color: 'white',
+            overflow: 'hidden',
+            backgroundColor: '#0a0a0a',
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            pt: { xs: 8, sm: 10, md: 12 },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
             bottom: 0,
             background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
             zIndex: 0,
@@ -450,5 +455,7 @@ export default function ManageRegistrationPage() {
           }}
         /> : null}
     </Box>
+    <ProfessionalFooter />
+    </div>
   );
 }

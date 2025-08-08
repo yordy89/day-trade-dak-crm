@@ -1,5 +1,6 @@
 {
   "navigation": {
+    "home": "Home",
     "dashboard": "Dashboard",
     "classes": "Classes",
     "masterClasses": "Master Classes",
@@ -40,7 +41,7 @@
     "learningPaths": "Learning Paths",
     "tradingCourses": {
       "title": "Trading Courses",
-      "description": "Master professional strategies step by step"
+      "description": "Master professional techniques step by step"
     },
     "mentorship": {
       "title": "1-on-1 Mentorship",
@@ -61,7 +62,37 @@
     "daysAgo": "{{days}} days ago",
     "weekAgo": "1 week ago",
     "weeksAgo": "{{weeks}} weeks ago",
-    "viewAllAchievements": "View All Achievements"
+    "viewAllAchievements": "View All Achievements",
+    "memberFor": "Member for {{days}} days",
+    "premiumMember": "Premium Member",
+    "tradingPhase": "Phase {{phase}}",
+    "exploreCourses": "Explore Courses",
+    "yourAccount": "Your Account",
+    "activeSubscriptions": "Active Subscriptions",
+    "premiumAccess": "Premium Access",
+    "freeAccount": "Free Account",
+    "eventsRegistered": "Events Registered",
+    "contentAvailable": "Content Available",
+    "videosAndCourses": "Videos and courses",
+    "tradingLevel": "Trading Level",
+    "currentPhase": "Current phase",
+    "contentLibrary": "Content Library",
+    "locked": "Locked",
+    "premiumOnly": "Premium Only",
+    "subscriptionStatus": "Subscription Status",
+    "expiresOn": "Expires on {{date}}",
+    "active": "Active",
+    "manageSubscriptions": "Manage Subscriptions",
+    "noActiveSubscriptions": "You don't have active subscriptions",
+    "viewPlans": "View Plans",
+    "upcomingEvents": "Upcoming Events",
+    "noUpcomingEvents": "No upcoming events",
+    "browseEvents": "Browse Events",
+    "viewAllEvents": "View all ({{count}} events)",
+    "readyToLearnMore": "Ready to learn more?",
+    "exploreOurContent": "Explore our content and improve your trading skills",
+    "startLearning": "Start Learning",
+    "upgradeToPremium": "Upgrade to Premium"
   },
   "courses": {
     "fundamentalCourse": {
@@ -69,7 +100,7 @@
       "description": "Master the basics of trading from scratch"
     },
     "advancedStrategies": {
-      "title": "Advanced Strategies",
+      "title": "Advanced Techniques",
       "description": "Take your trading to the next level"
     },
     "psicoTradingElite": {
@@ -115,6 +146,7 @@
   },
   "account": {
     "title": "Account Information",
+    "info": "Personal Info",
     "personalInfo": "Personal Information",
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -128,6 +160,11 @@
     "confirmPassword": "Confirm Password",
     "saveChanges": "Save Changes",
     "updatePassword": "Update Password",
+    "passwordUpdatedSuccessfully": "Password updated successfully",
+    "passwordUpdateError": "Error updating password. Please check your current password.",
+    "pleaseFillAllFields": "Please fill in all fields",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters long",
     "subscriptionStatus": "Subscription Status",
     "memberSince": "Member Since",
     "cancelSubscription": "Cancel Subscription",
@@ -194,7 +231,7 @@
       "discountedPrice": "Discounted price",
       "noInterruptions": "No access interruptions",
       "weeklyMasterClasses": "Weekly live master classes",
-      "advancedStrategies": "Advanced trading strategies",
+      "advancedAnalysis": "Advanced market analysis",
       "professionalAnalysis": "Professional technical analysis",
       "exclusiveCommunity": "Exclusive traders community",
       "downloadableMaterial": "Downloadable study material",
@@ -202,7 +239,7 @@
       "communitySpecialPrice": "Special price for community",
       "accessAllRecorded": "Access to all recorded sessions",
       "newDailyContent": "New daily content",
-      "stepByStepStrategies": "Strategies explained step by step",
+      "stepByStepAnalysis": "Analysis explained step by step",
       "downloadOffline": "Download for offline viewing",
       "freeWithLive": "FREE with active Live subscription",
       "psychologySession": "Trading psychology sessions",
@@ -250,10 +287,13 @@
     "noContracts": "No contracts or commitments",
     "bestValuePerWeek": "Best value per week",
     "save10": "SAVE 10%",
+    "bestOption": "BEST OPTION",
     "popularTag": "POPULAR",
     "processing": "Processing...",
     "activateFree": "Activate Free",
     "startNow": "Start Now",
+    "contactSupportForAccess": "Contact Support for Access",
+    "requiresPermission": "REQUIRES PERMISSION",
     "alreadyHaveSubscription": "You already have this subscription",
     "paymentError": "Error processing payment",
     "errorLoadingPrices": "Error loading prices",
@@ -293,10 +333,18 @@
     "daysRemaining": "{{days}} days remaining",
     "backToIntro": "Back to Introduction",
     "intensiveCourse": "15-day intensive course to master trading",
-    "courseDescription": "Learn the strategies and techniques used by professional traders. This course will take you from basic concepts to advanced strategies in just 15 days of intensive content.",
+    "courseDescription": "Learn to analyze markets and make informed decisions based on technical indicators, moving averages, and complete market context. This course will take you from basic concepts to advanced market analysis in just 15 days of intensive content.",
     "lessons": "Lessons",
     "daysAccess": "Days of Access",
     "hoursContent": "Hours of Content",
+    "practicalContent": "Practical Content",
+    "whatYouWillLearn": "What You'll Master",
+    "learnPoints": {
+      "point1": "Technical analysis with real indicators",
+      "point2": "Professional account setup and configuration",
+      "point3": "Risk management and capital protection"
+    },
+    "startLearningToday": "Start your trading journey today",
     "coursePresentation": "Course Presentation",
     "discoverWhatYouLearn": "Discover what you'll learn in these 15 days",
     "features": {
@@ -304,20 +352,30 @@
       "access15DaysDesc": "Intensive course with full access for 15 days",
       "structuredLessons": "Structured Lessons",
       "structuredLessonsDesc": "Content organized for progressive learning",
-      "provenStrategies": "Proven Strategies",
-      "provenStrategiesDesc": "Trading techniques validated in real markets",
-      "certificateIncluded": "Certificate Included",
-      "certificateIncludedDesc": "Get your certificate upon course completion"
+      "provenStrategies": "Market Analysis",
+      "provenStrategiesDesc": "Learn to analyze markets using indicators, moving averages, and complete market context",
+      "realTimeSupport": "Real-Time Support",
+      "realTimeSupportDesc": "Get your questions answered during live sessions"
     },
     "curriculum": {
-      "module1": "Trading Fundamentals",
-      "module2": "Technical Analysis",
-      "module3": "Risk Management",
-      "module4": "Trading Psychology",
-      "module5": "Advanced Strategies",
-      "module6": "Live Trading",
-      "title": "Course Curriculum",
-      "subtitle": "6 modules designed to take you from beginner to competent trader"
+      "module1": "Introduction to Stock Market",
+      "module2": "Charles Schwab Account Setup",
+      "module3": "Chart Analysis",
+      "module4": "Moving Averages and Indicators",
+      "module5": "Trading Checklist",
+      "module6": "Risk Management",
+      "module7": "ThinkorSwim Operations",
+      "module8": "Q&A Session",
+      "topic1": "Understanding market basics and terminology",
+      "topic2": "Complete account configuration and setup",
+      "topic3": "Reading and interpreting price charts",
+      "topic4": "Using technical indicators for analysis",
+      "topic5": "Step-by-step trading verification process",
+      "topic6": "Protecting capital and managing positions",
+      "topic7": "Platform navigation and order execution",
+      "topic8": "Addressing common questions and concerns",
+      "title": "What You'll Learn",
+      "subtitle": "8 comprehensive lessons covering everything from basics to live trading"
     },
     "whyChoose": "Why choose our Classes?",
     "whyChooseSubtitle": "Designed for traders seeking fast and effective results",
@@ -347,11 +405,11 @@
       "notFound": "Video not found.",
       "backToClasses": "Back to Classes",
       "aboutTitle": "About this lesson",
-      "aboutDescription": "This comprehensive trading lesson covers essential concepts and strategies for successful day trading. Pay close attention to the key principles discussed and take notes for future reference.",
+      "aboutDescription": "This comprehensive trading lesson covers essential concepts and techniques for successful day trading. Pay close attention to the key principles discussed and take notes for future reference.",
       "keyTopics": "Key Topics Covered",
       "topics": {
         "analysis": "Market analysis fundamentals",
-        "risk": "Risk management strategies",
+        "risk": "Risk management techniques",
         "entry": "Entry and exit techniques",
         "examples": "Real-world trading examples"
       },
@@ -359,7 +417,7 @@
       "tips": {
         "takeNotes": {
           "title": "Take Notes",
-          "description": "Write down key concepts and strategies as you watch."
+          "description": "Write down key concepts and techniques as you watch."
         },
         "practice": {
           "title": "Practice",
@@ -373,109 +431,114 @@
     }
   },
   "masterclass": {
-    "title": "Master Classes Elite",
-    "subtitle": "Advanced training for professional traders",
-    "description": "Access our exclusive master classes where we reveal the most advanced strategies and techniques of professional trading. High-level content to take your trading to the next level.",
+    "title": "Master Classes with Mijail Medina",
+    "subtitle": "Live community sessions with our expert mentor",
+    "description": "Join our exclusive master classes led by Mijail Medina. Live sessions where we analyze markets in real-time, identify entry points, use moving averages, and make informed decisions based on technical indicators and market signals.",
     "viewMasterClasses": "View Master Classes",
     "getEliteAccess": "Get Elite Access",
     "getAccess": "Get Access",
     "viewVideos": "View Videos",
     "back": "Back",
-    "accessDescription": "Access our exclusive master classes with advanced strategies and professional trading techniques.",
+    "backToIntro": "Back to Introduction",
+    "accessDescription": "Access live recordings of our master classes where we analyze market conditions, identify entry and exit points, and demonstrate decision-making with indicators and signals.",
     "premiumContent": "Premium Content",
     "advancedLevel": "Advanced Level",
     "exclusiveAccess": "Exclusive Access",
     "video": {
       "eliteContent": "Elite Content",
       "aboutTitle": "About this master class",
-      "aboutDescription": "This elite master class provides advanced trading insights and strategies from our expert instructors. Take notes and apply these concepts to enhance your trading skills.",
+      "aboutDescription": "In this live master class with Mijail Medina and our community, we analyze current market conditions, identify entry and exit points, and demonstrate real-time decision making using indicators, moving averages, and other key signals.",
       "keyTopics": "Key Topics Covered",
       "topics": {
-        "analysis": "Advanced market analysis techniques",
-        "risk": "Risk management strategies",
-        "psychology": "Elite trading psychology",
-        "caseStudies": "Real-world case studies"
+        "analysis": "Real-time market analysis and opportunity identification",
+        "risk": "Risk management techniques and capital management",
+        "psychology": "Trading discipline and emotional control",
+        "caseStudies": "Live trading examples with community"
       },
-      "eliteDescription": "This is exclusive content available only to Elite members. Make sure to take advantage of all the insights shared in this master class.",
-      "proTip": "Pro Tip: Watch with a notebook ready to capture key strategies and insights.",
+      "eliteDescription": "This is exclusive content from our live community sessions. Watch how we analyze the market and identify opportunities in real conditions.",
+      "proTip": "Pro Tip: Take notes on the specific indicators and entry/exit signals discussed during the session.",
       "backToMasterClasses": "Back to Master Classes",
       "errorLoading": "Error loading video",
       "failedToLoad": "Failed to load video. Please try again.",
       "notFound": "Video not found."
     },
-    "whyMasterClasses": "Why Master Classes Elite?",
+    "whyMasterClasses": "Why Join Our Master Classes?",
     "exclusiveContent": {
-      "title": "Exclusive Content",
-      "description": "Master classes with advanced strategies not available in other courses."
+      "title": "Live Market Analysis",
+      "description": "Real-time market analysis with our mentor Mijail Medina applying professional techniques."
     },
     "professionalLevel": {
-      "title": "Professional Level",
-      "description": "Techniques and concepts used by institutional traders."
+      "title": "Technical Analysis",
+      "description": "Learn to use indicators, moving averages, and other technical signals for decision making."
     },
     "highValue": {
-      "title": "High Value",
-      "description": "Each class is designed to maximize your return on investment."
+      "title": "Community Learning",
+      "description": "Interactive sessions with our trading community, sharing insights and experiences."
     },
     "realCases": {
-      "title": "Real Cases",
-      "description": "In-depth analysis of successful operations and lessons learned."
+      "title": "Practical Application",
+      "description": "Watch real trades being analyzed and executed with detailed explanations."
     },
     "features": {
-      "institutionalTrading": "Advanced institutional trading strategies",
-      "marketStructure": "In-depth market structure analysis",
-      "professionalRisk": "Professional risk management",
-      "advancedPsychology": "Advanced trading psychology",
-      "orderFlow": "Order flow and volume profile",
-      "algorithms": "Algorithms and systematic trading",
-      "portfolioManagement": "Professional portfolio management",
-      "unlimitedAccess": "Unlimited access and updates"
+      "institutionalTrading": "Entry Points (8-part series): Identifying optimal market entry opportunities",
+      "marketStructure": "Moving Averages: Complete analysis and application techniques",
+      "professionalRisk": "Account Management: How to manage your trading capital effectively",
+      "advancedPsychology": "Market Context: Understanding general market conditions",
+      "orderFlow": "Reinforcement Sessions: Strengthening key trading concepts",
+      "algorithms": "Q&A Sessions: Interactive questions and answers with the community",
+      "portfolioManagement": "Live Market Analysis: Real-time market observation and decision making",
+      "unlimitedAccess": "Access to all recorded mentorship sessions"
     },
     "topics": {
-      "title": "Master Classes Topics",
+      "title": "Master Class Focus Areas",
       "institutional": {
-        "title": "Institutional Trading",
-        "description": "How large funds and banks operate"
+        "title": "Technical Analysis",
+        "description": "Moving averages, RSI, MACD, and other key indicators"
       },
       "advancedManagement": {
-        "title": "Advanced Management",
-        "description": "Professional-level risk management"
+        "title": "Entry Points",
+        "description": "Identifying optimal market entry points"
       },
       "deepAnalysis": {
-        "title": "Deep Analysis",
-        "description": "Market structure and order flow"
+        "title": "Market Decision Making",
+        "description": "How to make informed trading decisions using multiple signals"
       }
     },
-    "includedContent": "Included Content",
-    "expectedResults": "Expected Results",
-    "professionalTrading": "Professional Trading",
-    "professionalTradingDesc": "Learn to trade like institutional traders with proven strategies.",
-    "advancedManagement": "Advanced Management",
-    "advancedManagementDesc": "Master risk management techniques used by hedge funds.",
-    "deepAnalysis": "Deep Analysis",
-    "deepAnalysisDesc": "Understand the market from an institutional perspective.",
-    "consistency": "Consistency",
-    "consistencyDesc": "Develop a robust and consistent trading system.",
-    "exclusiveUpdated": "Exclusive and Updated Content",
-    "exclusiveUpdatedDesc": "Our master classes are recorded by professional traders active in the market. Each session includes real analysis of the current market, proven strategies and detailed case studies you won't find anywhere else.",
-    "newClassesAdded": "New master classes added regularly with the latest market trends.",
-    "elevateYourTrading": "Elevate Your Trading to Elite Level",
-    "accessExclusiveKnowledge": "Access exclusive knowledge reserved for professional traders"
+    "includedContent": "Mentorship Topics Covered",
+    "expectedResults": "What You'll Learn",
+    "professionalTrading": "Market Analysis",
+    "professionalTradingDesc": "Identify entry and exit points using technical indicators and market signals.",
+    "advancedManagement": "Risk Management",
+    "advancedManagementDesc": "Proper position sizing and risk management for consistent results.",
+    "deepAnalysis": "Market Analysis",
+    "deepAnalysisDesc": "Read and interpret market conditions using technical analysis tools.",
+    "consistency": "Trading Discipline",
+    "consistencyDesc": "Develop consistency through systematic approach and emotional control.",
+    "exclusiveUpdated": "Live Community Sessions",
+    "exclusiveUpdatedDesc": "Our master classes are live sessions with Mijail Medina and our trading community. Each session covers topics including: entry point identification (8 parts), moving averages analysis, account management, general market context, reinforcement of key concepts, and Q&A sessions.",
+    "newClassesAdded": "Regular live sessions analyzing current market conditions and opportunities.",
+    "elevateYourTrading": "Learn Professional Market Analysis",
+    "accessExclusiveKnowledge": "Join our community and learn from experienced traders in live sessions"
   },
   "liveRecorded": {
     "title": "Recorded Live",
     "subtitle": "Access all recordings of our live trading sessions",
-    "description": "Relive our daily trading classes. Each session includes market analysis, real trades and proven strategies. Learn at your own pace with full access to all recordings.",
+    "description": "Relive our daily trading classes. Each session includes market analysis, real trades and detailed explanations. Learn at your own pace with full access to all recordings.",
     "viewLiveClasses": "View Live Classes",
     "getAccess": "Get Access",
     "viewVideos": "View Videos",
     "back": "Back",
+    "backToIntro": "Back to Introduction",
+    "accessRequired": "Access Required",
+    "needSubscriptionOrPermission": "You need an active subscription or permission to view this content",
+    "viewPlans": "View Plans",
     "libraryTitle": "Recorded Live Library",
-    "libraryDescription": "Explore our complete collection of recorded live trading sessions. Each recording includes market analysis, real trades and strategies explained step by step.",
+    "libraryDescription": "Explore our complete collection of recorded live trading sessions. Each recording includes market analysis, real trades and techniques explained step by step.",
     "mondayToFriday": "Monday to Friday",
     "activeCommunity": "Active Community",
     "globalAccess": "Global Access",
     "updatedDaily": "UPDATED DAILY",
-    "moreThan100Classes": "More than 100 classes available",
+    "growingLibrary": "Growing library of trading sessions",
     "whyJoinLiveClasses": "Why join our live classes?",
     "completeLibrary": {
       "title": "Complete Library",
@@ -511,7 +574,7 @@
       "newRecordings": "New recordings added daily",
       "prePostMarket": "Pre-market and post-market analysis",
       "detailedExplanations": "Detailed explanations of each trade",
-      "differentMarkets": "Strategies for different markets",
+      "differentMarkets": "Analysis for different markets",
       "riskManagement": "Risk management explained step by step",
       "patternIdentification": "Pattern and opportunity identification",
       "practicalPsychology": "Trading psychology in practice",
@@ -519,20 +582,20 @@
     },
     "whatYouLearn": "What You'll Learn",
     "advancedTechnicalAnalysis": "Advanced Technical Analysis",
-    "advancedTechnicalAnalysisDesc": "Patterns, indicators and professional strategies applied in real time.",
+    "advancedTechnicalAnalysisDesc": "Patterns, indicators and professional techniques applied in real time.",
     "riskManagement": "Risk Management",
     "riskManagementDesc": "How to protect your capital and maximize profits with proper stops and sizing.",
     "tradingPsychology": "Trading Psychology",
     "tradingPsychologyDesc": "Maintain discipline and control your emotions during operations.",
-    "multipleStrategies": "Multiple Strategies",
-    "multipleStrategiesDesc": "Day trading, swing trading and strategies for different market conditions.",
-    "learnFromProfessionals": "Learn from Professional Traders",
-    "learnFromProfessionalsDesc": "Our classes are taught by traders with years of experience in financial markets. Each instructor brings their unique expertise and strategies proven in real markets.",
-    "10YearsExperience": "10+ years of experience",
-    "thousandsSuccessfulTrades": "Thousands of successful trades",
-    "hundredsStudents": "Hundreds of students",
+    "multipleApproaches": "Multiple Approaches",
+    "multipleApproachesDesc": "Day trading, swing trading and techniques for different market conditions.",
+    "learnFromMijailAndCommunity": "Learn from Mijail Medina and Our Community",
+    "learnFromMijailAndCommunityDesc": "Our classes are led by our expert mentor Mijail Medina, along with insights from our experienced trading community. Together they share real market knowledge and proven techniques.",
+    "expertMentor": "Expert Mentor",
+    "realExperience": "Real Market Experience",
+    "activeCommunitySupport": "Active Community Support",
     "knowledgeLibrary": "Knowledge Library",
-    "knowledgeLibraryDesc": "Access our extensive library of recorded classes. Each session captures real-time market analysis, trading decisions and lessons learned. Perfect for reviewing concepts and improving your strategy.",
+    "knowledgeLibraryDesc": "Access our extensive library of recorded classes. Each session captures real-time market analysis, trading decisions and lessons learned. Perfect for reviewing concepts and improving your approach.",
     "newRecordingsAddedDaily": "New recordings added daily after each live session.",
     "readyToImprove": "Ready to improve your trading?",
     "accessEntireLibrary": "Access our entire class library and learn from the best",
@@ -544,38 +607,37 @@
       "notFound": "Video not found.",
       "backToSessions": "Back to Live Sessions",
       "aboutTitle": "About this live session",
-      "aboutDescription": "This is a recorded live trading session where our expert instructors share real-time market analysis, trading strategies, and answer questions from the community.",
+      "aboutDescription": "This is a recorded live trading session where our expert instructors share real-time market analysis, trading techniques, and answer questions from the community.",
       "whatToExpect": "What to expect:",
       "expectations": {
         "analysis": "Real-time market analysis and commentary",
-        "examples": "Live trading examples and setups",
+        "examples": "Live trading examples and analysis",
         "qa": "Q&A with community members",
         "technical": "Technical and fundamental analysis"
       },
       "liveSessionRecording": "Live Session Recording",
       "recordingDescription": "This recording captures the full live trading session, including all market analysis, trades executed, and community interactions.",
-      "tip": "Tip: Take notes on the trading setups and strategies discussed during the session."
+      "tip": "Tip: Take notes on the trading setups and techniques discussed during the session."
     }
   },
   "psicotrading": {
     "title": "PsicoTrading Elite",
     "subtitle": "Master your mind, master the markets",
     "description": "90% of trading success is in your mind. Learn to control your emotions, develop unbreakable discipline and achieve the consistency you seek.",
-    "sessions1to1": "1-on-1 Sessions",
-    "personalizedPlan": "Personalized Plan",
-    "certifiedPsychologist": "Certified Psychologist",
+    "psychologicalTechniques": "Psychological Techniques",
+    "emotionalControl": "Emotional Control",
+    "mentalPerformance": "Mental Performance",
     "accessVideos": "Access Videos",
     "startPsicoTrading": "Start PsicoTrading Elite",
     "backToStart": "Back to Start",
     "videosTitle": "PsicoTrading Videos",
     "videosDescription": "Access all exclusive PsicoTrading Elite content",
     "whatYouAchieve": "What will you achieve with PsicoTrading?",
-    "whatIncludesPsicoTradingElite": "What's included in your PsicoTrading Elite program",
     "thisProgramIsForYou": "This program is for you if...",
-    "notForYou": "NOT for you if...",
+    "notForYouTitle": "NOT for you if...",
     "howItWorks": "How does it work?",
     "transformYourTrading": "Transform Your Trading from the Root",
-    "successfulTradingDescription": "Successful trading is not just about strategies and analysis. It's about having the mental strength to execute your plan without doubt, handle losses without emotional destruction, and maintain discipline when everyone around you panics.",
+    "successfulTradingDescription": "Successful trading is not just about techniques and analysis. It's about having the mental strength to execute your plan without doubt, handle losses without emotional destruction, and maintain discipline when everyone around you panics.",
     "improveAsPersonAndTrader": "With PsicoTrading Elite, you'll not only improve as a trader, you'll improve as a person.",
     "readyToMasterYourMind": "Ready to master your mind?",
     "startYourTransformation": "Start your transformation today",
@@ -603,7 +665,7 @@
       "mindfulness": "Mindfulness applied to trading",
       "fearGreedTools": "Tools to overcome fear and greed",
       "disciplinePatience": "Development of discipline and patience",
-      "lossManagement": "Strategies to handle losses"
+      "lossManagement": "Techniques to handle losses"
     },
     "forYou": {
       "emotionsControl": "You feel your emotions control your trades",
@@ -617,19 +679,19 @@
       "magicSolution": "You're looking for a magic solution without effort",
       "notWillingToWork": "You're not willing to work on yourself",
       "onlyTechnicalAnalysis": "You believe trading is only technical analysis",
-      "noTimeForSessions": "You don't have time for the sessions",
+      "noTimeForLearning": "You don't have time to learn and practice",
       "immediateResults": "You expect immediate results without process",
       "notOpenToChange": "You're not open to personal change"
     },
     "steps": {
-      "initialEvaluation": "Initial Evaluation",
-      "initialEvaluationDesc": "We analyze your psychological profile and trading style",
-      "personalizedPlan": "Personalized Plan",
-      "personalizedPlanDesc": "We create a plan adapted to your specific needs",
-      "sessions1to1": "1-on-1 Sessions",
-      "sessions1to1Desc": "We work together on your mental and emotional development",
-      "results": "Results",
-      "resultsDesc": "You see improvements in your trading and overall well-being"
+      "accessContent": "Access Content",
+      "accessContentDesc": "Get instant access to all PsicoTrading video materials",
+      "learnConcepts": "Learn Concepts",
+      "learnConceptsDesc": "Study psychological concepts applied to trading",
+      "practiceExercises": "Practice Exercises",
+      "practiceExercisesDesc": "Apply mental and emotional management techniques",
+      "applyKnowledge": "Apply Knowledge",
+      "applyKnowledgeDesc": "Integrate what you've learned into your daily trading"
     },
     "modules": {
       "emotionalControl": "Emotional Control",
@@ -669,12 +731,23 @@
           "description": "Apply the psychological techniques in your daily trading routine for best results."
         }
       }
-    }
+    },
+    "accessRequired": "Access required",
+    "needSubscriptionOrPermission": "You need an active subscription or permission to access this content.",
+    "viewPlans": "View plans"
   },
   "settings": {
     "title": "Settings",
+    "privacy": {
+      "title": "Privacy",
+      "short": "Privacy",
+      "profileVisibility": "Profile Visibility",
+      "showProgress": "Show Progress",
+      "shareAchievements": "Share Achievements"
+    },
     "notifications": {
       "title": "Notifications",
+      "short": "Notifications",
       "emailNotifications": "Email Notifications",
       "pushNotifications": "Push Notifications",
       "tradingAlerts": "Trading Alerts",
@@ -687,18 +760,12 @@
       "timezone": "Timezone",
       "currency": "Currency",
       "theme": "Theme"
-    },
-    "privacy": {
-      "title": "Privacy",
-      "profileVisibility": "Profile Visibility",
-      "showProgress": "Show Progress",
-      "shareAchievements": "Share Achievements"
     }
   },
   "peaceWithMoney": {
     "title": "Course for Traders: PEACE WITH MONEY",
     "subtitle": "21 days to transform your relationship with money",
-    "description": "What if your real winning strategy was to HEAL your relationship with money?",
+    "description": "What if your real winning path was to HEAL your relationship with money?",
     "mainDescription": "It's not your trading system that's holding you back, it's your emotional, mental and energetic bond with money. In 21 days you'll get the keys to transform that relationship and build a solid foundation for sustainable results.",
     "21Days": "21 Days",
     "60DaysAccess": "60 days of access",

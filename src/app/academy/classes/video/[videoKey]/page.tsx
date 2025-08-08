@@ -11,11 +11,9 @@ import {
   Stack,
   Alert,
   CircularProgress,
-  Chip,
-  Grid,
+  alpha,
 } from '@mui/material';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
-import { BookOpen } from '@phosphor-icons/react/dist/ssr/BookOpen';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -67,14 +65,42 @@ export default function ClassesVideoPlayerPage() {
   });
   */
   
-  // Extract video name from key
-  const extractVideoName = (key: string): string => {
-    const parts = key.split('/');
-    const filename = parts[parts.length - 1];
-    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-    return nameWithoutExt
+  // Extract video name from key or use title from API
+  const extractVideoName = (video?: any): string => {
+    // Use the title from API if available
+    if (video?.title) {
+      return video.title;
+    }
+    
+    // Fallback to extracting from key
+    const key = video?.key || videoKey;
+    const filename = key.split('/').pop() || key;
+    const nameWithoutExt = filename.replace(/\.(?:mp4|webm|ogg|m3u8)$/i, '');
+    
+    // Clean up the name
+    const cleanName = nameWithoutExt
       .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+      .replace(/clase/gi, 'Clase')
+      .replace(/playlist/gi, '') // Remove "playlist" from the name
+      .trim()
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
+    
+    // If the name is empty or just "Playlist", extract from the key
+    if (!cleanName || cleanName.toLowerCase() === 'playlist') {
+      // Try to extract a meaningful name from the path
+      const pathParts = videoKey.split('/');
+      for (let i = pathParts.length - 1; i >= 0; i--) {
+        const part = pathParts[i];
+        if (part && !part.includes('.') && part.toLowerCase() !== 'playlist') {
+          return part
+            .replace(/_/g, ' ')
+            .replace(/clase/gi, 'Clase')
+            .replace(/\b\w/g, (l: string) => l.toUpperCase());
+        }
+      }
+    }
+    
+    return cleanName || 'Clase de Trading';
   };
   
   // Handle video progress
@@ -133,211 +159,128 @@ export default function ClassesVideoPlayerPage() {
   }
   
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      {/* Header */}
-      <Box sx={{ mb: 3 }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#0a0a0a',
+        position: 'relative',
+      }}
+    >
+      {/* Background gradient */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+          opacity: 0.3,
+          zIndex: 0,
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: 4 }}>
+        {/* Header */}
         <Button
           startIcon={<ArrowLeft size={20} />}
           onClick={() => router.push('/academy/classes#videos')}
-          sx={{ mb: 2 }}
+          sx={{ 
+            mb: 4,
+            color: 'white',
+            '&:hover': {
+              backgroundColor: alpha('#ffffff', 0.1),
+            },
+          }}
         >
           {t('classes.video.backToClasses')}
         </Button>
-        
-        <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-          <Box>
-            <Typography variant="h4" fontWeight={700} gutterBottom>
-              {extractVideoName(videoKey)}
-            </Typography>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Chip
-                icon={<BookOpen size={16} />}
-                label={t('classes.video.tradingClass')}
-                size="small"
-                variant="outlined"
-              />
-              {/* TODO: Show duration when metadata is available
-              <Chip
-                icon={<Clock size={16} />}
-                label="Duration will update when video loads"
-                size="small"
-                variant="outlined"
-              />
-              */}
-              {/* TODO: Show completed status when progress tracking is implemented
-              {(userProgress?.completedAt || hasWatched) && (
-                <Chip
-                  icon={<CheckCircle size={16} />}
-                  label="Completed"
-                  size="small"
-                  color="success"
-                />
-              )}
-              */}
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h3" fontWeight={700} sx={{ color: 'white', mb: 2 }}>
+            {extractVideoName()}
+          </Typography>
+          <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.7) }}>
+            {t('classes.video.tradingClass')}
+          </Typography>
+        </Box>
       
-      {/* Video Player */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <Card
-            sx={{
-              overflow: 'hidden',
-              backgroundColor: 'black',
-              position: 'relative',
-            }}
-          >
-            <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                {hasAccess ? (
-                  <ProfessionalVideoPlayer
-                    video={{
-                      id: videoKey,
-                      title: extractVideoName(videoKey),
-                      description: `Lesson video for ${extractVideoName(videoKey)}`,
-                      duration: 0, // Will be set by video player
-                      instructor: 'Trading Academy',
-                      thumbnail: '',
-                    }}
-                    src={finalVideoUrl}
-                    onProgress={handleProgress}
-                    onComplete={() => {
-                      // TODO: Enable when backend endpoints are implemented
-                      // completeVideo.mutate()
-                    }}
-                  />
-                ) : (
-                  <ProtectedVideoPlayer
-                    videoId={videoKey}
-                    moduleType={ModuleType.Classes}
-                    videoUrl={finalVideoUrl}
-                    title={extractVideoName(videoKey)}
-                    description={`Lesson video for ${extractVideoName(videoKey)}`}
-                  />
-                )}
-              </Box>
-            </Box>
-          </Card>
-          
-          {/* Video Description */}
-          <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('classes.video.aboutTitle')}
+        {/* Video Player */}
+        <Box
+          sx={{
+            backgroundColor: '#000',
+            borderRadius: 2,
+            overflow: 'hidden',
+            aspectRatio: '16/9',
+            mb: 4,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          {hasAccess ? (
+            <ProfessionalVideoPlayer
+              video={{
+                id: videoKey,
+                title: extractVideoName(),
+                description: `Lesson video for ${extractVideoName()}`,
+                duration: 0, // Will be set by video player
+                instructor: 'Trading Academy',
+                thumbnail: '',
+              }}
+              src={finalVideoUrl}
+              onProgress={handleProgress}
+              onComplete={() => {
+                // TODO: Enable when backend endpoints are implemented
+                // completeVideo.mutate()
+              }}
+            />
+          ) : (
+            <ProtectedVideoPlayer
+              videoId={videoKey}
+              moduleType={ModuleType.Classes}
+              videoUrl={finalVideoUrl}
+              title={extractVideoName()}
+              description={`Lesson video for ${extractVideoName()}`}
+            />
+          )}
+        </Box>
+        {/* Video Info Card */}
+        <Card 
+          sx={{ 
+            backgroundColor: alpha('#ffffff', 0.05),
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${alpha('#22c55e', 0.2)}`,
+          }}
+        >
+          <CardContent>
+            <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
+              {t('classes.video.aboutTitle')}
+            </Typography>
+            <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.8), mb: 3 }}>
+              {t('classes.video.aboutDescription')}
+            </Typography>
+            
+            <Box>
+              <Typography variant="subtitle1" sx={{ color: 'white', mb: 2 }}>
+                {t('classes.video.keyTopics')}
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {t('classes.video.aboutDescription')}
-              </Typography>
-              
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  {t('classes.video.keyTopics')}
+              <Stack spacing={1}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('classes.video.topics.analysis')}
                 </Typography>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('classes.video.topics.analysis')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('classes.video.topics.risk')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('classes.video.topics.entry')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • {t('classes.video.topics.examples')}
-                  </Typography>
-                </Stack>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        {/* Sidebar */}
-        <Grid item xs={12} lg={4}>
-          {/* Progress Card - Hidden until backend implementation */}
-          {/* TODO: Enable when video progress tracking is implemented
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Your Progress
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Video Progress
-                  </Typography>
-                  <Typography variant="body2" fontWeight={600}>
-                    {userProgress?.progress || 0}%
-                  </Typography>
-                </Stack>
-                <LinearProgress
-                  variant="determinate"
-                  value={userProgress?.progress || 0}
-                  sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                  }}
-                />
-              </Box>
-              
-              {(userProgress?.completedAt || hasWatched) && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  <Typography variant="body2">
-                    Great job! You&apos;ve completed this lesson.
-                  </Typography>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-          */}
-          
-          {/* Tips Card */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('classes.video.learningTips')}
-              </Typography>
-              <Stack spacing={2}>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    📝 {t('classes.video.tips.takeNotes.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('classes.video.tips.takeNotes.description')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    🔄 {t('classes.video.tips.practice.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('classes.video.tips.practice.description')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    ❓ {t('classes.video.tips.askQuestions.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('classes.video.tips.askQuestions.description')}
-                  </Typography>
-                </Box>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('classes.video.topics.risk')}
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('classes.video.topics.entry')}
+                </Typography>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
+                  • {t('classes.video.topics.examples')}
+                </Typography>
               </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Container>
+            </Box>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 }

@@ -2,16 +2,11 @@
 
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import IconButton from '@mui/material/IconButton';
-import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
-import Box from '@mui/material/Box';
 import { Header } from './header';
-import { MobileNav } from './mobile-nav';
 import { getNavItems } from './config';
 import { useTranslation } from 'react-i18next';
 
 export function MainNav(): React.JSX.Element {
-  const [openNav, setOpenNav] = React.useState<boolean>(false);
   const pathname = usePathname();
   const { t } = useTranslation('academy');
   
@@ -61,36 +56,8 @@ export function MainNav(): React.JSX.Element {
 
   return (
     <React.Fragment>
-      {/* Mobile Menu Button for smaller screens */}
-      <Box
-        sx={{
-          display: { xs: 'flex', lg: 'none' },
-          position: 'fixed',
-          top: 20,
-          left: 20,
-          zIndex: (theme) => theme.zIndex.appBar + 1,
-        }}
-      >
-        <IconButton
-          onClick={() => setOpenNav(true)}
-          sx={{
-            backgroundColor: 'background.paper',
-            boxShadow: 2,
-            '&:hover': {
-              backgroundColor: 'background.paper',
-              boxShadow: 3,
-            },
-          }}
-        >
-          <ListIcon size={24} />
-        </IconButton>
-      </Box>
-
       {/* Professional Header */}
       <Header pageTitle={title} pageSubtitle={subtitle} />
-
-      {/* Mobile Nav */}
-      <MobileNav onClose={() => setOpenNav(false)} open={openNav} />
     </React.Fragment>
   );
 }

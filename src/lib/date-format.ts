@@ -1,28 +1,39 @@
 export const formatVideoTitle = (key: string): string => {
-  // Remove prefix & file extension
-  const filename = key.replace('class-videos/', '').replace('.mp4', '');
-
-  // Extract parts (expected format: MM:DD:YYYY)
-  const [month, day, year] = filename.split(':');
-
-  // Map months to Spanish names
-  const months: Record<string, string> = {
-    '01': 'Enero',
-    '02': 'Febrero',
-    '03': 'Marzo',
-    '04': 'Abril',
-    '05': 'Mayo',
-    '06': 'Junio',
-    '07': 'Julio',
-    '08': 'Agosto',
-    '09': 'Septiembre',
-    '10': 'Octubre',
-    '11': 'Noviembre',
-    '12': 'Diciembre',
-  };
-
-  // Validate format & return formatted title
-  return months[month] && day && year ? `${parseInt(day)} ${months[month]} ${year}` : filename;
+  // Handle new format: class-daily/07:22:2025/master.m3u8
+  // or class-daily/07:24:2025/720p/playlist.m3u8
+  
+  // Extract the date portion from the path
+  const dateRegex = /(?<month>\d{2}):(?<day>\d{2}):(?<year>\d{4})/;
+  const dateMatch = dateRegex.exec(key);
+  
+  if (dateMatch?.groups) {
+    const { month, day, year } = dateMatch.groups;
+    
+    // Map months to Spanish names
+    const months: Record<string, string> = {
+      '01': 'Enero',
+      '02': 'Febrero',
+      '03': 'Marzo',
+      '04': 'Abril',
+      '05': 'Mayo',
+      '06': 'Junio',
+      '07': 'Julio',
+      '08': 'Agosto',
+      '09': 'Septiembre',
+      '10': 'Octubre',
+      '11': 'Noviembre',
+      '12': 'Diciembre',
+    };
+    
+    // Return formatted title
+    return months[month] && day && year 
+      ? `Sesión del ${parseInt(day)} de ${months[month]} ${year}`
+      : `Sesión ${month}/${day}/${year}`;
+  }
+  
+  // Fallback for old format or other formats
+  const filename = key.replace('class-videos/', '').replace('class-daily/', '').replace('.mp4', '').replace('/master.m3u8', '');
+  return filename;
 };
 
 export function formatDate(date: string | Date | null | undefined): string {

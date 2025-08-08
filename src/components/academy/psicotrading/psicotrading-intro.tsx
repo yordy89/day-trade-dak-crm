@@ -22,12 +22,11 @@ import {
   Lightning, 
   Heart,
   ChartLine,
-  MedalMilitary,
   Sparkle,
   CheckCircle,
-  Users,
-  Clock,
-  Certificate,
+  BookOpen,
+  Video,
+  HandHeart,
 } from '@phosphor-icons/react';
 
 interface PsicoTradingIntroProps {
@@ -63,17 +62,6 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
     }
   ];
 
-  const features = [
-    t('psicotrading.features.oneOnOne'),
-    t('psicotrading.features.personalizedEvaluation'),
-    t('psicotrading.features.adaptedPlan'),
-    t('psicotrading.features.advancedEmotional'),
-    t('psicotrading.features.mindfulness'),
-    t('psicotrading.features.fearGreedTools'),
-    t('psicotrading.features.disciplinePatience'),
-    t('psicotrading.features.lossManagement'),
-  ];
-
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
       {/* Hero Section */}
@@ -92,38 +80,63 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
         }}
       >
         <Box sx={{ position: 'relative', zIndex: 1 }}>
-          <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }} mb={3}>
             <Brain size={48} weight="duotone" color={theme.palette.primary.main} />
-            <Box>
-              <Typography variant="h3" fontWeight={800} mb={1}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography 
+                variant="h3" 
+                fontWeight={800} 
+                mb={1}
+                sx={{
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                  lineHeight: 1.2,
+                  wordBreak: 'break-word',
+                  hyphens: 'auto',
+                }}
+              >
                 {t('psicotrading.title')}
               </Typography>
-              <Typography variant="h6" color="text.secondary">
+              <Typography 
+                variant="h6" 
+                color="text.secondary"
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                }}
+              >
                 {t('psicotrading.subtitle')}
               </Typography>
             </Box>
           </Stack>
 
-          <Typography variant="h5" paragraph sx={{ mb: 3, fontWeight: 300 }}>
+          <Typography 
+            variant="h5" 
+            paragraph 
+            sx={{ 
+              mb: 3, 
+              fontWeight: 300,
+              fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' },
+              lineHeight: 1.6,
+            }}
+          >
             {t('psicotrading.description')}
           </Typography>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={4}>
             <Chip 
-              icon={<Users size={16} />} 
-              label={t('psicotrading.sessions1to1')} 
+              icon={<Brain size={16} />} 
+              label={t('psicotrading.psychologicalTechniques')} 
               color="primary" 
               variant="filled"
             />
             <Chip 
-              icon={<Clock size={16} />} 
-              label={t('psicotrading.personalizedPlan')} 
+              icon={<Target size={16} />} 
+              label={t('psicotrading.emotionalControl')} 
               color="primary" 
               variant="outlined"
             />
             <Chip 
-              icon={<Certificate size={16} />} 
-              label={t('psicotrading.certifiedPsychologist')} 
+              icon={<TrendUp size={16} />} 
+              label={t('psicotrading.mentalPerformance')} 
               color="primary" 
               variant="outlined"
             />
@@ -210,25 +223,6 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
         ))}
       </Grid>
 
-      {/* Features Section */}
-      <Paper sx={{ p: 4, mb: 6, border: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="h5" fontWeight={700} mb={3}>
-          <MedalMilitary size={28} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-          {t('psicotrading.whatIncludesPsicoTradingElite')}
-        </Typography>
-        
-        <Grid container spacing={2}>
-          {features.map((feature) => (
-            <Grid item xs={12} md={6} key={feature}>
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 1 }}>
-                <CheckCircle size={24} weight="fill" color={theme.palette.success.main} />
-                <Typography>{feature}</Typography>
-              </Stack>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
-
       {/* Target Audience */}
       <Grid container spacing={4} mb={6}>
         <Grid item xs={12} md={6}>
@@ -252,13 +246,13 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
           <Paper sx={{ p: 4, height: '100%', bgcolor: alpha(theme.palette.error.main, 0.05) }}>
             <Typography variant="h6" fontWeight={700} mb={2} color="error.main">
               <Lightning size={24} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-              {t('psicotrading.notForYou')}
+              {t('psicotrading.notForYouTitle')}
             </Typography>
             <Stack spacing={2}>
               <Typography>• {t('psicotrading.notForYou.magicSolution')}</Typography>
               <Typography>• {t('psicotrading.notForYou.notWillingToWork')}</Typography>
               <Typography>• {t('psicotrading.notForYou.onlyTechnicalAnalysis')}</Typography>
-              <Typography>• {t('psicotrading.notForYou.noTimeForSessions')}</Typography>
+              <Typography>• {t('psicotrading.notForYou.noTimeForLearning')}</Typography>
               <Typography>• {t('psicotrading.notForYou.immediateResults')}</Typography>
               <Typography>• {t('psicotrading.notForYou.notOpenToChange')}</Typography>
             </Stack>
@@ -266,7 +260,7 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
         </Grid>
       </Grid>
 
-      {/* Process Section */}
+      {/* Process Section - Updated */}
       <Paper 
         sx={{ 
           p: 4, 
@@ -293,15 +287,13 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
                 }}
               >
-                1
+                <Video size={28} weight="bold" />
               </Box>
-              <Typography variant="h6">{t('psicotrading.steps.initialEvaluation')}</Typography>
+              <Typography variant="h6">{t('psicotrading.steps.accessContent')}</Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('psicotrading.steps.initialEvaluationDesc')}
+                {t('psicotrading.steps.accessContentDesc')}
               </Typography>
             </Stack>
           </Grid>
@@ -318,15 +310,13 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
                 }}
               >
-                2
+                <BookOpen size={28} weight="bold" />
               </Box>
-              <Typography variant="h6">{t('psicotrading.steps.personalizedPlan')}</Typography>
+              <Typography variant="h6">{t('psicotrading.steps.learnConcepts')}</Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('psicotrading.steps.personalizedPlanDesc')}
+                {t('psicotrading.steps.learnConceptsDesc')}
               </Typography>
             </Stack>
           </Grid>
@@ -343,15 +333,13 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
                 }}
               >
-                3
+                <HandHeart size={28} weight="bold" />
               </Box>
-              <Typography variant="h6">{t('psicotrading.steps.sessions1to1')}</Typography>
+              <Typography variant="h6">{t('psicotrading.steps.practiceExercises')}</Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('psicotrading.steps.sessions1to1Desc')}
+                {t('psicotrading.steps.practiceExercisesDesc')}
               </Typography>
             </Stack>
           </Grid>
@@ -368,15 +356,13 @@ export default function PsicoTradingIntro({ onStart, ctaText }: PsicoTradingIntr
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
                 }}
               >
-                4
+                <TrendUp size={28} weight="bold" />
               </Box>
-              <Typography variant="h6">{t('psicotrading.steps.results')}</Typography>
+              <Typography variant="h6">{t('psicotrading.steps.applyKnowledge')}</Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('psicotrading.steps.resultsDesc')}
+                {t('psicotrading.steps.applyKnowledgeDesc')}
               </Typography>
             </Stack>
           </Grid>

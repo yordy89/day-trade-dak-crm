@@ -39,39 +39,91 @@ export default function PsicoTradingVideoList() {
   // Fetch videos from API
   const { data: videos = [], isLoading, error } = useQuery({
     queryKey: ['psicotrading-videos'],
-    queryFn: () => videoService.getPsicotradingVideos(),
+    queryFn: async () => {
+      const data = await videoService.getPsicotradingVideos();
+      
+      // Filter to get only unique mentoria folders (deduplicate by folder name)
+      const uniqueVideos = new Map<string, any>();
+      
+      // Create a map to group videos by mentoria folder
+      const mentoriaMap = new Map<string, any[]>();
+      
+      data.forEach((video: any) => {
+        const pathParts = video.key.split('/');
+        const mentoriaFolder = pathParts[2] || '';
+        
+        if (!mentoriaMap.has(mentoriaFolder)) {
+          mentoriaMap.set(mentoriaFolder, []);
+        }
+        mentoriaMap.get(mentoriaFolder)!.push(video);
+      });
+      
+      // For each mentoria, try to use master.m3u8 first, fallback to 720p if master is too small
+      mentoriaMap.forEach((videos, mentoriaFolder) => {
+        // Find master.m3u8
+        const masterVideo = videos.find(v => v.key.includes('master.m3u8'));
+        
+        if (masterVideo && masterVideo.size && masterVideo.size > 100) {
+          // Use master if it's a reasonable size (more than 100 bytes)
+          uniqueVideos.set(mentoriaFolder, masterVideo);
+        } else {
+          // Fallback to 720p if master is too small or doesn't exist
+          const quality720p = videos.find(v => v.key.includes('720p/playlist.m3u8'));
+          const quality480p = videos.find(v => v.key.includes('480p/playlist.m3u8'));
+          const quality360p = videos.find(v => v.key.includes('360p/playlist.m3u8'));
+          const quality1080p = videos.find(v => v.key.includes('1080p/playlist.m3u8'));
+          
+          // Prefer 720p, then 480p, then 360p, then 1080p
+          const selectedVideo = quality720p || quality480p || quality360p || quality1080p || masterVideo || videos[0];
+          if (selectedVideo) {
+            uniqueVideos.set(mentoriaFolder, selectedVideo);
+          }
+        }
+      });
+      
+      // Convert Map values back to array and continue with the mapping
+      return Array.from(uniqueVideos.values()).map((video: any) => {
+        // Extract the folder name from the path structure again
+        const pathParts = video.key.split('/');
+        const mentoriaFolder = pathParts[2] || '';
+        
+        // Format title based on folder name
+        let formattedTitle = '';
+        let order = 999;
+        
+        if (mentoriaFolder === 'Mentoria Introductoria') {
+          formattedTitle = 'Mentoría Introductoria';
+          order = 0; // Show first
+        } else if (mentoriaFolder.startsWith('Mentoria ')) {
+          // Extract number from "Mentoria 1", "Mentoria 2", etc.
+          const match = /Mentoria (\d+)/.exec(mentoriaFolder);
+          if (match) {
+            const number = match[1];
+            formattedTitle = `Mentoría ${number}`;
+            order = parseInt(number);
+          } else {
+            formattedTitle = mentoriaFolder.replace('Mentoria', 'Mentoría');
+          }
+        } else {
+          // Default formatting
+          formattedTitle = mentoriaFolder;
+        }
+        
+        return {
+          ...video,
+          title: formattedTitle,
+          sortOrder: order,
+        };
+      }).sort((a, b) => a.sortOrder - b.sortOrder);
+    },
   });
 
   // Fetch user's video progress
   // TODO: Enable when backend endpoints are implemented
   const userProgress: any[] = [];
 
-  // Extract video name from S3 key
-  const extractVideoName = (key: string): string => {
-    const parts = key.split('/');
-    const filename = parts[parts.length - 1];
-    // Remove file extension
-    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-    // Replace underscores with spaces and capitalize words
-    return nameWithoutExt
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
-  // Extract video order from filename (if videos are numbered)
-  const extractOrder = (key: string): number => {
-    const filename = key.split('/').pop() || '';
-    const match = /^(?<order>\d+)[_\-\s]/.exec(filename);
-    return match ? parseInt(match.groups!.order, 10) : 999;
-  };
-
-  // Sort videos by order
-  const sortedVideos = [...videos].sort((a, b) => {
-    return extractOrder(a.key) - extractOrder(b.key);
-  });
-
   // Merge video data with user progress
-  const videosWithProgress: VideoWithProgress[] = sortedVideos.map(video => {
+  const videosWithProgress: VideoWithProgress[] = videos.map(video => {
     const userClass = userProgress.find(uc => uc.s3Key === video.key);
     return {
       ...video,
@@ -206,7 +258,7 @@ export default function PsicoTradingVideoList() {
                             color: 'text.primary',
                           }}
                         >
-                          Lección {index + 1}: {extractVideoName(video.key)}
+                          {(video as any).title || `Lección ${index + 1}`}
                         </Typography>
                         {/* TODO: Show completion status when progress tracking is implemented */}
                         {video.completed ? (

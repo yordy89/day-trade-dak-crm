@@ -14,8 +14,14 @@ interface VideoUrlConfig {
  * Determines if we should use proxy based on environment and URL
  */
 function shouldUseProxy(url: string, config?: VideoUrlConfig): boolean {
-  // Never use proxy in production
-  if (process.env.NODE_ENV === 'production') {
+  // Check if we're on a subdomain that needs proxy
+  if (typeof window !== 'undefined' && window.location.hostname === 'events.daytradedak.com') {
+    // Force proxy for events subdomain until CloudFront CORS is fixed
+    return true;
+  }
+  
+  // Never use proxy in production (main domain)
+  if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined' && window.location.hostname === 'daytradedak.com') {
     return false;
   }
 

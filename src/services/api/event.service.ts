@@ -156,17 +156,22 @@ class EventService {
 
   async getUpcomingEvents(limit = 10): Promise<Event[]> {
     try {
-      const response = await API.get<Event[]>('/events/upcoming', {
-        params: { limit },
+      // Use the regular events endpoint with filters instead of /events/upcoming
+      // to avoid routing conflicts with /events/:id
+      const response = await API.get('/events', {
+        params: {
+          isActive: true,
+          limit,
+          startDate: new Date().toISOString(),
+        },
       });
-      return response.data;
+      // Handle both possible response formats
+      const events = response.data.data || response.data.events || response.data || [];
+      return Array.isArray(events) ? events : [];
     } catch (error) {
-      const apiError = errorHandler.handle(error, {
-        showToast: true,
-        logError: true,
-        fallbackMessage: 'Failed to load upcoming events.',
-      });
-      throw new Error(apiError.message);
+      console.error('Failed to load upcoming events:', error);
+      // Return empty array instead of throwing to prevent UI breaks
+      return [];
     }
   }
 

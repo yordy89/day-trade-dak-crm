@@ -578,7 +578,8 @@
         "passwordRequired": "La contraseña debe tener al menos 6 caracteres",
         "termsRequired": "Debes aceptar los términos y condiciones",
         "signupFailed": "Error al registrarse"
-      }
+      },
+      "success": "¡Cuenta creada exitosamente! Por favor inicia sesión para continuar."
     },
     "layout": {
       "startJourney": {

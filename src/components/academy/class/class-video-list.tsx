@@ -84,11 +84,13 @@ export default function ClassVideoList() {
       return data.map((video: any) => {
         const title = formatVideoTitle(video.key);
         
-        // Extract date from title or use key
+        // Extract date from key (format: MM:DD:YYYY)
         let dateStr = '';
-        const dateMatch = /(?<date>\d{4}-\d{2}-\d{2})/.exec(title);
+        const dateMatch = video.key.match(/(\d{2}):(\d{2}):(\d{4})/);
         if (dateMatch) {
-          dateStr = dateMatch.groups!.date;
+          const [, month, day, year] = dateMatch;
+          // Convert to ISO format for sorting: YYYY-MM-DD
+          dateStr = `${year}-${month}-${day}`;
         }
         
         return {
@@ -349,7 +351,11 @@ export default function ClassVideoList() {
                         {video.date ? <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Calendar size={14} />
                             <Typography component="span" variant="caption" color="text.secondary">
-                              {video.isLive ? 'Ahora' : (video.date || '')}
+                              {video.isLive ? 'Ahora' : new Date(video.date).toLocaleDateString('es', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: 'numeric' 
+                              })}
                             </Typography>
                           </Box> : null}
                         <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>

@@ -52,21 +52,23 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
     },
     {
       icon: <Trophy size={32} weight="fill" />,
-      title: t('classes.features.certificateIncluded'),
-      description: t('classes.features.certificateIncludedDesc'),
+      title: t('classes.features.realTimeSupport'),
+      description: t('classes.features.realTimeSupportDesc'),
     },
   ];
 
   const curriculum = [
-    { module: t('common.module', { number: 1 }), title: t('classes.curriculum.module1'), lessons: 5 },
-    { module: t('common.module', { number: 2 }), title: t('classes.curriculum.module2'), lessons: 8 },
-    { module: t('common.module', { number: 3 }), title: t('classes.curriculum.module3'), lessons: 6 },
-    { module: t('common.module', { number: 4 }), title: t('classes.curriculum.module4'), lessons: 4 },
-    { module: t('common.module', { number: 5 }), title: t('classes.curriculum.module5'), lessons: 7 },
-    { module: t('common.module', { number: 6 }), title: t('classes.curriculum.module6'), lessons: 10 },
+    { title: t('classes.curriculum.module1'), topic: t('classes.curriculum.topic1'), icon: <BookOpen size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module2'), topic: t('classes.curriculum.topic2'), icon: <Trophy size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module3'), topic: t('classes.curriculum.topic3'), icon: <ChartLineUp size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module4'), topic: t('classes.curriculum.topic4'), icon: <ChartLineUp size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module5'), topic: t('classes.curriculum.topic5'), icon: <BookOpen size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module6'), topic: t('classes.curriculum.topic6'), icon: <Trophy size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module7'), topic: t('classes.curriculum.topic7'), icon: <ChartLineUp size={24} weight="bold" /> },
+    { title: t('classes.curriculum.module8'), topic: t('classes.curriculum.topic8'), icon: <BookOpen size={24} weight="bold" /> },
   ];
 
-  const totalLessons = curriculum.reduce((sum, module) => sum + module.lessons, 0);
+  const totalLessons = 8;
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -145,10 +147,10 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                   </Box>
                   <Box>
                     <Typography variant="h4" fontWeight={700} color="primary.main">
-                      40+
+                      100%
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {t('classes.hoursContent')}
+                      {t('classes.practicalContent')}
                     </Typography>
                   </Box>
                 </Stack>
@@ -161,7 +163,7 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <Box
+                <Card
                   sx={{
                     position: 'relative',
                     width: '100%',
@@ -169,30 +171,43 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                     borderRadius: 4,
                     overflow: 'hidden',
                     boxShadow: theme.shadows[10],
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.95)} 0%, ${alpha(theme.palette.primary.dark, 0.95)} 100%)`,
                   }}
                 >
-                  <PlayCircle size={120} color="white" weight="fill" />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      bottom: 20,
-                      left: 20,
-                      right: 20,
-                      color: 'white',
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight={600}>
-                      {t('classes.coursePresentation')}
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      {t('classes.discoverWhatYouLearn')}
-                    </Typography>
+                  <Box sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <Box>
+                      <Typography variant="h4" fontWeight={700} color="white" gutterBottom>
+                        {t('classes.whatYouWillLearn')}
+                      </Typography>
+                      <Stack spacing={2} sx={{ mt: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <ChartLineUp size={24} color="white" weight="bold" />
+                          <Typography variant="body1" color="white">
+                            {t('classes.learnPoints.point1')}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <BookOpen size={24} color="white" weight="bold" />
+                          <Typography variant="body1" color="white">
+                            {t('classes.learnPoints.point2')}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Trophy size={24} color="white" weight="bold" />
+                          <Typography variant="body1" color="white">
+                            {t('classes.learnPoints.point3')}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 3 }}>
+                      <PlayCircle size={32} color="white" weight="fill" />
+                      <Typography variant="body1" color="white" fontWeight={600}>
+                        {t('classes.startLearningToday')}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
+                </Card>
               </MotionBox>
             </Grid>
           </Grid>
@@ -289,20 +304,18 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'primary.main',
-                        fontWeight: 700,
                       }}
                     >
-                      {index + 1}
+                      {module.icon}
                     </Box>
                     <Box flex={1}>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        {module.module}
-                      </Typography>
                       <Typography variant="h6" fontWeight={600}>
                         {module.title}
                       </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {module.topic}
+                      </Typography>
                     </Box>
-                    <Chip label={t('classes.lessonsCount', { count: module.lessons })} size="small" />
                   </Stack>
                 </Paper>
               </Grid>

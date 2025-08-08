@@ -19,44 +19,98 @@ interface SimpleHLSPlayerProps {
 function addQualityIndicator(player: Player) {
   const qualityLevels = (player as any).qualityLevels()
   
-  // Create quality indicator element
-  const indicator = document.createElement('div')
-  indicator.id = 'quality-indicator'
-  indicator.style.cssText = `
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    z-index: 100;
-    pointer-events: none;
-  `
-  
-  // Update indicator on quality change
-  qualityLevels.on('change', () => {
-    const selectedLevel = qualityLevels[qualityLevels.selectedIndex]
-    if (selectedLevel) {
-      indicator.textContent = `${selectedLevel.height}p`
-      const tech = player.tech(true) as any
-      if (tech?.vhs) {
-        const bandwidth = tech.vhs.bandwidth
-        indicator.innerHTML = `
-          <div>${selectedLevel.height}p</div>
-          <div style="font-size: 11px; opacity: 0.8">${(bandwidth / 1000000).toFixed(1)} Mbps</div>
-        `
+  // Wait for quality levels to be populated or timeout after 2 seconds
+  let attempts = 0;
+  const checkAndAddIndicator = () => {
+    attempts++;
+    if (qualityLevels.length === 0 && attempts < 20) {
+      // If no quality levels yet, check again in 100ms (max 2 seconds)
+      setTimeout(checkAndAddIndicator, 100)
+      return
+    }
+    
+    console.log(`Adding quality indicator, ${qualityLevels.length} quality levels available`)
+    
+    // Create quality indicator element
+    const indicator = document.createElement('div')
+    indicator.id = 'quality-indicator'
+    indicator.style.cssText = `
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 100;
+      pointer-events: none;
+    `
+    
+    // Function to update indicator
+    const updateIndicator = () => {
+      const selectedLevel = qualityLevels[qualityLevels.selectedIndex]
+      if (selectedLevel && selectedLevel.height) {
+        indicator.style.display = 'block'
+        const tech = player.tech(true) as any
+        if (tech?.vhs) {
+          const bandwidth = tech.vhs.bandwidth
+          indicator.innerHTML = `
+            <div>${selectedLevel.height}p</div>
+            <div style="font-size: 11px; opacity: 0.8">${(bandwidth / 1000000).toFixed(1)} Mbps</div>
+          `
+        } else {
+          indicator.textContent = `${selectedLevel.height}p`
+        }
+      } else {
+        // Try to get quality from first available level if selectedIndex doesn't have height
+        let foundQuality = false;
+        for (let i = 0; i < qualityLevels.length; i++) {
+          const level = qualityLevels[i]
+          if (level.height) {
+            indicator.style.display = 'block'
+            indicator.textContent = `${level.height}p`
+            foundQuality = true;
+            break
+          }
+        }
+        
+        // If no quality levels with height, try to infer from URL
+        if (!foundQuality) {
+          const src = player.currentSrc();
+          if (src) {
+            let quality = 'HD';
+            if (src.includes('1080p')) quality = '1080p';
+            else if (src.includes('720p')) quality = '720p';
+            else if (src.includes('480p')) quality = '480p';
+            else if (src.includes('360p')) quality = '360p';
+            
+            indicator.style.display = 'block';
+            indicator.textContent = quality;
+          }
+        }
       }
     }
-  })
-  
-  // Add to player container
-  const playerEl = player.el()
-  if (playerEl) {
-    playerEl.appendChild(indicator)
+    
+    // Initial update
+    updateIndicator()
+    
+    // Update indicator on quality change
+    qualityLevels.on('change', updateIndicator)
+    
+    // Also listen for addqualitylevel event
+    qualityLevels.on('addqualitylevel', updateIndicator)
+    
+    // Add to player container
+    const playerEl = player.el()
+    if (playerEl) {
+      playerEl.appendChild(indicator)
+    }
   }
+  
+  // Start checking for quality levels
+  checkAndAddIndicator()
 }
 
 export function SimpleHLSPlayer({
@@ -82,6 +136,21 @@ export function SimpleHLSPlayer({
       videoRef.current.appendChild(videoElement)
 
       console.log('Initializing player with CloudFront URL:', src)
+      
+      // Check if URL is properly formatted
+      try {
+        const url = new URL(src);
+        console.log('URL components:', {
+          origin: url.origin,
+          pathname: url.pathname,
+          search: url.search
+        });
+      } catch (e) {
+        console.error('Invalid URL provided:', src);
+        setError('URL del video no válida');
+        setLoading(false);
+        return;
+      }
 
       // Configure Video.js to handle HLS properly
       const player = videojs(videoElement, {
@@ -106,20 +175,32 @@ export function SimpleHLSPlayer({
             },
             overrideNative: true,
             smoothQualityChange: true,
-            fastQualityChange: true
+            fastQualityChange: true,
+            // Add retry configuration
+            handleManifestRedirects: true,
+            useCueTags: true,
+            experimentalBufferBasedABR: false
           },
           nativeVideoTracks: false,
           nativeAudioTracks: false,
           nativeTextTracks: false
-        }
+        },
+        // Add error recovery
+        errorDisplay: false
       })
 
       playerRef.current = player
 
-      // Set the source
+      // Set the source with CORS mode
       player.src({
         src,
-        type: 'application/x-mpegURL'
+        type: 'application/x-mpegURL',
+        withCredentials: false
+      })
+      
+      // Add additional error handling for manifest load
+      player.on('loadstart', () => {
+        console.log('Load started for:', src);
       })
 
       if (poster) {
@@ -138,7 +219,18 @@ export function SimpleHLSPlayer({
       player.on('error', (_e: any) => {
         const playerError = player.error()
         console.error('Playback error:', playerError)
-        setError(playerError?.message || 'Playback error')
+        
+        // Check if it's a CORS or network error
+        let errorMessage = 'Error al cargar el video';
+        if (playerError?.code === 2) {
+          errorMessage = 'Error de red al cargar el video. Por favor, intenta de nuevo.';
+        } else if (playerError?.code === 4) {
+          errorMessage = 'Formato de video no soportado o error de reproducción.';
+        } else if (playerError?.message) {
+          errorMessage = playerError.message;
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         if (onError) {
           onError(playerError)

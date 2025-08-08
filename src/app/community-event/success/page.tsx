@@ -43,6 +43,8 @@ import confetti from 'canvas-confetti';
 import { useTranslation } from 'react-i18next';
 import GoogleMap from '@/components/common/GoogleMap';
 import axios from 'axios';
+import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 
 export default function CommunityEventSuccessPage() {
   const router = useRouter();
@@ -171,8 +173,10 @@ export default function CommunityEventSuccessPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 } }}>
-      <Container maxWidth="lg">
+    <div className="min-h-screen">
+      <MainNavbar />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 }, pt: { xs: 12, sm: 14, md: 16 } }}>
+        <Container maxWidth="lg">
         {/* Success Header */}
         <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
           <CheckCircleOutline 
@@ -568,5 +572,7 @@ export default function CommunityEventSuccessPage() {
         </Box>
       </Container>
     </Box>
+    <ProfessionalFooter />
+    </div>
   );
 }

@@ -151,8 +151,8 @@ export default function AboutPage() {
   return (
     <>
       <MainNavbar />
-      {/* Stock Ticker Animation */}
-      <Box
+      {/* Stock Ticker Animation - Already included in TopBar component */}
+      {/* <Box
         sx={{
           position: 'fixed',
           top: 116,
@@ -216,8 +216,8 @@ export default function AboutPage() {
             </Box>
           ))}
         </Box>
-      </Box>
-      <Box sx={{ pt: 24, pb: 10, minHeight: '100vh' }}>
+      </Box> */}
+      <Box sx={{ pt: 0, pb: 10, minHeight: '100vh' }}>
         {/* Animated Background Elements */}
         <Box
           sx={{
@@ -274,7 +274,8 @@ export default function AboutPage() {
             background: isDarkMode 
               ? 'linear-gradient(180deg, rgba(16,163,74,0.1) 0%, rgba(0,0,0,0) 100%)'
               : 'linear-gradient(180deg, rgba(16,163,74,0.05) 0%, rgba(255,255,255,0) 100%)',
-            py: 8,
+            pt: { xs: 12, md: 14 }, // Account for TopBar on desktop
+            pb: 8,
             mb: 8,
             position: 'relative',
             zIndex: 1,

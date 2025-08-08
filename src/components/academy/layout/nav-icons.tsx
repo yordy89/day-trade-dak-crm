@@ -6,9 +6,11 @@ import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
 import { CreditCard } from '@phosphor-icons/react/dist/ssr/CreditCard';
+import { House } from '@phosphor-icons/react/dist/ssr/House';
 import { CalendarCheck, Buildings, Book, ChalkboardTeacher, Student, ChartLineUp, Brain, GraduationCap, ChartLine, TreeStructure, Leaf } from '@phosphor-icons/react';
 
 export const navIcons = {
+  house: House,
   'chart-pie': ChartPieIcon,
   'gear-six': GearSixIcon,
   'plugs-connected': PlugsConnectedIcon,

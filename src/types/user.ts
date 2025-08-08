@@ -17,6 +17,8 @@ export interface User {
   customClassAccess?: {
     reason: string;
   };
+  allowLiveMeetingAccess?: boolean;
+  allowLiveWeeklyAccess?: boolean;
 }
 
 export enum SubscriptionPlan {

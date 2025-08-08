@@ -213,83 +213,179 @@ export function MainNavbar() {
       PaperProps={{
         sx: {
           width: 280,
-          backgroundColor: isDarkMode ? '#0a0a0a' : 'white',
+          background: isDarkMode 
+            ? 'linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%)'
+            : 'linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%)',
+          zIndex: 1400,
+          boxShadow: '-4px 0 15px rgba(0,0,0,0.2)',
         },
       }}
+      sx={{
+        zIndex: 1400,
+      }}
     >
-      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Image
-          src={isDarkMode 
-            ? (settings?.branding?.logo_dark_url || "/assets/logos/day_trade_dak_white_logo.png")
-            : (settings?.branding?.logo_light_url || "/assets/logos/day_trade_dak_black_logo.png")
-          }
-          alt={settings?.branding?.company_name || "DayTradeDak"}
-          width={120}
-          height={35}
-          style={{ 
-            objectFit: 'contain'
+      {/* Header with gradient */}
+      <Box sx={{ 
+        background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+        p: 2.5,
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography variant="h6" sx={{ 
+            color: 'white', 
+            fontWeight: 700,
+            fontSize: '1.1rem',
+          }}>
+            DAY TRADE
+          </Typography>
+          <Typography variant="h6" sx={{ 
+            color: 'white', 
+            fontWeight: 800,
+            fontSize: '1.1rem',
+          }}>
+            DAK
+          </Typography>
+        </Box>
+        <IconButton 
+          onClick={() => setMobileOpen(false)}
+          sx={{ 
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+            },
           }}
-        />
-        <IconButton onClick={() => setMobileOpen(false)}>
+        >
           <Close />
         </IconButton>
       </Box>
-      <Divider />
-      <List>
+      {/* Navigation Items */}
+      <List sx={{ px: 1, py: 2 }}>
         {mainNavigation.map((item) => (
-          <ListItem key={item.key} disablePadding>
-            <ListItemButton onClick={() => handleNavClick(item)} sx={{ position: 'relative' }}>
-              <ListItemText primary={t(`navigation.${item.key}`)} />
+          <ListItem key={item.key} disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton 
+              onClick={() => handleNavClick(item)} 
+              sx={{ 
+                borderRadius: 2,
+                px: 2,
+                py: 1.5,
+                position: 'relative',
+                transition: 'all 0.2s',
+                backgroundColor: isActiveRoute(item.href) 
+                  ? (isDarkMode ? 'rgba(22, 163, 74, 0.15)' : 'rgba(22, 163, 74, 0.1)')
+                  : 'transparent',
+                '&:hover': {
+                  backgroundColor: isDarkMode 
+                    ? 'rgba(255,255,255,0.05)' 
+                    : 'rgba(0,0,0,0.05)',
+                  transform: 'translateX(4px)',
+                },
+                ...(item.key === 'live' && {
+                  border: '1px solid #ef4444',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 8,
+                    left: 8,
+                    width: 6,
+                    height: 6,
+                    backgroundColor: '#ef4444',
+                    borderRadius: '50%',
+                    animation: 'pulse 2s infinite',
+                  },
+                }),
+              }}
+            >
+              <ListItemText 
+                primary={t(`navigation.${item.key}`)}
+                primaryTypographyProps={{
+                  sx: {
+                    fontWeight: isActiveRoute(item.href) ? 600 : 500,
+                    fontSize: '0.95rem',
+                    color: item.key === 'live' 
+                      ? '#ef4444' 
+                      : (isActiveRoute(item.href) ? '#16a34a' : 'inherit'),
+                    pl: item.key === 'live' ? 2 : 0,
+                  },
+                }}
+              />
               {item.badge ? (
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: 4,
-                    right: item.external ? 40 : 16,
                     backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : '#ef4444',
                     color: 'white',
-                    fontSize: '9px',
+                    fontSize: '0.65rem',
                     fontWeight: 700,
-                    px: 0.75,
-                    py: 0.25,
-                    borderRadius: '10px',
+                    px: 1,
+                    py: 0.3,
+                    borderRadius: '12px',
                     lineHeight: 1,
-                    minWidth: '28px',
-                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
                   }}
                 >
                   {item.badge}
                 </Box>
               ) : null}
-              {item.external ? <OpenInNew sx={{ fontSize: 16, ml: 1 }} /> : null}
+              {item.external ? <OpenInNew sx={{ fontSize: 16, ml: 1, opacity: 0.5 }} /> : null}
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <Box sx={{ p: 2 }}>
+      
+      <Box sx={{ flexGrow: 1 }} />
+      {/* Bottom Section */}
+      <Box sx={{ 
+        p: 2, 
+        borderTop: '1px solid',
+        borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+        background: isDarkMode 
+          ? 'rgba(0,0,0,0.3)'
+          : 'rgba(0,0,0,0.02)',
+      }}>
         {/* Language and Theme Controls */}
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           <Button
             fullWidth
-            variant="outlined"
+            size="small"
+            variant={isDarkMode ? 'outlined' : 'contained'}
             onClick={handleLanguageClick}
-            startIcon={<Box sx={{ fontSize: '1.2rem' }}>{mounted ? (normalizedLang === 'es' ? '🇪🇸' : '🇺🇸') : '🇺🇸'}</Box>}
-            sx={{ textTransform: 'none' }}
+            startIcon={<Box sx={{ fontSize: '1rem' }}>{mounted ? (normalizedLang === 'es' ? '🇪🇸' : '🇺🇸') : '🇺🇸'}</Box>}
+            sx={{ 
+              textTransform: 'none',
+              borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : undefined,
+              backgroundColor: !isDarkMode ? 'white' : undefined,
+              color: isDarkMode ? 'white' : 'text.primary',
+              boxShadow: !isDarkMode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              '&:hover': {
+                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+              },
+            }}
           >
-            {mounted ? (normalizedLang === 'es' ? 'Español' : 'English') : 'English'}
+            {mounted ? (normalizedLang === 'es' ? 'ES' : 'EN') : 'EN'}
           </Button>
           <Button
             fullWidth
-            variant="outlined"
+            size="small"
+            variant={isDarkMode ? 'outlined' : 'contained'}
             onClick={toggleTheme}
-            startIcon={isDarkMode ? <LightMode /> : <DarkMode />}
-            sx={{ textTransform: 'none' }}
+            startIcon={isDarkMode ? <LightMode sx={{ fontSize: 18 }} /> : <DarkMode sx={{ fontSize: 18 }} />}
+            sx={{ 
+              textTransform: 'none',
+              borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : undefined,
+              backgroundColor: !isDarkMode ? 'white' : undefined,
+              color: isDarkMode ? 'white' : 'text.primary',
+              boxShadow: !isDarkMode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              '&:hover': {
+                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+              },
+            }}
           >
-            {isDarkMode ? t('theme.light') : t('theme.dark')}
+            {isDarkMode ? 'Claro' : 'Oscuro'}
           </Button>
         </Box>
-        <Divider sx={{ mb: 2 }} />
         {isAuthenticated ? (
           <>
             <Button
@@ -297,7 +393,12 @@ export function MainNavbar() {
               component={Link}
               href="/academy/account"
               startIcon={<AccountCircle />}
-              sx={{ mb: 1 }}
+              sx={{ 
+                mb: 1,
+                justifyContent: 'flex-start',
+                color: isDarkMode ? 'white' : 'text.primary',
+                borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+              }}
             >
               {t('navigation.profile')}
             </Button>
@@ -305,7 +406,14 @@ export function MainNavbar() {
               fullWidth
               onClick={handleLogout}
               variant="outlined"
-              color="error"
+              sx={{
+                color: '#ef4444',
+                borderColor: '#ef4444',
+                '&:hover': {
+                  backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                  borderColor: '#ef4444',
+                },
+              }}
             >
               {t('navigation.logout')}
             </Button>
@@ -317,7 +425,14 @@ export function MainNavbar() {
               component={Link}
               href="/auth/sign-in"
               variant="outlined"
-              sx={{ mb: 1 }}
+              sx={{ 
+                mb: 1,
+                borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                color: isDarkMode ? 'white' : 'text.primary',
+                '&:hover': {
+                  backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                },
+              }}
             >
               {t('navigation.login')}
             </Button>
@@ -329,6 +444,12 @@ export function MainNavbar() {
               sx={{
                 background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                 color: 'white',
+                fontWeight: 600,
+                boxShadow: '0 4px 15px rgba(22, 163, 74, 0.3)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+                  boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+                },
               }}
             >
               {t('navigation.signup')}
@@ -350,7 +471,7 @@ export function MainNavbar() {
         position="fixed"
         elevation={scrolled ? 1 : 0}
         sx={{
-          top: 36, // Height of TopBar
+          top: { xs: 32, md: 36 }, // Different heights for mobile (32px) and desktop (36px)
           backgroundColor: scrolled 
             ? (isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)')
             : (isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),
@@ -360,18 +481,24 @@ export function MainNavbar() {
           transition: 'all 0.3s ease',
         }}
       >
-        <Toolbar sx={{ minHeight: '80px', px: { xs: 2, md: 4 } }}>
+        <Toolbar sx={{ 
+          minHeight: { xs: '56px', md: '80px' }, 
+          px: { xs: 2, md: 4 },
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
           {/* Logo */}
           <Link href="/" passHref style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <Image
                 src={isDarkMode 
             ? (settings?.branding?.logo_dark_url || "/assets/logos/day_trade_dak_white_logo.png")
             : (settings?.branding?.logo_light_url || "/assets/logos/day_trade_dak_black_logo.png")
           }
                 alt={settings?.branding?.company_name || "DayTradeDak"}
-                width={180}
-                height={50}
+                width={isMobile ? 120 : 180}
+                height={isMobile ? 35 : 50}
                 style={{ 
                   objectFit: 'contain'
                 }}
@@ -379,37 +506,44 @@ export function MainNavbar() {
             </Box>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Center */}
           {!isMobile ? renderDesktopMenu() : null}
+          
+          {/* Spacer for mobile to push menu to the right */}
+          {isMobile && <Box sx={{ flexGrow: 1 }} />}
 
           {/* Right Actions */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Language */}
-            <Button
-              size="small"
-              onClick={handleLanguageClick}
-              startIcon={<Box sx={{ fontSize: '1.2rem' }}>{mounted ? (normalizedLang === 'es' ? '🇪🇸' : '🇺🇸') : '🇺🇸'}</Box>}
-              sx={{ 
-                color: isDarkMode ? 'white' : 'black', 
-                cursor: 'pointer',
-                textTransform: 'none',
-                minWidth: 'auto',
-                '& .MuiButton-startIcon': {
-                  marginRight: 0.5,
-                },
-              }}
-            >
-              {mounted ? normalizedLang.toUpperCase() : 'EN'}
-            </Button>
+            {/* Language - Hidden on mobile */}
+            {!isMobile && (
+              <Button
+                size="small"
+                onClick={handleLanguageClick}
+                startIcon={<Box sx={{ fontSize: '1.2rem' }}>{mounted ? (normalizedLang === 'es' ? '🇪🇸' : '🇺🇸') : '🇺🇸'}</Box>}
+                sx={{ 
+                  color: isDarkMode ? 'white' : 'black', 
+                  cursor: 'pointer',
+                  textTransform: 'none',
+                  minWidth: 'auto',
+                  '& .MuiButton-startIcon': {
+                    marginRight: 0.5,
+                  },
+                }}
+              >
+                {mounted ? normalizedLang.toUpperCase() : 'EN'}
+              </Button>
+            )}
 
-            {/* Theme Toggle */}
-            <IconButton
-              size="small"
-              onClick={toggleTheme}
-              sx={{ color: isDarkMode ? 'white' : 'black', cursor: 'pointer' }}
-            >
-              {isDarkMode ? <LightMode /> : <DarkMode />}
-            </IconButton>
+            {/* Theme Toggle - Hidden on mobile */}
+            {!isMobile && (
+              <IconButton
+                size="small"
+                onClick={toggleTheme}
+                sx={{ color: isDarkMode ? 'white' : 'black', cursor: 'pointer' }}
+              >
+                {isDarkMode ? <LightMode /> : <DarkMode />}
+              </IconButton>
+            )}
 
             {/* Desktop Auth Buttons */}
             {!isMobile ? (
@@ -534,7 +668,11 @@ export function MainNavbar() {
             {isMobile ? (
               <IconButton
                 onClick={() => setMobileOpen(true)}
-                sx={{ color: isDarkMode ? 'white' : 'black', cursor: 'pointer' }}
+                sx={{ 
+                  color: isDarkMode ? 'white' : 'black', 
+                  cursor: 'pointer',
+                  ml: 1, // Add margin to create space from other elements
+                }}
               >
                 <MenuIcon />
               </IconButton>
