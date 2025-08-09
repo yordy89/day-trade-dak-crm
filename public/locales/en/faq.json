@@ -1,0 +1,118 @@
+{
+  "title": "Frequently Asked Questions",
+  "subtitle": "Find answers to the most common questions",
+  "searchPlaceholder": "Search in frequently asked questions...",
+  "resultsCount": "{{count}} question found",
+  "resultsCount_plural": "{{count}} questions found",
+  "categories": {
+    "all": "All",
+    "account": "Account",
+    "payments": "Payments",
+    "trading": "Trading",
+    "education": "Education",
+    "security": "Security",
+    "technical": "Technical"
+  },
+  "stillNeedHelp": {
+    "title": "Still have questions?",
+    "description": "We couldn't find what you're looking for. Contact us directly and we'll help you.",
+    "contactSupport": "Contact Support"
+  },
+  "items": {
+    "acc1": {
+      "question": "How do I create an account on DayTradeDak?",
+      "answer": "To create an account, click the \"Sign Up\" button on the main page. You only need to provide your name, email, and create a password. Then verify your email and you can access all our educational content. The process takes less than 2 minutes.",
+      "tags": ["registration", "account", "start"]
+    },
+    "acc2": {
+      "question": "Do I need to verify my account with documents?",
+      "answer": "No, you don't need any documents to verify your account. DayTradeDak is an educational trading platform, we don't execute real trading operations. You only need to verify your email to activate your account and access our courses, educational signals, and live trading room.",
+      "tags": ["verification", "documents", "account"]
+    },
+    "acc3": {
+      "question": "Can I have multiple accounts?",
+      "answer": "We recommend using a single account per person to keep your educational progress and content access organized. If you forgot your password, use the recovery option instead of creating a new account.",
+      "tags": ["multiple accounts", "restrictions"]
+    },
+    "pay1": {
+      "question": "What payment methods do you accept?",
+      "answer": "We accept credit and debit cards (Visa, MasterCard, American Express, Discover) and Klarna for flexible financing. All payments are securely processed through Stripe, the world leader in online payment processing. Stripe complies with the highest PCI DSS security standards.",
+      "tags": ["payments", "payment methods", "cards", "klarna", "stripe"]
+    },
+    "pay2": {
+      "question": "How can I cancel my subscription?",
+      "answer": "You can cancel your subscription at any time. Go to Academy > My Account > Subscription tab, where you'll find the option to manage or cancel your plan. Your access will continue until the end of the current billing period. No partial refunds are issued.",
+      "tags": ["cancel", "subscription", "refund"]
+    },
+    "trade1": {
+      "question": "What is the live trading room?",
+      "answer": "The live trading room is an educational space where our professional mentors share real-time market analysis and trade alongside the community. We analyze the market using moving averages, technical indicators, and price action to make informed decisions. Sessions are held Monday through Friday during market hours. You can interact, ask questions, and learn by watching how we trade in real-time. All content is educational and you should do your own research before trading with your broker.",
+      "tags": ["live room", "education", "technical analysis", "indicators"]
+    },
+    "trade2": {
+      "question": "What are educational signals?",
+      "answer": "Educational signals are market analyses shared for teaching purposes. They include suggested entry points, stop loss, take profit, and detailed explanation of the analysis based on moving averages, technical indicators, and price action. They are learning tools to understand how professionals analyze the market using these indicators. They are NOT investment recommendations - you should always do your own analysis.",
+      "tags": ["signals", "education", "analysis", "indicators"]
+    },
+    "trade3": {
+      "question": "Which markets do you teach to analyze?",
+      "answer": "Our educational content focuses primarily on the options and stock market. Most of our analysis and content is dedicated to options, where we teach how to analyze using moving averages and technical indicators to make informed decisions. We also cover individual stock analysis. In live sessions, we trade alongside the community for educational purposes, but the platform does not execute trades for clients.",
+      "tags": ["options", "stocks", "markets", "analysis", "education"]
+    },
+    "trade4": {
+      "question": "Can I trade directly from DayTradeDak?",
+      "answer": "No, DayTradeDak is exclusively an educational platform. We are not a broker and we don't execute trades for you. We teach you technical analysis with moving averages and indicators, and risk management. In our daily live sessions, we trade in real-time alongside the community for educational purposes. To trade yourself, you'll need to use a regulated broker of your choice.",
+      "tags": ["broker", "trade", "platform"]
+    },
+    "edu1": {
+      "question": "What does the educational program include?",
+      "answer": "Our educational program includes: DayTradeDak Academy with courses from basic to advanced on technical analysis using moving averages and indicators, daily live trading room, specialized masterclasses, psychotrading, recommended book library, daily educational market analysis based on technical indicators, and access to our exclusive student community.",
+      "tags": ["education", "courses", "learning", "academy", "indicators"]
+    },
+    "edu2": {
+      "question": "What is the Master Course?",
+      "answer": "The Master Course is our most comprehensive educational program. It includes advanced training in deep technical analysis with moving averages, advanced indicators, risk management, trading psychology, and price action analysis. It's ideal for those who want to take their trading education to the next level with personalized mentorship directly with the mentor, where you'll have exclusive access to resolve doubts and receive individualized guidance.",
+      "tags": ["master course", "advanced course", "mentorship", "technical analysis"]
+    },
+    "edu3": {
+      "question": "Can I access educational content at any time?",
+      "answer": "Yes, all recorded academy content is available 24/7. Live sessions have specific schedules (Monday to Friday during market hours), but they are recorded so you can watch them later. You can learn at your own pace and review lessons as many times as you need.",
+      "tags": ["access", "24/7", "content", "schedules"]
+    },
+    "edu4": {
+      "question": "What is Psychotrading?",
+      "answer": "Psychotrading is our specialized module on trading psychology. We have a psychotrading specialist who guides all sessions, teaching you to manage emotions, develop discipline, control fear and greed, and maintain a professional mindset. It's fundamental for long-term success in the markets.",
+      "tags": ["psychotrading", "psychology", "emotions", "specialist"]
+    },
+    "sec1": {
+      "question": "How do you protect my personal information?",
+      "answer": "We use 256-bit SSL encryption and comply with PCI DSS standards to protect your personal and payment information. Your information is only used to provide you access to our educational services. It's never shared with third parties without your consent. We conduct regular security audits to keep your data safe.",
+      "tags": ["security", "privacy", "encryption"]
+    },
+    "sec3": {
+      "question": "Is it safe to make payments on the platform?",
+      "answer": "Yes, all payments are securely processed through Stripe, one of the world's most trusted payment processors. We don't store credit card information on our servers. All payments are for accessing our educational content.",
+      "tags": ["payments", "security", "stripe"]
+    },
+    "tech1": {
+      "question": "What technical requirements do I need?",
+      "answer": "You only need a stable internet connection and a modern web browser (Chrome, Firefox, Safari, Edge). The educational platform is responsive and works on computers, tablets, and mobile devices. We recommend at least 5 Mbps internet speed to watch live sessions without interruptions.",
+      "tags": ["requirements", "technical", "internet"]
+    },
+    "tech2": {
+      "question": "Do you have a mobile app?",
+      "answer": "We're working on mobile apps for iOS and Android that will be available soon. Meanwhile, you can access all educational content from any mobile browser. The mobile web experience is fully optimized.",
+      "tags": ["app", "mobile", "iOS", "Android"]
+    },
+    "tech3": {
+      "question": "Can I download the educational content?",
+      "answer": "Some educational materials like PDFs, presentations, and study resources are available for download. Live sessions are recorded and you can stream them whenever you want, but for content protection they cannot be downloaded.",
+      "tags": ["downloads", "content", "offline"]
+    },
+    "tech4": {
+      "question": "What should I do if I have technical problems?",
+      "answer": "If you experience technical problems, first check your internet connection and update your browser. If the problem persists, contact our technical support through live chat or send an email to support@daytradedak.com with a description of the problem.",
+      "tags": ["problems", "support", "technical help"]
+    }
+  }
+}

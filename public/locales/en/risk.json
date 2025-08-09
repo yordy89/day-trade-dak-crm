@@ -1,0 +1,112 @@
+{
+  "hero": {
+    "title": "Risk Disclosure",
+    "subtitle": "Important information about trading risks"
+  },
+  "mainWarning": {
+    "title": "HIGH RISK WARNING",
+    "content": "Trading leveraged financial products carries a high degree of risk to your capital. Prices can move quickly against you, resulting in significant losses. <strong>75-85% of retail traders lose money when trading these products.</strong>"
+  },
+  "introduction": {
+    "title": "Introduction",
+    "paragraph1": "This risk disclosure document aims to inform you about the risks associated with trading and investing in financial markets. It is important that you read and fully understand this information before applying any knowledge acquired on our educational platform.",
+    "paragraph2": "DayTradeDak is an exclusively educational platform that provides training, market analysis for educational purposes, and educational signals. We do not execute trades or manage client funds. Any investment decision you make outside our platform is your sole responsibility. We are not financial advisors, we are not a broker, and we do not provide personalized investment advice."
+  },
+  "riskFactors": {
+    "title": "Main Risk Factors",
+    "items": {
+      "volatility": {
+        "title": "Market Volatility",
+        "description": "Financial markets can experience rapid and significant price movements that can result in substantial losses."
+      },
+      "leverage": {
+        "title": "Leverage",
+        "description": "The use of leverage can magnify both gains and losses. A small fluctuation can result in the total loss of invested capital."
+      },
+      "psychological": {
+        "title": "Psychological Factors",
+        "description": "Emotions such as fear and greed can negatively affect trading decisions and lead to significant losses."
+      },
+      "complexity": {
+        "title": "Market Complexity",
+        "description": "Financial markets are complex and influenced by multiple factors that can be difficult to predict or fully understand."
+      },
+      "pastPerformance": {
+        "title": "Past Performance",
+        "description": "Historical returns do not guarantee future results. Successful strategies in the past may not work in future market conditions."
+      },
+      "totalLoss": {
+        "title": "Risk of Total Loss",
+        "description": "There is the possibility of losing all invested capital. Never invest money you cannot afford to lose."
+      }
+    }
+  },
+  "importantPoints": {
+    "title": "Important Points to Consider",
+    "items": [
+      "Currency trading, CFDs and other financial instruments are highly speculative and carry a high level of risk.",
+      "DayTradeDak is an educational platform. We do not execute trades or manage client funds.",
+      "The education and signals provided are exclusively for educational purposes and do not constitute investment recommendations.",
+      "It is possible to lose part or all of your investment when trading in real markets, therefore you should not invest money you cannot afford to lose.",
+      "You should be aware of all risks associated with trading. Our professional traders teach you analysis techniques and risk management, but you should always do your own research.",
+      "All content on our platform is educational and designed to teach you how to analyze markets like a professional. Apply what you've learned with your own judgment when making investment decisions.",
+      "We are not responsible for losses that may result from applying knowledge acquired on our platform."
+    ]
+  },
+  "specificRisks": {
+    "title": "Specific Trading Risks",
+    "marketRisk": {
+      "title": "1. Market Risk",
+      "description": "Markets can be extremely volatile and prices can fluctuate rapidly due to news, economic events, political events, or changes in market sentiment. These fluctuations can work in your favor or against you."
+    },
+    "leverageRisk": {
+      "title": "2. Leverage Risk",
+      "description": "Leverage allows you to trade with a larger position than your initial capital. While this can amplify profits, it also amplifies losses. A 1% adverse market movement can result in a 100% loss of your investment if using 100:1 leverage."
+    },
+    "liquidityRisk": {
+      "title": "3. Liquidity Risk",
+      "description": "Under certain market conditions, it may be difficult or impossible to liquidate a position. This can occur during periods of rapid price movement if there is insufficient trading volume at a certain price level."
+    },
+    "technologyRisk": {
+      "title": "4. Technology Risk",
+      "description": "Online trading depends on complex technological systems. Failures in hardware, software, internet connections, or broker systems can result in losses. As an educational platform, DayTradeDak does not execute trades and is not responsible for losses caused by technical problems at external brokers or trading decisions you make outside our platform."
+    },
+    "counterpartyRisk": {
+      "title": "5. Counterparty Risk",
+      "description": "This is the risk that your broker or financial institution will not meet its financial obligations. It's important to choose regulated brokers with good reputations."
+    }
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "content": "DayTradeDak is an educational platform that provides training, educational analysis, and learning tools about trading. We do not offer personalized investment advice or execute trades. All trading decisions you make with external brokers are your sole responsibility. We do not guarantee specific results and are not responsible for losses that may result from applying knowledge acquired on our educational platform."
+  },
+  "recommendations": {
+    "title": "Our Recommendations",
+    "items": {
+      "educate": {
+        "primary": "Educate before trading",
+        "secondary": "Take advantage of all our educational resources before risking real capital"
+      },
+      "demo": {
+        "primary": "Start with a demo account",
+        "secondary": "Practice your strategies without risk before trading with real money"
+      },
+      "invest": {
+        "primary": "Never invest more than you can lose",
+        "secondary": "Only use capital that won't affect your lifestyle if you lose it completely"
+      },
+      "riskManagement": {
+        "primary": "Use risk management",
+        "secondary": "Always use stop loss and never risk more than 1-2% of your capital per trade"
+      },
+      "learn": {
+        "primary": "Learn from professional traders",
+        "secondary": "Our mentors with years of experience guide you in your educational process"
+      }
+    }
+  },
+  "finalNotice": {
+    "lastUpdate": "Last updated: {{date}}",
+    "acknowledgment": "By using our services, you acknowledge that you have read, understood, and accepted this risk disclosure."
+  }
+}

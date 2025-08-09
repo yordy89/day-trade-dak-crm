@@ -1,11 +1,12 @@
 import { loadStripe } from '@stripe/stripe-js';
 import type { Stripe, StripeElementsOptions } from '@stripe/stripe-js';
+import { getStripePublishableKey } from '@/config/environment';
 
 let stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+    stripePromise = loadStripe(getStripePublishableKey());
   }
   return stripePromise;
 };

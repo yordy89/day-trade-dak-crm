@@ -564,16 +564,6 @@
   },
   "footer": {
     "sections": {
-      "trading": {
-        "title": "Trading",
-        "links": {
-          "liveRoom": "Sala de Trading en Vivo",
-          "signals": "Señales de Trading",
-          "analysis": "Análisis del Mercado",
-          "calendar": "Calendario Económico",
-          "tools": "Herramientas de Trading"
-        }
-      },
       "education": {
         "title": "Educación",
         "links": {
@@ -581,7 +571,7 @@
           "masterClasses": "Master Classes",
           "psychology": "Psicología del Trading",
           "library": "Biblioteca de eBooks",
-          "webinars": "Webinars"
+          "dailyLive": "Live Diario"
         }
       },
       "company": {
@@ -589,8 +579,6 @@
         "links": {
           "about": "Sobre Nosotros",
           "success": "Historias de Éxito",
-          "careers": "Carreras",
-          "blog": "Blog",
           "contact": "Contacto"
         }
       },

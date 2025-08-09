@@ -101,6 +101,32 @@ class AuthService {
     }
   }
 
+  async verifyResetToken(token: string): Promise<{ valid: boolean }> {
+    try {
+      const response = await API.post('/auth/reset-password/verify', { token });
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: false,
+        logError: true,
+      });
+      throw new Error(apiError.message);
+    }
+  }
+
+  async resetPasswordWithToken(data: { token: string; newPassword: string }): Promise<void> {
+    try {
+      await API.post('/auth/reset-password/update', data);
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to reset password. Please try again.',
+      });
+      throw new Error(apiError.message);
+    }
+  }
+
   async updatePassword(data: UpdatePasswordData): Promise<void> {
     try {
       await API.patch('/auth/update-password', data);

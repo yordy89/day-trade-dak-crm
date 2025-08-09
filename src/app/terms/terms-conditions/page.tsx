@@ -40,6 +40,8 @@ import {
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
+import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -106,31 +108,20 @@ export default function TermsAndPrivacy(): React.JSX.Element {
   const isSpanish = i18n.language === 'es';
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: isDarkMode 
-        ? 'linear-gradient(180deg, #0a0a0a 0%, #141414 100%)'
-        : 'linear-gradient(180deg, #f9fafb 0%, #ffffff 100%)',
-      pt: 12,
-      pb: 8
+    <>
+      <MainNavbar />
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: isDarkMode 
+          ? 'linear-gradient(180deg, #0a0a0a 0%, #141414 100%)'
+          : 'linear-gradient(180deg, #f9fafb 0%, #ffffff 100%)',
+        pt: 20,
+        pb: 8
     }}>
       <Container maxWidth="lg">
         {/* Header */}
         <Box sx={{ mb: 6, textAlign: 'center' }}>
           <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ mb: 3 }}>
-            <IconButton 
-              onClick={() => router.back()} 
-              sx={{ 
-                position: 'absolute',
-                left: 0,
-                backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                '&:hover': {
-                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-                }
-              }}
-            >
-              <ArrowLeft size={24} />
-            </IconButton>
             <Shield size={48} weight="duotone" color={theme.palette.primary.main} />
           </Stack>
           
@@ -797,29 +788,11 @@ export default function TermsAndPrivacy(): React.JSX.Element {
                 sx={{ cursor: 'pointer' }}
               />
             </Stack>
-
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => router.push('/')}
-              startIcon={<ArrowLeft size={20} />}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-                textTransform: 'none',
-                fontWeight: 600,
-                background: theme.palette.primary.main,
-                '&:hover': {
-                  background: theme.palette.primary.dark,
-                }
-              }}
-            >
-              {t('legal.backToHome')}
-            </Button>
           </Stack>
         </Box>
       </Container>
     </Box>
+    <ProfessionalFooter />
+    </>
   );
 }

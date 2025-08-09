@@ -13,6 +13,14 @@ import enMasterCourse from '../../../public/locales/en/master-course.json';
 import esMasterCourse from '../../../public/locales/es/master-course.json';
 import enAcademy from '../../../public/locales/en/academy.json';
 import esAcademy from '../../../public/locales/es/academy.json';
+import enFaq from '../../../public/locales/en/faq.json';
+import esFaq from '../../../public/locales/es/faq.json';
+import enRisk from '../../../public/locales/en/risk.json';
+import esRisk from '../../../public/locales/es/risk.json';
+import enAuth from '../../../public/locales/en/auth.json';
+import esAuth from '../../../public/locales/es/auth.json';
+import enSuccessStories from '../../../public/locales/en/success-stories.json';
+import esSuccessStories from '../../../public/locales/es/success-stories.json';
 
 const resources = {
   en: {
@@ -21,6 +29,10 @@ const resources = {
     communityEvent: enCommunityEvent,
     masterCourse: enMasterCourse,
     academy: enAcademy,
+    faq: enFaq,
+    risk: enRisk,
+    auth: enAuth,
+    'success-stories': enSuccessStories,
   },
   es: {
     common: esCommon,
@@ -28,6 +40,10 @@ const resources = {
     communityEvent: esCommunityEvent,
     masterCourse: esMasterCourse,
     academy: esAcademy,
+    faq: esFaq,
+    risk: esRisk,
+    auth: esAuth,
+    'success-stories': esSuccessStories,
   },
 };
 
@@ -38,7 +54,7 @@ void i18n
     resources,
     fallbackLng: 'es',
     defaultNS: 'common',
-    ns: ['common', 'landing', 'communityEvent', 'masterCourse', 'academy'],
+    ns: ['common', 'landing', 'communityEvent', 'masterCourse', 'academy', 'faq', 'risk', 'auth', 'success-stories'],
     
     interpolation: {
       escapeValue: false, // React already escapes values

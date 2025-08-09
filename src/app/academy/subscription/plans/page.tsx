@@ -43,8 +43,9 @@ import { useClientAuth } from '@/hooks/use-client-auth';
 import { SubscriptionPlan } from '@/types/user';
 import API from '@/lib/axios';
 import { loadStripe } from '@stripe/stripe-js';
+import { getStripePublishableKey } from '@/config/environment';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(getStripePublishableKey());
 
 interface PlanFeature {
   text: string;

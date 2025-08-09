@@ -29,8 +29,9 @@ import { SubscriptionPlan } from '@/types/user';
 import { loadStripe } from '@stripe/stripe-js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import API from '@/lib/axios';
+import { getStripePublishableKey } from '@/config/environment';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(getStripePublishableKey());
 
 interface PlanPrice {
   plan: SubscriptionPlan;

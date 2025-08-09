@@ -33,8 +33,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import API from '@/lib/axios';
 import { subscriptionService, type SubscriptionPlanData, type CalculatedPrice } from '@/services/api/subscription.service';
 import { useTranslation } from 'react-i18next';
+import { getStripePublishableKey } from '@/config/environment';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(getStripePublishableKey());
 
 // Icon mapping
 const iconComponents = {

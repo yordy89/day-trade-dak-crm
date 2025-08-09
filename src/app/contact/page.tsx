@@ -949,7 +949,12 @@ export default function ContactPage() {
                     </Typography>
                   </Box>
 
-                  <Button variant="outlined" fullWidth>
+                  <Button 
+                    variant="outlined" 
+                    fullWidth
+                    component="a"
+                    href="/faq"
+                  >
                     {t('contact.faq.viewAll')}
                   </Button>
                 </CardContent>

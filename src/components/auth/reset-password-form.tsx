@@ -8,11 +8,11 @@ import {
   Button,
   FormControl,
   FormHelperText,
-  OutlinedInput,
   Stack,
   Typography,
   Box,
-  InputAdornment,
+  InputBase,
+  useTheme as useMuiTheme,
 } from '@mui/material';
 import {
   Email,
@@ -25,6 +25,8 @@ import { paths } from '@/paths';
 import { useMutation } from '@tanstack/react-query';
 import { authService } from '@/services/api/auth.service';
 import { toast } from 'react-hot-toast';
+import { useTheme } from '@/components/theme/theme-provider';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
 
@@ -32,7 +34,97 @@ type Values = zod.infer<typeof schema>;
 
 const defaultValues = { email: '' } satisfies Values;
 
+// Custom Input Component matching sign-in form style
+const CustomInput = React.forwardRef<HTMLInputElement, any>(({ 
+  icon, 
+  label,
+  isDarkMode, 
+  muiTheme,
+  error,
+  helperText,
+  ...props 
+}) => {
+  const [isFocused, setIsFocused] = React.useState(false);
+  
+  return (
+    <FormControl fullWidth error={error}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'transparent',
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: error 
+            ? muiTheme.palette.error.main 
+            : isFocused 
+              ? muiTheme.palette.primary.main 
+              : isDarkMode 
+                ? 'rgba(255, 255, 255, 0.2)'
+                : 'rgba(0, 0, 0, 0.2)',
+          transition: 'all 0.3s',
+          '&:hover': {
+            borderColor: error 
+              ? muiTheme.palette.error.main 
+              : isDarkMode 
+                ? 'rgba(255, 255, 255, 0.3)'
+                : 'rgba(0, 0, 0, 0.3)',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            px: 1.5,
+            color: isFocused 
+              ? muiTheme.palette.primary.main 
+              : isDarkMode
+                ? 'rgba(255, 255, 255, 0.7)'
+                : 'rgba(0, 0, 0, 0.6)',
+            transition: 'color 0.3s',
+          }}
+        >
+          {icon}
+        </Box>
+        <InputBase
+          {...props}
+          onFocus={() => setIsFocused(true)}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
+          sx={{
+            flex: 1,
+            py: 1.75,
+            pr: 2,
+            fontSize: '16px',
+            fontWeight: 400,
+            color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+            '& input': {
+              padding: '0 0 0 8px',
+              color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+              backgroundColor: 'transparent',
+              '&::placeholder': {
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                opacity: 1,
+              },
+            },
+          }}
+        />
+      </Box>
+      {helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
+    </FormControl>
+  );
+});
+
+CustomInput.displayName = 'CustomInput';
+
 export function ResetPasswordForm(): React.JSX.Element {
+  const { t } = useTranslation('auth');
+  const muiTheme = useMuiTheme();
+  const { isDarkMode } = useTheme();
   const {
     control,
     handleSubmit,
@@ -45,7 +137,7 @@ export function ResetPasswordForm(): React.JSX.Element {
       return authService.resetPassword({ email: values.email });
     },
     onSuccess: () => {
-      toast.success('Password reset instructions sent to your email');
+      toast.success(t('resetPassword.emailSentMessage'));
       // Could redirect to a confirmation page
     },
     onError: (error: Error) => {
@@ -75,10 +167,10 @@ export function ResetPasswordForm(): React.JSX.Element {
           <LockReset sx={{ fontSize: 40 }} />
         </Box>
         <Typography variant="h3" fontWeight={800} textAlign="center">
-          Forgot Password?
+          {t('resetPassword.forgotPasswordTitle')}
         </Typography>
         <Typography color="text.secondary" variant="body1" textAlign="center" sx={{ maxWidth: 400 }}>
-          No worries! Enter your email and we&apos;ll send you reset instructions.
+          {t('resetPassword.forgotPasswordSubtitle')}
         </Typography>
       </Stack>
       
@@ -88,30 +180,16 @@ export function ResetPasswordForm(): React.JSX.Element {
             control={control}
             name="email"
             render={({ field }) => (
-              <FormControl fullWidth error={Boolean(errors.email)}>
-                <OutlinedInput
-                  {...field}
-                  placeholder="Enter your email address"
-                  type="email"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <Email sx={{ color: 'text.secondary' }} />
-                    </InputAdornment>
-                  }
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'divider',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '& .MuiOutlinedInput-input': {
-                      color: 'text.primary',
-                    },
-                  }}
-                />
-                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
-              </FormControl>
+              <CustomInput
+                {...field}
+                icon={<Email sx={{ fontSize: 20 }} />}
+                placeholder={t('resetPassword.emailPlaceholder')}
+                type="email"
+                error={Boolean(errors.email)}
+                helperText={errors.email?.message}
+                isDarkMode={isDarkMode}
+                muiTheme={muiTheme}
+              />
             )}
           />
           
@@ -135,7 +213,7 @@ export function ResetPasswordForm(): React.JSX.Element {
               },
             }}
           >
-            {isPending ? 'Sending...' : 'Send Reset Instructions'}
+            {isPending ? t('resetPassword.sendingButton') : t('resetPassword.sendButton')}
           </Button>
           
           <Button
@@ -151,7 +229,7 @@ export function ResetPasswordForm(): React.JSX.Element {
               },
             }}
           >
-            Back to Sign In
+            {t('resetPassword.backToSignIn')}
           </Button>
         </Stack>
       </form>

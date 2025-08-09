@@ -35,16 +35,6 @@ import { useTranslation } from 'react-i18next';
 import { useSettings, processCopyrightText } from '@/services/api/settings.service';
 
 const getFooterLinks = (t: any) => ({
-  trading: {
-    title: t('footer.sections.trading.title'),
-    links: [
-      { label: t('footer.sections.trading.links.liveRoom'), href: '/live' },
-      { label: t('footer.sections.trading.links.signals'), href: '/signals' },
-      { label: t('footer.sections.trading.links.analysis'), href: '/analysis' },
-      { label: t('footer.sections.trading.links.calendar'), href: '/calendar' },
-      { label: t('footer.sections.trading.links.tools'), href: '/tools' },
-    ],
-  },
   education: {
     title: t('footer.sections.education.title'),
     links: [
@@ -52,7 +42,7 @@ const getFooterLinks = (t: any) => ({
       { label: t('footer.sections.education.links.masterClasses'), href: '/academy/masterclass' },
       { label: t('footer.sections.education.links.psychology'), href: '/academy/psicotrading' },
       { label: t('footer.sections.education.links.library'), href: '/academy/books' },
-      { label: t('footer.sections.education.links.webinars'), href: '/webinars' },
+      { label: t('footer.sections.education.links.dailyLive'), href: '/live' },
     ],
   },
   company: {
@@ -60,15 +50,13 @@ const getFooterLinks = (t: any) => ({
     links: [
       { label: t('footer.sections.company.links.about'), href: '/about' },
       { label: t('footer.sections.company.links.success'), href: '/success-stories' },
-      { label: t('footer.sections.company.links.careers'), href: '/careers' },
-      { label: t('footer.sections.company.links.blog'), href: '/blog' },
       { label: t('footer.sections.company.links.contact'), href: '/contact' },
     ],
   },
   support: {
     title: t('footer.sections.support.title'),
     links: [
-      { label: t('footer.sections.support.links.help'), href: '/help' },
+      // { label: t('footer.sections.support.links.help'), href: '/help' }, // Temporarily hidden - coming soon
       { label: t('footer.sections.support.links.faq'), href: '/faq' },
       { label: t('footer.sections.support.links.terms'), href: '/terms/terms-conditions#terms' },
       { label: t('footer.sections.support.links.privacy'), href: '/terms/terms-conditions#privacy' },
@@ -191,20 +179,26 @@ export function ProfessionalFooter() {
     <Box
       component="footer"
       sx={{
-        backgroundColor: isDarkMode ? '#000000' : '#f5f5f5',
+        background: isDarkMode 
+          ? 'linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%)' 
+          : 'linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%)',
         color: isDarkMode ? 'white' : '#333333',
-        pt: 8,
+        pt: { xs: 6, md: 10 },
         pb: 4,
         mt: { xs: 8, sm: 10, md: 12 },
-        borderTop: '1px solid',
-        borderColor: isDarkMode ? 'rgba(22, 163, 74, 0.2)' : 'rgba(22, 163, 74, 0.3)',
+        borderTop: '3px solid',
+        borderImage: 'linear-gradient(90deg, transparent, #16a34a, transparent) 1',
+        position: 'relative',
+        boxShadow: isDarkMode 
+          ? '0 -10px 40px rgba(22, 163, 74, 0.05)' 
+          : '0 -10px 40px rgba(22, 163, 74, 0.03)',
       }}
     >
       <Container maxWidth="lg">
         {/* Top Section */}
-        <Grid container spacing={4} sx={{ mb: 6 }}>
+        <Grid container spacing={6} sx={{ mb: 6 }}>
           {/* Company Info */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} lg={4}>
             <Box sx={{ mb: 3, textAlign: { xs: 'center', md: 'left' } }}>
               <Link href="/" passHref style={{ textDecoration: 'none' }}>
                 {isLoading ? (
@@ -223,34 +217,44 @@ export function ProfessionalFooter() {
                 )}
               </Link>
             </Box>
-            <Typography variant="body2" sx={{ mb: 3, opacity: isDarkMode ? 0.8 : 0.7, lineHeight: 1.8, textAlign: { xs: 'center', md: 'left' } }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                mb: 3, 
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                lineHeight: 1.8, 
+                textAlign: { xs: 'center', md: 'left' },
+                fontSize: '0.95rem',
+                maxWidth: '90%',
+              }}
+            >
               {settings?.footer?.footer_company_description || t('footer.about.description')}
             </Typography>
             
             {/* Contact Info */}
-            <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <Phone fontSize="small" />
-                <Typography variant="body2">
+            <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' }, gap: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Phone sx={{ fontSize: 18, color: '#16a34a' }} />
+                <Typography variant="body2" sx={{ fontSize: '0.95rem', color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)' }}>
                   {settings?.contact?.contact_phone || t('footer.contact.phone')}
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <Email fontSize="small" />
-                <Typography variant="body2">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Email sx={{ fontSize: 18, color: '#16a34a' }} />
+                <Typography variant="body2" sx={{ fontSize: '0.95rem', color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)' }}>
                   {settings?.contact?.contact_email || t('footer.contact.email')}
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LocationOn fontSize="small" />
-                <Typography variant="body2">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <LocationOn sx={{ fontSize: 18, color: '#16a34a' }} />
+                <Typography variant="body2" sx={{ fontSize: '0.95rem', color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)' }}>
                   {settings?.contact?.contact_address || t('footer.contact.address')}
                 </Typography>
               </Box>
             </Box>
 
             {/* Social Links */}
-            <Box sx={{ display: 'flex', gap: 0.5, mt: 3, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+            <Box sx={{ display: 'flex', gap: 1, mt: 4, justifyContent: { xs: 'center', md: 'flex-start' } }}>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -259,21 +263,26 @@ export function ProfessionalFooter() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    size="small"
+                    size="medium"
                     sx={{
-                      color: isDarkMode ? 'white' : '#333333',
-                      opacity: isDarkMode ? 0.8 : 0.7,
+                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                      color: isDarkMode ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                      border: '1px solid',
+                      borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
                       '&:hover': {
-                        opacity: 1,
-                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                        color: '#16a34a',
+                        backgroundColor: '#16a34a',
+                        color: 'white',
+                        borderColor: '#16a34a',
+                        transform: 'translateY(-3px)',
+                        boxShadow: '0 5px 15px rgba(22, 163, 74, 0.3)',
                       },
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     {social.isCustomIcon ? (
-                      <Icon size={18} />
+                      <Icon size={20} />
                     ) : (
-                      <Icon fontSize="small" />
+                      <Icon sx={{ fontSize: 20 }} />
                     )}
                   </IconButton>
                 );
@@ -281,44 +290,65 @@ export function ProfessionalFooter() {
             </Box>
           </Grid>
 
-          {/* Links Sections */}
-          {Object.entries(footerLinks).map(([key, section]) => (
-            <Grid item xs={6} sm={3} md={2} key={key}>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  fontWeight: 600,
-                  mb: 2,
-                  color: isDarkMode ? 'white' : '#333333',
-                  textAlign: { xs: 'center', md: 'left' },
-                }}
-              >
-                {section.title}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: { xs: 'center', md: 'flex-start' } }}>
-                {section.links.map((link) => (
-                  <MuiLink
-                    key={link.label}
-                    component={Link}
-                    href={link.href}
-                    variant="body2"
+          {/* Links Sections - Professional 3 Column Layout */}
+          <Grid item xs={12} lg={8}>
+            <Grid container spacing={4}>
+              {Object.entries(footerLinks).map(([key, section]) => (
+                <Grid item xs={12} sm={6} md={4} key={key}>
+                  <Typography
+                    variant="h6"
                     sx={{
-                      color: isDarkMode ? 'white' : '#333333',
-                      opacity: isDarkMode ? 0.8 : 0.7,
-                      textDecoration: 'none',
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        opacity: 1,
-                        color: '#16a34a',
-                      },
+                      fontWeight: 700,
+                      mb: 3,
+                      color: isDarkMode ? 'white' : '#1a1a1a',
+                      textAlign: { xs: 'center', sm: 'left' },
+                      fontSize: '1.1rem',
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    {link.label}
-                  </MuiLink>
-                ))}
-              </Box>
+                    {section.title}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: { xs: 'center', sm: 'flex-start' } }}>
+                    {section.links.map((link) => (
+                      <MuiLink
+                        key={link.label}
+                        component={Link}
+                        href={link.href}
+                        variant="body2"
+                        sx={{
+                          color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                          textDecoration: 'none',
+                          transition: 'all 0.2s ease',
+                          fontSize: '0.95rem',
+                          fontWeight: 400,
+                          position: 'relative',
+                          '&:hover': {
+                            color: '#16a34a',
+                            '&::after': {
+                              width: '100%',
+                            },
+                          },
+                          '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: -2,
+                            left: 0,
+                            width: 0,
+                            height: '2px',
+                            backgroundColor: '#16a34a',
+                            transition: 'width 0.3s ease',
+                          },
+                        }}
+                      >
+                        {link.label}
+                      </MuiLink>
+                    ))}
+                  </Box>
+                </Grid>
+              ))}
             </Grid>
-          ))}
+          </Grid>
         </Grid>
 
         {/* Newsletter */}

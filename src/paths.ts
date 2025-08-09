@@ -1,7 +1,12 @@
 export const paths = {
   home: '/',
   about: '/about',
-  auth: { signIn: '/auth/sign-in', signUp: '/auth/sign-up', resetPassword: '/auth/reset-password' },
+  auth: { 
+    signIn: '/auth/sign-in', 
+    signUp: '/auth/sign-up', 
+    resetPassword: '/auth/reset-password',
+    resetPasswordConfirm: '/auth/reset-password/confirm'
+  },
   terms: {
     terms: '/terms/terms-conditions',
   },

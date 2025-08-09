@@ -1,0 +1,102 @@
+{
+  "hero": {
+    "title": "Success Stories",
+    "subtitle": "Real traders, real transformations. Discover how our students went from beginners to profitable traders."
+  },
+  "stats": {
+    "liveSupport": "Live Trading Support",
+    "dailyLiveSessions": "Daily Live Sessions",
+    "countries": "Countries Represented",
+    "rating": "Community Rating"
+  },
+  "categories": {
+    "all": "All Stories",
+    "founder": "Founder's Journey",
+    "student": "Student Success",
+    "professional": "Professional Traders"
+  },
+  "featured": {
+    "label": "FOUNDER'S STORY",
+    "title": "From 4 Years of Losses to Building a Trading Empire",
+    "readFullStory": "Read Full Story",
+    "showLess": "Show Less"
+  },
+  "storySection": {
+    "challenge": "The Challenge",
+    "journey": "The Journey",
+    "breakthrough": "The Breakthrough",
+    "results": "The Results",
+    "advice": "Advice for New Traders"
+  },
+  "metrics": {
+    "timeToProfitability": "Time to Profitability",
+    "firstMillion": "First Million",
+    "yearsTeaching": "Years Teaching",
+    "tradingStyle": "Trading Style",
+    "startingCapital": "Starting Capital",
+    "currentAccount": "Current Account",
+    "monthlyAverage": "Monthly Average",
+    "weeklyProfit": "Weekly Profit",
+    "winRate": "Win Rate",
+    "tradingHours": "Trading Hours",
+    "timeToProfit": "Time to Profit",
+    "started": "Started"
+  },
+  "stories": {
+    "mijail": {
+      "name": "Mijail Medina",
+      "title": "Founder & CEO of DayTradeDak",
+      "beforeTrading": "Mechanical Engineer from Cuba",
+      "currentStatus": "Professional Trader & Educator",
+      "quote": "The journey to becoming a profitable trader isn't about avoiding losses—it's about transforming your mindset, learning from every mistake, and persisting when 95% of people quit.",
+      "challenge": "I started my trading journey as a mechanical engineer from Cuba with big dreams but limited resources. Like many beginners, I thought trading would be my quick path to financial freedom. The reality was 4 years of losses, countless sleepless nights studying charts, and moments where I questioned if I would ever succeed.",
+      "journey": "Those 4 years weren't just about learning technical analysis or finding the perfect strategy. They were about completely rewiring my brain. I had to unlearn the employee mindset and develop the discipline of a professional trader. Every loss taught me something valuable—about the markets, but more importantly, about myself. I studied psychology, risk management, and spent thousands of hours backtesting strategies.",
+      "breakthrough": "The breakthrough came when I stopped looking for the 'holy grail' strategy and started focusing on consistency and risk management. I realized that profitable trading isn't about being right all the time—it's about managing your losses and letting your winners run. Once I mastered my emotions and stuck to my rules, everything changed.",
+      "results": "After 4 years of persistence, I finally became consistently profitable. By 2022, I reached my first million dollars in trading profits. But the real success wasn't the money—it was the transformation I underwent. Today, I'm building a growing community of passionate traders, written a book about my journey, and created DayTradeDak to help others avoid the mistakes I made.",
+      "advice": "To anyone starting their trading journey: expect it to be hard. Expect to lose money initially. But if you're willing to invest in your education, control your emotions, and persist through the difficult times, trading can transform not just your finances, but your entire life. Remember, 95% of traders fail because they quit too soon. Be part of the 5% who persist.",
+      "tags": ["Founder", "Day Trading", "Options", "Mindset", "Education"]
+    },
+    "carlos": {
+      "name": "Carlos Rodriguez",
+      "title": "Former Uber Driver",
+      "beforeTrading": "Uber Driver",
+      "currentStatus": "Full-time Trader",
+      "quote": "DayTradeDak didn't just teach me how to trade—they taught me how to think like a trader. That mindset shift made all the difference.",
+      "challenge": "I was driving Uber 12 hours a day, barely making ends meet. I knew there had to be a better way to provide for my family.",
+      "journey": "I joined DayTradeDak's program with just $2,000 in savings. The first 6 months were tough—I lost half my account. But the mentorship and community support kept me going.",
+      "breakthrough": "The live trading sessions were game-changers. Watching Mijail trade in real-time helped me understand market psychology in a way no book could teach.",
+      "results": "After 18 months, I quit driving Uber. Now I trade full-time, averaging $8,000 per month. My family's life has completely changed.",
+      "advice": "Start small, focus on education first, and don't give up when you face losses. They're part of the journey.",
+      "tags": ["Student Success", "Day Trading", "Career Change"]
+    },
+    "maria": {
+      "name": "Maria Santos",
+      "title": "Single Mother of Two",
+      "beforeTrading": "Restaurant Manager",
+      "currentStatus": "Part-time Trader",
+      "quote": "As a single mom, I needed flexibility. Trading gave me the freedom to be there for my kids while building our financial future.",
+      "challenge": "Working 60-hour weeks in a restaurant while raising two kids alone was exhausting. I needed a way to earn more while working less.",
+      "journey": "I started with just $500 and treated trading like going back to school. Every loss was a lesson, every win was reinvested.",
+      "breakthrough": "The PsicoTrading course helped me manage my emotions. Once I stopped revenge trading, my account started growing consistently.",
+      "results": "Now I trade 2-3 hours in the morning while my kids are at school. I make more in a week than I used to make in a month.",
+      "advice": "Don't let a small account discourage you. Focus on percentage gains, not dollar amounts. Consistency compounds over time.",
+      "tags": ["Women in Trading", "Part-time Trading", "Work-Life Balance"]
+    }
+  },
+  "actions": {
+    "readStory": "Read Story"
+  },
+  "cta": {
+    "title": "Ready to Write Your Success Story?",
+    "subtitle": "Join thousands of traders who transformed their lives with DayTradeDak",
+    "startJourney": "Start Your Journey",
+    "viewCourses": "View Courses"
+  },
+  "values": {
+    "years": "Years",
+    "months": "18 months",
+    "twoYears": "2 years",
+    "dayTrading": "Day Trading",
+    "perDay": "/day"
+  }
+}

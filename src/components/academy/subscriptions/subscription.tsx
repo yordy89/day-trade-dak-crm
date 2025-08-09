@@ -8,9 +8,10 @@ import { useMutation } from '@tanstack/react-query';
 
 import { SubscriptionPlan } from '@/types/user';
 import API from '@/lib/axios';
+import { getStripePublishableKey } from '@/config/environment';
 
 // Load Stripe
-const stripePromise = loadStripe(`${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`);
+const stripePromise = loadStripe(getStripePublishableKey());
 
 // Define available plans with their Stripe price IDs and features
 const subscriptionPlans = [

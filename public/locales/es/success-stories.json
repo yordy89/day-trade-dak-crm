@@ -1,0 +1,102 @@
+{
+  "hero": {
+    "title": "Historias de Éxito",
+    "subtitle": "Traders reales, transformaciones reales. Descubre cómo nuestros estudiantes pasaron de principiantes a traders rentables."
+  },
+  "stats": {
+    "liveSupport": "Soporte de Trading en Vivo",
+    "dailyLiveSessions": "Sesiones Diarias en Vivo",
+    "countries": "Países Representados",
+    "rating": "Calificación de la Comunidad"
+  },
+  "categories": {
+    "all": "Todas las Historias",
+    "founder": "Historia del Fundador",
+    "student": "Éxito Estudiantil",
+    "professional": "Traders Profesionales"
+  },
+  "featured": {
+    "label": "HISTORIA DEL FUNDADOR",
+    "title": "De 4 Años de Pérdidas a Construir un Imperio de Trading",
+    "readFullStory": "Leer Historia Completa",
+    "showLess": "Mostrar Menos"
+  },
+  "storySection": {
+    "challenge": "El Desafío",
+    "journey": "El Viaje",
+    "breakthrough": "El Avance",
+    "results": "Los Resultados",
+    "advice": "Consejo para Nuevos Traders"
+  },
+  "metrics": {
+    "timeToProfitability": "Tiempo para Rentabilidad",
+    "firstMillion": "Primer Millón",
+    "yearsTeaching": "Años Enseñando",
+    "tradingStyle": "Estilo de Trading",
+    "startingCapital": "Capital Inicial",
+    "currentAccount": "Cuenta Actual",
+    "monthlyAverage": "Promedio Mensual",
+    "weeklyProfit": "Ganancia Semanal",
+    "winRate": "Tasa de Acierto",
+    "tradingHours": "Horas de Trading",
+    "timeToProfit": "Tiempo para Ganancias",
+    "started": "Comenzó"
+  },
+  "stories": {
+    "mijail": {
+      "name": "Mijail Medina",
+      "title": "Fundador y CEO de DayTradeDak",
+      "beforeTrading": "Ingeniero Mecánico de Cuba",
+      "currentStatus": "Trader Profesional y Educador",
+      "quote": "El viaje para convertirse en un trader rentable no se trata de evitar pérdidas—se trata de transformar tu mentalidad, aprender de cada error y persistir cuando el 95% de las personas se rinden.",
+      "challenge": "Comencé mi viaje en el trading como ingeniero mecánico de Cuba con grandes sueños pero recursos limitados. Como muchos principiantes, pensé que el trading sería mi camino rápido hacia la libertad financiera. La realidad fueron 4 años de pérdidas, innumerables noches sin dormir estudiando gráficos, y momentos donde cuestioné si alguna vez tendría éxito.",
+      "journey": "Esos 4 años no fueron solo sobre aprender análisis técnico o encontrar la estrategia perfecta. Fueron sobre reconfigurar completamente mi cerebro. Tuve que desaprender la mentalidad de empleado y desarrollar la disciplina de un trader profesional. Cada pérdida me enseñó algo valioso—sobre los mercados, pero más importante, sobre mí mismo. Estudié psicología, gestión de riesgo, y pasé miles de horas probando estrategias.",
+      "breakthrough": "El avance llegó cuando dejé de buscar la estrategia del 'santo grial' y comencé a enfocarme en la consistencia y la gestión de riesgo. Me di cuenta de que el trading rentable no se trata de tener razón todo el tiempo—se trata de gestionar tus pérdidas y dejar correr tus ganancias. Una vez que dominé mis emociones y me apegué a mis reglas, todo cambió.",
+      "results": "Después de 4 años de persistencia, finalmente me volví consistentemente rentable. Para 2022, alcancé mi primer millón de dólares en ganancias de trading. Pero el verdadero éxito no fue el dinero—fue la transformación que experimenté. Hoy, estoy construyendo una comunidad creciente de traders apasionados, escrito un libro sobre mi viaje, y creado DayTradeDak para ayudar a otros a evitar los errores que cometí.",
+      "advice": "Para cualquiera que comience su viaje en el trading: espera que sea difícil. Espera perder dinero inicialmente. Pero si estás dispuesto a invertir en tu educación, controlar tus emociones y persistir en los momentos difíciles, el trading puede transformar no solo tus finanzas, sino toda tu vida. Recuerda, el 95% de los traders fallan porque se rinden demasiado pronto. Sé parte del 5% que persiste.",
+      "tags": ["Fundador", "Day Trading", "Opciones", "Mentalidad", "Educación"]
+    },
+    "carlos": {
+      "name": "Carlos Rodriguez",
+      "title": "Ex Conductor de Uber",
+      "beforeTrading": "Conductor de Uber",
+      "currentStatus": "Trader a Tiempo Completo",
+      "quote": "DayTradeDak no solo me enseñó cómo hacer trading—me enseñaron a pensar como un trader. Ese cambio de mentalidad hizo toda la diferencia.",
+      "challenge": "Conducía Uber 12 horas al día, apenas llegando a fin de mes. Sabía que tenía que haber una mejor manera de mantener a mi familia.",
+      "journey": "Me uní al programa de DayTradeDak con solo $2,000 en ahorros. Los primeros 6 meses fueron duros—perdí la mitad de mi cuenta. Pero la mentoría y el apoyo de la comunidad me mantuvieron adelante.",
+      "breakthrough": "Las sesiones de trading en vivo fueron revolucionarias. Ver a Mijail operar en tiempo real me ayudó a entender la psicología del mercado de una manera que ningún libro podría enseñar.",
+      "results": "Después de 18 meses, dejé de conducir Uber. Ahora hago trading a tiempo completo, promediando $8,000 por mes. La vida de mi familia ha cambiado completamente.",
+      "advice": "Comienza pequeño, enfócate primero en la educación, y no te rindas cuando enfrentes pérdidas. Son parte del viaje.",
+      "tags": ["Éxito Estudiantil", "Day Trading", "Cambio de Carrera"]
+    },
+    "maria": {
+      "name": "Maria Santos",
+      "title": "Madre Soltera de Dos",
+      "beforeTrading": "Gerente de Restaurante",
+      "currentStatus": "Trader a Tiempo Parcial",
+      "quote": "Como madre soltera, necesitaba flexibilidad. El trading me dio la libertad de estar ahí para mis hijos mientras construyo nuestro futuro financiero.",
+      "challenge": "Trabajar 60 horas a la semana en un restaurante mientras criaba a dos hijos sola era agotador. Necesitaba una manera de ganar más trabajando menos.",
+      "journey": "Comencé con solo $500 y traté el trading como volver a la escuela. Cada pérdida fue una lección, cada ganancia fue reinvertida.",
+      "breakthrough": "El curso de PsicoTrading me ayudó a manejar mis emociones. Una vez que dejé de hacer trading por venganza, mi cuenta comenzó a crecer consistentemente.",
+      "results": "Ahora hago trading 2-3 horas en la mañana mientras mis hijos están en la escuela. Gano más en una semana de lo que solía ganar en un mes.",
+      "advice": "No dejes que una cuenta pequeña te desanime. Enfócate en ganancias porcentuales, no en cantidades de dólares. La consistencia se compone con el tiempo.",
+      "tags": ["Mujeres en el Trading", "Trading a Tiempo Parcial", "Balance Vida-Trabajo"]
+    }
+  },
+  "actions": {
+    "readStory": "Leer Historia"
+  },
+  "cta": {
+    "title": "¿Listo para Escribir tu Historia de Éxito?",
+    "subtitle": "Únete a miles de traders que transformaron sus vidas con DayTradeDak",
+    "startJourney": "Comienza tu Viaje",
+    "viewCourses": "Ver Cursos"
+  },
+  "values": {
+    "years": "Años",
+    "months": "18 meses",
+    "twoYears": "2 años",
+    "dayTrading": "Day Trading",
+    "perDay": "/día"
+  }
+}

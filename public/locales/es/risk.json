@@ -1,0 +1,112 @@
+{
+  "hero": {
+    "title": "Divulgación de Riesgos",
+    "subtitle": "Información importante sobre los riesgos del trading"
+  },
+  "mainWarning": {
+    "title": "ADVERTENCIA DE ALTO RIESGO",
+    "content": "El trading de productos financieros con apalancamiento conlleva un alto grado de riesgo para su capital. Los precios pueden moverse rápidamente en su contra, resultando en pérdidas significativas. <strong>El 75-85% de los traders minoristas pierden dinero al operar con estos productos.</strong>"
+  },
+  "introduction": {
+    "title": "Introducción",
+    "paragraph1": "Este documento de divulgación de riesgos tiene como objetivo informarle sobre los riesgos asociados con el trading y la inversión en mercados financieros. Es importante que lea y comprenda completamente esta información antes de aplicar cualquier conocimiento adquirido en nuestra plataforma educativa.",
+    "paragraph2": "DayTradeDak es una plataforma exclusivamente educativa que proporciona formación, análisis de mercado con fines didácticos y señales educativas. No ejecutamos operaciones ni manejamos fondos de clientes. Toda decisión de inversión que tome fuera de nuestra plataforma es su responsabilidad exclusiva. No somos asesores financieros, no somos un broker, y no proporcionamos asesoramiento personalizado de inversión."
+  },
+  "riskFactors": {
+    "title": "Factores de Riesgo Principales",
+    "items": {
+      "volatility": {
+        "title": "Volatilidad del Mercado",
+        "description": "Los mercados financieros pueden experimentar movimientos de precios rápidos y significativos que pueden resultar en pérdidas sustanciales."
+      },
+      "leverage": {
+        "title": "Apalancamiento",
+        "description": "El uso de apalancamiento puede magnificar tanto las ganancias como las pérdidas. Una pequeña fluctuación puede resultar en la pérdida total del capital invertido."
+      },
+      "psychological": {
+        "title": "Factores Psicológicos",
+        "description": "Las emociones como el miedo y la codicia pueden afectar negativamente las decisiones de trading y llevar a pérdidas significativas."
+      },
+      "complexity": {
+        "title": "Complejidad del Mercado",
+        "description": "Los mercados financieros son complejos y están influenciados por múltiples factores que pueden ser difíciles de predecir o entender completamente."
+      },
+      "pastPerformance": {
+        "title": "Rendimientos Pasados",
+        "description": "Los rendimientos históricos no garantizan resultados futuros. Las estrategias exitosas en el pasado pueden no funcionar en condiciones de mercado futuras."
+      },
+      "totalLoss": {
+        "title": "Riesgo de Pérdida Total",
+        "description": "Existe la posibilidad de perder todo el capital invertido. Nunca invierta dinero que no pueda permitirse perder."
+      }
+    }
+  },
+  "importantPoints": {
+    "title": "Puntos Importantes a Considerar",
+    "items": [
+      "El trading de divisas, CFDs y otros instrumentos financieros es altamente especulativo y conlleva un alto nivel de riesgo.",
+      "DayTradeDak es una plataforma educativa. No ejecutamos operaciones ni manejamos fondos de clientes.",
+      "La educación y las señales proporcionadas son exclusivamente con fines didácticos y no constituyen recomendaciones de inversión.",
+      "Es posible perder parte o la totalidad de su inversión cuando opera en mercados reales, por lo tanto, no debe invertir dinero que no pueda permitirse perder.",
+      "Debe ser consciente de todos los riesgos asociados con el trading. Nuestros traders profesionales te enseñan técnicas de análisis y gestión de riesgo, pero siempre debes hacer tu propia investigación.",
+      "Todo el contenido en nuestra plataforma es educativo y está diseñado para enseñarte a analizar los mercados como un profesional. Aplica lo aprendido con criterio propio al tomar decisiones de inversión.",
+      "No somos responsables por las pérdidas que puedan resultar de la aplicación de los conocimientos adquiridos en nuestra plataforma."
+    ]
+  },
+  "specificRisks": {
+    "title": "Riesgos Específicos del Trading",
+    "marketRisk": {
+      "title": "1. Riesgo de Mercado",
+      "description": "Los mercados pueden ser extremadamente volátiles y los precios pueden fluctuar rápidamente debido a noticias, eventos económicos, políticos o cambios en el sentimiento del mercado. Estas fluctuaciones pueden trabajar a su favor o en su contra."
+    },
+    "leverageRisk": {
+      "title": "2. Riesgo de Apalancamiento",
+      "description": "El apalancamiento le permite operar con una posición mayor que su capital inicial. Aunque esto puede amplificar las ganancias, también amplifica las pérdidas. Un movimiento adverso del 1% en el mercado puede resultar en una pérdida del 100% de su inversión si utiliza un apalancamiento de 100:1."
+    },
+    "liquidityRisk": {
+      "title": "3. Riesgo de Liquidez",
+      "description": "En ciertas condiciones de mercado, puede ser difícil o imposible liquidar una posición. Esto puede ocurrir durante períodos de rápido movimiento de precios si no hay suficiente volumen de trading a cierto nivel de precio."
+    },
+    "technologyRisk": {
+      "title": "4. Riesgo Tecnológico",
+      "description": "El trading online depende de sistemas tecnológicos complejos. Fallas en hardware, software, conexiones de internet o sistemas de los brokers pueden resultar en pérdidas. Como plataforma educativa, DayTradeDak no ejecuta operaciones y no se hace responsable por pérdidas causadas por problemas técnicos en brokers externos o por decisiones de trading que usted tome fuera de nuestra plataforma."
+    },
+    "counterpartyRisk": {
+      "title": "5. Riesgo de Contraparte",
+      "description": "Este es el riesgo de que su broker o institución financiera no cumpla con sus obligaciones financieras. Es importante elegir brokers regulados y con buena reputación."
+    }
+  },
+  "disclaimer": {
+    "title": "Descargo de Responsabilidad",
+    "content": "DayTradeDak es una plataforma educativa que proporciona formación, análisis didáctico y herramientas de aprendizaje sobre trading. No ofrecemos asesoramiento de inversión personalizado ni ejecutamos operaciones. Todas las decisiones de trading que tome en brokers externos son su responsabilidad exclusiva. No garantizamos resultados específicos y no somos responsables por las pérdidas que puedan resultar de la aplicación de los conocimientos adquiridos en nuestra plataforma educativa."
+  },
+  "recommendations": {
+    "title": "Nuestras Recomendaciones",
+    "items": {
+      "educate": {
+        "primary": "Eduque antes de operar",
+        "secondary": "Aproveche todos nuestros recursos educativos antes de arriesgar capital real"
+      },
+      "demo": {
+        "primary": "Comience con una cuenta demo",
+        "secondary": "Practique sus estrategias sin riesgo antes de operar con dinero real"
+      },
+      "invest": {
+        "primary": "Nunca invierta más de lo que puede perder",
+        "secondary": "Solo use capital que no afecte su estilo de vida si lo pierde completamente"
+      },
+      "riskManagement": {
+        "primary": "Use gestión de riesgo",
+        "secondary": "Siempre use stop loss y nunca arriesgue más del 1-2% de su capital por operación"
+      },
+      "learn": {
+        "primary": "Aprenda de traders profesionales",
+        "secondary": "Nuestros mentores con años de experiencia te guían en tu proceso educativo"
+      }
+    }
+  },
+  "finalNotice": {
+    "lastUpdate": "Última actualización: {{date}}",
+    "acknowledgment": "Al utilizar nuestros servicios, usted reconoce que ha leído, entendido y aceptado esta divulgación de riesgos."
+  }
+}

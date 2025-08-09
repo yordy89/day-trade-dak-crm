@@ -23,6 +23,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/components/theme/theme-provider';
 
@@ -673,6 +674,7 @@ export default function AboutPage() {
           </Container>
         </Box>
       </Box>
+      <ProfessionalFooter />
     </>
   );
 }
