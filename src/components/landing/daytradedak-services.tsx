@@ -86,7 +86,8 @@ export function DayTradeDakServices() {
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
   const { t } = useTranslation('landing');
-  const services = getServices(t);
+  // Filter out Master Course temporarily
+  const services = getServices(t).filter(service => service.href !== '/master-course');
 
   return (
     <Box
