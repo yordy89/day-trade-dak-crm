@@ -99,15 +99,187 @@ export function SideNav(): React.JSX.Element {
         bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
         borderRight: '1px solid',
         borderColor: 'divider',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Stock Ticker Background Effect */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden',
+          opacity: isDarkMode ? 0.08 : 0.06,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      >
+        {/* Stock Tickers */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '10%',
+            left: '10%',
+            fontSize: '0.75rem',
+            fontFamily: 'monospace',
+            color: '#16a34a',
+            transform: 'rotate(-45deg)',
+            fontWeight: 600,
+          }}
+        >
+          SPY +0.78%
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '25%',
+            right: '15%',
+            fontSize: '0.7rem',
+            fontFamily: 'monospace',
+            color: '#22c55e',
+            transform: 'rotate(30deg)',
+            fontWeight: 600,
+          }}
+        >
+          QQQ ↑ 574.55
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '30%',
+            left: '20%',
+            fontSize: '0.8rem',
+            fontFamily: 'monospace',
+            color: '#16a34a',
+            fontWeight: 600,
+          }}
+        >
+          AAPL 229.35
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '45%',
+            left: '40%',
+            fontSize: '0.65rem',
+            fontFamily: 'monospace',
+            color: '#22c55e',
+            transform: 'rotate(-15deg)',
+            fontWeight: 600,
+          }}
+        >
+          NVDA +1.07%
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '15%',
+            right: '25%',
+            fontSize: '0.75rem',
+            fontFamily: 'monospace',
+            color: '#16a34a',
+            transform: 'rotate(45deg)',
+            fontWeight: 600,
+          }}
+        >
+          MSFT 522.04
+        </Box>
+        
+        {/* Candlestick Patterns */}
+        <svg 
+          width="100%" 
+          height="100%" 
+          style={{ 
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
+          {/* Candlestick 1 */}
+          <g transform="translate(50, 150)">
+            <line x1="0" y1="0" x2="0" y2="40" stroke="#22c55e" strokeWidth="2" />
+            <rect x="-4" y="10" width="8" height="20" fill="#22c55e" />
+          </g>
+          
+          {/* Candlestick 2 */}
+          <g transform="translate(80, 180)">
+            <line x1="0" y1="0" x2="0" y2="35" stroke="#ef4444" strokeWidth="2" />
+            <rect x="-4" y="8" width="8" height="18" fill="none" stroke="#ef4444" strokeWidth="2" />
+          </g>
+          
+          {/* Candlestick 3 */}
+          <g transform="translate(110, 160)">
+            <line x1="0" y1="0" x2="0" y2="45" stroke="#22c55e" strokeWidth="2" />
+            <rect x="-4" y="12" width="8" height="22" fill="#22c55e" />
+          </g>
+          
+          {/* Candlestick 4 */}
+          <g transform="translate(140, 170)">
+            <line x1="0" y1="0" x2="0" y2="38" stroke="#22c55e" strokeWidth="2" />
+            <rect x="-4" y="9" width="8" height="20" fill="#22c55e" />
+          </g>
+          
+          {/* Trading Line Chart */}
+          <path
+            d="M 20 250 Q 60 240 100 220 T 180 200 Q 220 190 260 180"
+            stroke="#16a34a"
+            strokeWidth="2"
+            fill="none"
+            opacity="0.8"
+          />
+          
+          {/* Another Trading Line */}
+          <path
+            d="M 10 350 L 50 340 L 90 345 L 130 330 L 170 335 L 210 320"
+            stroke="#22c55e"
+            strokeWidth="1.5"
+            fill="none"
+            opacity="0.7"
+          />
+        </svg>
+        
+        {/* ETF Labels */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '60%',
+            right: '10%',
+            fontSize: '0.9rem',
+            fontFamily: 'monospace',
+            color: '#f59e0b',
+            fontWeight: 'bold',
+          }}
+        >
+          ETF
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '75%',
+            left: '15%',
+            fontSize: '0.85rem',
+            fontFamily: 'monospace',
+            color: '#3b82f6',
+            fontWeight: 'bold',
+            transform: 'rotate(-30deg)',
+          }}
+        >
+          STOCKS
+        </Box>
+      </Box>
+
       {/* Logo Section */}
       <Box 
         sx={{ 
           p: 3, 
           borderBottom: '1px solid',
           borderColor: 'divider',
-          bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+          bgcolor: 'transparent',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -181,7 +353,9 @@ export function SideNav(): React.JSX.Element {
           overflowY: 'auto',
           overflowX: 'hidden',
           p: 2,
-          bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+          bgcolor: 'transparent',
+          position: 'relative',
+          zIndex: 1,
           '&::-webkit-scrollbar': {
             width: '6px',
           },
@@ -207,7 +381,14 @@ export function SideNav(): React.JSX.Element {
       </Box>
 
       {/* Premium Upgrade Section */}
-      <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff' }}>
+      <Box sx={{ 
+        p: 2, 
+        borderTop: '1px solid', 
+        borderColor: 'divider', 
+        bgcolor: 'transparent',
+        position: 'relative',
+        zIndex: 1,
+      }}>
         <Paper
           elevation={0}
           sx={{

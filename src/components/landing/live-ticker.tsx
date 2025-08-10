@@ -1,82 +1,91 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, Chip, Grid } from '@mui/material';
+import { Box, Typography, Card, CardContent, Chip, Grid, Skeleton } from '@mui/material';
 import { TrendingUp, TrendingDown } from '@mui/icons-material';
+import { useQuery } from '@tanstack/react-query';
+import API from '@/lib/axios';
 
 interface TickerItem {
-  id: string;
-  name: string;
   symbol: string;
+  name: string;
   price: number;
   change: number;
   changePercent: number;
-  volume: string;
-  action: 'CALL' | 'PUT';
-  image?: string;
+  volume: number;
+  high?: number;
+  low?: number;
+  open?: number;
+  previousClose?: number;
+  timestamp?: number;
 }
 
 const mockTickers: TickerItem[] = [
   {
-    id: '1',
-    name: 'Apple Inc.',
     symbol: 'AAPL',
+    name: 'Apple Inc.',
     price: 195.89,
     change: 2.34,
     changePercent: 1.21,
-    volume: '52.3M',
-    action: 'CALL',
+    volume: 52300000,
   },
   {
-    id: '2',
-    name: 'Microsoft Corp.',
     symbol: 'MSFT',
+    name: 'Microsoft Corp.',
     price: 428.52,
     change: -1.23,
     changePercent: -0.29,
-    volume: '23.1M',
-    action: 'PUT',
+    volume: 23100000,
   },
   {
-    id: '3',
-    name: 'Tesla Inc.',
     symbol: 'TSLA',
+    name: 'Tesla Inc.',
     price: 248.42,
     change: 5.67,
     changePercent: 2.34,
-    volume: '98.7M',
-    action: 'CALL',
+    volume: 98700000,
   },
   {
-    id: '4',
-    name: 'NVIDIA Corp.',
     symbol: 'NVDA',
+    name: 'NVIDIA Corp.',
     price: 875.28,
     change: 12.45,
     changePercent: 1.44,
-    volume: '45.2M',
-    action: 'CALL',
+    volume: 45200000,
   },
 ];
 
 export function LiveTicker() {
-  const [tickers, setTickers] = useState(mockTickers);
+  // Fetch featured stocks from API
+  const { data: tickers, isLoading, error } = useQuery<TickerItem[]>({
+    queryKey: ['featured-stocks'],
+    queryFn: async () => {
+      try {
+        const response = await API.get('/market/featured');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching featured stocks:', error);
+        // Return mock data as fallback
+        return mockTickers;
+      }
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+    staleTime: 15000, // Consider data stale after 15 seconds
+  });
 
-  // Simulate live price updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTickers(prevTickers =>
-        prevTickers.map(ticker => ({
-          ...ticker,
-          price: ticker.price + (Math.random() - 0.5) * 2,
-          change: ticker.change + (Math.random() - 0.5) * 0.5,
-          changePercent: ticker.changePercent + (Math.random() - 0.5) * 0.1,
-        }))
-      );
-    }, 3000);
+  const formatVolume = (volume: number): string => {
+    if (volume >= 1000000000) {
+      return `${(volume / 1000000000).toFixed(1)}B`;
+    } else if (volume >= 1000000) {
+      return `${(volume / 1000000).toFixed(1)}M`;
+    } else if (volume >= 1000) {
+      return `${(volume / 1000).toFixed(1)}K`;
+    }
+    return volume.toString();
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  // Use mock data if API fails
+  const displayTickers = tickers || mockTickers;
 
   return (
     <Box className="bg-[#0a0e17] py-8">
@@ -97,8 +106,25 @@ export function LiveTicker() {
         </Box>
 
         <Grid container spacing={3}>
-          {tickers.map((ticker) => (
-            <Grid item xs={12} sm={6} md={3} key={ticker.id}>
+          {isLoading ? (
+            // Loading skeletons
+            [...Array(4)].map((_, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card
+                  className="bg-[#1a1f2e] border border-gray-800"
+                  elevation={0}
+                >
+                  <CardContent>
+                    <Skeleton variant="text" width="60%" height={32} />
+                    <Skeleton variant="text" width="40%" height={20} />
+                    <Skeleton variant="text" width="80%" height={20} />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            displayTickers.slice(0, 4).map((ticker) => (
+            <Grid item xs={12} sm={6} md={3} key={ticker.symbol}>
               <Card
                 className="bg-[#1a1f2e] border border-gray-800 hover:border-gray-700 transition-all cursor-pointer"
                 elevation={0}
@@ -114,10 +140,10 @@ export function LiveTicker() {
                       </Typography>
                     </Box>
                     <Chip
-                      label={ticker.action}
+                      label={ticker.change >= 0 ? 'UP' : 'DOWN'}
                       size="small"
                       className={
-                        ticker.action === 'CALL' 
+                        ticker.change >= 0 
                           ? 'bg-green-900/50 text-green-400 border border-green-800'
                           : 'bg-red-900/50 text-red-400 border border-red-800'
                       }
@@ -139,7 +165,7 @@ export function LiveTicker() {
                       </Typography>
                     </Box>
                     <Typography variant="caption" className="text-gray-500">
-                      Vol: {ticker.volume}
+                      Vol: {formatVolume(ticker.volume)}
                     </Typography>
                   </Box>
 
@@ -149,15 +175,17 @@ export function LiveTicker() {
                 </CardContent>
               </Card>
             </Grid>
-          ))}
+          ))
+          )}
         </Grid>
 
         {/* Scrolling ticker */}
-        <Box className="mt-8 overflow-hidden bg-[#1a1f2e] rounded-lg border border-gray-800 py-3">
-          <Box className="flex animate-scroll">
-            {[...tickers, ...tickers].map((ticker, _index) => (
+        {!isLoading && displayTickers && (
+          <Box className="mt-8 overflow-hidden bg-[#1a1f2e] rounded-lg border border-gray-800 py-3">
+            <Box className="flex animate-scroll">
+              {[...displayTickers, ...displayTickers].map((ticker, _index) => (
               <Box
-                key={`${ticker.id}-${_index}`}
+                key={`${ticker.symbol}-${_index}`}
                 className="flex items-center px-6 border-r border-gray-800"
               >
                 <Typography variant="body2" className="text-gray-400 mr-2">
@@ -173,9 +201,10 @@ export function LiveTicker() {
                   {ticker.change >= 0 ? '+' : ''}{ticker.changePercent.toFixed(2)}%
                 </Typography>
               </Box>
-            ))}
+              ))}
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </Box>
   );

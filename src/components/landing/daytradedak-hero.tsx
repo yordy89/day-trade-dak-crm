@@ -23,6 +23,7 @@ import Link from 'next/link';
 import CountUp from 'react-countup';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useTranslation } from 'react-i18next';
+import { HeroStockTable } from './hero-stock-table';
 
 export function DayTradeDakHero() {
   const muiTheme = useMuiTheme();
@@ -197,125 +198,10 @@ export function DayTradeDakHero() {
             </Box>
           </Grid>
 
-          {/* Right Content - Feature Cards */}
+          {/* Right Content - Stock Table Only */}
           <Grid item xs={12} lg={5}>
-            <Stack spacing={3}>
-              {/* Live Classes Card */}
-              <Card
-                elevation={10}
-                sx={{
-                  backgroundColor: muiTheme.palette.background.paper,
-                  borderRadius: 3,
-                  overflow: 'hidden',
-                  border: '1px solid',
-                  borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                  transition: 'transform 0.3s ease',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Box sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <LiveTv sx={{ color: '#ef4444', fontSize: 32 }} />
-                    <Box>
-                      <Typography variant="h6" fontWeight="600">
-                        {t('hero.featureCards.liveClasses.title')}
-                      </Typography>
-                      <Chip
-                        label={t('hero.featureCards.liveClasses.badge')}
-                        size="small"
-                        sx={{
-                          backgroundColor: '#ef4444',
-                          color: 'white',
-                          fontWeight: 600,
-                          mt: 0.5,
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('hero.featureCards.liveClasses.description')}
-                  </Typography>
-                </Box>
-              </Card>
-
-              {/* Courses Card */}
-              <Card
-                elevation={10}
-                sx={{
-                  backgroundColor: muiTheme.palette.background.paper,
-                  borderRadius: 3,
-                  overflow: 'hidden',
-                  border: '1px solid',
-                  borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                  transition: 'transform 0.3s ease',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Box sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <VideoLibrary sx={{ color: '#3b82f6', fontSize: 32 }} />
-                    <Box>
-                      <Typography variant="h6" fontWeight="600">
-                        {t('hero.featureCards.videoLibrary.title')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('hero.featureCards.videoLibrary.subtitle')}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('hero.featureCards.videoLibrary.description')}
-                  </Typography>
-                </Box>
-              </Card>
-
-              {/* Events Card */}
-              <Card
-                elevation={10}
-                sx={{
-                  backgroundColor: muiTheme.palette.background.paper,
-                  borderRadius: 3,
-                  overflow: 'hidden',
-                  border: '1px solid',
-                  borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                  transition: 'transform 0.3s ease',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Box sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <CalendarMonth sx={{ color: '#8b5cf6', fontSize: 32 }} />
-                    <Box>
-                      <Typography variant="h6" fontWeight="600">
-                        {t('hero.featureCards.exclusiveEvents.title')}
-                      </Typography>
-                      <Chip
-                        label={t('hero.featureCards.exclusiveEvents.badge')}
-                        size="small"
-                        sx={{
-                          backgroundColor: '#8b5cf6',
-                          color: 'white',
-                          fontWeight: 600,
-                          mt: 0.5,
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('hero.featureCards.exclusiveEvents.description')}
-                  </Typography>
-                </Box>
-              </Card>
-            </Stack>
+            {/* Live Market Stock Table */}
+            <HeroStockTable />
           </Grid>
         </Grid>
       </Container>

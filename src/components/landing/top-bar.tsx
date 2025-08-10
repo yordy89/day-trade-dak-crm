@@ -19,14 +19,19 @@ import {
 import { SiTiktok } from 'react-icons/si';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useSettings } from '@/services/api/settings.service';
+import { useTranslation } from 'react-i18next';
 
 export function TopBar() {
   const { } = useTheme();
   const muiTheme = useMuiTheme();
   const { data: settings } = useSettings();
+  const { t } = useTranslation('common');
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [marketOpen, setMarketOpen] = useState(false);
+  const [marketStatus, setMarketStatus] = useState<{ status: string; color: string }>({ 
+    status: 'market.closed', 
+    color: '#ef4444' 
+  });
   const [marketData] = useState({
     index: 'DAK Index',
     value: 247.83,
@@ -40,12 +45,43 @@ export function TopBar() {
       const now = new Date();
       setCurrentTime(now);
       
-      // Check if market is open (9:30 AM - 4:00 PM EST, Monday-Friday)
-      const hours = now.getUTCHours() - 5; // Convert to EST
+      // Determine market status based on ET time
+      const isDST = () => {
+        const month = now.getUTCMonth();
+        return month >= 2 && month <= 10; // Approximate DST period (March-November)
+      };
+      
+      const etOffset = isDST() ? 4 : 5;
+      let etHours = now.getUTCHours() - etOffset;
       const minutes = now.getUTCMinutes();
-      const time = hours * 100 + minutes;
-      const dayOfWeek = now.getDay();
-      setMarketOpen(time >= 930 && time < 1600 && dayOfWeek > 0 && dayOfWeek < 6);
+      let etDay = now.getUTCDay();
+      
+      // Adjust day if we crossed midnight
+      if (etHours < 0) {
+        etHours += 24;
+        etDay = (etDay - 1 + 7) % 7;
+      }
+      
+      const time = etHours * 100 + minutes;
+      
+      // Determine market status with professional color scheme
+      let status = { status: 'topBar.closed', color: '#ef4444' }; // Red for closed
+      
+      if (etDay === 0 || etDay === 6) {
+        // Weekend - Market Closed
+        status = { status: 'topBar.closed', color: '#ef4444' }; // Red
+      } else if (time >= 930 && time < 1600) {
+        // Regular Trading Hours
+        status = { status: 'topBar.open', color: '#16a34a' }; // Green
+      } else if (time >= 400 && time < 930) {
+        // Pre-Market
+        status = { status: 'topBar.preMarket', color: '#fbbf24' }; // Amber/Yellow
+      } else if (time >= 1600 && time < 2000) {
+        // After-Hours
+        status = { status: 'topBar.afterHours', color: '#fbbf24' }; // Amber/Yellow
+      }
+      
+      setMarketStatus(status);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -131,8 +167,8 @@ export function TopBar() {
                   width: 5, 
                   height: 5, 
                   borderRadius: '50%',
-                  backgroundColor: marketOpen ? '#10b981' : '#6b7280',
-                  animation: marketOpen ? 'pulse 2s infinite' : 'none',
+                  backgroundColor: marketStatus.color,
+                  animation: marketStatus.status === 'topBar.open' ? 'pulse 2s infinite' : 'none',
                   '@keyframes pulse': {
                     '0%, 100%': { opacity: 1 },
                     '50%': { opacity: 0.5 },
@@ -143,7 +179,7 @@ export function TopBar() {
                   fontWeight: 600,
                   textTransform: 'uppercase',
                 }}>
-                  MERCADO: {marketOpen ? 'ABIERTO' : 'CERRADO'}
+                  {t('topBar.market')}: {t(marketStatus.status)}
                 </Typography>
               </Box>
 
@@ -239,8 +275,8 @@ export function TopBar() {
                 width: 6, 
                 height: 6, 
                 borderRadius: '50%',
-                backgroundColor: marketOpen ? '#10b981' : '#6b7280',
-                animation: marketOpen ? 'pulse 2s infinite' : 'none',
+                backgroundColor: marketStatus.color,
+                animation: marketStatus.status === 'topBar.open' ? 'pulse 2s infinite' : 'none',
                 '@keyframes pulse': {
                   '0%, 100%': { opacity: 1 },
                   '50%': { opacity: 0.5 },
@@ -252,7 +288,7 @@ export function TopBar() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
               }}>
-                MERCADO: {marketOpen ? 'ABIERTO' : 'CERRADO'}
+                {t(marketStatus.status)}
               </Typography>
             </Box>
 

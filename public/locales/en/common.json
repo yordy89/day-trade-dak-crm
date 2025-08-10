@@ -340,10 +340,21 @@
     "hotTrade": "HOT TRADE",
     "executeTrade": "Execute Trade"
   },
+  "market": {
+    "marketsToday": "Markets Today",
+    "open": "Open",
+    "closed": "Closed",
+    "preMarket": "Pre-Market",
+    "afterHours": "After-Hours",
+    "dataProvidedBy": "Data provided by real-time market",
+    "refreshesEvery": "Refreshes every 30 seconds"
+  },
   "topBar": {
     "market": "Market",
     "open": "OPEN",
     "closed": "CLOSED",
+    "preMarket": "PRE-MARKET",
+    "afterHours": "AFTER-HOURS",
     "liveUpdates": "Live Updates",
     "call": "Call",
     "support": "Support"

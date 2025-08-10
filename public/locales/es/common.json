@@ -340,10 +340,21 @@
     "hotTrade": "OPERACIÓN CALIENTE",
     "executeTrade": "Ejecutar Operación"
   },
+  "market": {
+    "marketsToday": "Mercados Hoy",
+    "open": "Abierto",
+    "closed": "Cerrado",
+    "preMarket": "Pre-Mercado",
+    "afterHours": "Después del Cierre",
+    "dataProvidedBy": "Datos proporcionados por el mercado en tiempo real",
+    "refreshesEvery": "Se actualiza cada 30 segundos"
+  },
   "topBar": {
     "market": "Mercado",
     "open": "ABIERTO",
     "closed": "CERRADO",
+    "preMarket": "PRE-MERCADO",
+    "afterHours": "POST-MERCADO",
     "liveUpdates": "Actualizaciones en Vivo",
     "call": "Llamar",
     "support": "Soporte"

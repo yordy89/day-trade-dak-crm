@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Container, 
@@ -34,6 +34,8 @@ import { useSettings } from '@/services/api/settings.service';
 import { ProfessionalFooter } from '@/components/landing/professional-footer';
 import { contactService } from '@/services/api/contact.service';
 import { Snackbar, Alert } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import API from '@/lib/axios';
 
 interface CustomInputProps {
   icon: React.ReactNode;
@@ -471,11 +473,31 @@ const SignalWaves = ({ isDarkMode }: { isDarkMode: boolean }) => (
   </svg>
 );
 
+interface StockData {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+}
+
 export default function ContactPage() {
   const { t, i18n } = useTranslation();
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
   const { data: settings } = useSettings();
+  
+  // Fetch real stock data
+  const { data: stockData } = useQuery<StockData[]>({
+    queryKey: ['contact-stocks'],
+    queryFn: async () => {
+      const response = await API.get('/market/featured');
+      // Get 8 stocks for the floating tags
+      return response.data.slice(0, 8);
+    },
+    refetchInterval: 60000, // Refresh every minute
+  });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -597,14 +619,74 @@ export default function ContactPage() {
             zIndex: 0,
           }}
         >
-          {/* Floating Price Tags */}
-          {[...Array(8)].map((_, i) => (
+          {/* Floating Price Tags with Real Data */}
+          {stockData ? stockData.map((stock, i) => {
+            const isPositive = stock.changePercent > 0;
+            const isNeutral = stock.changePercent === 0;
+            const borderColor = isPositive ? '#16a34a' : isNeutral ? '#eab308' : '#ef4444';
+            const textColor = isPositive ? '#16a34a' : isNeutral ? '#eab308' : '#ef4444';
+            
+            return (
+              <Box
+                key={stock.symbol}
+                sx={{
+                  position: 'absolute',
+                  left: `${10 + (i % 4) * 23}%`,
+                  top: `${15 + Math.floor(i / 4) * 45}%`,
+                  animation: `floatPrice ${15 + i * 3}s ease-in-out infinite`,
+                  '@keyframes floatPrice': {
+                    '0%, 100%': { 
+                      transform: 'translate(0, 0) scale(1)',
+                      opacity: 0.1,
+                    },
+                    '50%': { 
+                      transform: `translate(${i % 2 === 0 ? '30px' : '-30px'}, -30px) scale(1.1)`,
+                      opacity: 0.2,
+                    },
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                    border: `1px solid ${borderColor}`,
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    minWidth: '120px',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography sx={{ fontSize: '10px', fontWeight: 700, color: 'text.primary' }}>
+                        {stock.symbol}
+                      </Typography>
+                      <Typography sx={{ fontSize: '10px', color: textColor }}>
+                        {isPositive ? '▲' : isNeutral ? '=' : '▼'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography sx={{ fontSize: '14px', fontWeight: 600, color: 'text.primary' }}>
+                        ${stock.price.toFixed(2)}
+                      </Typography>
+                      <Typography sx={{ fontSize: '10px', color: textColor }}>
+                        {isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            );
+          }) : 
+          // Fallback static data while loading
+          [...Array(8)].map((_, i) => (
             <Box
               key={i}
               sx={{
                 position: 'absolute',
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                left: `${10 + (i % 4) * 23}%`,
+                top: `${15 + Math.floor(i / 4) * 45}%`,
                 animation: `floatPrice ${15 + i * 3}s ease-in-out infinite`,
                 '@keyframes floatPrice': {
                   '0%, 100%': { 
@@ -632,18 +714,18 @@ export default function ContactPage() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography sx={{ fontSize: '10px', fontWeight: 700, color: 'text.primary' }}>
-                      {['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT', 'META', 'NVDA', 'SPY'][i]}
+                      {['SPY', 'QQQ', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'META', 'GOOGL'][i]}
                     </Typography>
-                    <Typography sx={{ fontSize: '10px', color: i % 3 === 0 ? '#16a34a' : i % 3 === 1 ? '#eab308' : '#ef4444' }}>
-                      {i % 3 === 0 ? '▲' : i % 3 === 1 ? '=' : '▼'}
+                    <Typography sx={{ fontSize: '10px', color: '#16a34a' }}>
+                      ▲
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography sx={{ fontSize: '14px', fontWeight: 600, color: 'text.primary' }}>
-                      ${(100 + Math.random() * 400).toFixed(2)}
+                      Loading...
                     </Typography>
-                    <Typography sx={{ fontSize: '10px', color: i % 3 === 0 ? '#16a34a' : i % 3 === 1 ? '#eab308' : '#ef4444' }}>
-                      {i % 3 === 0 ? '+' : i % 3 === 1 ? '' : '-'}{(Math.random() * 5).toFixed(2)}%
+                    <Typography sx={{ fontSize: '10px', color: '#16a34a' }}>
+                      ...
                     </Typography>
                   </Box>
                 </Box>

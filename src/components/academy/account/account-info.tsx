@@ -41,20 +41,26 @@ import {
 export function AccountInfo(): React.JSX.Element {
   const theme = useTheme();
   const { user } = useClientAuth();
-  const setUser = useAuthStore.getState().setUser;
+  const setUser = useAuthStore((state) => state.setUser);
 
   const queryClient = useQueryClient();
 
   const [isUploading, setIsUploading] = React.useState(false);
   const [selectedPlan, setSelectedPlan] = React.useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [profileImageUrl, setProfileImageUrl] = React.useState<string | undefined>(user?.profileImage);
 
   // User data comes from the auth store via useClientAuth
   // No need to fetch it again
   const _userData = user;
   const isLoading = !user;
 
-  // Don&apos;t update user in useEffect - causes infinite loops
+  // Update local profile image when user changes
+  React.useEffect(() => {
+    if (user?.profileImage) {
+      setProfileImageUrl(user.profileImage);
+    }
+  }, [user?.profileImage]);
 
   // ✅ Subscription Cancellation Mutation
   const cancelSubscription = useMutation({
@@ -72,6 +78,11 @@ export function AccountInfo(): React.JSX.Element {
     if (!event.target.files || event.target.files.length === 0) return;
 
     const file = event.target.files[0];
+    
+    // Create a preview URL immediately
+    const previewUrl = URL.createObjectURL(file);
+    setProfileImageUrl(previewUrl);
+    
     const formData = new FormData();
     formData.append('file', file);
 
@@ -82,11 +93,26 @@ export function AccountInfo(): React.JSX.Element {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.data?.avatarUrl) {
-        setUser({ ...response.data });
+      if (response.data) {
+        // Update the user in the store with the new data
+        setUser(response.data);
+        
+        // Update local state with the actual uploaded image URL
+        if (response.data.profileImage) {
+          setProfileImageUrl(response.data.profileImage);
+        }
+        
+        // Invalidate queries to refresh any cached data
+        await queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+        
+        // Clean up the preview URL
+        URL.revokeObjectURL(previewUrl);
       }
     } catch (error) {
       console.error('Error uploading profile picture:', error);
+      // Revert to the original image on error
+      setProfileImageUrl(user?.profileImage);
+      URL.revokeObjectURL(previewUrl);
     } finally {
       setIsUploading(false);
     }
@@ -139,6 +165,7 @@ export function AccountInfo(): React.JSX.Element {
               <IconButton
                 component="label"
                 htmlFor="upload-avatar"
+                disabled={isUploading}
                 sx={{
                   width: 36,
                   height: 36,
@@ -146,27 +173,50 @@ export function AccountInfo(): React.JSX.Element {
                   '&:hover': { bgcolor: 'primary.dark' },
                   border: '3px solid',
                   borderColor: 'background.paper',
+                  '&.Mui-disabled': {
+                    bgcolor: 'action.disabledBackground',
+                  },
                 }}
               >
-                <Camera size={18} weight="bold" color="white" />
+                {isUploading ? (
+                  <CircularProgress size={18} sx={{ color: 'white' }} />
+                ) : (
+                  <Camera size={18} weight="bold" color="white" />
+                )}
               </IconButton>
             }
           >
-            <Avatar 
-              src={user?.profileImage} 
-              sx={{ 
-                width: 120,
-                height: 120,
-                border: '4px solid',
-                borderColor: 'background.paper',
-                boxShadow: 3,
-                bgcolor: isPremium ? 'primary.main' : 'grey.500',
-                fontSize: '2.5rem',
-                fontWeight: 700,
-              }}
-            >
-              {user?.firstName?.[0]?.toUpperCase() || 'U'}
-            </Avatar>
+            <Box sx={{ position: 'relative' }}>
+              <Avatar 
+                src={profileImageUrl} 
+                sx={{ 
+                  width: 120,
+                  height: 120,
+                  border: '4px solid',
+                  borderColor: 'background.paper',
+                  boxShadow: 3,
+                  bgcolor: isPremium ? 'primary.main' : 'grey.500',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  opacity: isUploading ? 0.7 : 1,
+                  transition: 'opacity 0.3s',
+                }}
+              >
+                {user?.firstName?.[0]?.toUpperCase() || 'U'}
+              </Avatar>
+              {isUploading && (
+                <CircularProgress
+                  size={40}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-20px',
+                    marginLeft: '-20px',
+                  }}
+                />
+              )}
+            </Box>
           </Badge>
 
           {/* User Info */}

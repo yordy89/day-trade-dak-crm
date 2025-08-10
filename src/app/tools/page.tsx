@@ -1,101 +1,156 @@
 'use client';
 
 import React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, Button } from '@mui/material';
-import { BarChart, Calculate, TrendingUp, Analytics } from '@mui/icons-material';
-import Link from 'next/link';
+import { Box, Container, Typography, Tab, Tabs, Paper, useTheme, alpha } from '@mui/material';
+import { ShowChart, CalendarMonth, TrendingUp, Assessment, AccountBalance } from '@mui/icons-material';
 import { MainNavbar } from '@/components/landing/main-navbar';
+import { MarketOverview } from '@/components/tools/market-overview';
+import { EarningsCalendar } from '@/components/tools/earnings-calendar';
+import { EconomicCalendar } from '@/components/tools/economic-calendar';
+import { StockWatchlist } from '@/components/tools/stock-watchlist';
 
-const tools = [
-  {
-    icon: <BarChart sx={{ fontSize: 48 }} />,
-    title: 'Stock Screener',
-    description: 'Find trading opportunities with our advanced screening tools',
-    href: '/tools/screener',
-    available: false,
-  },
-  {
-    icon: <Calculate sx={{ fontSize: 48 }} />,
-    title: 'Position Calculator',
-    description: 'Calculate risk and position sizing for your trades',
-    href: '/tools/calculator',
-    available: false,
-  },
-  {
-    icon: <TrendingUp sx={{ fontSize: 48 }} />,
-    title: 'Market Scanner',
-    description: 'Real-time scanning for market movers and opportunities',
-    href: '/academy/market',
-    available: true,
-  },
-  {
-    icon: <Analytics sx={{ fontSize: 48 }} />,
-    title: 'Technical Analysis',
-    description: 'Advanced charting and technical analysis tools',
-    href: '/tools/analysis',
-    available: false,
-  },
-];
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tools-tabpanel-${index}`}
+      aria-labelledby={`tools-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `tools-tab-${index}`,
+    'aria-controls': `tools-tabpanel-${index}`,
+  };
+}
 
 export default function ToolsPage() {
+  const [value, setValue] = React.useState(0);
+  const theme = useTheme();
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   return (
     <>
       <MainNavbar />
-      <Box sx={{ pt: 18, pb: 10, minHeight: '100vh' }}>
-        <Container maxWidth="lg">
-          <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ mb: 2 }}>
-            Trading Tools
-          </Typography>
-          <Typography variant="h5" align="center" color="text.secondary" sx={{ mb: 6 }}>
-            Professional tools to enhance your trading decisions
-          </Typography>
+      <Box sx={{ 
+        minHeight: '100vh', 
+        bgcolor: 'background.default', 
+        pt: 12,
+        pb: 6,
+      }}>
+        <Container maxWidth="xl">
+          <Box sx={{ mb: 4 }}>
+            <Typography 
+              variant="h3" 
+              component="h1" 
+              gutterBottom 
+              fontWeight="bold"
+              sx={{ 
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Professional Trading Tools
+            </Typography>
+            <Typography variant="h6" color="text.secondary">
+              Real-time market data, earnings calendar, and economic insights
+            </Typography>
+          </Box>
 
-          <Grid container spacing={4}>
-            {tools.map((tool) => (
-              <Grid item xs={12} sm={6} md={3} key={tool.title}>
-                <Card 
-                  sx={{ 
-                    height: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    position: 'relative',
-                    opacity: tool.available ? 1 : 0.7,
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                    <Box sx={{ color: 'primary.main', mb: 2 }}>
-                      {tool.icon}
-                    </Box>
-                    <Typography gutterBottom variant="h6" component="h2">
-                      {tool.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                      {tool.description}
-                    </Typography>
-                    {tool.available ? (
-                      <Button
-                        component={Link}
-                        href={tool.href}
-                        variant="contained"
-                        fullWidth
-                      >
-                        Access Tool
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        disabled
-                      >
-                        Coming Soon
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          <Paper 
+            sx={{ 
+              width: '100%', 
+              mb: 3,
+              borderRadius: 2,
+              overflow: 'hidden',
+              boxShadow: theme.shadows[2],
+            }}
+          >
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              aria-label="trading tools tabs"
+              sx={{
+                bgcolor: alpha(theme.palette.primary.main, 0.02),
+                '& .MuiTab-root': {
+                  minHeight: 72,
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  '&.Mui-selected': {
+                    bgcolor: 'background.paper',
+                  },
+                },
+              }}
+            >
+              <Tab 
+                label="Market Overview" 
+                icon={<ShowChart />} 
+                iconPosition="start"
+                {...a11yProps(0)}
+              />
+              <Tab 
+                label="Earnings Calendar" 
+                icon={<CalendarMonth />} 
+                iconPosition="start"
+                {...a11yProps(1)}
+              />
+              <Tab 
+                label="Economic Calendar" 
+                icon={<AccountBalance />} 
+                iconPosition="start"
+                {...a11yProps(2)}
+              />
+              <Tab 
+                label="My Watchlist" 
+                icon={<TrendingUp />} 
+                iconPosition="start"
+                {...a11yProps(3)}
+              />
+            </Tabs>
+          </Paper>
+
+          <Paper 
+            sx={{ 
+              borderRadius: 2,
+              overflow: 'hidden',
+              minHeight: '600px',
+            }}
+          >
+            <TabPanel value={value} index={0}>
+              <MarketOverview />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <EarningsCalendar />
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              <EconomicCalendar />
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              <StockWatchlist />
+            </TabPanel>
+          </Paper>
         </Container>
       </Box>
     </>
