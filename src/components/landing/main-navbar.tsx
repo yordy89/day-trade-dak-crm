@@ -184,7 +184,7 @@ export function MainNavbar() {
                 position: 'absolute',
                 top: -6,
                 right: -8,
-                backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : '#ef4444',
+                backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : item.badge === 'OFERTA' ? '#f59e0b' : '#ef4444',
                 color: 'white',
                 fontSize: '8px',
                 fontWeight: 700,
@@ -194,7 +194,8 @@ export function MainNavbar() {
                 lineHeight: 1,
                 minWidth: '24px',
                 textAlign: 'center',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                boxShadow: item.badge === 'OFERTA' ? '0 0 15px rgba(245, 158, 11, 0.5)' : '0 2px 4px rgba(0,0,0,0.2)',
+                animation: item.badge === 'OFERTA' ? 'offerPulse 2s infinite' : undefined,
               }}
             >
               {item.badge}
@@ -314,7 +315,7 @@ export function MainNavbar() {
               {item.badge ? (
                 <Box
                   sx={{
-                    backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : '#ef4444',
+                    backgroundColor: item.badge === 'EXCLUSIVE' ? '#8b5cf6' : item.badge === 'OFERTA' ? '#f59e0b' : '#ef4444',
                     color: 'white',
                     fontSize: '0.65rem',
                     fontWeight: 700,
@@ -324,6 +325,8 @@ export function MainNavbar() {
                     lineHeight: 1,
                     textTransform: 'uppercase',
                     letterSpacing: '0.5px',
+                    animation: item.badge === 'OFERTA' ? 'offerPulse 2s infinite' : undefined,
+                    boxShadow: item.badge === 'OFERTA' ? '0 0 10px rgba(245, 158, 11, 0.4)' : undefined,
                   }}
                 >
                   {item.badge}
@@ -471,7 +474,7 @@ export function MainNavbar() {
         position="fixed"
         elevation={scrolled ? 1 : 0}
         sx={{
-          top: { xs: 32, md: 36 }, // Different heights for mobile (32px) and desktop (36px)
+          top: { xs: 60, md: 66 }, // Updated: TopBar (32/36px) + Promotional Banner (~28/30px)
           backgroundColor: scrolled 
             ? (isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)')
             : (isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),

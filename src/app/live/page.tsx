@@ -612,7 +612,15 @@ export default function LivePage() {
               color="primary"
               size={isPrimary ? "large" : "medium"}
               startIcon={<SignIn size={isPrimary ? 24 : 20} />}
-              onClick={() => router.push('/auth/sign-in')}
+              onClick={() => {
+                // If user is not logged in, go to sign-in page
+                if (!user) {
+                  router.push('/auth/sign-in');
+                } else {
+                  // If user is logged in but doesn't have access, go to subscriptions page
+                  router.push('/academy/subscription/plans');
+                }
+              }}
               sx={{
                 animation: 'pulse 2s infinite',
                 '@keyframes pulse': {

@@ -32,12 +32,12 @@ const allNavigationItems: NavigationItem[] = [
   //   href: '/tools',
   //   requiresAuth: true,
   // },
-  // {
-  //   key: 'masterCourse',
-  //   href: '/master-course',
-  //   requiresAuth: false,
-  //   badge: 'NEW',
-  // },
+  {
+    key: 'masterCourse',
+    href: '/master-course',
+    requiresAuth: false,
+    badge: 'OFERTA',
+  },
   {
     key: 'communityEvent',
     href: '/community-event',

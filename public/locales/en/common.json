@@ -3,6 +3,10 @@
     "name": "DayTradeDak",
     "tagline": "Professional Trading Education Platform"
   },
+  "promotionalBanner": {
+    "text": "🎉 SPECIAL OFFER: Intensive Trading Course - October 11-13, 2025 | Only 25 spots available",
+    "buttonText": "VIEW DETAILS"
+  },
   "navigation": {
     "home": "Home",
     "academy": "Academy",
@@ -906,5 +910,13 @@
         }
       }
     }
+  },
+  "footer": {
+    "tagline": "Your trusted platform for professional trading. Training, mentorship and community for serious traders.",
+    "followUs": "Follow Us",
+    "socialDescription": "Join our trader community on social media",
+    "allRightsReserved": "All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms and Conditions"
   }
 }

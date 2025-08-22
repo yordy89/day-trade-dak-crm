@@ -1,15 +1,16 @@
 {
   "hero": {
     "badge": "Limited Spots Available",
+    "specialOffer": "SPECIAL OFFER!",
     "title": "Master Trading Course 2025",
-    "subtitle": "4-Month Intensive Trading Transformation Program",
-    "description": "Complete trading education program that combines online learning, in-person training in Miami, and supervised practice with professional mentorship.",
-    "startDate": "Starts January 15, 2025",
-    "duration": "4 Months Duration",
-    "location": "Miami, Florida",
+    "subtitle": "3-Month Intensive Trading Transformation Program",
+    "description": "Complete trading education program that combines online learning, in-person training in Tampa, and supervised practice with professional mentorship.",
+    "startDate": "October 11-13, 2025",
+    "duration": "3 Days + 2.5 Months",
+    "location": "Tampa, Florida",
     "stats": {
       "students": {
-        "number": "50",
+        "number": "25",
         "label": "Maximum Students"
       },
       "modules": {
@@ -34,7 +35,7 @@
       "secondary": "Download Syllabus"
     },
     "buttons": {
-      "registerNow": "Register Now - $3,000",
+      "registerNow": "Register Now",
       "viewProgram": "View Program"
     },
     "tagline": "Transform your trading journey with expert guidance",
@@ -71,7 +72,7 @@
       "name": "In-Person Training",
       "duration": "3 Days",
       "dates": "October 25-27, 2025",
-      "location": "Miami, Florida - Hotel Intercontinental",
+      "location": "Tampa, Florida - Hotel Intercontinental",
       "description": "Intensive hands-on training with live trading sessions",
       "activities": [
         "Live trading with real capital",
@@ -135,10 +136,10 @@
     "title": "Course Requirements",
     "subtitle": "What you need to succeed",
     "items": [
-      "4-month commitment to the program",
+      "3-month commitment to the program",
       "Laptop or desktop computer",
       "Minimum $500 initial trading capital",
-      "Availability to travel to Miami for in-person training",
+      "Availability to travel to Tampa for in-person training",
       "Basic understanding of financial markets (preferred)",
       "Dedication to daily practice and learning"
     ]
@@ -186,7 +187,11 @@
     },
     "pricingSection": {
       "title": "Invest in your Financial Education",
-      "subtitle": "Only 20 spots available - In-person in Tampa, FL or Virtual",
+      "subtitle": "Only 25 spots available - In-person in Tampa, FL or Virtual",
+      "limitedSpotsAlert": {
+        "title": "ATTENTION! Limited spots remaining - Hurry up!",
+        "description": "This special offer ends soon. Don't miss the opportunity to transform your trading with real mentorship."
+      },
       "modalitiesInfo": "Available modalities:",
       "modalitiesDescription": "In-person in Tampa, FL or Virtual with full access to all live sessions.",
       "registerButton": "REGISTER NOW",
@@ -249,7 +254,7 @@
   "support": {
     "title": "Need Help?",
     "contactTitle": "Contact Information",
-    "email": "mastertrading@daytradedash.com",
+    "email": "support@daytradedak.com",
     "phone": "Phone",
     "phoneNumber": "786.356.7260",
     "web": "Web",
@@ -401,7 +406,7 @@
   },
   "seo": {
     "title": "Master Trading Course 2025 - Professional Trading Education",
-    "description": "Join our 4-month intensive trading program. Learn from professionals, trade live in Miami, and get certified. Limited to 50 students.",
-    "keywords": "trading course, professional trading, Miami trading workshop, trading certification, day trading education"
+    "description": "Join our 3-month intensive trading program. Learn from professionals, trade live in Tampa, and get certified. Limited to 50 students.",
+    "keywords": "trading course, professional trading, Tampa trading workshop, trading certification, day trading education"
   }
 }

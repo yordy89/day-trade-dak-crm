@@ -6,6 +6,7 @@
     "masterClasses": "Master Classes",
     "recordedLiveSessions": "Recorded Live Sessions",
     "psicoTrading": "PsicoTrading",
+    "stocks": "Stock Market",
     "personalGrowth": "Personal Growth",
     "peaceWithMoney": "Peace with Money",
     "subscriptions": "Subscriptions",
@@ -79,6 +80,35 @@
     "contentLibrary": "Content Library",
     "locked": "Locked",
     "premiumOnly": "Premium Only",
+    "explore": "EXPLORE",
+    "blocked": "BLOCKED",
+    "classes": {
+      "title": "Classes",
+      "description": "Basic trading classes for beginners"
+    },
+    "masterClasses": {
+      "title": "Master Classes",
+      "description": "Advanced classes with professional strategies"
+    },
+    "recordedLiveSessions": {
+      "title": "Recorded Live Sessions",
+      "description": "Access recordings of live sessions"
+    },
+    "psicoTrading": {
+      "title": "PsicoTrading",
+      "description": "Master your mind to master the market"
+    },
+    "stockMarket": {
+      "title": "Stock Market",
+      "description": "Stock market analysis and strategies"
+    },
+    "peaceWithMoney": {
+      "title": "Peace with Money",
+      "description": "Transform your relationship with money"
+    },
+    "daysAsMember": "Days as Member",
+    "since": "Since {{date}}",
+    "newMember": "New member",
     "subscriptionStatus": "Subscription Status",
     "expiresOn": "Expires on {{date}}",
     "active": "Active",
@@ -218,6 +248,10 @@
       "peaceWithMoney": {
         "name": "Peace with Money",
         "description": "Complete financial education course"
+      },
+      "stocks": {
+        "name": "Stock Market",
+        "description": "Master stock market investing with professional strategies"
       }
     },
     "planFeatures": {
@@ -227,12 +261,17 @@
       "professionalChat": "Chat with professional traders",
       "weeklyManualRenewal": "Manual renewal each week",
       "everythingInManual": "Everything in manual plan",
-      "automaticRenewal": "Automatic renewal",
+      "automaticRenewal": "Automatic weekly renewal",
       "discountedPrice": "Discounted price",
-      "noInterruptions": "No access interruptions",
+      "noInterruptions": "Continuous access without interruptions",
       "weeklyMasterClasses": "Weekly live master classes",
       "advancedAnalysis": "Advanced market analysis",
       "professionalAnalysis": "Professional technical analysis",
+      "institutionalAnalysis": "Institutional trading analysis",
+      "marketIndicators": "Advanced market indicators and context",
+      "orderFlowAnalysis": "Order flow and volume analysis",
+      "riskManagement": "Professional risk management",
+      "realTimeDecisions": "Real-time decision making based on data",
       "exclusiveCommunity": "Exclusive traders community",
       "downloadableMaterial": "Downloadable study material",
       "participationCertificate": "Participation certificate",
@@ -241,6 +280,10 @@
       "newDailyContent": "New daily content",
       "stepByStepAnalysis": "Analysis explained step by step",
       "downloadOffline": "Download for offline viewing",
+      "prePostMarketAnalysis": "Pre-market and post-market analysis",
+      "indicatorAnalysis": "Analysis based on indicators and market context",
+      "realOperations": "Real trading operations with explanations",
+      "patternIdentification": "Pattern identification in real-time",
       "freeWithLive": "FREE with active Live subscription",
       "psychologySession": "Trading psychology sessions",
       "emotionalControl": "Emotional control in operations",
@@ -248,6 +291,12 @@
       "personalizedMentalPlan": "Personalized mental plan",
       "psychologicalSupport": "Psychological support group",
       "monthlyEvaluations": "Monthly evaluations",
+      "tradingPsychology": "Trading psychology specialized sessions",
+      "emotionalControlTrading": "Emotional control during trading operations",
+      "disciplineDevelopment": "Trading discipline development",
+      "fearGreedManagement": "Tools to overcome fear and greed",
+      "lossManagement": "Techniques for managing losses",
+      "mentalConsistency": "Mental consistency for long-term results",
       "15DaysAccess": "15 days of complete access",
       "40HoursContent": "More than 40 hours of content",
       "6StructuredModules": "6 structured modules",
@@ -256,7 +305,14 @@
       "60DaysAccess": "60 days of complete access",
       "financialEducation": "Financial education course",
       "personalFinanceManagement": "Personal finance management",
-      "financialFreedom": "Financial freedom step by step"
+      "financialFreedom": "Financial freedom step by step",
+      "stocksContent": "Complete stock market education content",
+      "stocksVideos": "20+ HD video lessons on stock investing",
+      "fundamentalAnalysis": "Fundamental analysis of companies",
+      "technicalAnalysis": "Advanced technical analysis",
+      "portfolioManagement": "Professional portfolio management",
+      "optionsTrading": "Options trading strategies",
+      "optionsTradingAnalysis": "Options trading analysis and techniques"
     },
     "title": "Choose Your Plan",
     "subtitle": "Select the plan that best fits your trading journey",
@@ -294,6 +350,8 @@
     "startNow": "Start Now",
     "contactSupportForAccess": "Contact Support for Access",
     "requiresPermission": "REQUIRES PERMISSION",
+    "requiresCommunity": "Requires Live Membership",
+    "joinCommunityFirst": "Join Live First",
     "alreadyHaveSubscription": "You already have this subscription",
     "paymentError": "Error processing payment",
     "errorLoadingPrices": "Error loading prices",
@@ -329,7 +387,7 @@
     "addToList": "Add to List",
     "completed": "Completed",
     "viewClasses": "View Classes",
-    "getAccess": "Get Access (15 days)",
+    "getAccess": "Contact Support for Access",
     "daysRemaining": "{{days}} days remaining",
     "backToIntro": "Back to Introduction",
     "intensiveCourse": "15-day intensive course to master trading",
@@ -385,7 +443,7 @@
     "startToday": "Start today",
     "accessAllContent": "Access all course content and progress at your own pace",
     "getFullAccess": "Get full access for 15 days and transform your trading",
-    "priceInfo": "Only $52.99 USD for 15 days of full access",
+    "priceInfo": "Access included with Master Course",
     "noVideosAvailable": "No videos available",
     "checkBackLater": "Check back later for new class content",
     "classVideos": "Class Videos",
@@ -429,6 +487,17 @@
         }
       }
     }
+  },
+  "stocks": {
+    "title": "Stock Market Investing",
+    "subtitle": "Master the art of stock market investing",
+    "description": "Learn professional strategies for stock market investing, from fundamental analysis to technical indicators. Build a solid foundation for successful stock trading.",
+    "viewVideos": "View Videos",
+    "getAccess": "Get Access",
+    "backToIntro": "Back to Introduction",
+    "accessRequired": "Access Required",
+    "needSubscriptionOrPermission": "You need an active subscription or permission to access this content.",
+    "viewPlans": "View Plans"
   },
   "masterclass": {
     "title": "Master Classes with Mijail Medina",
@@ -709,7 +778,17 @@
       "instructor": "Trading Psychology Expert",
       "aboutTitle": "About this lesson",
       "aboutDescription": "This PsicoTrading lesson focuses on the psychological aspects of trading, helping you develop the mental discipline and emotional control necessary for successful trading.",
+      "description": "This PsicoTrading mentorship will help you develop the right mindset for trading. Learn to control your emotions, manage stress, and make rational decisions in the market.",
+      "mindsetDevelopment": "Mindset Development",
+      "allLessons": "All Lessons",
       "keyLearningPoints": "Key Learning Points:",
+      "keyTopics": "Key Topics",
+      "topics": {
+        "psychology": "Understanding trader psychology and how it affects your decisions",
+        "emotions": "Managing emotions during trading operations",
+        "discipline": "Developing discipline and patience in the market",
+        "confidence": "Building confidence and mental resilience"
+      },
       "points": {
         "understanding": "Understanding trading psychology",
         "managing": "Managing emotions during trades",
@@ -877,7 +956,10 @@
     "exclusiveBonus": "EXCLUSIVE BONUS",
     "bonusDescription": "When you enroll, you can download the e-book \"The definitive guide to living peace with money\" for free.",
     "readyToTransform": "Ready to transform your relationship with money?",
-    "startJourney": "Start your 21-day journey to financial peace"
+    "startJourney": "Start your 21-day journey to financial peace",
+    "accessRequired": "Access Required",
+    "needSubscriptionOrPermission": "You need an active subscription or permission to access this content.",
+    "viewPlans": "View Plans"
   },
   "common": {
     "loading": "Loading...",

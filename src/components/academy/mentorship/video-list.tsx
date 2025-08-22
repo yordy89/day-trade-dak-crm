@@ -26,6 +26,7 @@ import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
 import { videoService, type VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
+import { extractUniqueVideoFromHLS } from '@/data/video-mappings';
 
 interface VideoWithProgress extends VideoMetadata {
   completed?: boolean;
@@ -46,37 +47,10 @@ export default function MentorshipVideoList() {
     queryFn: async () => {
       const data = await videoService.getMentorshipVideos();
       
-      // Filter to get only unique mentoria folders (deduplicate by folder name)
-      const uniqueVideos = new Map<string, any>();
+      // Extract unique videos from HLS variants
+      const uniqueVideos = extractUniqueVideoFromHLS(data);
       
-      data.forEach((video: any) => {
-        // Extract the folder name from the path structure
-        // Example: hsl-daytradedak-videos/mentorias/mentoria_1/1080p/playlist.m3u8
-        // or: hsl-daytradedak-videos/mentorias/mentoria_1/master.m3u8
-        const pathParts = video.key.split('/');
-        const mentoriaFolder = pathParts[2] || ''; // This gets "mentoria_1", "mentoria_2_iwm", etc.
-        
-        // Prefer master.m3u8 over quality-specific files
-        if (!uniqueVideos.has(mentoriaFolder)) {
-          uniqueVideos.set(mentoriaFolder, video);
-        } else {
-          const existingVideo = uniqueVideos.get(mentoriaFolder);
-          // Always prefer master.m3u8 as it contains all quality levels
-          if (video.key.includes('master.m3u8')) {
-            uniqueVideos.set(mentoriaFolder, video);
-          } else if (!existingVideo.key.includes('master.m3u8')) {
-            // If neither is master.m3u8, prefer higher quality
-            if (video.key.includes('1080p') && !existingVideo.key.includes('1080p')) {
-              uniqueVideos.set(mentoriaFolder, video);
-            } else if (video.key.includes('720p') && !existingVideo.key.includes('1080p') && !existingVideo.key.includes('720p')) {
-              uniqueVideos.set(mentoriaFolder, video);
-            }
-          }
-        }
-      });
-      
-      // Convert Map values back to array and continue with the mapping
-      return Array.from(uniqueVideos.values()).map((video: any) => {
+      return uniqueVideos.map((video: any) => {
         // Extract the folder name from the path structure again
         const pathParts = video.key.split('/');
         const mentoriaFolder = pathParts[2] || '';

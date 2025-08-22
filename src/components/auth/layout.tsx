@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { Button, Card, IconButton, List, ListItem, ListItemIcon, ListItemText, useTheme, alpha } from '@mui/material';
+import { Button, Card, List, ListItem, ListItemIcon, ListItemText, useTheme, alpha } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { 
@@ -12,14 +12,11 @@ import {
   School,
   MenuBook,
   Groups,
-  Twitter,
-  Facebook,
-  Instagram,
-  LinkedIn,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
 import { MainNavbar } from '@/components/landing/main-navbar';
+import { ProfessionalFooter } from '@/components/landing/professional-footer';
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -225,66 +222,8 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
         </Box>
       </Box>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          width: '100%',
-          py: 3,
-          px: 4,
-          textAlign: 'center',
-          borderTop: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          mt: 'auto',
-        }}
-      >
-        {/* Social Media Icons */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2 }}>
-          <IconButton 
-            component="a" 
-            href="https://twitter.com" 
-            target="_blank"
-            size="small"
-            sx={{ color: 'text.secondary' }}
-          >
-            <Twitter fontSize="small" />
-          </IconButton>
-          <IconButton 
-            component="a" 
-            href="https://facebook.com" 
-            target="_blank"
-            size="small"
-            sx={{ color: 'text.secondary' }}
-          >
-            <Facebook fontSize="small" />
-          </IconButton>
-          <IconButton 
-            component="a" 
-            href="https://instagram.com" 
-            target="_blank"
-            size="small"
-            sx={{ color: 'text.secondary' }}
-          >
-            <Instagram fontSize="small" />
-          </IconButton>
-          <IconButton 
-            component="a" 
-            href="https://linkedin.com" 
-            target="_blank"
-            size="small"
-            sx={{ color: 'text.secondary' }}
-          >
-            <LinkedIn fontSize="small" />
-          </IconButton>
-        </Box>
-
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
-          {t('auth.layout.footer.copyright', { year: new Date().getFullYear() })}
-        </Typography>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ opacity: 0.8 }}>
-          {t('auth.layout.footer.disclaimer')}
-        </Typography>
-      </Box>
+      {/* Footer - Use the same professional footer as other pages */}
+      <ProfessionalFooter />
     </Box>
   );
 }

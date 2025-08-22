@@ -294,8 +294,59 @@ export function UnifiedMeetingRoom({
   }
 
   if (provider === 'zoom' && zoomUrl) {
-    // Redirect to Zoom
-    window.location.href = zoomUrl;
+    // Open Zoom in a new window/tab
+    const zoomWindow = window.open(zoomUrl, '_blank', 'noopener,noreferrer');
+    
+    // Check if popup was blocked
+    if (!zoomWindow) {
+      return (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <Paper sx={{ p: 4, maxWidth: 400 }}>
+            <Stack spacing={2} alignItems="center">
+              <Typography variant="h6" gutterBottom>
+                Zoom Meeting Ready
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center">
+                Your browser may have blocked the popup. Please click the button below to join the Zoom meeting.
+              </Typography>
+              <Button 
+                variant="contained" 
+                onClick={() => window.open(zoomUrl, '_blank')}
+                fullWidth
+              >
+                Open Zoom Meeting
+              </Button>
+              <Button 
+                variant="outlined" 
+                onClick={onClose}
+                fullWidth
+              >
+                Close
+              </Button>
+            </Stack>
+          </Paper>
+        </Box>
+      );
+    }
+    
+    // Successfully opened in new window, close this modal
+    setTimeout(() => {
+      onClose();
+    }, 2000);
+    
     return (
       <Box
         sx={{
@@ -311,9 +362,17 @@ export function UnifiedMeetingRoom({
           zIndex: 9999,
         }}
       >
-        <Typography variant="h6" color="white">
-          Redirecting to Zoom...
-        </Typography>
+        <Paper sx={{ p: 4, maxWidth: 400 }}>
+          <Stack spacing={2} alignItems="center">
+            <CircularProgress size={40} />
+            <Typography variant="h6">
+              Opening Zoom Meeting...
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              The meeting is opening in a new window
+            </Typography>
+          </Stack>
+        </Paper>
       </Box>
     );
   }

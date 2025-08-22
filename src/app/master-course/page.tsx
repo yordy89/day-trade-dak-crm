@@ -53,6 +53,7 @@ import { ProfessionalFooter } from '@/components/landing/professional-footer';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { EventRegistrationModal } from '@/components/events/EventRegistrationModal';
 import { eventService } from '@/services/api/event.service';
+import { useSettings } from '@/services/api/settings.service';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
@@ -76,20 +77,6 @@ const _getPaymentOptions = (t: any): PaymentOption[] => [
     id: 'klarna',
     name: t('pricing.paymentOptions.klarna.name'),
     description: t('pricing.paymentOptions.klarna.description'),
-    icon: <MoneyOff />,
-    available: true,
-  },
-  {
-    id: 'affirm',
-    name: t('pricing.paymentOptions.affirm.name'),
-    description: t('pricing.paymentOptions.affirm.description'),
-    icon: <ShoppingCart />,
-    available: true,
-  },
-  {
-    id: 'afterpay',
-    name: t('pricing.paymentOptions.afterpay.name'),
-    description: t('pricing.paymentOptions.afterpay.description'),
     icon: <MoneyOff />,
     available: true,
   },
@@ -314,6 +301,7 @@ export default function MasterCoursePage() {
   const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
   const { t, ready } = useTranslation('masterCourse');
+  const { data: settings } = useSettings();
   const [pricing, setPricing] = useState<{ basePrice: number; currency: string } | null>(null);
   const [isLoadingPrice, setIsLoadingPrice] = useState(true);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
@@ -387,7 +375,7 @@ export default function MasterCoursePage() {
           name: 'Master Trading Course',
           title: 'Curso Intensivo de Trading',
           type: 'master_course',
-          price: 2999.99,
+          price: 2500,
           requiresActiveSubscription: false,
           isActive: true,
           _isTemporary: true,
@@ -448,30 +436,56 @@ export default function MasterCoursePage() {
         </Alert>
       ) : null}
       
-      <Box sx={{ pt: { xs: 14, md: 18 }, minHeight: '100vh', position: 'relative' }}>
+      <Box sx={{ pt: { xs: 14, md: 18 }, minHeight: '100vh', position: 'relative' }}> {/* Adjusted padding for TopBar with banner + Navbar */}
         <BullBearBackground isDarkMode={isDarkMode} />
         
         {/* Hero Section */}
         <Box
         sx={{
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.9)} 0%, ${alpha(theme.palette.primary.main, 0.8)} 100%)`,
+          backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           color: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden',
           zIndex: 1,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+            zIndex: 0,
+          },
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={7}>
               <Stack spacing={3}>
-                <Chip
-                  label={t('hero.badge')}
-                  color="warning"
-                  icon={<Star />}
-                  sx={{ width: 'fit-content' }}
-                />
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Chip
+                    label={t('hero.badge')}
+                    color="warning"
+                    icon={<Star />}
+                    sx={{ width: 'fit-content' }}
+                  />
+                  <Chip
+                    label={t('hero.specialOffer')}
+                    sx={{
+                      backgroundColor: '#f59e0b',
+                      color: 'white',
+                      fontWeight: 700,
+                      animation: 'offerPulse 2s infinite',
+                      '& .MuiChip-icon': { color: 'white' },
+                    }}
+                    icon={<LocalOffer />}
+                  />
+                </Stack>
                 <Typography variant="h2" fontWeight={800}>
                   {t('hero.title')}
                 </Typography>
@@ -517,13 +531,14 @@ export default function MasterCoursePage() {
                     {isLoadingPrice ? (
                       <CircularProgress size={20} color="inherit" />
                     ) : (
-                      `${t('hero.buttons.registerNow')} - ${formatPrice(pricing?.basePrice || 2999.99)}`
+                      t('hero.buttons.registerNow')
                     )}
                   </Button>
                   <Button
                     variant="outlined"
                     size="large"
                     startIcon={<PlayCircle />}
+                    onClick={() => document.getElementById('program-details')?.scrollIntoView({ behavior: 'smooth' })}
                     sx={{
                       borderColor: 'white',
                       color: 'white',
@@ -556,7 +571,7 @@ export default function MasterCoursePage() {
                           {t('hero.flexiblePayments', 'Flexible Payment Options Available!')}
                         </Typography>
                         <Typography variant="caption" sx={{ color: alpha('#fff', 0.9) }}>
-                          {t('hero.bnplOptions', 'Pay in 4 interest-free payments with Klarna or finance up to 36 months with Affirm')}
+                          {t('hero.bnplOptions', 'Opciones de pago flexible disponibles con Klarna')}
                         </Typography>
                       </Box>
                     </Stack>
@@ -565,33 +580,19 @@ export default function MasterCoursePage() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={5}>
-              <Box sx={{ position: 'relative' }}>
-                {/* Bull graphic */}
-                <Box
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    height: 400,
-                    background: 'radial-gradient(ellipse at center, rgba(22, 163, 74, 0.1) 0%, transparent 70%)',
+              <Box sx={{ position: 'relative', height: '100%', minHeight: 400 }}>
+                {/* Trading Pattern Graphic */}
+                <Box 
+                  sx={{ 
+                    position: 'relative', 
+                    width: '100%', 
+                    height: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    background: 'radial-gradient(ellipse at center, rgba(22, 163, 74, 0.05) 0%, transparent 70%)',
                   }}
                 >
-                  <Box
-                    sx={{
-                      fontSize: 300,
-                      color: '#16a34a',
-                      opacity: 0.15,
-                      transform: 'rotate(-15deg)',
-                      fontWeight: 900,
-                    }}
-                  >
-                    🐂
-                  </Box>
-                </Box>
-                {/* Trading Pattern */}
-                <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
                   <TradingPatternGraphic />
                 </Box>
               </Box>
@@ -760,7 +761,7 @@ export default function MasterCoursePage() {
       </Container>
 
       {/* Detailed Phase Breakdown */}
-      <Box sx={{ py: 10, position: 'relative' }}>
+      <Box id="program-details" sx={{ py: 10, position: 'relative' }}>
         <Container maxWidth="xl">
           <Typography variant="h2" textAlign="center" fontWeight={800} mb={8}>
             {t('programComplete.title')}
@@ -1332,10 +1333,83 @@ export default function MasterCoursePage() {
             variant="h6"
             textAlign="center"
             color="text.secondary"
-            mb={6}
+            mb={2}
           >
             {t('pricing.pricingSection.subtitle')}
           </Typography>
+          
+          {/* Limited Spots Alert */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+            <Alert 
+              severity="warning"
+              icon={<Warning sx={{ fontSize: 24 }} />}
+              sx={{ 
+                maxWidth: 600,
+                backgroundColor: isDarkMode 
+                  ? alpha('#fbbf24', 0.08)  // Very subtle yellow for dark mode
+                  : alpha('#fbbf24', 0.12), // Slightly more visible for light mode
+                border: `1px solid ${alpha('#f59e0b', isDarkMode ? 0.3 : 0.4)}`,
+                borderRadius: 2,
+                backdropFilter: 'blur(10px)',
+                '& .MuiAlert-icon': { 
+                  color: isDarkMode ? '#fbbf24' : '#f59e0b',
+                  alignSelf: 'flex-start',
+                  mt: 0.3,
+                  opacity: 0.9
+                },
+                '& .MuiAlert-message': {
+                  width: '100%'
+                },
+                boxShadow: isDarkMode 
+                  ? '0 4px 20px rgba(251, 191, 36, 0.05)'
+                  : '0 4px 20px rgba(245, 158, 11, 0.08)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: 'linear-gradient(90deg, transparent, #f59e0b, transparent)',
+                  animation: 'shimmer 3s infinite',
+                },
+                '@keyframes shimmer': {
+                  '0%': { 
+                    transform: 'translateX(-100%)',
+                  },
+                  '100%': { 
+                    transform: 'translateX(100%)',
+                  },
+                },
+              }}
+            >
+              <Stack spacing={0.5}>
+                <Typography 
+                  variant="body1" 
+                  fontWeight={600} 
+                  sx={{
+                    color: isDarkMode ? '#fde68a' : '#92400e',
+                    letterSpacing: '0.3px'
+                  }}
+                >
+                  {t('pricing.pricingSection.limitedSpotsAlert.title')}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{
+                    color: isDarkMode 
+                      ? 'rgba(255, 255, 255, 0.7)' 
+                      : 'rgba(0, 0, 0, 0.65)',
+                    lineHeight: 1.6
+                  }}
+                >
+                  {t('pricing.pricingSection.limitedSpotsAlert.description')}
+                </Typography>
+              </Stack>
+            </Alert>
+          </Box>
 
           <Card sx={{ mb: 4 }}>
             <CardContent sx={{ p: 4 }}>
@@ -1345,7 +1419,7 @@ export default function MasterCoursePage() {
                     {isLoadingPrice ? (
                       <CircularProgress size={24} />
                     ) : (
-                      formatPrice(pricing?.basePrice || 2999.99)
+                      formatPrice(pricing?.basePrice || 2500)
                     )}
                   </Typography>
                   <Typography variant="h6" color="text.secondary">
@@ -1377,8 +1451,29 @@ export default function MasterCoursePage() {
                   fullWidth
                   onClick={handlePurchase}
                   startIcon={<ShoppingCart />}
+                  sx={{
+                    py: 2,
+                    fontSize: '1.1rem',
+                    fontWeight: 700,
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    color: 'white',
+                    boxShadow: '0 4px 20px rgba(22, 163, 74, 0.3)',
+                    animation: 'offerPulse 3s infinite',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+                      boxShadow: '0 6px 30px rgba(22, 163, 74, 0.4)',
+                    },
+                    '@keyframes offerPulse': {
+                      '0%, 100%': { 
+                        transform: 'scale(1)',
+                      },
+                      '50%': { 
+                        transform: 'scale(1.02)',
+                      },
+                    },
+                  }}
                 >
-                  {t('pricing.pricingSection.registerButton')}
+                  {t('pricing.pricingSection.registerButton')} - ¡OFERTA LIMITADA!
                 </Button>
 
                 {/* BNPL Payment Options Message */}
@@ -1393,7 +1488,7 @@ export default function MasterCoursePage() {
                     {t('pricing.flexiblePayments', 'Multiple Payment Options Available')}
                   </Typography>
                   <Typography variant="caption">
-                    {t('pricing.bnplOptions', 'Pay in full with card or choose Klarna (4 payments) or Affirm (up to 36 months)')}
+                    {t('pricing.bnplOptions', 'Paga completo con tarjeta o elige Klarna para pagos flexibles sin intereses')}
                   </Typography>
                 </Alert>
 
@@ -1443,13 +1538,13 @@ export default function MasterCoursePage() {
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="body2">
-                  <strong>Email:</strong> {t('support.email')}
+                  <strong>Email:</strong> {settings?.contact?.contact_email || 'support@daytradedak.com'}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>{t('support.phone')}:</strong> {t('support.phoneNumber')}
+                  <strong>{t('support.phone')}:</strong> {settings?.contact?.contact_phone || '786.356.7260'}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>{t('support.web')}:</strong> {t('support.website')}
+                  <strong>{t('support.web')}:</strong> www.DayTradeDAK.com
                 </Typography>
               </Stack>
             </Stack>

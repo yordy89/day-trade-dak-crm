@@ -15,8 +15,10 @@ export const paths = {
     market: '/academy/market',
     earnings: '/academy/earnings',
     mentorship: '/academy/masterclass',
-    class: '/academy/live-sessions',
+    class: '/academy/classes',
+    liveSessions: '/academy/live-sessions',
     courses: '/academy/classes',
+    stock: '/academy/stock',
     stocks: '/academy/stock',
     psicotrading: '/academy/psicotrading',
     books: '/academy/books',
@@ -30,6 +32,10 @@ export const paths = {
     subscriptions: {
       plans: '/academy/subscription/plans',
       success: '/academy/subscription/success',
+    },
+    personalGrowth: {
+      peaceWithMoney: '/academy/personal-growth/peace-with-money',
+      mind: '/academy/personal-growth/mind'
     },
     superation: {
       proposit: '/academy/personal-growth/peace-with-money',

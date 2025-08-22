@@ -25,10 +25,13 @@ import { Warning } from '@phosphor-icons/react/dist/ssr/Warning';
 import { useQuery } from '@tanstack/react-query';
 import { videoService, type VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
+import { psicotradingMappings, getVideoTitle, extractUniqueVideoFromHLS } from '@/data/video-mappings';
 
 interface VideoWithProgress extends VideoMetadata {
   completed?: boolean;
   progress?: number;
+  title?: string;
+  sortOrder?: number;
 }
 
 export default function PsicoTradingVideoList() {
@@ -42,77 +45,38 @@ export default function PsicoTradingVideoList() {
     queryFn: async () => {
       const data = await videoService.getPsicotradingVideos();
       
-      // Filter to get only unique mentoria folders (deduplicate by folder name)
-      const uniqueVideos = new Map<string, any>();
+      // Extract unique videos from HLS variants
+      const uniqueVideos = extractUniqueVideoFromHLS(data);
       
-      // Create a map to group videos by mentoria folder
-      const mentoriaMap = new Map<string, any[]>();
-      
-      data.forEach((video: any) => {
+      return uniqueVideos.map((video: any) => {
+        // Extract folder name from the path
         const pathParts = video.key.split('/');
-        const mentoriaFolder = pathParts[2] || '';
+        // The folder structure is: hsl-daytradedak-videos/psicotrading-curso1/[folder_name]/...
+        const folderName = pathParts[2] || '';
         
-        if (!mentoriaMap.has(mentoriaFolder)) {
-          mentoriaMap.set(mentoriaFolder, []);
-        }
-        mentoriaMap.get(mentoriaFolder)!.push(video);
-      });
-      
-      // For each mentoria, try to use master.m3u8 first, fallback to 720p if master is too small
-      mentoriaMap.forEach((videos, mentoriaFolder) => {
-        // Find master.m3u8
-        const masterVideo = videos.find(v => v.key.includes('master.m3u8'));
+        // Get title and order from mapping
+        const { title, order } = getVideoTitle(folderName, psicotradingMappings);
         
-        if (masterVideo && masterVideo.size && masterVideo.size > 100) {
-          // Use master if it's a reasonable size (more than 100 bytes)
-          uniqueVideos.set(mentoriaFolder, masterVideo);
-        } else {
-          // Fallback to 720p if master is too small or doesn't exist
-          const quality720p = videos.find(v => v.key.includes('720p/playlist.m3u8'));
-          const quality480p = videos.find(v => v.key.includes('480p/playlist.m3u8'));
-          const quality360p = videos.find(v => v.key.includes('360p/playlist.m3u8'));
-          const quality1080p = videos.find(v => v.key.includes('1080p/playlist.m3u8'));
-          
-          // Prefer 720p, then 480p, then 360p, then 1080p
-          const selectedVideo = quality720p || quality480p || quality360p || quality1080p || masterVideo || videos[0];
-          if (selectedVideo) {
-            uniqueVideos.set(mentoriaFolder, selectedVideo);
-          }
-        }
-      });
-      
-      // Convert Map values back to array and continue with the mapping
-      return Array.from(uniqueVideos.values()).map((video: any) => {
-        // Extract the folder name from the path structure again
-        const pathParts = video.key.split('/');
-        const mentoriaFolder = pathParts[2] || '';
+        // Determine sort order
+        let sortOrder = order !== undefined ? order : 999;
         
-        // Format title based on folder name
-        let formattedTitle = '';
-        let order = 999;
-        
-        if (mentoriaFolder === 'Mentoria Introductoria') {
-          formattedTitle = 'Mentoría Introductoria';
-          order = 0; // Show first
-        } else if (mentoriaFolder.startsWith('Mentoria ')) {
-          // Extract number from "Mentoria 1", "Mentoria 2", etc.
-          const match = /Mentoria (\d+)/.exec(mentoriaFolder);
+        // Extract lesson number if it's a lesson
+        if (folderName.match(/^\d+_Leccion_\d+/)) {
+          const match = folderName.match(/^(\d+)_/);
           if (match) {
-            const number = match[1];
-            formattedTitle = `Mentoría ${number}`;
-            order = parseInt(number);
-          } else {
-            formattedTitle = mentoriaFolder.replace('Mentoria', 'Mentoría');
+            sortOrder = parseInt(match[1]);
           }
-        } else {
-          // Default formatting
-          formattedTitle = mentoriaFolder;
+        } else if (folderName.match(/^Mentoria (\d+)$/)) {
+          const match = folderName.match(/^Mentoria (\d+)$/);
+          if (match) {
+            sortOrder = 100 + parseInt(match[1]); // Mentorías come after lessons
+          }
         }
         
         return {
           ...video,
-          title: formattedTitle,
-          sortOrder: order,
+          title: title,
+          sortOrder: sortOrder,
         };
       }).sort((a, b) => a.sortOrder - b.sortOrder);
     },
@@ -140,9 +104,13 @@ export default function PsicoTradingVideoList() {
     router.push(`/academy/psicotrading/video/${encodedKey}?url=${encodedUrl}`);
   };
 
-  const getVideoDuration = (_video: VideoWithProgress) => {
-    // TODO: Get actual duration from video metadata
-    // For now, return a placeholder
+  const getVideoDuration = (video: VideoWithProgress) => {
+    // Check if it's a lesson or mentoria
+    if (video.title && video.title.includes('Lección')) {
+      return 'Lección teórica';
+    } else if (video.title && video.title.includes('Mentoría')) {
+      return 'Sesión de mentoría';
+    }
     return 'Video lesson';
   };
 

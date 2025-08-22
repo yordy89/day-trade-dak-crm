@@ -235,6 +235,20 @@ class VideoService {
     }
   }
 
+  async getStocksVideos(): Promise<VideoMetadata[]> {
+    try {
+      const response = await API.get<VideoMetadata[]>('/videos/stockVideos');
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to load stocks videos.',
+      });
+      throw new Error(apiError.message);
+    }
+  }
+
   async getVideoByKey(videoKey: string): Promise<VideoMetadata | null> {
     try {
       // First, get all classes videos

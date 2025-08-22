@@ -267,7 +267,8 @@ export function AccountInfo(): React.JSX.Element {
             <Stack spacing={1.5}>
               {activeSubscriptions
                 .map((sub: any) => {
-                  const planName = typeof sub === 'string' ? sub : sub.plan;
+                  if (!sub) return null; // Handle null/undefined subscription
+                  const planName = typeof sub === 'string' ? sub : sub?.plan;
                   return (
                   <Paper
                     key={planName}

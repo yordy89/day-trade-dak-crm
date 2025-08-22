@@ -31,6 +31,7 @@ import {
   Add,
   Remove,
   ChildCare,
+  LocalOffer,
 } from '@mui/icons-material';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import FormControl from '@mui/material/FormControl';
@@ -70,6 +71,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   disabled,
   multiline,
   rows,
+  endAdornment,
   ...props 
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -131,6 +133,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         </Box>
         <InputBase
           {...props}
+          endAdornment={endAdornment}
           multiline={multiline}
           rows={rows}
           disabled={disabled}
@@ -203,7 +206,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
             },
           }}
         />
-        {props.endAdornment}
       </Box>
       {helperText ? (
         <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
@@ -254,18 +256,44 @@ export function EventRegistrationModal({
   const [additionalChildren, setAdditionalChildren] = useState(0);
   const [totalPrice, setTotalPrice] = useState(event.price || 0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | null>(null);
+  
+  // Referral code states
+  const [referralCode, setReferralCode] = useState('');
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [codeValidated, setCodeValidated] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountFixedAmount, setDiscountFixedAmount] = useState(0);
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [affiliateDetails, setAffiliateDetails] = useState<any>(null);
+  const [validationError, setValidationError] = useState('');
 
   // Price constants
   const ADULT_PRICE = 75;
   const CHILD_PRICE = 48;
   const KLARNA_FEE_PERCENTAGE = 0.0644; // 6.44%
 
-  // Calculate total price whenever attendees change
+  // Calculate total price whenever attendees or discount change
   useEffect(() => {
     const basePrice = event.price || 0;
-    const newTotal = basePrice + (additionalAdults * ADULT_PRICE) + (additionalChildren * CHILD_PRICE);
-    setTotalPrice(newTotal);
-  }, [additionalAdults, additionalChildren, event.price]);
+    const attendeesPrice = (additionalAdults * ADULT_PRICE) + (additionalChildren * CHILD_PRICE);
+    const subtotal = basePrice + attendeesPrice;
+    
+    // Apply discount if validated
+    let finalPrice = subtotal;
+    if (codeValidated) {
+      let calculatedDiscount = 0;
+      if (discountType === 'percentage' && discountPercentage > 0) {
+        calculatedDiscount = (subtotal * discountPercentage) / 100;
+      } else if (discountType === 'fixed' && discountFixedAmount > 0) {
+        calculatedDiscount = Math.min(discountFixedAmount, subtotal);
+      }
+      setDiscountAmount(calculatedDiscount);
+      finalPrice = subtotal - calculatedDiscount;
+    }
+    
+    setTotalPrice(finalPrice);
+  }, [additionalAdults, additionalChildren, event.price, codeValidated, discountPercentage, discountFixedAmount, discountType]);
 
   // Debug event data
   console.log('Event data in modal:', event);
@@ -276,6 +304,64 @@ export function EventRegistrationModal({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const validateReferralCode = async () => {
+    if (!referralCode.trim()) {
+      setValidationError('Please enter a referral code');
+      return;
+    }
+
+    setIsValidatingCode(true);
+    setValidationError('');
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/affiliates/validate-code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: referralCode.toUpperCase(),
+          eventType: event.type || 'master_course',
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.valid) {
+        setCodeValidated(true);
+        setDiscountType(data.discountType || 'percentage');
+        if (data.discountType === 'fixed') {
+          setDiscountFixedAmount(data.discountFixedAmount || data.discount || 0);
+        } else {
+          setDiscountPercentage(data.discountPercentage || data.discount || 0);
+        }
+        setAffiliateDetails(data);
+        toast.success(data.message || `Referral code applied!`);
+      } else {
+        setValidationError(data.message || 'Invalid referral code');
+        setCodeValidated(false);
+        setDiscountPercentage(0);
+        setAffiliateDetails(null);
+      }
+    } catch (error) {
+      console.error('Error validating referral code:', error);
+      setValidationError('Failed to validate code. Please try again.');
+    } finally {
+      setIsValidatingCode(false);
+    }
+  };
+
+  const clearReferralCode = () => {
+    setReferralCode('');
+    setCodeValidated(false);
+    setDiscountPercentage(0);
+    setDiscountFixedAmount(0);
+    setDiscountType('percentage');
+    setDiscountAmount(0);
+    setAffiliateDetails(null);
+    setValidationError('');
   };
 
   const handleAdultChange = (increment: boolean) => {
@@ -323,8 +409,8 @@ export function EventRegistrationModal({
         };
       }
 
-      // Create checkout session with payment method
-      const checkoutData = {
+      // Create checkout session with payment method and affiliate data
+      const checkoutData: any = {
         eventId: event._id,
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -334,6 +420,16 @@ export function EventRegistrationModal({
         userId,
         paymentMethod, // Add payment method to checkout data
       };
+      
+      // Add affiliate data if code is validated
+      if (codeValidated && affiliateDetails) {
+        checkoutData.affiliateCode = affiliateDetails.affiliateCode;
+        checkoutData.affiliateId = affiliateDetails.affiliateId;
+        checkoutData.discountAmount = discountAmount;
+        checkoutData.commissionType = affiliateDetails.commissionType;
+        checkoutData.commissionRate = affiliateDetails.commissionRate;
+        checkoutData.commissionFixedAmount = affiliateDetails.commissionFixedAmount;
+      }
 
       const response = await eventService.createEventCheckout(checkoutData);
       
@@ -353,7 +449,7 @@ export function EventRegistrationModal({
         toast.error(t('events.registration.errors.alreadyRegistered'));
       } else if (errorMessage.includes('active subscription required')) {
         toast.error(t('events.registration.errors.activeSubscriptionRequired'));
-        router.push('/pricing');
+        router.push('/academy/subscription/plans');
       } else if (errorMessage.includes('Event is full')) {
         toast.error(t('events.registration.errors.eventFull'));
       } else {
@@ -450,16 +546,42 @@ export function EventRegistrationModal({
           
           <Stack direction="row" spacing={2} alignItems="center">
             {event.price !== null && event.price !== undefined && event.price > 0 ? (
-              <Chip
-                label={`$${event.price} USD`}
-                sx={{
-                  backgroundColor: 'white',
-                  color: '#16a34a',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-                icon={<TrendingUp />}
-              />
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                {codeValidated && discountAmount > 0 && (
+                  <Chip
+                    label={`$${event.price} USD`}
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                      color: 'white',
+                      fontWeight: 500,
+                      fontSize: '0.875rem',
+                      textDecoration: 'line-through',
+                      opacity: 0.8,
+                    }}
+                  />
+                )}
+                <Chip
+                  label={`$${totalPrice.toFixed(2)} USD`}
+                  sx={{
+                    backgroundColor: 'white',
+                    color: '#16a34a',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                  }}
+                  icon={<TrendingUp />}
+                />
+                {codeValidated && discountAmount > 0 && (
+                  <Chip
+                    label={discountType === 'percentage' ? `-${discountPercentage}%` : `-$${discountFixedAmount}`}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      fontWeight: 600,
+                    }}
+                  />
+                )}
+              </Box>
             ) : null}
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
               {t('events.registration.modal.completeRegistration')}
@@ -574,6 +696,68 @@ export function EventRegistrationModal({
                 muiTheme={theme}
               />
             </Grid>
+
+            {/* Referral Code Field - Only for Master Course */}
+            {event.type === 'master_course' && (
+              <Grid item xs={12}>
+                <CustomInput
+                  icon={<LocalOffer />}
+                  label="Referral Code (Optional)"
+                  name="referralCode"
+                  value={referralCode}
+                  onChange={(e) => {
+                    setReferralCode(e.target.value.toUpperCase());
+                    setValidationError('');
+                    if (codeValidated) {
+                      clearReferralCode();
+                    }
+                  }}
+                  placeholder="Enter referral code"
+                  disabled={isLoading || codeValidated}
+                  isDarkMode={isDarkMode}
+                  muiTheme={theme}
+                  error={!!validationError}
+                  helperText={validationError}
+                  endAdornment={
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {codeValidated ? (
+                        <Button
+                          size="small"
+                          onClick={clearReferralCode}
+                          disabled={isLoading}
+                          sx={{ minWidth: 'auto' }}
+                        >
+                          Clear
+                        </Button>
+                      ) : (
+                        <Button
+                          size="small"
+                          onClick={validateReferralCode}
+                          disabled={!referralCode || isLoading || isValidatingCode}
+                          sx={{ minWidth: 'auto' }}
+                        >
+                          {isValidatingCode ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            'Apply'
+                          )}
+                        </Button>
+                      )}
+                    </Box>
+                  }
+                />
+                {codeValidated && affiliateDetails && (
+                  <Alert severity="success" sx={{ mt: 1 }}>
+                    <Typography variant="body2">
+                      Referral code applied! {discountType === 'percentage' ? `${discountPercentage}%` : `$${discountFixedAmount}`} discount
+                      {affiliateDetails.affiliateName && (
+                        <> from {affiliateDetails.affiliateName}</>
+                      )}
+                    </Typography>
+                  </Alert>
+                )}
+              </Grid>
+            )}
 
             {/* Master Course specific fields */}
             {event.type === 'master_course' ? (
@@ -845,9 +1029,21 @@ export function EventRegistrationModal({
                             {additionalChildren > 0 && `${additionalChildren} ${tCommunity('registration.additionalAttendees.children', 'niños')}`}
                           </Typography>
                         </Box>
-                        <Typography variant="h5" fontWeight={700} color="primary">
-                          ${totalPrice.toFixed(2)}
-                        </Typography>
+                        <Box>
+                          {codeValidated && discountAmount > 0 && (
+                            <>
+                              <Typography variant="body2" sx={{ textDecoration: 'line-through', color: 'text.secondary' }}>
+                                ${(totalPrice + discountAmount).toFixed(2)}
+                              </Typography>
+                              <Typography variant="caption" color="error" display="block">
+                                Save ${discountAmount.toFixed(2)}!
+                              </Typography>
+                            </>
+                          )}
+                          <Typography variant="h5" fontWeight={700} color="primary">
+                            ${totalPrice.toFixed(2)}
+                          </Typography>
+                        </Box>
                       </Stack>
                     </Paper>
                   </Grid>
@@ -1008,9 +1204,16 @@ export function EventRegistrationModal({
                 ) : (
                   <>
                     <span>{t('events.registration.modal.payWithCard', 'Pagar al contado')}</span>
-                    <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
-                      ${totalPrice.toFixed(2)} USD
-                    </span>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      {codeValidated && discountAmount > 0 && (
+                        <span style={{ fontSize: '0.75rem', textDecoration: 'line-through', opacity: 0.7 }}>
+                          ${(totalPrice + discountAmount).toFixed(2)} USD
+                        </span>
+                      )}
+                      <span style={{ fontSize: '1.05rem', fontWeight: 700 }}>
+                        ${totalPrice.toFixed(2)} USD
+                      </span>
+                    </Box>
                   </>
                 )}
               </Button>

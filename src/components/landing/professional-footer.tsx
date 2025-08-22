@@ -32,7 +32,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useTranslation } from 'react-i18next';
-import { useSettings, processCopyrightText } from '@/services/api/settings.service';
+import { useSettings, useLocalizedFooterSettings, processCopyrightText } from '@/services/api/settings.service';
 
 const getFooterLinks = (t: any) => ({
   education: {
@@ -70,6 +70,7 @@ export function ProfessionalFooter() {
   const { t } = useTranslation('landing');
   const footerLinks = getFooterLinks(t);
   const { data: settings, isLoading } = useSettings();
+  const localizedFooter = useLocalizedFooterSettings();
   const [email, setEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [snackbar, setSnackbar] = useState<{
@@ -228,7 +229,7 @@ export function ProfessionalFooter() {
                 maxWidth: '90%',
               }}
             >
-              {settings?.footer?.footer_company_description || t('footer.about.description')}
+              {localizedFooter.description || t('landing:footer.about.description')}
             </Typography>
             
             {/* Contact Info */}
@@ -503,7 +504,7 @@ export function ProfessionalFooter() {
           }}
         >
           <Typography variant="body2" sx={{ opacity: isDarkMode ? 0.6 : 0.7, color: isDarkMode ? 'white' : '#333333', width: { xs: '100%', md: 'auto' }, textAlign: { xs: 'center', md: 'left' } }}>
-            {processCopyrightText(settings?.footer?.footer_copyright_text || t('footer.copyright', { year: new Date().getFullYear() }))}
+            {localizedFooter.copyright ? processCopyrightText(localizedFooter.copyright) : t('footer.copyright', { year: new Date().getFullYear() })}
           </Typography>
           
           <Typography variant="caption" sx={{ opacity: isDarkMode ? 0.5 : 0.6, color: isDarkMode ? 'white' : '#333333', maxWidth: 600, textAlign: 'center' }}>

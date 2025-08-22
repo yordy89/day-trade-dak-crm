@@ -86,8 +86,8 @@ ClassesAPI.interceptors.response.use(
         logError: true,
       });
       
-      // Redirect to classes login instead of global login
-      window.location.href = '/classes/sign-in';
+      // Redirect to global login
+      window.location.href = '/auth/sign-in';
       return Promise.reject(error);
     }
 

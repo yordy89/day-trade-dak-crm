@@ -105,7 +105,7 @@ export function EventCheckoutForm({
       console.error('Registration error:', error);
       if (error.message?.includes('active subscription required')) {
         toast.error('An active subscription is required to register for this event');
-        router.push('/pricing');
+        router.push('/academy/subscription/plans');
       } else if (error.message?.includes('Event is full')) {
         toast.error('Sorry, this event is full');
       } else {

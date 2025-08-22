@@ -30,6 +30,7 @@ export enum SubscriptionPlan {
   MasterClases = 'MasterClases',
   LiveRecorded = 'LiveRecorded',
   PSICOTRADING = 'Psicotrading',
+  Stocks = 'Stocks',
   
   // One-Time Purchases
   CLASSES = 'Classes',

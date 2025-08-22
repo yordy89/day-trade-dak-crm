@@ -144,8 +144,9 @@ export function Header({ pageTitle = 'Dashboard', pageSubtitle }: HeaderProps): 
   const getSubscriptionBadge = () => {
     if (!user?.subscriptions || user.subscriptions.length === 0) return 'Free';
     const subscription = user.subscriptions[0];
+    if (!subscription) return 'Free'; // Handle null/undefined subscription
     // Handle both string and object subscription formats
-    const planName = typeof subscription === 'string' ? subscription : subscription.plan;
+    const planName = typeof subscription === 'string' ? subscription : subscription?.plan || 'Free';
     return String(planName).charAt(0).toUpperCase() + String(planName).slice(1);
   };
 

@@ -9,7 +9,7 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
   { 
     id: 'courses', 
     title: t('academy:navigation.classes'), 
-    href: paths.academy.courses, 
+    href: paths.academy.class, 
     icon: 'graduation',
     requiredSubscription: SubscriptionPlan.CLASSES,
   },
@@ -21,9 +21,9 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
     requiredSubscription: SubscriptionPlan.MasterClases,
   },
   {
-    id: 'class',
+    id: 'live-sessions',
     title: t('academy:navigation.recordedLiveSessions'),
-    href: paths.academy.class,
+    href: paths.academy.liveSessions,
     icon: 'class',
     requiredSubscription: SubscriptionPlan.LiveRecorded,
   },
@@ -34,6 +34,14 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
     icon: 'psicotrading',
     requiredSubscription: SubscriptionPlan.PSICOTRADING,
   },
+  // Hidden for now - will be enabled in the future
+  // {
+  //   id: 'stocks',
+  //   title: t('academy:navigation.stocks'),
+  //   href: paths.academy.stocks,
+  //   icon: 'trending-up',
+  //   requiredSubscription: SubscriptionPlan.Stocks,
+  // },
   {
     id: 'personal-growth',
     title: t('academy:navigation.personalGrowth'),

@@ -30,6 +30,7 @@ import type { VideoMetadata } from '@/services/api/video.service';
 import { useRouter } from 'next/navigation';
 import { getVideosDescriptions } from '@/data/curso1';
 import { useTranslation } from 'react-i18next';
+import { pazConElDineroMappings, getVideoTitle, extractUniqueVideoFromHLS } from '@/data/video-mappings';
 
 interface VideoWithProgress extends VideoMetadata {
   completed?: boolean;
@@ -54,22 +55,32 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
     queryKey: [`superacion-videos-${courseKey}`, i18n.language],
     queryFn: async () => {
       const data = await videoService.getSuperacionVideos(courseKey);
-      return data.map((video: any) => {
-        const filename = video.key.split('/').pop() || '';
-        const match = /^(?<id>\d+)_(?<title>[\w_]+)\.mp4$/iu.exec(filename);
-        const id = match?.groups?.id ? parseInt(match.groups.id, 10) : null;
-        const title = match?.groups?.title?.replace(/_/g, ' ') ?? filename.replace(/\.[^/.]+$/, '');
+      
+      // Extract unique videos from HLS variants
+      const uniqueVideos = extractUniqueVideoFromHLS(data);
+      
+      return uniqueVideos.map((video: any) => {
+        // Extract folder name from the path
+        const pathParts = video.key.split('/');
+        // The folder structure is: hsl-daytradedak-videos/curso1/[folder_name]/...
+        const folderName = pathParts[2] || '';
         
+        // Get title and lesson number from mapping
+        const { title, lessonNumber } = getVideoTitle(folderName, pazConElDineroMappings);
+        
+        // Get description from existing descriptions data
         const videosDescriptions = getVideosDescriptions(i18n.language);
-        const rawDescription = videosDescriptions.find((d) => d.id === id)?.description ?? '';
+        const rawDescription = lessonNumber ? 
+          videosDescriptions.find((d) => d.id === lessonNumber)?.description ?? '' : '';
 
         return {
           ...video,
-          title: title.replace('.mp4', ''),
-          lessonNumber: id,
+          title: title,
+          lessonNumber: lessonNumber || null,
           description: rawDescription,
+          folderName: folderName, // Keep for debugging
         };
-      }).sort((a: any, b: any) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
+      }).sort((a: any, b: any) => (a.lessonNumber || 999) - (b.lessonNumber || 999));
     },
   });
 
@@ -216,7 +227,7 @@ export default function SuperacionVideoList({ courseKey }: VideoListProps) {
                               color: 'text.primary',
                             }}
                           >
-                            {t('peaceWithMoney.video.dayTitle', { day: video.lessonNumber, title: video.title })}
+                            {video.title}
                           </Typography>
                           {isSpecialDay ? <Chip
                               icon={<Sparkle size={14} />}

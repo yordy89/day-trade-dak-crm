@@ -36,6 +36,7 @@ import {
   Calendar,
   CurrencyDollar,
   Info,
+  TrendUp,
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -101,12 +102,13 @@ const getLivePlans = (t: any): PricingPlan[] => [
     color: '#ef4444',
     popular: true,
     features: [
-      { text: t('subscriptions.planFeatures.everythingInManual'), included: true },
+      { text: t('subscriptions.planFeatures.liveDailySession'), included: true },
+      { text: t('subscriptions.planFeatures.realtimeAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.liveTradingSignals'), included: true },
+      { text: t('subscriptions.planFeatures.professionalChat'), included: true },
       { text: t('subscriptions.planFeatures.automaticRenewal'), included: true },
-      { text: t('subscriptions.planFeatures.discountedPrice'), included: true },
       { text: t('subscriptions.planFeatures.noInterruptions'), included: true },
       { text: t('subscriptions.cancelAnytime'), included: true },
-      { text: t('subscriptions.bestValuePerWeek'), included: true },
     ],
     duration: t('subscriptions.automaticRenewal'),
     tag: t('subscriptions.bestOption'),
@@ -126,12 +128,12 @@ const getMonthlyPlans = (t: any): PricingPlan[] => [
     popular: true,
     features: [
       { text: t('subscriptions.planFeatures.weeklyMasterClasses'), included: true },
-      { text: t('subscriptions.planFeatures.advancedStrategies'), included: true },
-      { text: t('subscriptions.planFeatures.professionalAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.institutionalAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.marketIndicators'), included: true },
+      { text: t('subscriptions.planFeatures.orderFlowAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.riskManagement'), included: true },
+      { text: t('subscriptions.planFeatures.realTimeDecisions'), included: true },
       { text: t('subscriptions.planFeatures.exclusiveCommunity'), included: true },
-      { text: t('subscriptions.planFeatures.downloadableMaterial'), included: true },
-      { text: t('subscriptions.planFeatures.participationCertificate'), included: true },
-      { text: t('subscriptions.planFeatures.communitySpecialPrice'), included: true, tooltip: t('subscriptions.withDiscount') },
     ],
   },
   {
@@ -146,9 +148,10 @@ const getMonthlyPlans = (t: any): PricingPlan[] => [
     features: [
       { text: t('subscriptions.planFeatures.accessAllRecorded'), included: true },
       { text: t('subscriptions.planFeatures.newDailyContent'), included: true },
-      { text: t('subscriptions.planFeatures.realtimeAnalysis'), included: true },
-      { text: t('subscriptions.planFeatures.stepByStepStrategies'), included: true },
-      { text: t('subscriptions.planFeatures.downloadOffline'), included: true },
+      { text: t('subscriptions.planFeatures.prePostMarketAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.indicatorAnalysis'), included: true },
+      { text: t('subscriptions.planFeatures.realOperations'), included: true },
+      { text: t('subscriptions.planFeatures.patternIdentification'), included: true },
       { text: t('subscriptions.planFeatures.freeWithLive'), included: true, tooltip: t('subscriptions.includedNoCost') },
     ],
   },
@@ -162,14 +165,34 @@ const getMonthlyPlans = (t: any): PricingPlan[] => [
     icon: <Brain size={32} />,
     color: '#16a34a',
     features: [
-      { text: t('subscriptions.planFeatures.psychologySession'), included: true },
-      { text: t('subscriptions.planFeatures.emotionalControl'), included: true },
-      { text: t('subscriptions.planFeatures.mindfulnessTechniques'), included: true },
-      { text: t('subscriptions.planFeatures.personalizedMentalPlan'), included: true },
-      { text: t('subscriptions.planFeatures.psychologicalSupport'), included: true },
-      { text: t('subscriptions.planFeatures.monthlyEvaluations'), included: true },
+      { text: t('subscriptions.planFeatures.tradingPsychology'), included: true },
+      { text: t('subscriptions.planFeatures.emotionalControlTrading'), included: true },
+      { text: t('subscriptions.planFeatures.disciplineDevelopment'), included: true },
+      { text: t('subscriptions.planFeatures.fearGreedManagement'), included: true },
+      { text: t('subscriptions.planFeatures.lossManagement'), included: true },
+      { text: t('subscriptions.planFeatures.mentalConsistency'), included: true },
     ],
   },
+  // Hidden for now - will be enabled in the future
+  // {
+  //   id: SubscriptionPlan.Stocks,
+  //   name: t('subscriptions.plans.stocks.name'),
+  //   price: 99.99,
+  //   period: t('subscriptions.perMonth'),
+  //   billingCycle: 'monthly',
+  //   description: t('subscriptions.plans.stocks.description'),
+  //   icon: <TrendUp size={32} />,
+  //   color: '#ec4899',
+  //   popular: true,
+  //   features: [
+  //     { text: t('subscriptions.planFeatures.stocksContent'), included: true },
+  //     { text: t('subscriptions.planFeatures.fundamentalAnalysis'), included: true },
+  //     { text: t('subscriptions.planFeatures.technicalAnalysis'), included: true },
+  //     { text: t('subscriptions.planFeatures.portfolioManagement'), included: true },
+  //     { text: t('subscriptions.planFeatures.optionsTradingAnalysis'), included: true },
+  //     { text: t('subscriptions.planFeatures.marketIndicators'), included: true },
+  //   ],
+  // },
 ];
 
 const getFixedPlans = (t: any): PricingPlan[] => [
@@ -254,6 +277,7 @@ export default function PlansPage() {
   const activeSubscriptions = user?.subscriptions || [];
   const hasLiveSubscription = activeSubscriptions.some(
     (sub: any) => {
+      if (!sub) return false; // Handle null/undefined subscriptions
       if (typeof sub === 'string') {
         return sub === (SubscriptionPlan.LiveWeeklyManual as string) || sub === (SubscriptionPlan.LiveWeeklyRecurring as string);
       }
@@ -310,6 +334,7 @@ export default function PlansPage() {
 
     // Check if user already has this subscription
     const hasSubscription = activeSubscriptions.some((sub: any) => {
+      if (!sub) return false; // Handle null/undefined subscriptions
       if (typeof sub === 'string') {
         return sub === (plan as string);
       }
@@ -381,6 +406,7 @@ export default function PlansPage() {
   const renderPlanCard = (plan: PricingPlan) => {
     const displayPrice = getDisplayPrice(plan);
     const isCurrentPlan = activeSubscriptions.some((sub: any) => {
+      if (!sub) return false; // Handle null/undefined subscriptions
       if (typeof sub === 'string') {
         return sub === (plan.id as string);
       }
@@ -392,12 +418,20 @@ export default function PlansPage() {
     const isFree = displayPrice === 0;
     const isHighlighted = highlightedPlan === plan.id;
     
+    // Check if this is Live Recorded and user has Live Weekly (auto access)
+    const isLiveRecordedWithAccess = plan.id === SubscriptionPlan.LiveRecorded && 
+      hasLiveSubscription && !isCurrentPlan;
+    
     // Check Live Weekly access permission
     const isLiveWeeklyPlan = [
       SubscriptionPlan.LiveWeeklyManual,
       SubscriptionPlan.LiveWeeklyRecurring,
     ].includes(plan.id);
     const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
+    
+    // Check if Master Classes needs Live subscription
+    const isMasterClasses = plan.id === SubscriptionPlan.MasterClases;
+    const needsLiveSubscription = isMasterClasses && !hasLiveSubscription;
 
     return (
       <Box
@@ -406,7 +440,7 @@ export default function PlansPage() {
         sx={{ 
           position: 'relative', 
           height: '100%',
-          pt: (needsPermission || plan.popular || plan.tag || isHighlighted) ? 2 : 0,
+          pt: (needsPermission || needsLiveSubscription || plan.popular || plan.tag || isHighlighted) ? 2 : 0,
         }}
       >
         {/* Badge - Outside the Card */}
@@ -420,6 +454,22 @@ export default function PlansPage() {
               left: '50%',
               transform: 'translateX(-50%)',
               backgroundColor: 'grey.600',
+              color: 'white',
+              fontWeight: 600,
+              px: 2,
+              zIndex: 10,
+            }}
+          />
+        ) : needsLiveSubscription ? (
+          <Chip
+            label={t('subscriptions.requiresCommunity', 'Requiere Membresía Live')}
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: 'warning.main',
               color: 'white',
               fontWeight: 600,
               px: 2,
@@ -456,13 +506,13 @@ export default function PlansPage() {
             height: '100%',
             borderRadius: 3,
             border: '2px solid',
-            borderColor: needsPermission ? 'grey.400' : (isHighlighted ? plan.color : plan.popular ? plan.color : 'divider'),
+            borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : (isHighlighted ? plan.color : plan.popular ? plan.color : 'divider'),
             position: 'relative',
             transition: 'all 0.3s ease',
             backgroundColor: theme.palette.background.paper,
-            opacity: needsPermission ? 0.7 : (isCurrentPlan ? 0.8 : 1),
-            boxShadow: isHighlighted && !needsPermission ? `0 0 20px ${alpha(plan.color, 0.3)}` : 'none',
-            animation: isHighlighted && !needsPermission ? 'pulse 2s ease-in-out infinite' : 'none',
+            opacity: (needsPermission || needsLiveSubscription) ? 0.7 : (isCurrentPlan ? 0.8 : 1),
+            boxShadow: isHighlighted && !needsPermission && !needsLiveSubscription ? `0 0 20px ${alpha(plan.color, 0.3)}` : 'none',
+            animation: isHighlighted && !needsPermission && !needsLiveSubscription ? 'pulse 2s ease-in-out infinite' : 'none',
             '@keyframes pulse': {
               '0%': {
                 transform: 'scale(1)',
@@ -577,38 +627,80 @@ export default function PlansPage() {
               ))}
             </List>
 
-            {/* CTA Button */}
-            <Button
-              fullWidth
-              variant={needsPermission ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
-              onClick={() => handleSubscribe(plan.id)}
-              disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission}
-              sx={{
-                borderColor: needsPermission ? 'grey.400' : plan.color,
-                color: needsPermission ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
-                backgroundColor: needsPermission ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
-                py: 1.5,
-                fontWeight: 600,
-                '&:hover': {
-                  borderColor: needsPermission ? 'grey.400' : plan.color,
-                  backgroundColor: needsPermission ? 'transparent' : (plan.popular || isFree ? plan.color : alpha(plan.color, 0.08)),
-                },
-                '&.Mui-disabled': {
-                  borderColor: needsPermission ? 'grey.400' : undefined,
-                  color: needsPermission ? 'text.disabled' : undefined,
-                },
-              }}
-            >
-              {loadingPlan === plan.id
-                ? t('subscriptions.processing')
-                : isCurrentPlan
-                ? t('subscriptions.currentPlan')
-                : needsPermission
-                ? t('subscriptions.contactSupportForAccess')
-                : isFree
-                ? t('subscriptions.activateFree')
-                : t('subscriptions.startNow')}
-            </Button>
+            {/* CTA Button or Access Message */}
+            {isLiveRecordedWithAccess ? (
+              <Stack spacing={1}>
+                <Alert 
+                  severity="success" 
+                  icon={<Check size={20} />}
+                  sx={{ 
+                    borderRadius: 2,
+                    '& .MuiAlert-message': {
+                      width: '100%',
+                      textAlign: 'center'
+                    }
+                  }}
+                >
+                  <Typography variant="body2" fontWeight={600}>
+                    {t('subscriptions.alreadyHaveAccess', '¡Ya tienes acceso!')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('subscriptions.includedWithLiveCommunity', 'Incluido con tu membresía Live')}
+                  </Typography>
+                </Alert>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => window.location.href = '/academy/live-sessions'}
+                  sx={{
+                    backgroundColor: plan.color,
+                    color: 'white',
+                    py: 1.5,
+                    fontWeight: 600,
+                    '&:hover': {
+                      backgroundColor: plan.color,
+                      filter: 'brightness(1.1)',
+                    },
+                  }}
+                >
+                  {t('subscriptions.goToVideos', 'Ir a los Videos')}
+                </Button>
+              </Stack>
+            ) : (
+              <Button
+                fullWidth
+                variant={(needsPermission || needsLiveSubscription) ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
+                onClick={() => handleSubscribe(plan.id)}
+                disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission || needsLiveSubscription}
+                sx={{
+                  borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : plan.color,
+                  color: (needsPermission || needsLiveSubscription) ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
+                  backgroundColor: (needsPermission || needsLiveSubscription) ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
+                  py: 1.5,
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : plan.color,
+                    backgroundColor: (needsPermission || needsLiveSubscription) ? 'transparent' : (plan.popular || isFree ? plan.color : alpha(plan.color, 0.08)),
+                  },
+                  '&.Mui-disabled': {
+                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : undefined,
+                    color: (needsPermission || needsLiveSubscription) ? 'text.disabled' : undefined,
+                  },
+                }}
+              >
+                {loadingPlan === plan.id
+                  ? t('subscriptions.processing')
+                  : isCurrentPlan
+                  ? t('subscriptions.currentPlan')
+                  : needsPermission
+                  ? t('subscriptions.contactSupportForAccess')
+                  : needsLiveSubscription
+                  ? t('subscriptions.joinCommunityFirst', 'Únete a Live Primero')
+                  : isFree
+                  ? t('subscriptions.activateFree')
+                  : t('subscriptions.startNow')}
+              </Button>
+            )}
           </Stack>
         </CardContent>
       </Card>

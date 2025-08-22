@@ -20,6 +20,7 @@ import {
   ListItemText,
   ListItemIcon,
   Divider,
+  CircularProgress,
 } from '@mui/material';
 import {
   GraduationCap,
@@ -44,6 +45,9 @@ import { paths } from '@/paths';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import API from '@/lib/axios';
+import { formatEventDate } from '@/lib/date-utils';
+import { useMultipleModuleAccess } from '@/hooks/use-module-access';
+import { ModuleType } from '@/types/module-permission';
 
 // Modern gradient background
 const ModernBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
@@ -236,7 +240,7 @@ const ContentAccessCard = ({
           
           <Box sx={{ display: 'flex', alignItems: 'center', color: available ? color : 'text.disabled', fontWeight: 600 }}>
             <Typography variant="button" sx={{ mr: 1 }}>
-              {available ? t('overview.explore') : t('overview.locked')}
+              {available ? t('overview.explore') : t('overview.blocked')}
             </Typography>
             {available && <ArrowRight size={20} className="hover-arrow" style={{ transition: 'transform 0.2s' }} />}
           </Box>
@@ -252,6 +256,16 @@ export default function AcademyOverviewPage(): React.JSX.Element {
   const router = useRouter();
   const { user } = useClientAuth();
   const { t, i18n } = useTranslation('academy');
+  
+  // Check module access for all content types
+  const { accessMap, loading: moduleAccessLoading } = useMultipleModuleAccess([
+    ModuleType.Classes,
+    ModuleType.MasterClasses,
+    ModuleType.LiveRecorded,
+    ModuleType.Psicotrading,
+    ModuleType.Stocks,
+    ModuleType.PeaceWithMoney,
+  ]);
   
   // Fetch user's event registrations
   const { data: eventRegistrations, isLoading: eventsLoading } = useQuery({
@@ -314,48 +328,86 @@ export default function AcademyOverviewPage(): React.JSX.Element {
     return false;
   }) || [];
   
-  const hasLiveAccess = user?.allowLiveMeetingAccess || user?.allowLiveWeeklyAccess || false;
-  const hasPremiumAccess = activeSubscriptions.length > 0;
+  // Check user permissions and access
+  const isSuperAdmin = user?.role === 'super_admin';
+  const hasPremiumAccess = activeSubscriptions.length > 0 || isSuperAdmin;
   
-  // Content access based on subscriptions
+  // Use module access results from the hook (which checks API for proper permissions)
+  const hasClassesAccess = accessMap[ModuleType.Classes] ?? false;
+  const hasMasterClassAccess = accessMap[ModuleType.MasterClasses] ?? false;
+  const hasLiveSessionsAccess = accessMap[ModuleType.LiveRecorded] ?? false;
+  const hasPsicoTradingAccess = accessMap[ModuleType.Psicotrading] ?? false;
+  const hasStocksAccess = accessMap[ModuleType.Stocks] ?? false;
+  const hasPeaceWithMoneyAccess = accessMap[ModuleType.PeaceWithMoney] ?? false;
+  
+  // Content access based on subscriptions and permissions
   const contentAccess = [
     {
-      title: t('overview.tradingCourses.title'),
-      description: t('overview.tradingCourses.description'),
+      title: t('overview.classes.title'),
+      description: t('overview.classes.description'),
       icon: <GraduationCap size={32} weight="duotone" />,
-      path: paths.academy.courses,
-      color: theme.palette.primary.main,
-      available: true, // Basic courses available to all
-    },
-    {
-      title: t('overview.liveClasses.title'),
-      description: t('overview.liveClasses.description'),
-      icon: <VideoCamera size={32} weight="duotone" />,
       path: paths.academy.class,
-      color: theme.palette.error.main,
-      available: hasLiveAccess,
-      locked: !hasLiveAccess,
+      color: theme.palette.primary.main,
+      available: hasClassesAccess,
+      locked: !hasClassesAccess,
     },
     {
-      title: t('overview.mentorship.title'),
-      description: t('overview.mentorship.description'),
-      icon: <Users size={32} weight="duotone" />,
+      title: t('overview.masterClasses.title'),
+      description: t('overview.masterClasses.description'),
+      icon: <Trophy size={32} weight="duotone" />,
       path: paths.academy.mentorship,
-      color: theme.palette.info.main,
-      available: hasPremiumAccess,
-      locked: !hasPremiumAccess,
+      color: theme.palette.warning.main,
+      available: hasMasterClassAccess,
+      locked: !hasMasterClassAccess,
     },
     {
-      title: t('overview.psicoTradingElite.title'),
-      description: t('overview.psicoTradingElite.description'),
+      title: t('overview.recordedLiveSessions.title'),
+      description: t('overview.recordedLiveSessions.description'),
+      icon: <VideoCamera size={32} weight="duotone" />,
+      path: paths.academy.liveSessions,
+      color: theme.palette.error.main,
+      available: hasLiveSessionsAccess,
+      locked: !hasLiveSessionsAccess,
+    },
+    {
+      title: t('overview.psicoTrading.title'),
+      description: t('overview.psicoTrading.description'),
       icon: <Brain size={32} weight="duotone" />,
       path: paths.academy.psicotrading,
       color: theme.palette.success.main,
-      available: hasPremiumAccess,
-      locked: !hasPremiumAccess,
+      available: hasPsicoTradingAccess,
+      locked: !hasPsicoTradingAccess,
+    },
+    {
+      title: t('overview.stockMarket.title'),
+      description: t('overview.stockMarket.description'),
+      icon: <ChartLine size={32} weight="duotone" />,
+      path: paths.academy.stock,
+      color: theme.palette.info.main,
+      available: hasStocksAccess,
+      locked: !hasStocksAccess,
+    },
+    {
+      title: t('overview.peaceWithMoney.title'),
+      description: t('overview.peaceWithMoney.description'),
+      icon: <CreditCard size={32} weight="duotone" />,
+      path: paths.academy.personalGrowth.peaceWithMoney,
+      color: theme.palette.secondary.main,
+      available: hasPeaceWithMoneyAccess,
+      locked: !hasPeaceWithMoneyAccess,
     },
   ];
   
+  // Show loading state while checking module permissions
+  if (moduleAccessLoading) {
+    return (
+      <Box sx={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ModernBackground isDarkMode={isDarkMode} />
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ position: 'relative' }}>
       <ModernBackground isDarkMode={isDarkMode} />
@@ -514,11 +566,11 @@ export default function AcademyOverviewPage(): React.JSX.Element {
           </Grid>
           <Grid item xs={6} lg={3}>
             <StatsCard
-              title={t('overview.tradingLevel')}
-              value={user?.tradingPhase || 1}
+              title={t('overview.daysAsMember')}
+              value={memberDays}
               icon={<Trophy size={24} weight="bold" />}
               color={theme.palette.warning.main}
-              subtitle={t('overview.currentPhase')}
+              subtitle={user?.createdAt ? t('overview.since', { date: new Date(user.createdAt).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { month: 'short', year: 'numeric' }) }) : t('overview.newMember')}
             />
           </Grid>
         </Grid>
@@ -531,7 +583,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
         </Typography>
         <Grid container spacing={{ xs: 2, sm: 3 }}>
           {contentAccess.map((content) => (
-            <Grid item xs={12} md={6} lg={3} key={content.path}>
+            <Grid item xs={12} sm={6} md={4} lg={4} key={content.path}>
               <ContentAccessCard {...content} />
             </Grid>
           ))}
@@ -557,8 +609,9 @@ export default function AcademyOverviewPage(): React.JSX.Element {
             {activeSubscriptions.length > 0 ? (
               <Stack spacing={2}>
                 {activeSubscriptions.map((sub: any, index: number) => {
-                  const planName = typeof sub === 'string' ? sub : sub.plan;
-                  const expiresAt = typeof sub === 'object' && sub.expiresAt ? new Date(sub.expiresAt) : null;
+                  if (!sub) return null; // Handle null/undefined subscription
+                  const planName = typeof sub === 'string' ? sub : sub?.plan;
+                  const expiresAt = typeof sub === 'object' && sub?.expiresAt ? new Date(sub.expiresAt) : null;
                   
                   return (
                     <Card key={index} variant="outlined" sx={{ p: 2 }}>
@@ -636,20 +689,18 @@ export default function AcademyOverviewPage(): React.JSX.Element {
                     <ListItem 
                       sx={{ 
                         px: 0, 
-                        cursor: 'pointer',
-                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) }
+                        // Disable click for now until event pages are ready
+                        // cursor: 'pointer',
+                        // '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) }
                       }}
-                      onClick={() => router.push(`/events/${event._id}`)}
+                      // onClick={() => router.push(`/events/${event._id}`)}
                     >
                       <ListItemIcon>
                         <Calendar size={24} color={theme.palette.primary.main} />
                       </ListItemIcon>
                       <ListItemText
                         primary={event.title}
-                        secondary={new Date(event.date).toLocaleDateString(
-                          i18n.language === 'es' ? 'es-ES' : 'en-US',
-                          { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-                        )}
+                        secondary={formatEventDate(event.date, i18n.language)}
                       />
                       {event.isPremium && (
                         <Chip 
@@ -670,6 +721,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
                 <Typography variant="body1" color="text.secondary" textAlign="center">
                   {t('overview.noUpcomingEvents')}
                 </Typography>
+                {/* Hide browse events button for now until event pages are ready
                 <Button
                   variant="outlined"
                   onClick={() => router.push('/events')}
@@ -677,9 +729,11 @@ export default function AcademyOverviewPage(): React.JSX.Element {
                 >
                   {t('overview.browseEvents')}
                 </Button>
+                */}
               </Stack>
             )}
             
+            {/* Hide "Ver todos" button for now until events pages are ready
             {upcomingEvents && upcomingEvents.length > 3 && (
               <Button
                 fullWidth
@@ -689,7 +743,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               >
                 {t('overview.viewAllEvents', { count: upcomingEvents.length })}
               </Button>
-            )}
+            )} */}
           </Paper>
         </Grid>
       </Grid>

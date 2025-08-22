@@ -29,6 +29,7 @@ import { useModuleAccess } from '@/hooks/use-module-access';
 import API from '@/lib/axios';
 import { getVideosDescriptions } from '@/data/curso1';
 import { useTranslation } from 'react-i18next';
+import { pazConElDineroMappings, getVideoTitle } from '@/data/video-mappings';
 
 export default function PeaceWithMoneyVideoPlayerPage() {
   const theme = useTheme();
@@ -66,18 +67,33 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   
   // Extract video info from key
   const extractVideoInfo = (key: string): { title: string; lessonNumber: number | null; description: string } => {
-    const parts = key.split('/');
-    const filename = parts[parts.length - 1];
-    const match = /^(?<id>\d+)_(?<title>[\w_]+)\.mp4$/iu.exec(filename);
-    const id = match?.groups?.id ? parseInt(match.groups.id, 10) : null;
-    const title = match?.groups?.title?.replace(/_/g, ' ') ?? filename.replace(/\.[^/.]+$/, '');
+    // Extract folder name from HLS path
+    // Example: hsl-daytradedak-videos/curso1/1_Leccion_1_teoria/master.m3u8
+    const pathParts = key.split('/');
+    let folderName = '';
     
+    // Try to find the lesson folder (should be at index 2)
+    if (pathParts.length >= 3) {
+      folderName = pathParts[2];
+    } else {
+      // Fallback: try to extract from the full path
+      const folderMatch = key.match(/\/([^\/]+)\/(?:master|playlist)\.m3u8/);
+      if (folderMatch) {
+        folderName = folderMatch[1];
+      }
+    }
+    
+    // Get title and lesson number from mapping
+    const { title, lessonNumber } = getVideoTitle(folderName, pazConElDineroMappings);
+    
+    // Get description from curso1 data
     const videosDescriptions = getVideosDescriptions(i18n.language);
-    const rawDescription = videosDescriptions.find((d) => d.id === id)?.description ?? '';
+    const rawDescription = lessonNumber ? 
+      videosDescriptions.find((d) => d.id === lessonNumber)?.description ?? '' : '';
     
     return {
-      title: title.replace('.mp4', ''),
-      lessonNumber: id,
+      title: title || folderName.replace(/_/g, ' '),
+      lessonNumber: lessonNumber || null,
       description: rawDescription,
     };
   };
@@ -123,21 +139,51 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   }
   
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3 }}>
-        <Button
-          startIcon={<ArrowLeft size={20} />}
-          onClick={() => router.push('/academy/personal-growth/peace-with-money#videos')}
-          sx={{ mb: 2 }}
-        >
-          {t('peaceWithMoney.video.backToPeaceWithMoney')}
-        </Button>
+    <Box sx={{
+      minHeight: '100vh',
+      backgroundColor: '#0a0a0a',
+      position: 'relative',
+    }}>
+      {/* Gradient background overlay */}
+      <Box sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: `linear-gradient(135deg, 
+          ${alpha('#0a0a0a', 0.92)} 0%, 
+          ${alpha('#8b5cf6', 0.85)} 30%, 
+          ${alpha('#f59e0b', 0.85)} 70%, 
+          ${alpha('#0a0a0a', 0.92)} 100%)`,
+        opacity: 0.3,
+        pointerEvents: 'none',
+      }} />
+      
+      <Container maxWidth="xl" sx={{ py: 4, position: 'relative', zIndex: 1 }}>
+        <Box sx={{ mb: 3 }}>
+          <Button
+            startIcon={<ArrowLeft size={20} />}
+            onClick={() => router.push('/academy/personal-growth/peace-with-money#videos')}
+            sx={{ 
+              mb: 2,
+              color: 'white',
+              '&:hover': {
+                backgroundColor: alpha('#ffffff', 0.1),
+              },
+            }}
+          >
+            {t('peaceWithMoney.video.backToPeaceWithMoney')}
+          </Button>
         
         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
           <HandsPraying size={32} weight="duotone" color={theme.palette.secondary.main} />
           <Box flex={1}>
-            <Typography variant="h4" gutterBottom>
-              {videoInfo.title}
+            <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
+              {videoInfo.lessonNumber ? 
+                `Día ${videoInfo.lessonNumber}: ${videoInfo.title}` : 
+                videoInfo.title
+              }
             </Typography>
             <Stack direction="row" spacing={2} alignItems="center">
               <Chip
@@ -187,16 +233,18 @@ export default function PeaceWithMoneyVideoPlayerPage() {
         </Stack>
       </Box>
       
-      {/* Video Player */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <Card
-            sx={{
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              boxShadow: theme.shadows[8],
-            }}
-          >
+        {/* Video Player */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} lg={8}>
+            <Card
+              sx={{
+                overflow: 'hidden',
+                bgcolor: alpha('#1a1a1a', 0.8),
+                backdropFilter: 'blur(10px)',
+                boxShadow: theme.shadows[8],
+                border: `1px solid ${alpha('#ffffff', 0.1)}`,
+              }}
+            >
             <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}>
               <Box
                 sx={{
@@ -236,12 +284,17 @@ export default function PeaceWithMoneyVideoPlayerPage() {
             </Box>
           </Card>
           
-          {/* Video Description */}
-          <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('peaceWithMoney.video.aboutThisLesson')}
-              </Typography>
+            {/* Video Description */}
+            <Card sx={{ 
+              mt: 3,
+              bgcolor: alpha('#1a1a1a', 0.8),
+              backdropFilter: 'blur(10px)',
+              border: `1px solid ${alpha('#ffffff', 0.1)}`,
+            }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+                  {t('peaceWithMoney.video.aboutThisLesson')}
+                </Typography>
               {videoInfo.description ? (
                 <Stack spacing={2}>
                   {videoInfo.description.split(';').map((phrase, _index) => {
@@ -258,7 +311,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                           borderRadius: 1,
                         }}
                       >
-                        <Typography variant="body1" color="text.primary">
+                        <Typography variant="body1" sx={{ color: 'white' }}>
                           {trimmedPhrase}
                         </Typography>
                       </Box>
@@ -266,7 +319,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                   })}
                 </Stack>
               ) : (
-                <Typography variant="body1" color="text.secondary">
+                <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.7) }}>
                   {t('peaceWithMoney.video.defaultDescription')}
                 </Typography>
               )}
@@ -280,39 +333,43 @@ export default function PeaceWithMoneyVideoPlayerPage() {
           </Card>
         </Grid>
         
-        {/* Sidebar */}
-        <Grid item xs={12} lg={4}>
-          {/* Peace with Money Tips Card */}
-          <Card>
-            <CardContent>
+          {/* Sidebar */}
+          <Grid item xs={12} lg={4}>
+            {/* Peace with Money Tips Card */}
+            <Card sx={{
+              bgcolor: alpha('#1a1a1a', 0.8),
+              backdropFilter: 'blur(10px)',
+              border: `1px solid ${alpha('#ffffff', 0.1)}`,
+            }}>
+              <CardContent>
               <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
                 <HandsPraying size={28} weight="duotone" color={theme.palette.secondary.main} />
-                <Typography variant="h6">
+                <Typography variant="h6" sx={{ color: 'white' }}>
                   {t('peaceWithMoney.video.dailyPractice')}
                 </Typography>
               </Stack>
               <Stack spacing={2}>
                 <Box>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom sx={{ color: 'white' }}>
                     🧘 {t('peaceWithMoney.video.practices.morningReflection.title')}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
                     {t('peaceWithMoney.video.practices.morningReflection.description')}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom sx={{ color: 'white' }}>
                     📝 {t('peaceWithMoney.video.practices.journalInsights.title')}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
                     {t('peaceWithMoney.video.practices.journalInsights.description')}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom sx={{ color: 'white' }}>
                     💚 {t('peaceWithMoney.video.practices.practiceAcceptance.title')}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.7) }}>
                     {t('peaceWithMoney.video.practices.practiceAcceptance.description')}
                   </Typography>
                 </Box>
@@ -321,7 +378,16 @@ export default function PeaceWithMoneyVideoPlayerPage() {
               {/* Download reminders for special days */}
               {videoInfo.lessonNumber && [7, 14, 21].includes(videoInfo.lessonNumber) ? (
                 <Box sx={{ mt: 3 }}>
-                  <Alert severity="success">
+                  <Alert 
+                    severity="success"
+                    sx={{ 
+                      backgroundColor: alpha('#22c55e', 0.1),
+                      color: '#22c55e',
+                      '& .MuiAlert-icon': {
+                        color: '#22c55e',
+                      },
+                    }}
+                  >
                     <Typography variant="body2">
                       {t('peaceWithMoney.video.downloadReminder', { day: videoInfo.lessonNumber })}
                     </Typography>
@@ -330,8 +396,9 @@ export default function PeaceWithMoneyVideoPlayerPage() {
               ) : null}
             </CardContent>
           </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Box>
   );
 }

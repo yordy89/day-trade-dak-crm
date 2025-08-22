@@ -29,7 +29,8 @@ export default function ClasesPage(): React.JSX.Element {
     if (hasAccess) {
       setViewVideos(true);
     } else {
-      router.push('/academy/subscription/plans?highlight=Classes');
+      // Open email to contact support for access
+      window.location.href = 'mailto:support@daytradedak.com?subject=Solicitud de Acceso a Clases&body=Hola, me gustaría obtener acceso a las Clases de Trading. Por favor, contáctenme con más información sobre el Master Course.';
     }
   };
 

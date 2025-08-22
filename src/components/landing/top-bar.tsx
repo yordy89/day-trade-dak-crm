@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, Button, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
+import { Box, Container, Typography, Button, useMediaQuery, useTheme as useMuiTheme, Stack, alpha } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import Link from 'next/link';
 import { 
@@ -14,7 +14,8 @@ import {
   YouTube,
   TrendingUp,
   TrendingDown,
-  AccessTime
+  AccessTime,
+  LocalOffer
 } from '@mui/icons-material';
 import { SiTiktok } from 'react-icons/si';
 import { useTheme } from '@/components/theme/theme-provider';
@@ -22,7 +23,7 @@ import { useSettings } from '@/services/api/settings.service';
 import { useTranslation } from 'react-i18next';
 
 export function TopBar() {
-  const { } = useTheme();
+  const { isDarkMode } = useTheme();
   const muiTheme = useMuiTheme();
   const { data: settings } = useSettings();
   const { t } = useTranslation('common');
@@ -137,16 +138,79 @@ export function TopBar() {
   // Mobile version - simplified
   if (isMobile) {
     return (
-      <Box
-        sx={{
-          backgroundColor: '#0a0a0a',
-          color: 'rgba(255, 255, 255, 0.8)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          fontSize: '0.7rem',
-          height: 32,
-        }}
-      >
-        <Container maxWidth={false}>
+      <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1400 }}>
+        {/* Promotional Banner - Mobile */}
+        <Box 
+          sx={{ 
+            background: isDarkMode 
+              ? `linear-gradient(90deg, 
+                  ${alpha('#fbbf24', 0.15)} 0%, 
+                  ${alpha('#f59e0b', 0.2)} 50%, 
+                  ${alpha('#fbbf24', 0.15)} 100%)`
+              : `linear-gradient(90deg, 
+                  ${alpha('#fed7aa', 0.25)} 0%, 
+                  ${alpha('#fbbf24', 0.3)} 50%, 
+                  ${alpha('#fed7aa', 0.25)} 100%)`,
+            backdropFilter: 'blur(12px)',
+            borderBottom: `1px solid ${alpha('#f59e0b', isDarkMode ? 0.2 : 0.3)}`,
+            py: 0.4,
+            px: 1,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Stack 
+            direction="row" 
+            alignItems="center" 
+            justifyContent="center" 
+            spacing={1}
+            sx={{ flexWrap: 'wrap' }}
+          >
+            <Typography 
+              variant="caption" 
+              fontWeight={600} 
+              sx={{ 
+                textAlign: 'center',
+                color: isDarkMode ? '#fef3c7' : '#92400e',
+                fontSize: '0.65rem',
+              }}
+            >
+              {t('promotionalBanner.text').split('|')[0]}
+            </Typography>
+            <Button
+              size="small"
+              variant="contained"
+              component={Link}
+              href="/master-course"
+              sx={{
+                backgroundColor: '#16a34a',
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '0.6rem',
+                py: 0.2,
+                px: 1,
+                minHeight: 'auto',
+                '&:hover': {
+                  backgroundColor: '#15803d',
+                },
+              }}
+            >
+              {t('promotionalBanner.buttonText')}
+            </Button>
+          </Stack>
+        </Box>
+        
+        {/* Original TopBar Content - Mobile */}
+        <Box
+          sx={{
+            backgroundColor: '#0a0a0a',
+            color: 'rgba(255, 255, 255, 0.8)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            fontSize: '0.7rem',
+            height: 32,
+          }}
+        >
+          <Container maxWidth={false}>
           <Box
             sx={{
               display: 'flex',
@@ -239,21 +303,118 @@ export function TopBar() {
           </Box>
         </Container>
       </Box>
+      </Box>
     );
   }
 
   // Desktop version - full featured
   return (
-    <Box
-      sx={{
-        backgroundColor: '#0a0a0a',
-        color: 'rgba(255, 255, 255, 0.8)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        fontSize: '0.75rem',
-        height: 36,
-      }}
-    >
-      <Container maxWidth={false}>
+    <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1400 }}>
+      {/* Promotional Banner */}
+      <Box 
+        sx={{ 
+          background: isDarkMode 
+            ? `linear-gradient(90deg, 
+                ${alpha('#fbbf24', 0.15)} 0%, 
+                ${alpha('#f59e0b', 0.2)} 50%, 
+                ${alpha('#fbbf24', 0.15)} 100%)`
+            : `linear-gradient(90deg, 
+                ${alpha('#fed7aa', 0.25)} 0%, 
+                ${alpha('#fbbf24', 0.3)} 50%, 
+                ${alpha('#fed7aa', 0.25)} 100%)`,
+          backdropFilter: 'blur(12px)',
+          borderBottom: `1px solid ${alpha('#f59e0b', isDarkMode ? 0.2 : 0.3)}`,
+          py: 0.5,
+          px: 2,
+          boxShadow: isDarkMode 
+            ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+            : '0 2px 8px rgba(245, 158, 11, 0.08)',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '-100%',
+            width: '100%',
+            height: '100%',
+            background: `linear-gradient(90deg, 
+              transparent, 
+              ${alpha('#fbbf24', isDarkMode ? 0.1 : 0.15)}, 
+              transparent)`,
+            animation: 'shimmerBanner 4s infinite',
+          },
+          '@keyframes shimmerBanner': {
+            '0%': { left: '-100%' },
+            '100%': { left: '100%' },
+          },
+        }}
+      >
+        <Stack 
+          direction="row" 
+          alignItems="center" 
+          justifyContent="center" 
+          spacing={2}
+          sx={{ flexWrap: { xs: 'wrap', md: 'nowrap' } }}
+        >
+          <LocalOffer sx={{ 
+            color: isDarkMode ? '#fbbf24' : '#f59e0b',
+            display: { xs: 'none', sm: 'block' },
+            fontSize: 18,
+            opacity: 0.9
+          }} />
+          <Typography 
+            variant="caption" 
+            fontWeight={600} 
+            sx={{ 
+              textAlign: 'center',
+              color: isDarkMode ? '#fef3c7' : '#92400e',
+              letterSpacing: '0.3px',
+              fontSize: '0.75rem',
+              textShadow: isDarkMode 
+                ? '0 1px 2px rgba(0, 0, 0, 0.3)'
+                : 'none'
+            }}
+          >
+            {t('promotionalBanner.text')}
+          </Typography>
+          <Button
+            size="small"
+            variant="contained"
+            component={Link}
+            href="/master-course"
+            sx={{
+              backgroundColor: isDarkMode ? '#16a34a' : '#16a34a',
+              color: 'white',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+              fontSize: '0.7rem',
+              py: 0.3,
+              px: 1.5,
+              minHeight: 'auto',
+              boxShadow: '0 2px 8px rgba(22, 163, 74, 0.2)',
+              '&:hover': {
+                backgroundColor: '#15803d',
+                boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+              },
+            }}
+          >
+            {t('promotionalBanner.buttonText')}
+          </Button>
+        </Stack>
+      </Box>
+      
+      {/* Original TopBar Content */}
+      <Box
+        sx={{
+          backgroundColor: '#0a0a0a',
+          color: 'rgba(255, 255, 255, 0.8)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          fontSize: '0.75rem',
+          height: 36,
+        }}
+      >
+        <Container maxWidth={false}>
         <Box
           sx={{
             display: 'flex',
@@ -456,6 +617,7 @@ export function TopBar() {
           </Box>
         </Box>
       </Container>
+    </Box>
     </Box>
   );
 }

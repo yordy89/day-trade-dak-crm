@@ -19,7 +19,7 @@
   "pricing": {
     "title": "Precio Especial",
     "description": "Todo incluido: Hotel, comidas y entrenamiento",
-    "limitedSpots": "Cupos limitados • Solo 30 lugares disponibles"
+    "limitedSpots": "Cupos limitados • Solo 25 lugares disponibles"
   },
   "included": {
     "title": "¿Qué incluye tu inversión?",
@@ -171,7 +171,7 @@
   },
   "cta": {
     "title": "¡Únete a este evento exclusivo!",
-    "subtitle": "Solo 30 cupos disponibles para mantener la calidad y atención personalizada",
+    "subtitle": "Solo 25 cupos disponibles para mantener la calidad y atención personalizada",
     "warning": {
       "title": "Este evento es exclusivo para miembros activos de DayTradeDak",
       "description": "Necesitas tener una suscripción activa para poder participar"

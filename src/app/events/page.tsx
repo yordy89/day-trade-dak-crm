@@ -46,6 +46,7 @@ import { MainNavbar } from '@/components/landing/main-navbar';
 import { TopBar } from '@/components/landing/top-bar';
 import { useTheme } from '@/components/theme/theme-provider';
 import { eventService, type Event } from '@/services/api/event.service';
+import { getUTCDateAsLocal, isUTCDateInPast } from '@/lib/date-utils';
 
 // Event Card Component
 const EventCard = ({ event, onClick }: { event: Event; onClick: () => void }) => {
@@ -54,8 +55,9 @@ const EventCard = ({ event, onClick }: { event: Event; onClick: () => void }) =>
   const { isDarkMode } = useTheme();
   const { i18n } = useTranslation();
   
-  const eventDate = new Date(event.date || event.startDate || '');
-  const isPastEvent = eventDate < new Date();
+  // Use utility function to get correct date without timezone conversion
+  const eventDate = getUTCDateAsLocal(event.date || event.startDate || '');
+  const isPastEvent = isUTCDateInPast(event.date || event.startDate || '');
   const hasVipAccess = event.vipPrice && event.vipPrice > 0;
   
   return (

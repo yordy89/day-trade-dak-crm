@@ -1,12 +1,15 @@
 import API from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryOptions } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 export interface Settings {
   general?: Record<string, any>;
   social_media?: Record<string, any>;
   contact?: Record<string, any>;
   footer?: Record<string, any>;
+  footer_es?: Record<string, any>;
+  footer_en?: Record<string, any>;
   branding?: Record<string, any>;
   features?: Record<string, any>;
   [key: string]: Record<string, any> | undefined;
@@ -41,6 +44,22 @@ class SettingsService {
     return this.settings?.[category]?.[key] ?? defaultValue;
   }
 
+  getLocalizedFooterSetting(key: string, lang: string = 'en'): string | null {
+    const footerKey = `footer_${lang}`;
+    
+    // First try language-specific footer settings
+    if (this.settings?.[footerKey]?.[key]) {
+      return this.settings[footerKey][key];
+    }
+    
+    // Fallback to general footer settings
+    if (this.settings?.footer?.[key]) {
+      return this.settings.footer[key];
+    }
+    
+    return null;
+  }
+
   private getDefaultSettings(): Settings {
     return {
       social_media: {
@@ -58,8 +77,16 @@ class SettingsService {
         contact_address: 'Miami, Florida, USA',
       },
       footer: {
+        footer_copyright_text: '© {{year}} DayTradeDak. All rights reserved.',
+        footer_company_description: 'Your trusted platform for professional trading. Training, mentorship and community for serious traders.',
+      },
+      footer_es: {
         footer_copyright_text: '© {{year}} DayTradeDak. Todos los derechos reservados.',
         footer_company_description: 'Tu plataforma de confianza para el trading profesional. Formación, mentoría y comunidad para traders serios.',
+      },
+      footer_en: {
+        footer_copyright_text: '© {{year}} DayTradeDak. All rights reserved.',
+        footer_company_description: 'Your trusted platform for professional trading. Training, mentorship and community for serious traders.',
       },
       branding: {
         company_name: 'DayTradeDak',
@@ -86,6 +113,23 @@ export function useSettings(options?: UseQueryOptions<Settings>) {
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
     ...options,
   });
+}
+
+// Hook to get localized footer settings
+export function useLocalizedFooterSettings() {
+  const { data: settings } = useSettings();
+  const { i18n } = useTranslation();
+  const lang = i18n.language || 'en';
+  const footerKey = `footer_${lang}`;
+  
+  return {
+    description: settings?.[footerKey]?.footer_company_description || 
+                 settings?.footer?.footer_company_description || 
+                 null,
+    copyright: settings?.[footerKey]?.footer_copyright_text || 
+               settings?.footer?.footer_copyright_text || 
+               null,
+  };
 }
 
 // Utility function to process copyright text

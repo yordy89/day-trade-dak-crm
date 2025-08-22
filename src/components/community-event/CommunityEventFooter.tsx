@@ -19,8 +19,10 @@ import {
   Phone
 } from '@mui/icons-material';
 import { FaTiktok } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 export function CommunityEventFooter() {
+  const { t } = useTranslation('common');
   return (
     <Box
       component="footer"
@@ -43,8 +45,7 @@ export function CommunityEventFooter() {
               DayTradeDak
             </Typography>
             <Typography variant="body2" sx={{ mb: 3, color: alpha('#ffffff', 0.8) }}>
-              Tu plataforma de confianza para el trading profesional. Formación, mentoría y 
-              comunidad para traders serios.
+              {t('footer.tagline')}
             </Typography>
             <Stack spacing={1}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -82,10 +83,10 @@ export function CommunityEventFooter() {
           {/* Social Media Section */}
           <Grid item xs={12} md={4}>
             <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-              Síguenos
+              {t('footer.followUs')}
             </Typography>
             <Typography variant="body2" sx={{ mb: 2, color: alpha('#ffffff', 0.8) }}>
-              Únete a nuestra comunidad de traders en las redes sociales
+              {t('footer.socialDescription')}
             </Typography>
             <Stack direction="row" spacing={1}>
               <IconButton
@@ -166,7 +167,7 @@ export function CommunityEventFooter() {
           }}
         >
           <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.6) }}>
-            © 2025 DayTradeDak. Todos los derechos reservados.
+            © 2025 DayTradeDak. {t('footer.allRightsReserved')}
           </Typography>
           <Stack 
             direction="row" 
@@ -186,7 +187,7 @@ export function CommunityEventFooter() {
                 }
               }}
             >
-              Política de Privacidad
+              {t('footer.privacyPolicy')}
             </MuiLink>
             <Typography sx={{ color: alpha('#ffffff', 0.4) }}>•</Typography>
             <MuiLink 
@@ -201,7 +202,7 @@ export function CommunityEventFooter() {
                 }
               }}
             >
-              Términos y Condiciones
+              {t('footer.termsConditions')}
             </MuiLink>
           </Stack>
         </Box>

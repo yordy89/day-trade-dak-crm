@@ -19,7 +19,7 @@
   "pricing": {
     "title": "Special Price",
     "description": "All inclusive: Hotel, meals and training",
-    "limitedSpots": "Limited spots • Only 30 places available"
+    "limitedSpots": "Limited spots • Only 25 places available"
   },
   "included": {
     "title": "What's included with your investment?",
@@ -171,7 +171,7 @@
   },
   "cta": {
     "title": "Join this exclusive event!",
-    "subtitle": "Only 30 spots available to maintain quality and personalized attention",
+    "subtitle": "Only 25 spots available to maintain quality and personalized attention",
     "warning": {
       "title": "This event is exclusive for active DayTradeDak members",
       "description": "You need to have an active subscription to participate"

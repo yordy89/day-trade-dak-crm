@@ -883,8 +883,9 @@ export function AccountPageClient(): React.JSX.Element {
               return activeSubscriptions.length > 0 ? (
                 <Grid container spacing={{ xs: 2, sm: 2 }}>
                   {activeSubscriptions.map((subscription: any) => {
-                    const plan = typeof subscription === 'string' ? subscription : subscription.plan;
-                    const expiresAt = typeof subscription === 'object' ? subscription.expiresAt : null;
+                    if (!subscription) return null; // Handle null/undefined subscription
+                    const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
+                    const expiresAt = typeof subscription === 'object' ? subscription?.expiresAt : null;
                     
                     
                     // Determine if subscription is recurring or one-time
@@ -1075,8 +1076,9 @@ export function AccountPageClient(): React.JSX.Element {
                 </Typography>
                 <Stack spacing={2}>
                   {expiredSubscriptions.map((subscription: any) => {
-                    const plan = subscription.plan;
-                    const expiredDate = subscription.expiresAt;
+                    if (!subscription) return null; // Handle null/undefined subscription
+                    const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
+                    const expiredDate = typeof subscription === 'object' ? subscription?.expiresAt : null;
                     
                     return (
                       <Card key={`expired-${plan}`} sx={{ opacity: 0.7 }}>
