@@ -217,12 +217,13 @@ export function MainNavbar() {
           background: isDarkMode 
             ? 'linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%)'
             : 'linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%)',
-          zIndex: 1400,
+          zIndex: 1500, // Higher than TopBar to overlay everything
           boxShadow: '-4px 0 15px rgba(0,0,0,0.2)',
+          top: { xs: 0, md: 0 }, // Full height drawer
         },
       }}
       sx={{
-        zIndex: 1400,
+        zIndex: 1500,
       }}
     >
       {/* Header with gradient */}
@@ -474,7 +475,7 @@ export function MainNavbar() {
         position="fixed"
         elevation={scrolled ? 1 : 0}
         sx={{
-          top: { xs: 60, md: 66 }, // Updated: TopBar (32/36px) + Promotional Banner (~28/30px)
+          top: { xs: 72, md: 66 }, // Updated: Mobile has 36px promo + 36px market bar = 72px
           backgroundColor: scrolled 
             ? (isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)')
             : (isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),
@@ -482,6 +483,7 @@ export function MainNavbar() {
           borderBottom: '1px solid',
           borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
           transition: 'all 0.3s ease',
+          zIndex: 1200, // Ensure it's below TopBar
         }}
       >
         <Toolbar sx={{ 

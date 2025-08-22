@@ -1425,16 +1425,30 @@ export default function MasterCoursePage() {
                   <Typography variant="h6" color="text.secondary">
                     {t('pricing.pricingSection.regularSubtitle')}
                   </Typography>
-                  <Stack direction="row" spacing={3} justifyContent="center" sx={{ mt: 2 }}>
+                  <Stack 
+                    direction={{ xs: 'column', sm: 'row' }} 
+                    spacing={{ xs: 1, sm: 3 }} 
+                    justifyContent="center" 
+                    alignItems="center"
+                    sx={{ mt: 2 }}
+                  >
                     <Chip 
                       icon={<CalendarToday />} 
                       label={t('phases.phase2.dates')} 
-                      color="primary" 
+                      color="primary"
+                      sx={{ 
+                        width: { xs: 'fit-content', sm: 'auto' },
+                        maxWidth: { xs: '100%', sm: 'auto' }
+                      }} 
                     />
                     <Chip 
                       icon={<LocationOn />} 
                       label="Tampa, FL" 
-                      color="secondary" 
+                      color="secondary"
+                      sx={{ 
+                        width: { xs: 'fit-content', sm: 'auto' },
+                        maxWidth: { xs: '100%', sm: 'auto' }
+                      }} 
                     />
                   </Stack>
                 </Box>

@@ -492,7 +492,7 @@ export default function CommunityEventPage() {
           sx={{
             position: 'relative',
             color: 'white',
-            pt: { xs: 12, sm: 14, md: 18 },
+            pt: { xs: 16, sm: 18, md: 20 },
             pb: { xs: 6, sm: 8, md: 12 },
             overflow: 'hidden',
             backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',

@@ -138,7 +138,14 @@ export function TopBar() {
   // Mobile version - simplified
   if (isMobile) {
     return (
-      <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1400 }}>
+      <Box sx={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        zIndex: 1400,
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+      }}>
         {/* Promotional Banner - Mobile */}
         <Box 
           sx={{ 
@@ -153,10 +160,13 @@ export function TopBar() {
                   ${alpha('#fed7aa', 0.25)} 100%)`,
             backdropFilter: 'blur(12px)',
             borderBottom: `1px solid ${alpha('#f59e0b', isDarkMode ? 0.2 : 0.3)}`,
-            py: 0.4,
-            px: 1,
+            py: 0.75,
+            px: 1.5,
             position: 'relative',
             overflow: 'hidden',
+            minHeight: 36,
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
           <Stack 
@@ -164,7 +174,7 @@ export function TopBar() {
             alignItems="center" 
             justifyContent="center" 
             spacing={1}
-            sx={{ flexWrap: 'wrap' }}
+            sx={{ width: '100%' }}
           >
             <Typography 
               variant="caption" 
@@ -172,7 +182,14 @@ export function TopBar() {
               sx={{ 
                 textAlign: 'center',
                 color: isDarkMode ? '#fef3c7' : '#92400e',
-                fontSize: '0.65rem',
+                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                display: '-webkit-box',
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                lineHeight: 1.4,
+                flex: 1,
+                mr: 0.5,
               }}
             >
               {t('promotionalBanner.text').split('|')[0]}
@@ -186,10 +203,11 @@ export function TopBar() {
                 backgroundColor: '#16a34a',
                 color: 'white',
                 fontWeight: 600,
-                fontSize: '0.6rem',
-                py: 0.2,
-                px: 1,
+                fontSize: '0.65rem',
+                py: 0.3,
+                px: 1.2,
                 minHeight: 'auto',
+                whiteSpace: 'nowrap',
                 '&:hover': {
                   backgroundColor: '#15803d',
                 },
@@ -207,7 +225,9 @@ export function TopBar() {
             color: 'rgba(255, 255, 255, 0.8)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
             fontSize: '0.7rem',
-            height: 32,
+            minHeight: 36,
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
           <Container maxWidth={false}>
@@ -216,12 +236,13 @@ export function TopBar() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              height: 32,
+              minHeight: 36,
+              py: 0.5,
               px: 1,
             }}
           >
             {/* Left - Market Status */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -242,16 +263,19 @@ export function TopBar() {
                   fontSize: '0.65rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
                 }}>
                   {t('topBar.market')}: {t(marketStatus.status)}
                 </Typography>
               </Box>
 
-              {/* Market Data */}
+              {/* Market Data - with separator */}
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: 0.5,
+                pl: 1,
+                borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
               }}>
                 <Typography variant="caption" sx={{ 
                   fontSize: '0.65rem',
@@ -278,28 +302,7 @@ export function TopBar() {
               </Box>
             </Box>
 
-            {/* Right - Live Button */}
-            <Link href="/live" style={{ textDecoration: 'none' }}>
-              <Button
-                size="small"
-                sx={{
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  fontSize: '0.6rem',
-                  fontWeight: 600,
-                  px: 1,
-                  py: 0.25,
-                  minHeight: 'auto',
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: '#059669',
-                  },
-                }}
-              >
-                Actualizaciones
-                en Vivo
-              </Button>
-            </Link>
+            {/* Right - Removed Live Button for cleaner mobile view */}
           </Box>
         </Container>
       </Box>
