@@ -571,7 +571,7 @@ export default function MasterCoursePage() {
                           {t('hero.flexiblePayments', 'Flexible Payment Options Available!')}
                         </Typography>
                         <Typography variant="caption" sx={{ color: alpha('#fff', 0.9) }}>
-                          {t('hero.bnplOptions', 'Opciones de pago flexible disponibles con Klarna')}
+                          {t('hero.bnplOptions', 'Opciones de pago flexible disponibles con Klarna y Afterpay')}
                         </Typography>
                       </Box>
                     </Stack>
@@ -1502,7 +1502,7 @@ export default function MasterCoursePage() {
                     {t('pricing.flexiblePayments', 'Multiple Payment Options Available')}
                   </Typography>
                   <Typography variant="caption">
-                    {t('pricing.bnplOptions', 'Paga completo con tarjeta o elige Klarna para pagos flexibles sin intereses')}
+                    {t('pricing.bnplOptions', 'Paga completo con tarjeta o elige Klarna y Afterpay para pagos flexibles')}
                   </Typography>
                 </Alert>
 

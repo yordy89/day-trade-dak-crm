@@ -255,7 +255,7 @@ export function EventRegistrationModal({
   const [additionalAdults, setAdditionalAdults] = useState(0);
   const [additionalChildren, setAdditionalChildren] = useState(0);
   const [totalPrice, setTotalPrice] = useState(event.price || 0);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | 'afterpay' | null>(null);
   
   // Referral code states
   const [referralCode, setReferralCode] = useState('');
@@ -272,6 +272,7 @@ export function EventRegistrationModal({
   const ADULT_PRICE = 75;
   const CHILD_PRICE = 48;
   const KLARNA_FEE_PERCENTAGE = 0.0644; // 6.44%
+  const AFTERPAY_FEE_PERCENTAGE = 0.06; // 6% (hidden from customer)
 
   // Calculate total price whenever attendees or discount change
   useEffect(() => {
@@ -380,7 +381,7 @@ export function EventRegistrationModal({
     }
   };
 
-  const handleSubmit = async (paymentMethod: 'card' | 'klarna') => {
+  const handleSubmit = async (paymentMethod: 'card' | 'klarna' | 'afterpay') => {
     setIsLoading(true);
     setSelectedPaymentMethod(paymentMethod);
 
@@ -1304,6 +1305,58 @@ export function EventRegistrationModal({
                     </span>
                     <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
                       (incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento)
+                    </span>
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={() => handleSubmit('afterpay')}
+                disabled={isLoading && selectedPaymentMethod === 'afterpay'}
+                variant="contained"
+                size="medium"
+                fullWidth
+                startIcon={isLoading && selectedPaymentMethod === 'afterpay' ? <CircularProgress size={18} color="inherit" /> : <CreditCard />}
+                sx={{
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  py: { xs: 1.5, sm: 1.25 },
+                  px: { xs: 2, sm: 2.5 },
+                  fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                  fontWeight: 600,
+                  background: selectedPaymentMethod === 'afterpay' && isLoading ? buttonBackground : 'linear-gradient(135deg, #00D4AA 0%, #00C19F 100%)',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  minHeight: { xs: '72px', sm: 'auto' },
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #00C19F 0%, #00B594 100%)',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                    transform: 'translateY(-1px)',
+                  },
+                  '&:disabled': {
+                    opacity: 0.6,
+                  },
+                  '@media (max-width: 600px)': {
+                    '& .MuiButton-startIcon': {
+                      display: 'none',
+                    },
+                  },
+                }}
+              >
+                {isLoading && selectedPaymentMethod === 'afterpay' ? (
+                  t('status.processing')
+                ) : (
+                  <>
+                    <span>{t('events.registration.modal.payWithAfterpay', 'Pagar con Afterpay')}</span>
+                    <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
+                      ${(totalPrice * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
+                    </span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
+                      {t('events.registration.modal.afterpayDescription', '4 pagos sin intereses')}
                     </span>
                   </>
                 )}

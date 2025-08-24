@@ -10,7 +10,7 @@
     "live": "En Vivo",
     "classes": "Clases",
     "masterClass": "Master Clases",
-    "liveGrabados": "Live Grabados",
+    "liveGrabados": "Clases Diarias Grabadas",
     "event": "Evento",
     "shop": "Tienda",
     "about": "Sobre Nosotros",
@@ -40,7 +40,7 @@
     "pro": "Pro",
     "enterprise": "Empresa",
     "mentorship": "Mentorías",
-    "liveRecorded": "Live Grabados",
+    "liveRecorded": "Clases Diarias Grabadas",
     "masterClases": "Master Clases",
     "peaceWithMoney": "Paz con el Dinero",
     "psicotrading": "PsicoTrading",
@@ -213,7 +213,7 @@
         "tooltip": "$22.99 con suscripción Live"
       },
       "liveRecorded": {
-        "name": "Live Grabados",
+        "name": "Clases Diarias Grabadas",
         "description": "Biblioteca completa de sesiones de trading en vivo",
         "features": [
           "Acceso a todas las sesiones grabadas",
@@ -281,7 +281,7 @@
       "benefits": {
         "title": "¡Beneficios de tu suscripción Live activa!",
         "masterClassesDiscount": "• Master Clases: Precio especial de $22.99 (normalmente $199.99)",
-        "freeRecorded": "• Live Grabados: Acceso GRATIS incluido"
+        "freeRecorded": "• Clases Diarias Grabadas: Acceso GRATIS incluido"
       }
     },
     "buttons": {
@@ -758,7 +758,7 @@
       "mentorship": "Mentorías",
       "classes": "Clases",
       "masterClass": "Master Clases",
-      "liveRecorded": "Live Grabados",
+      "liveRecorded": "Clases Diarias Grabadas",
       "psicotrading": "PsicoTrading",
       "personalGrowth": "Crecimiento Personal",
       "peaceWithMoney": "Paz Con El Dinero",

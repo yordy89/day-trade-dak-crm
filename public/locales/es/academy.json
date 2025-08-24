@@ -234,7 +234,7 @@
         "description": "Clases magistrales de trading profesional"
       },
       "liveRecorded": {
-        "name": "Live Grabados",
+        "name": "Clases Diarias Grabadas",
         "description": "Biblioteca completa de sesiones de trading en vivo"
       },
       "psicoTrading": {
@@ -590,7 +590,7 @@
     "accessExclusiveKnowledge": "Únete a nuestra comunidad y aprende de traders experimentados en sesiones en vivo"
   },
   "liveRecorded": {
-    "title": "Live Grabados",
+    "title": "Clases Diarias Grabadas",
     "subtitle": "Accede a todas las grabaciones de nuestras sesiones de trading en vivo",
     "description": "Revive nuestras clases diarias de trading. Cada sesión incluye análisis del mercado, operaciones reales y explicaciones detalladas. Aprende a tu propio ritmo con acceso completo a todas las grabaciones.",
     "viewLiveClasses": "Ver Clases en Vivo",
@@ -601,7 +601,7 @@
     "accessRequired": "Acceso Requerido",
     "needSubscriptionOrPermission": "Necesitas una suscripción activa o permiso para ver este contenido",
     "viewPlans": "Ver Planes",
-    "libraryTitle": "Biblioteca de Live Grabados",
+    "libraryTitle": "Biblioteca de Clases Diarias Grabadas",
     "libraryDescription": "Explora nuestra colección completa de sesiones de trading en vivo grabadas. Cada grabación incluye análisis del mercado, operaciones reales y técnicas explicadas paso a paso.",
     "mondayToFriday": "Lunes a Viernes",
     "activeCommunity": "Comunidad Activa",
