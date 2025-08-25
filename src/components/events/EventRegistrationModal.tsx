@@ -32,6 +32,7 @@ import {
   Remove,
   ChildCare,
   LocalOffer,
+  AccountBalanceWallet as Wallet,
 } from '@mui/icons-material';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import FormControl from '@mui/material/FormControl';
@@ -229,6 +230,7 @@ interface EventRegistrationModalProps {
   };
   userId?: string;
   userEmail?: string;
+  user?: any; // Full user object for checking approvedForLocalFinancing
 }
 
 export function EventRegistrationModal({
@@ -237,6 +239,7 @@ export function EventRegistrationModal({
   event,
   userId,
   userEmail,
+  user,
 }: EventRegistrationModalProps) {
   const router = useRouter();
   const theme = useTheme();
@@ -255,7 +258,8 @@ export function EventRegistrationModal({
   const [additionalAdults, setAdditionalAdults] = useState(0);
   const [additionalChildren, setAdditionalChildren] = useState(0);
   const [totalPrice, setTotalPrice] = useState(event.price || 0);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | 'afterpay' | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | 'afterpay' | 'local_financing' | null>(null);
+  const [selectedFinancingPlan, setSelectedFinancingPlan] = useState<string | null>(null);
   
   // Referral code states
   const [referralCode, setReferralCode] = useState('');
@@ -381,7 +385,7 @@ export function EventRegistrationModal({
     }
   };
 
-  const handleSubmit = async (paymentMethod: 'card' | 'klarna' | 'afterpay') => {
+  const handleSubmit = async (paymentMethod: 'card' | 'klarna' | 'afterpay' | 'local_financing', financingPlanId?: string) => {
     setIsLoading(true);
     setSelectedPaymentMethod(paymentMethod);
 
@@ -420,6 +424,7 @@ export function EventRegistrationModal({
         additionalInfo,
         userId,
         paymentMethod, // Add payment method to checkout data
+        financingPlanId, // Add financing plan ID if using local financing
       };
       
       // Add affiliate data if code is validated
@@ -1361,6 +1366,61 @@ export function EventRegistrationModal({
                   </>
                 )}
               </Button>
+
+              {/* Local Financing Option - Only show if user is approved */}
+              {user?.approvedForLocalFinancing && (
+                <Button
+                  onClick={() => handleSubmit('local_financing', '4_biweekly')}
+                  disabled={isLoading && selectedPaymentMethod === 'local_financing'}
+                  variant="contained"
+                  size="medium"
+                  fullWidth
+                  startIcon={isLoading && selectedPaymentMethod === 'local_financing' ? <CircularProgress size={18} color="inherit" /> : <Wallet />}
+                  sx={{
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    py: { xs: 1.5, sm: 1.25 },
+                    px: { xs: 2, sm: 2.5 },
+                    fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                    fontWeight: 600,
+                    background: selectedPaymentMethod === 'local_financing' && isLoading ? buttonBackground : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    minHeight: { xs: '72px', sm: 'auto' },
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                      transform: 'translateY(-1px)',
+                    },
+                    '&:disabled': {
+                      opacity: 0.6,
+                    },
+                    '@media (max-width: 600px)': {
+                      '& .MuiButton-startIcon': {
+                        display: 'none',
+                      },
+                    },
+                  }}
+                >
+                  {isLoading && selectedPaymentMethod === 'local_financing' ? (
+                    t('status.processing')
+                  ) : (
+                    <>
+                      <span>{t('events.registration.modal.payWithLocalFinancing', 'Financiamiento DayTradeDak')}</span>
+                      <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
+                        4 pagos de ${(totalPrice / 4).toFixed(2)} USD
+                      </span>
+                      <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
+                        {t('events.registration.modal.localFinancingDescription', 'Sin verificación de crédito')}
+                      </span>
+                    </>
+                  )}
+                </Button>
+              )}
             </Box>
           ) : (
             <Button

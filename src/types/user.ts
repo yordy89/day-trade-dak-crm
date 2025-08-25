@@ -19,6 +19,13 @@ export interface User {
   };
   allowLiveMeetingAccess?: boolean;
   allowLiveWeeklyAccess?: boolean;
+  approvedForLocalFinancing?: boolean;
+  localFinancingDetails?: {
+    approvedBy: string;
+    approvedAt: Date;
+    maxAmount: number;
+    notes: string;
+  };
 }
 
 export enum SubscriptionPlan {

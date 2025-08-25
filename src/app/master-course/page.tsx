@@ -1593,6 +1593,7 @@ export default function MasterCoursePage() {
         event={event}
         userId={user?._id}
         userEmail={user?.email}
+        user={user}
       />
     ) : null}
     </>
