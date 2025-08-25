@@ -46,6 +46,7 @@ import {
   Groups,
   CameraAlt,
   RestaurantMenu,
+  Warning,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { EventRegistrationModal } from '@/components/events/EventRegistrationModal';
@@ -621,6 +622,32 @@ export default function CommunityEventPage() {
                         }
                       </Typography>
                     </Alert> : null}
+
+                  {/* Non-refundable Policy Warning */}
+                  <Alert 
+                    severity="warning"
+                    icon={<Warning />}
+                    sx={{ 
+                      mt: 3,
+                      backgroundColor: alpha(theme.palette.warning.main, 0.15),
+                      border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`,
+                      '& .MuiAlert-icon': {
+                        color: theme.palette.warning.main,
+                      },
+                    }}
+                  >
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2" fontWeight={700}>
+                        ⚠️ Política de No Reembolso
+                      </Typography>
+                      <Typography variant="caption" sx={{ display: 'block', lineHeight: 1.5 }}>
+                        Los pagos por las MENTORÍAS PRESENCIALES no son reembolsables. 
+                        Esta política se implementa para asegurar la planificación y el compromiso 
+                        tanto de los participantes, del equipo y de nuestro Mentor, garantizando así 
+                        la calidad y el valor de la experiencia educativa.
+                      </Typography>
+                    </Stack>
+                  </Alert>
 
                   <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: { xs: 'center', md: 'flex-start' }, width: '100%' }}>
                     <Button
