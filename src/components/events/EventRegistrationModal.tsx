@@ -19,6 +19,14 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 // import InputAdornment from '@mui/material/InputAdornment'; // Removed - no longer needed with CustomInput
 import { useTheme, alpha } from '@mui/material/styles';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 import {
   Close,
   Person,
@@ -33,6 +41,8 @@ import {
   ChildCare,
   LocalOffer,
   AccountBalanceWallet as Wallet,
+  ArrowBack,
+  ArrowForward,
 } from '@mui/icons-material';
 import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import FormControl from '@mui/material/FormControl';
@@ -259,7 +269,6 @@ export function EventRegistrationModal({
   const [additionalChildren, setAdditionalChildren] = useState(0);
   const [totalPrice, setTotalPrice] = useState(event.price || 0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | 'afterpay' | 'local_financing' | null>(null);
-  const [selectedFinancingPlan, setSelectedFinancingPlan] = useState<string | null>(null);
   
   // Referral code states
   const [referralCode, setReferralCode] = useState('');
@@ -272,11 +281,29 @@ export function EventRegistrationModal({
   const [affiliateDetails, setAffiliateDetails] = useState<any>(null);
   const [validationError, setValidationError] = useState('');
 
+  // Mobile responsive states
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [activeStep, setActiveStep] = useState(0);
+
   // Price constants
   const ADULT_PRICE = 75;
   const CHILD_PRICE = 48;
   const KLARNA_FEE_PERCENTAGE = 0.0644; // 6.44%
   const AFTERPAY_FEE_PERCENTAGE = 0.06; // 6% (hidden from customer)
+
+  // Mobile transition component
+  // Memoize the Transition component to prevent recreation
+  const Transition = React.useMemo(
+    () => React.forwardRef(function Transition(
+      props: TransitionProps & {
+        children: React.ReactElement;
+      },
+      ref: React.Ref<unknown>,
+    ) {
+      return <Slide direction="up" ref={ref} {...props} />;
+    }),
+    []
+  );
 
   // Calculate total price whenever attendees or discount change
   useEffect(() => {
@@ -300,6 +327,14 @@ export function EventRegistrationModal({
     setTotalPrice(finalPrice);
   }, [additionalAdults, additionalChildren, event.price, codeValidated, discountPercentage, discountFixedAmount, discountType]);
 
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveStep(0);
+      setSelectedPaymentMethod(null);
+    }
+  }, [isOpen]);
+
   // Debug event data
   console.log('Event data in modal:', event);
 
@@ -310,6 +345,7 @@ export function EventRegistrationModal({
       [name]: value,
     }));
   };
+
 
   const validateReferralCode = async () => {
     if (!referralCode.trim()) {
@@ -467,91 +503,163 @@ export function EventRegistrationModal({
     }
   };
 
-  const modalBackground = isDarkMode
-    ? '#1a1a1a'
-    : '#ffffff';
-
+  // Memoize style constants to prevent recalculation
+  const modalBackground = React.useMemo(() => isDarkMode ? '#1a1a1a' : '#ffffff', [isDarkMode]);
+  
   // Always use green theme colors for consistency
-  const headerBackground = `linear-gradient(135deg, ${alpha('#16a34a', 0.9)} 0%, ${alpha('#15803d', 0.9)} 100%)`;
+  const headerBackground = React.useMemo(() => 
+    `linear-gradient(135deg, ${alpha('#16a34a', 0.9)} 0%, ${alpha('#15803d', 0.9)} 100%)`,
+    []
+  );
 
   // Always use green theme colors for buttons
   const buttonBackground = 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)';
   const buttonHoverBackground = 'linear-gradient(135deg, #15803d 0%, #14532d 100%)';
 
+  // Define steps based on event type and mobile view
+  const steps = React.useMemo(() => {
+    if (event.type === 'community_event') {
+      return ['Información Personal', 'Invitados', 'Método de Pago'];
+    }
+    return ['Información Personal', 'Método de Pago'];
+  }, [event.type]);
+
+  // Validate current step before proceeding - memoize to prevent recreation
+  const validateStep = React.useCallback((step: number): boolean => {
+    if (step === 0) {
+      // Validate personal information
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber) {
+        toast.error('Por favor complete todos los campos requeridos');
+        return false;
+      }
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        toast.error('Por favor ingrese un email válido');
+        return false;
+      }
+      return true;
+    }
+    
+    if (event.type === 'community_event' && step === 1) {
+      // No validation needed for attendees
+      return true;
+    }
+    
+    return true;
+  }, [formData.firstName, formData.lastName, formData.email, formData.phoneNumber, event.type]);
+
+  // Handle step navigation - memoize to prevent recreation
+  const handleNext = React.useCallback(() => {
+    if (!validateStep(activeStep)) return;
+    setActiveStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
+  }, [activeStep, validateStep, steps.length]);
+
+  const handleBack = React.useCallback(() => {
+    setActiveStep((prevStep) => Math.max(prevStep - 1, 0));
+  }, []);
+
+  const handleStepClick = React.useCallback((step: number) => {
+    // Only allow going back to previous steps
+    if (step < activeStep) {
+      setActiveStep(step);
+    } else if (step === activeStep + 1) {
+      // Allow going forward only to the next step if current step is valid
+      if (validateStep(activeStep)) {
+        setActiveStep(step);
+      }
+    }
+  }, [activeStep, validateStep]);
+
+  // Memoize dialog paper props to prevent recreation
+  const dialogPaperProps = React.useMemo(() => ({
+    sx: {
+      borderRadius: isMobile ? 0 : '12px',
+      background: modalBackground,
+      backdropFilter: 'blur(10px)',
+      border: isMobile ? 'none' : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+      boxShadow: isMobile ? 'none' : isDarkMode 
+        ? '0 20px 25px -5px rgba(0, 0, 0, 0.3)' 
+        : '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+      maxWidth: isMobile ? '100%' : '900px',
+      width: isMobile ? '100%' : '95vw',
+      height: isMobile ? '100vh' : 'fit-content',
+      maxHeight: isMobile ? '100vh' : '90vh',
+      margin: isMobile ? 0 : 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+    },
+  }), [isMobile, modalBackground, isDarkMode]);
+
   return (
     <Dialog
       open={isOpen}
       onClose={onClose}
-      maxWidth="lg"
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: '12px',
-          background: modalBackground,
-          backdropFilter: 'blur(10px)',
-          border: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-          boxShadow: isDarkMode 
-            ? '0 20px 25px -5px rgba(0, 0, 0, 0.3)' 
-            : '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-          maxWidth: '900px',
-          width: '95vw',
-          height: 'fit-content',
-          maxHeight: '90vh',
-          margin: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          '@media (max-width: 600px)': {
-            maxHeight: '85vh',
-            margin: '10px',
-            width: 'calc(100vw - 20px)',
-          },
-        },
-      }}
+      maxWidth={isMobile ? false : "lg"}
+      fullWidth={!isMobile}
+      fullScreen={isMobile}
+      TransitionComponent={isMobile ? Transition : undefined}
+      PaperProps={dialogPaperProps}
     >
       {/* Header */}
-      <Box
-        sx={{
-          background: headerBackground,
-          color: 'white',
-          p: 2,
-          position: 'relative',
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
-          flexShrink: 0,
-          '@media (max-width: 600px)': {
-            p: 1.5,
-          },
-        }}
-      >
-        <IconButton
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: 'white',
-            backgroundColor: alpha('#000', 0.2),
-            '&:hover': {
-              backgroundColor: alpha('#000', 0.3),
-            },
+      {isMobile ? (
+        <AppBar 
+          position="static" 
+          sx={{ 
+            background: headerBackground,
+            boxShadow: 'none',
           }}
         >
-          <Close />
-        </IconButton>
+          <Toolbar sx={{ px: 2, py: 1 }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={onClose}
+              sx={{ mr: 2 }}
+            >
+              <Close />
+            </IconButton>
+            <Typography variant="h6" sx={{ flex: 1, fontWeight: 600 }}>
+              {event.title || event.name}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      ) : (
+        <Box
+          sx={{
+            background: headerBackground,
+            color: 'white',
+            p: 2,
+            position: 'relative',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            flexShrink: 0,
+          }}
+        >
+          <IconButton
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: 'white',
+              backgroundColor: alpha('#000', 0.2),
+              '&:hover': {
+                backgroundColor: alpha('#000', 0.3),
+              },
+            }}
+          >
+            <Close />
+          </IconButton>
 
-        <Stack spacing={1.5} sx={{ pr: 6 }}>
-          <Typography variant="h5" fontWeight={700} sx={{ 
-            lineHeight: 1.2,
-            '@media (max-width: 600px)': {
-              fontSize: '1.25rem',
-            },
-          }}>
-            {t('events.registration.modal.registerFor')} {event.title || event.name}
-          </Typography>
-          
-          <Stack direction="row" spacing={2} alignItems="center">
-            {event.price !== null && event.price !== undefined && event.price > 0 ? (
+          <Stack spacing={1.5} sx={{ pr: 6 }}>
+            <Typography variant="h5" fontWeight={700} sx={{ lineHeight: 1.2 }}>
+              {t('events.registration.modal.registerFor')} {event.title || event.name}
+            </Typography>
+            
+            <Stack direction="row" spacing={2} alignItems="center">
+              {event.price !== null && event.price !== undefined && event.price > 0 ? (
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 {codeValidated && discountAmount > 0 && (
                   <Chip
@@ -593,22 +701,56 @@ export function EventRegistrationModal({
               {t('events.registration.modal.completeRegistration')}
             </Typography>
           </Stack>
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+      )}
+
+      {/* Mobile Stepper */}
+      {isMobile && (
+        <Box 
+          sx={{ 
+            backgroundColor: modalBackground,
+            borderBottom: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+            px: 2,
+            py: 1.5,
+          }}
+        >
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label, index) => (
+              <Step key={label}>
+                <StepLabel 
+                  onClick={() => handleStepClick(index)}
+                  sx={{ 
+                    cursor: index <= activeStep ? 'pointer' : 'default',
+                    '& .MuiStepLabel-label': {
+                      fontSize: '0.75rem',
+                      mt: 0.5,
+                    },
+                    '& .MuiStepIcon-root': {
+                      fontSize: '1.2rem',
+                    },
+                  }}
+                >
+                  {label}
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
+      )}
 
       {/* Form Content */}
       <DialogContent sx={{ 
-        p: 1.25,
-        pt: 0.75,
-        pb: 0.5,
+        p: isMobile ? 2 : 1.25,
+        pt: isMobile ? 2 : 0.75,
+        pb: isMobile ? 10 : 0.5, // Add padding for fixed navigation buttons on mobile
         backgroundColor: modalBackground,
         flex: '1 1 auto',
         overflow: 'auto',
         minHeight: 0,
-        maxHeight: 'calc(100vh - 250px)',
-        '@media (max-width: 600px)': {
-          maxHeight: 'calc(100vh - 280px)',
-        },
+        maxHeight: isMobile 
+          ? 'calc(100vh - 200px)' // Account for header and stepper
+          : 'calc(100vh - 250px)',
         '&::-webkit-scrollbar': {
           width: '8px',
         },
@@ -625,23 +767,27 @@ export function EventRegistrationModal({
         },
       }}>
         <Box component="form" id="event-registration-form">
-          <Grid container spacing={0.75}>
-            {/* Personal Information Section */}
-            <Grid item xs={12}>
-              <Typography 
-                variant="h6" 
-                fontWeight={600} 
-                gutterBottom
-                sx={{ 
-                  color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
-                  mb: 0.5
-                }}
-              >
-                {t('events.registration.modal.personalInformation')}
-              </Typography>
-            </Grid>
+          {/* Mobile Step-based Content */}
+          {isMobile ? (
+            <Box>
+              {/* Step 0: Personal Information */}
+              {activeStep === 0 && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Typography 
+                      variant="h6" 
+                      fontWeight={600} 
+                      gutterBottom
+                      sx={{ 
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                        mb: 2
+                      }}
+                    >
+                      {t('events.registration.modal.personalInformation')}
+                    </Typography>
+                  </Grid>
 
-            <Grid item xs={12} sm={6}>
+                  <Grid item xs={12}>
               <CustomInput
                 icon={<Person />}
                 label={t('events.registration.modal.firstName')}
@@ -654,9 +800,9 @@ export function EventRegistrationModal({
                 isDarkMode={isDarkMode}
                 muiTheme={theme}
               />
-            </Grid>
-            
-            <Grid item xs={12} sm={6}>
+                  </Grid>
+                  
+                  <Grid item xs={12}>
               <CustomInput
                 icon={<Person />}
                 label={t('events.registration.modal.lastName')}
@@ -669,9 +815,9 @@ export function EventRegistrationModal({
                 isDarkMode={isDarkMode}
                 muiTheme={theme}
               />
-            </Grid>
-            
-            <Grid item xs={12} sm={7}>
+                  </Grid>
+                  
+                  <Grid item xs={12}>
               <CustomInput
                 icon={<Email />}
                 label={t('events.registration.modal.email')}
@@ -685,9 +831,9 @@ export function EventRegistrationModal({
                 isDarkMode={isDarkMode}
                 muiTheme={theme}
               />
-            </Grid>
-            
-            <Grid item xs={12} sm={5}>
+                  </Grid>
+                  
+                  <Grid item xs={12}>
               <CustomInput
                 icon={<Phone />}
                 label={t('events.registration.modal.phone')}
@@ -701,11 +847,11 @@ export function EventRegistrationModal({
                 isDarkMode={isDarkMode}
                 muiTheme={theme}
               />
-            </Grid>
+                  </Grid>
 
-            {/* Referral Code Field - Only for Master Course */}
-            {event.type === 'master_course' && (
-              <Grid item xs={12}>
+                  {/* Referral Code Field - Only for Master Course */}
+                  {event.type === 'master_course' && (
+                    <Grid item xs={12}>
                 <CustomInput
                   icon={<LocalOffer />}
                   label="Referral Code (Optional)"
@@ -722,7 +868,7 @@ export function EventRegistrationModal({
                   disabled={isLoading || codeValidated}
                   isDarkMode={isDarkMode}
                   muiTheme={theme}
-                  error={!!validationError}
+                  error={Boolean(validationError)}
                   helperText={validationError}
                   endAdornment={
                     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -760,67 +906,69 @@ export function EventRegistrationModal({
                         <> from {affiliateDetails.affiliateName}</>
                       )}
                     </Typography>
-                  </Alert>
-                )}
-              </Grid>
-            )}
+                    </Alert>
+                  )}
+                    </Grid>
+                  )}
 
-            {/* Master Course specific fields */}
-            {event.type === 'master_course' ? (
-              <>
-                <Grid item xs={12}>
-                  <Typography 
-                    variant="h6" 
-                    fontWeight={600} 
-                    gutterBottom 
-                    sx={{ 
-                      mt: 0.5,
-                      color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
-                      mb: 0.5
-                    }}
-                  >
-                    {t('events.registration.modal.tradingBackground')}
-                  </Typography>
+                  {/* Master Course specific fields */}
+                  {event.type === 'master_course' && (
+                    <>
+                      <Grid item xs={12}>
+                        <Typography 
+                          variant="h6" 
+                          fontWeight={600} 
+                          gutterBottom 
+                          sx={{ 
+                            mt: 2,
+                            color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                            mb: 1
+                          }}
+                        >
+                          {t('events.registration.modal.tradingBackground')}
+                        </Typography>
+                      </Grid>
+                      
+                      <Grid item xs={12}>
+                        <CustomInput
+                          icon={<TrendingUp />}
+                          label={t('events.registration.modal.tradingExperience')}
+                          name="tradingExperience"
+                          value={formData.tradingExperience}
+                          onChange={handleInputChange}
+                          placeholder={t('events.registration.modal.tradingExperiencePlaceholder')}
+                          multiline
+                          rows={3}
+                          disabled={isLoading}
+                          isDarkMode={isDarkMode}
+                          muiTheme={theme}
+                        />
+                      </Grid>
+                      
+                      <Grid item xs={12}>
+                        <CustomInput
+                          icon={<Psychology />}
+                          label={t('events.registration.modal.expectationsLabel')}
+                          name="expectations"
+                          value={formData.expectations}
+                          onChange={handleInputChange}
+                          placeholder={t('events.registration.modal.expectationsShortPlaceholder')}
+                          multiline
+                          rows={3}
+                          disabled={isLoading}
+                          isDarkMode={isDarkMode}
+                          muiTheme={theme}
+                        />
+                      </Grid>
+                    </>
+                  )}
                 </Grid>
-                
-                <Grid item xs={12} md={6}>
-                  <CustomInput
-                    icon={<TrendingUp />}
-                    label={t('events.registration.modal.tradingExperience')}
-                    name="tradingExperience"
-                    value={formData.tradingExperience}
-                    onChange={handleInputChange}
-                    placeholder={t('events.registration.modal.tradingExperiencePlaceholder')}
-                    multiline
-                    rows={2}
-                    disabled={isLoading}
-                    isDarkMode={isDarkMode}
-                    muiTheme={theme}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} md={6}>
-                  <CustomInput
-                    icon={<Psychology />}
-                    label={t('events.registration.modal.expectationsLabel')}
-                    name="expectations"
-                    value={formData.expectations}
-                    onChange={handleInputChange}
-                    placeholder={t('events.registration.modal.expectationsShortPlaceholder')}
-                    multiline
-                    rows={2}
-                    disabled={isLoading}
-                    isDarkMode={isDarkMode}
-                    muiTheme={theme}
-                  />
-                </Grid>
-              </>
-            ) : null}
+              )}
 
-            {/* Additional Attendees for Community Event */}
-            {event.type === 'community_event' ? (
-              <>
-                <Grid item xs={12}>
+              {/* Step 1: Additional Attendees for Community Event */}
+              {event.type === 'community_event' && activeStep === 1 && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
                   <Divider sx={{ my: 1 }} />
                   <Typography 
                     variant="subtitle1" 
@@ -837,8 +985,8 @@ export function EventRegistrationModal({
                   </Typography>
                 </Grid>
 
-                {/* Quantity Selectors */}
-                <Grid item xs={12} sm={6}>
+                  {/* Quantity Selectors */}
+                  <Grid item xs={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -923,9 +1071,9 @@ export function EventRegistrationModal({
                       </Stack>
                     </Stack>
                   </Paper>
-                </Grid>
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
+                  <Grid item xs={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -1069,11 +1217,287 @@ export function EventRegistrationModal({
                     {tCommunity('registration.additionalAttendees.note', 'Nota: Los invitados adicionales SOLO podrán asistir a la cena del sábado. No tendrán acceso a las sesiones de entrenamiento ni a otras actividades del evento.')}
                   </Alert>
                 </Grid>
-              </>
-            ) : null}
+                </Grid>
+              )}
 
 
-            {/* Info Box */}
+              {/* Step 2 (or last step): Payment Methods */}
+              {((event.type === 'community_event' && activeStep === 2) || 
+                (event.type !== 'community_event' && activeStep === 1)) && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Typography 
+                      variant="h6" 
+                      fontWeight={600} 
+                      gutterBottom
+                      sx={{ 
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                        mb: 2
+                      }}
+                    >
+                      Selecciona tu método de pago
+                    </Typography>
+                  </Grid>
+
+                  {/* Display price summary if there's a discount */}
+                  {codeValidated && discountAmount > 0 && (
+                    <Grid item xs={12}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 2,
+                          backgroundColor: alpha('#16a34a', 0.08),
+                          border: `1px solid ${alpha('#16a34a', 0.2)}`,
+                          borderRadius: 2,
+                          mb: 2,
+                        }}
+                      >
+                        <Stack spacing={1}>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Typography variant="body2">Precio original:</Typography>
+                            <Typography variant="body2" sx={{ textDecoration: 'line-through' }}>
+                              ${(totalPrice + discountAmount).toFixed(2)} USD
+                            </Typography>
+                          </Stack>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Typography variant="body2" fontWeight={600}>Descuento aplicado:</Typography>
+                            <Typography variant="body2" fontWeight={600} color="success.main">
+                              -${discountAmount.toFixed(2)} USD
+                            </Typography>
+                          </Stack>
+                          <Divider />
+                          <Stack direction="row" justifyContent="space-between">
+                            <Typography variant="body1" fontWeight={700}>Total a pagar:</Typography>
+                            <Typography variant="body1" fontWeight={700} color="primary.main">
+                              ${totalPrice.toFixed(2)} USD
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      </Paper>
+                    </Grid>
+                  )}
+
+                  {/* Payment Methods */}
+                  <Grid item xs={12}>
+                    <Stack spacing={2}>
+                      {/* Card Payment */}
+                      <Button
+                        onClick={() => handleSubmit('card')}
+                        disabled={isLoading}
+                        variant="outlined"
+                        fullWidth
+                        startIcon={<CreditCard />}
+                        sx={{
+                          py: 2,
+                          borderRadius: 2,
+                          borderWidth: 2,
+                          borderColor: selectedPaymentMethod === 'card' && isLoading 
+                            ? 'primary.main' 
+                            : 'divider',
+                          backgroundColor: selectedPaymentMethod === 'card' && isLoading
+                            ? alpha(theme.palette.primary.main, 0.08)
+                            : 'transparent',
+                          '&:hover': {
+                            borderWidth: 2,
+                            borderColor: 'primary.main',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                          },
+                        }}
+                      >
+                        <Stack alignItems="center" spacing={0.5}>
+                          <Typography variant="body1" fontWeight={600}>
+                            Pagar con Tarjeta
+                          </Typography>
+                          <Typography variant="h6" fontWeight={700} color="primary">
+                            ${totalPrice.toFixed(2)} USD
+                          </Typography>
+                          {isLoading && selectedPaymentMethod === 'card' && (
+                            <CircularProgress size={20} />
+                          )}
+                        </Stack>
+                      </Button>
+
+                      {/* Klarna Payment */}
+                      <Button
+                        onClick={() => handleSubmit('klarna')}
+                        disabled={isLoading}
+                        variant="outlined"
+                        fullWidth
+                        startIcon={<Wallet />}
+                        sx={{
+                          py: 2,
+                          borderRadius: 2,
+                          borderWidth: 2,
+                          borderColor: selectedPaymentMethod === 'klarna' && isLoading 
+                            ? '#ec4899' 
+                            : 'divider',
+                          backgroundColor: selectedPaymentMethod === 'klarna' && isLoading
+                            ? alpha('#ec4899', 0.08)
+                            : 'transparent',
+                          '&:hover': {
+                            borderWidth: 2,
+                            borderColor: '#ec4899',
+                            backgroundColor: alpha('#ec4899', 0.04),
+                          },
+                        }}
+                      >
+                        <Stack alignItems="center" spacing={0.5}>
+                          <Typography variant="body1" fontWeight={600}>
+                            Financiar con Klarna
+                          </Typography>
+                          <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
+                            ${(totalPrice * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento
+                          </Typography>
+                          {isLoading && selectedPaymentMethod === 'klarna' && (
+                            <CircularProgress size={20} />
+                          )}
+                        </Stack>
+                      </Button>
+
+                      {/* Afterpay Payment */}
+                      <Button
+                        onClick={() => handleSubmit('afterpay')}
+                        disabled={isLoading}
+                        variant="outlined"
+                        fullWidth
+                        startIcon={<CreditCard />}
+                        sx={{
+                          py: 2,
+                          borderRadius: 2,
+                          borderWidth: 2,
+                          borderColor: selectedPaymentMethod === 'afterpay' && isLoading 
+                            ? '#00d4aa' 
+                            : 'divider',
+                          backgroundColor: selectedPaymentMethod === 'afterpay' && isLoading
+                            ? alpha('#00d4aa', 0.08)
+                            : 'transparent',
+                          '&:hover': {
+                            borderWidth: 2,
+                            borderColor: '#00d4aa',
+                            backgroundColor: alpha('#00d4aa', 0.04),
+                          },
+                        }}
+                      >
+                        <Stack alignItems="center" spacing={0.5}>
+                          <Typography variant="body1" fontWeight={600}>
+                            Pagar con Afterpay
+                          </Typography>
+                          <Typography variant="h6" fontWeight={700} sx={{ color: '#00d4aa' }}>
+                            ${(totalPrice * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            4 pagos sin intereses
+                          </Typography>
+                          {isLoading && selectedPaymentMethod === 'afterpay' && (
+                            <CircularProgress size={20} />
+                          )}
+                        </Stack>
+                      </Button>
+
+                      {/* Local Financing */}
+                      {user?.allowLocalFinancing && (
+                        <Button
+                          onClick={() => handleSubmit('local_financing', '4_biweekly')}
+                          disabled={isLoading}
+                          variant="outlined"
+                          fullWidth
+                          startIcon={<Wallet />}
+                          sx={{
+                            py: 2,
+                            borderRadius: 2,
+                            borderWidth: 2,
+                            borderColor: selectedPaymentMethod === 'local_financing' && isLoading 
+                              ? '#8B5CF6' 
+                              : 'divider',
+                            backgroundColor: selectedPaymentMethod === 'local_financing' && isLoading
+                              ? alpha('#8B5CF6', 0.08)
+                              : 'transparent',
+                            '&:hover': {
+                              borderWidth: 2,
+                              borderColor: '#8B5CF6',
+                              backgroundColor: alpha('#8B5CF6', 0.04),
+                            },
+                          }}
+                        >
+                          <Stack alignItems="center" spacing={0.5}>
+                            <Typography variant="body1" fontWeight={600}>
+                              Financiamiento DayTradeDak
+                            </Typography>
+                            <Typography variant="h6" fontWeight={700} sx={{ color: '#8B5CF6' }}>
+                              ${totalPrice.toFixed(2)} USD
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              4 pagos quincenales sin intereses
+                            </Typography>
+                            {isLoading && selectedPaymentMethod === 'local_financing' && (
+                              <CircularProgress size={20} />
+                            )}
+                          </Stack>
+                        </Button>
+                      )}
+                    </Stack>
+                  </Grid>
+                </Grid>
+              )}
+
+              {/* Mobile Navigation Buttons */}
+              {isMobile && (
+                <Box 
+                  sx={{ 
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: modalBackground,
+                    borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                    p: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 2,
+                    zIndex: 1,
+                  }}
+                >
+                  <Button
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                    variant="outlined"
+                    startIcon={<ArrowBack />}
+                    sx={{
+                      flex: activeStep === 0 ? 0 : 1,
+                      visibility: activeStep === 0 ? 'hidden' : 'visible',
+                    }}
+                  >
+                    Anterior
+                  </Button>
+                  {/* Show Next button only if not on last step */}
+                  {!((event.type === 'community_event' && activeStep === 2) || 
+                     (event.type !== 'community_event' && activeStep === 1)) && (
+                    <Button
+                      onClick={handleNext}
+                      disabled={isLoading}
+                      variant="contained"
+                      endIcon={<ArrowForward />}
+                      sx={{
+                        flex: 1,
+                        background: buttonBackground,
+                        '&:hover': {
+                          background: buttonHoverBackground,
+                        },
+                      }}
+                    >
+                      {activeStep === steps.length - 2 ? 'Continuar al Pago' : 'Siguiente'}
+                    </Button>
+                  )}
+                </Box>
+              )}
+            </Box>
+          ) : (
+            /* Desktop Version - Original Layout */
+            <Grid container spacing={0.75}>
+              {/* Info Box */}
             <Grid item xs={12}>
               <Paper
                 elevation={0}
@@ -1125,20 +1549,214 @@ export function EventRegistrationModal({
               </Paper>
             </Grid>
 
+            {/* Personal Information Section */}
+            <Grid item xs={12}>
+              <Typography 
+                variant="h6" 
+                fontWeight={600} 
+                gutterBottom
+                sx={{ 
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                  mb: 0.5
+                }}
+              >
+                {t('events.registration.modal.personalInformation')}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomInput
+                icon={<Person />}
+                label={t('events.registration.modal.firstName')}
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="John"
+                required
+                disabled={isLoading}
+                isDarkMode={isDarkMode}
+                muiTheme={theme}
+              />
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <CustomInput
+                icon={<Person />}
+                label={t('events.registration.modal.lastName')}
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Doe"
+                required
+                disabled={isLoading}
+                isDarkMode={isDarkMode}
+                muiTheme={theme}
+              />
+            </Grid>
+            
+            <Grid item xs={12} sm={7}>
+              <CustomInput
+                icon={<Email />}
+                label={t('events.registration.modal.email')}
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="john.doe@example.com"
+                required
+                disabled={isLoading}
+                isDarkMode={isDarkMode}
+                muiTheme={theme}
+              />
+            </Grid>
+            
+            <Grid item xs={12} sm={5}>
+              <CustomInput
+                icon={<Phone />}
+                label={t('events.registration.modal.phone')}
+                name="phoneNumber"
+                type="tel"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                placeholder="+1 (555) 123-4567"
+                required
+                disabled={isLoading}
+                isDarkMode={isDarkMode}
+                muiTheme={theme}
+              />
+            </Grid>
+
+            {/* Referral Code Field - Only for Master Course */}
+            {event.type === 'master_course' && (
+              <Grid item xs={12}>
+                <CustomInput
+                  icon={<LocalOffer />}
+                  label="Referral Code (Optional)"
+                  name="referralCode"
+                  value={referralCode}
+                  onChange={(e) => {
+                    setReferralCode(e.target.value.toUpperCase());
+                    setValidationError('');
+                    if (codeValidated) {
+                      clearReferralCode();
+                    }
+                  }}
+                  placeholder="Enter referral code"
+                  disabled={isLoading || codeValidated}
+                  isDarkMode={isDarkMode}
+                  muiTheme={theme}
+                  error={Boolean(validationError)}
+                  helperText={validationError}
+                  endAdornment={
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {codeValidated ? (
+                        <Button
+                          size="small"
+                          onClick={clearReferralCode}
+                          disabled={isLoading}
+                          sx={{ minWidth: 'auto' }}
+                        >
+                          Clear
+                        </Button>
+                      ) : (
+                        <Button
+                          size="small"
+                          onClick={validateReferralCode}
+                          disabled={!referralCode || isLoading || isValidatingCode}
+                          sx={{ minWidth: 'auto' }}
+                        >
+                          {isValidatingCode ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            'Apply'
+                          )}
+                        </Button>
+                      )}
+                    </Box>
+                  }
+                />
+                {codeValidated && affiliateDetails && (
+                  <Alert severity="success" sx={{ mt: 1 }}>
+                    <Typography variant="body2">
+                      Referral code applied! {discountType === 'percentage' ? `${discountPercentage}%` : `$${discountFixedAmount}`} discount
+                      {affiliateDetails.affiliateName && (
+                        <> from {affiliateDetails.affiliateName}</>
+                      )}
+                    </Typography>
+                  </Alert>
+                )}
+              </Grid>
+            )}
+
+            {/* Master Course specific fields */}
+            {event.type === 'master_course' && (
+              <>
+                <Grid item xs={12}>
+                  <Typography 
+                    variant="h6" 
+                    fontWeight={600} 
+                    gutterBottom 
+                    sx={{ 
+                      mt: 0.5,
+                      color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                      mb: 0.5
+                    }}
+                  >
+                    {t('events.registration.modal.tradingBackground')}
+                  </Typography>
+                </Grid>
+                
+                <Grid item xs={12} md={6}>
+                  <CustomInput
+                    icon={<TrendingUp />}
+                    label={t('events.registration.modal.tradingExperience')}
+                    name="tradingExperience"
+                    value={formData.tradingExperience}
+                    onChange={handleInputChange}
+                    placeholder={t('events.registration.modal.tradingExperiencePlaceholder')}
+                    multiline
+                    rows={2}
+                    disabled={isLoading}
+                    isDarkMode={isDarkMode}
+                    muiTheme={theme}
+                  />
+                </Grid>
+                
+                <Grid item xs={12} md={6}>
+                  <CustomInput
+                    icon={<Psychology />}
+                    label={t('events.registration.modal.expectationsLabel')}
+                    name="expectations"
+                    value={formData.expectations}
+                    onChange={handleInputChange}
+                    placeholder={t('events.registration.modal.expectationsShortPlaceholder')}
+                    multiline
+                    rows={2}
+                    disabled={isLoading}
+                    isDarkMode={isDarkMode}
+                    muiTheme={theme}
+                  />
+                </Grid>
+              </>
+            )}
+
           </Grid>
+          )}
         </Box>
       </DialogContent>
       
       {/* Action Buttons - Outside scrollable area */}
-      <Box sx={{ 
-        p: 1.5,
-        pt: 1, 
-        backgroundColor: modalBackground,
-        borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12,
-        flexShrink: 0,
-      }}>
+      {/* Hide these buttons completely on mobile */}
+      {!isMobile && (
+        <Box sx={{ 
+          p: 1.5,
+          pt: 1, 
+          backgroundColor: modalBackground,
+          borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+          borderBottomLeftRadius: 12,
+          borderBottomRightRadius: 12,
+          flexShrink: 0,
+        }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
           <Button
             onClick={onClose}
@@ -1456,6 +2074,7 @@ export function EventRegistrationModal({
           )}
         </Box>
       </Box>
+      )}
     </Dialog>
   );
 }
