@@ -594,7 +594,7 @@ export default function CommunityEventPage() {
                     </Stack>
                   </Stack>
 
-                  {/* Capacity Indicator */}
+                  {/* Capacity Indicator - More marketing friendly */}
                   {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 ? <Alert 
                       severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
                       sx={{ 
@@ -615,10 +615,10 @@ export default function CommunityEventPage() {
                     >
                       <Typography variant="body2" fontWeight={600}>
                         {eventCapacity.remaining <= 10 
-                          ? `¡ÚLTIMOS ${eventCapacity.remaining} LUGARES DISPONIBLES!`
+                          ? `¡ÚLTIMOS LUGARES DISPONIBLES! 🔥`
                           : eventCapacity.remaining <= 25
-                            ? `Solo quedan ${eventCapacity.remaining} lugares disponibles`
-                            : `${eventCapacity.remaining} lugares disponibles`
+                            ? `⚡ Quedan pocos lugares disponibles`
+                            : `✨ Lugares limitados disponibles`
                         }
                       </Typography>
                     </Alert> : null}
@@ -1180,33 +1180,7 @@ export default function CommunityEventPage() {
                 </Typography>
               </Alert>
               
-              {/* Capacity Indicator */}
-              {eventCapacity && eventCapacity.remaining > 0 && eventCapacity.remaining <= 50 ? <Alert 
-                  severity={eventCapacity.remaining <= 10 ? "error" : eventCapacity.remaining <= 25 ? "warning" : "info"}
-                  icon={false}
-                  sx={{ 
-                    mt: 3,
-                    mb: 3,
-                    textAlign: 'center',
-                    backgroundColor: alpha(
-                      eventCapacity.remaining <= 10 
-                        ? theme.palette.error.main 
-                        : eventCapacity.remaining <= 25 
-                          ? theme.palette.warning.main 
-                          : theme.palette.success.main, 
-                      0.2
-                    ),
-                  }}
-                >
-                  <Typography variant="h6" fontWeight={700}>
-                    {eventCapacity.remaining <= 10 
-                      ? `¡ÚLTIMOS ${eventCapacity.remaining} LUGARES DISPONIBLES!`
-                      : eventCapacity.remaining <= 25
-                        ? `Solo quedan ${eventCapacity.remaining} lugares disponibles`
-                        : `${eventCapacity.remaining} lugares disponibles`
-                    }
-                  </Typography>
-                </Alert> : null}
+              {/* Remove capacity indicator from this section per request */}
               
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
                 <Button
