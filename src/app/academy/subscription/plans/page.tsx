@@ -288,6 +288,12 @@ export default function PlansPage() {
     }
   );
 
+  // Check if user has live access through subscriptions OR admin permissions
+  const hasLiveAccess = Boolean(
+    hasLiveSubscription || 
+    (user?.allowLiveMeetingAccess === true)
+  );
+
   // Fetch dynamic prices
   useEffect(() => {
     const fetchPrices = async () => {
@@ -429,9 +435,22 @@ export default function PlansPage() {
     ].includes(plan.id);
     const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
     
-    // Check if Master Classes needs Live subscription
+    // Check if Master Classes needs Live subscription or access
     const isMasterClasses = plan.id === SubscriptionPlan.MasterClases;
-    const needsLiveSubscription = isMasterClasses && !hasLiveSubscription;
+    const needsLiveSubscription = isMasterClasses && !hasLiveAccess;
+    
+    // Debug logging for Master Classes
+    if (isMasterClasses) {
+      console.log('Master Classes Debug (page.tsx):', {
+        planId: plan.id,
+        hasLiveSubscription,
+        allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
+        allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
+        hasLiveAccess,
+        needsLiveSubscription,
+        userSubscriptions: user?.subscriptions
+      });
+    }
 
     return (
       <Box

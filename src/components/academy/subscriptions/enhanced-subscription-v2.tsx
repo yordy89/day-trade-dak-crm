@@ -80,6 +80,19 @@ export function EnhancedSubscriptionManagerV2() {
       plan: SubscriptionPlan; 
       paymentMethods?: string[] 
     }) => {
+      // Final safety check for Master Classes
+      const isMasterClassesPlan = 
+        plan === 'MasterClases' || 
+        plan === 'MASTER_CLASES' ||
+        plan.toString().toLowerCase().includes('master');
+      
+      if (isMasterClassesPlan && !hasLiveAccess()) {
+        console.error('FINAL CHECK BLOCKED: Cannot subscribe to Master Classes without Live access');
+        console.error('User needs either: Live subscription OR allowLiveMeetingAccess permission');
+        setError('You need Live access to purchase Master Classes. Please subscribe to Live or contact support.');
+        throw new Error('Live access required for Master Classes');
+      }
+      
       setProcessingPlan(plan);
       
       const response = await API.post('/payments/checkout/enhanced', {
@@ -123,8 +136,42 @@ export function EnhancedSubscriptionManagerV2() {
   };
 
   const hasLiveSubscription = (): boolean => {
-    return userSubscriptions.includes(SubscriptionPlan.LiveWeeklyManual as string) ||
-           userSubscriptions.includes(SubscriptionPlan.LiveWeeklyRecurring as string);
+    const hasLive = userSubscriptions.some((sub: any) => {
+      if (typeof sub === 'string') {
+        return sub === 'LiveWeeklyManual' || sub === 'LiveWeeklyRecurring';
+      }
+      if (sub && typeof sub === 'object' && sub.plan) {
+        return sub.plan === 'LiveWeeklyManual' || sub.plan === 'LiveWeeklyRecurring';
+      }
+      return false;
+    });
+    
+    console.log('hasLiveSubscription check:', {
+      userSubscriptions,
+      hasLive
+    });
+    
+    return hasLive;
+  };
+
+  // Check if user has live access through subscriptions or module permissions
+  const hasLiveAccess = (): boolean => {
+    // Check for live subscription
+    if (hasLiveSubscription()) {
+      return true;
+    }
+    
+    // Check for admin-granted live meeting access
+    // This is for users who have been granted access to live content
+    if (user?.allowLiveMeetingAccess === true) {
+      return true;
+    }
+    
+    // Note: We do NOT check allowLiveWeeklyAccess here because that's 
+    // specifically for allowing users to PURCHASE Live subscriptions,
+    // not for having access to Live content
+    
+    return false;
   };
 
   const renderPriceTag = (plan: SubscriptionPlanData, price?: CalculatedPrice) => {
@@ -214,9 +261,24 @@ export function EnhancedSubscriptionManagerV2() {
   }
 
   const plans = plansData || [];
+  
+  // Debug: Log all plans to see what we're working with
+  console.log('ALL PLANS FROM API:', plans.map(p => ({
+    planId: p.planId,
+    displayName: p.displayName,
+    interval: p.pricing?.interval,
+    type: p.type
+  })));
+  
   const livePlans = plans.filter(p => p.planId.includes('Live'));
   const monthlyPlans = plans.filter(p => p.pricing.interval === 'monthly');
   const fixedPlans = plans.filter(p => p.pricing.interval === 'once');
+  
+  console.log('Filtered Plans:', {
+    livePlans: livePlans.map(p => p.planId),
+    monthlyPlans: monthlyPlans.map(p => p.planId),
+    fixedPlans: fixedPlans.map(p => p.planId)
+  });
 
   return (
     <Box sx={{ p: 3 }}>
@@ -224,9 +286,11 @@ export function EnhancedSubscriptionManagerV2() {
         Choose Your Trading Journey
       </Typography>
       
-      {error ? <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
           {error}
-        </Alert> : null}
+        </Alert>
+      )}
       
       {hasLiveSubscription() ? (
         <Alert severity="success" sx={{ mb: 3 }}>
@@ -394,6 +458,41 @@ export function EnhancedSubscriptionManagerV2() {
                 const subscribed = isSubscribed(plan.planId);
                 const IconComponent = getIcon(plan.uiMetadata.icon);
                 
+                // Log ALL monthly plans to see their IDs
+                console.log('Monthly Plan:', {
+                  planId: plan.planId,
+                  displayName: plan.displayName,
+                  type: plan.type
+                });
+                
+                // Check if this is Master Classes and user needs live access
+                // Check multiple possible variations of the plan ID
+                const isMasterClasses = 
+                  plan.planId === 'MasterClases' || 
+                  plan.planId === 'MASTER_CLASES' ||
+                  plan.planId === 'MasterClasses' ||
+                  plan.planId === 'MASTER_CLASSES' ||
+                  (plan.displayName && plan.displayName.toLowerCase().includes('master'));
+                
+                const hasLiveAccessValue = hasLiveAccess();
+                const needsLiveForMasterClasses = isMasterClasses && !hasLiveAccessValue;
+                
+                // Debug logging for ALL plans, especially Master Classes
+                if (isMasterClasses || plan.displayName?.includes('Master')) {
+                  console.log('MASTER CLASSES FOUND - Debug:', {
+                    planId: plan.planId,
+                    displayName: plan.displayName,
+                    isMasterClasses,
+                    hasLiveSubscription: hasLiveSubscription(),
+                    allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
+                    allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
+                    hasLiveAccess: hasLiveAccessValue,
+                    needsLiveForMasterClasses,
+                    willBeDisabled: needsLiveForMasterClasses,
+                    user
+                  });
+                }
+                
                 return (
                   <Grid item xs={12} sm={6} lg={3} key={plan.planId}>
                     <Card sx={{ height: '100%' }}>
@@ -446,23 +545,35 @@ export function EnhancedSubscriptionManagerV2() {
                               variant="contained"
                               fullWidth
                               size="small"
-                              onClick={() => subscribe({ plan: plan.planId as SubscriptionPlan })}
-                              disabled={processingPlan === plan.planId || Boolean(price?.isFree) || !user}
+                              onClick={() => {
+                                if (needsLiveForMasterClasses) {
+                                  console.error('BLOCKED: User needs Live access for Master Classes');
+                                  return;
+                                }
+                                subscribe({ plan: plan.planId as SubscriptionPlan });
+                              }}
+                              disabled={processingPlan === plan.planId || Boolean(price?.isFree) || !user || needsLiveForMasterClasses}
                               sx={{
-                                backgroundColor: plan.uiMetadata.color,
+                                backgroundColor: needsLiveForMasterClasses ? 'grey.500' : plan.uiMetadata.color,
                                 '&:hover': {
-                                  backgroundColor: plan.uiMetadata.color,
-                                  filter: 'brightness(0.9)',
+                                  backgroundColor: needsLiveForMasterClasses ? 'grey.500' : plan.uiMetadata.color,
+                                  filter: needsLiveForMasterClasses ? 'none' : 'brightness(0.9)',
                                 },
                               }}
                             >
-                              {processingPlan === plan.planId ? (
-                                <CircularProgress size={20} sx={{ color: 'white' }} />
-                              ) : (price?.isFree ? (
-                                'Included with Live'
-                              ) : (
-                                'Subscribe'
-                              ))}
+                              {(() => {
+                                if (processingPlan === plan.planId) {
+                                  return <CircularProgress size={20} sx={{ color: 'white' }} />;
+                                }
+                                if (needsLiveForMasterClasses) {
+                                  console.log('Button should show: Únete a Live Primero');
+                                  return 'Únete a Live Primero';
+                                }
+                                if (price?.isFree) {
+                                  return 'Included with Live';
+                                }
+                                return 'Subscribe';
+                              })()}
                             </Button>
                           )}
                         </Stack>
