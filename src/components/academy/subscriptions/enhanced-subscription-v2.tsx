@@ -82,8 +82,8 @@ export function EnhancedSubscriptionManagerV2() {
     }) => {
       // Final safety check for Master Classes
       const isMasterClassesPlan = 
-        plan === 'MasterClases' || 
-        plan === 'MASTER_CLASES' ||
+        plan === SubscriptionPlan.MasterClases ||
+        plan.toString() === 'MasterClases' ||
         plan.toString().toLowerCase().includes('master');
       
       if (isMasterClassesPlan && !hasLiveAccess()) {
@@ -552,7 +552,7 @@ export function EnhancedSubscriptionManagerV2() {
                                 }
                                 subscribe({ plan: plan.planId as SubscriptionPlan });
                               }}
-                              disabled={processingPlan === plan.planId || Boolean(price?.isFree) || !user || needsLiveForMasterClasses}
+                              disabled={Boolean(processingPlan === plan.planId || price?.isFree || !user || needsLiveForMasterClasses)}
                               sx={{
                                 backgroundColor: needsLiveForMasterClasses ? 'grey.500' : plan.uiMetadata.color,
                                 '&:hover': {

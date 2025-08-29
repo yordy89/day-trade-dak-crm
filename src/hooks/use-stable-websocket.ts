@@ -17,6 +17,10 @@ export function useStableWebSocket(options: StableWebSocketOptions = {}) {
   const isConnecting = useRef(false);
 
   const connect = useCallback(() => {
+    // Temporarily disabled to debug LiveKit connection
+    console.log('WebSocket temporarily disabled for debugging');
+    return null;
+    
     if (socketRef.current?.connected || isConnecting.current) {
       return socketRef.current;
     }
@@ -24,9 +28,13 @@ export function useStableWebSocket(options: StableWebSocketOptions = {}) {
     isConnecting.current = true;
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const url = options.namespace ? `${apiUrl}${options.namespace}` : apiUrl;
+    // Socket.io namespaces should be part of the path, not a separate URL
+    // If namespace is provided, it should be like '/meetings' or '/chat'
+    const socketPath = options.namespace || '/';
+    const url = apiUrl; // Base URL remains the same
 
     const socket = io(url, {
+      path: '/socket.io/', // Default socket.io path
       transports: ['websocket', 'polling'],
       reconnection: options.reconnection ?? true,
       reconnectionAttempts: options.reconnectionAttempts ?? 5,

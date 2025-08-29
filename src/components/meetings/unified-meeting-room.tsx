@@ -133,7 +133,16 @@ export function UnifiedMeetingRoom({
 
       switch (provider) {
         case 'livekit': {
-          // Fetch LiveKit token
+          // Option to use branded experience - redirect to dedicated LiveKit page
+          const useBrandedExperience = true; // Can be configured based on requirements
+          
+          if (useBrandedExperience) {
+            // Redirect to branded LiveKit meeting page
+            router.push(`/meeting/livekit/${meeting._id}`);
+            return;
+          }
+          
+          // Otherwise fetch token for inline experience
           const livekitResponse = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/livekit/rooms/${meeting._id}/token`,
             {
