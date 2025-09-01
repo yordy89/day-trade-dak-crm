@@ -35,7 +35,7 @@ export function DayTradeDakHero() {
       sx={{
         minHeight: '100vh',
         backgroundColor: muiTheme.palette.background.default,
-        pt: { xs: '160px', md: '160px' }, // Updated: Mobile (72px TopBar + 56px Navbar + 32px padding) | Desktop (66px TopBar + 80px Navbar + padding)
+        pt: { xs: '120px', md: '130px' }, // Updated: Mobile (36px TopBar + 56px Navbar + 28px padding) | Desktop (36px TopBar + 80px Navbar + 14px padding)
         position: 'relative',
         overflow: 'hidden',
       }}

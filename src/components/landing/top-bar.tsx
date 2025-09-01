@@ -138,26 +138,23 @@ export function TopBar() {
   // Mobile version - simplified
   if (isMobile) {
     return (
-      <Box sx={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 1400,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-      }}>
-        {/* Original TopBar Content - Mobile */}
-        <Box
-          sx={{
-            backgroundColor: '#0a0a0a',
-            color: 'rgba(255, 255, 255, 0.8)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            fontSize: '0.7rem',
-            minHeight: 36,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1400,
+          backgroundColor: '#0a0a0a',
+          color: 'rgba(255, 255, 255, 0.8)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          fontSize: '0.7rem',
+          minHeight: 36,
+          display: 'flex',
+          alignItems: 'center',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+        }}
+      >
           <Container maxWidth={false}>
           <Box
             sx={{
@@ -234,23 +231,25 @@ export function TopBar() {
           </Box>
         </Container>
       </Box>
-      </Box>
     );
   }
 
   // Desktop version - full featured
   return (
-    <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1400 }}>
-      {/* Original TopBar Content */}
-      <Box
-        sx={{
-          backgroundColor: '#0a0a0a',
-          color: 'rgba(255, 255, 255, 0.8)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          fontSize: '0.75rem',
-          height: 36,
-        }}
-      >
+    <Box
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1400,
+        backgroundColor: '#0a0a0a',
+        color: 'rgba(255, 255, 255, 0.8)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        fontSize: '0.75rem',
+        height: 36,
+      }}
+    >
         <Container maxWidth={false}>
         <Box
           sx={{
@@ -454,7 +453,6 @@ export function TopBar() {
           </Box>
         </Box>
       </Container>
-    </Box>
     </Box>
   );
 }

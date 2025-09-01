@@ -475,7 +475,7 @@ export function MainNavbar() {
         position="fixed"
         elevation={scrolled ? 1 : 0}
         sx={{
-          top: { xs: 72, md: 66 }, // Updated: Mobile has 36px promo + 36px market bar = 72px
+          top: 36, // Only account for the top bar height
           backgroundColor: scrolled 
             ? (isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)')
             : (isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),

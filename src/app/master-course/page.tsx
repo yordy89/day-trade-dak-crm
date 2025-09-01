@@ -436,7 +436,7 @@ export default function MasterCoursePage() {
         </Alert>
       ) : null}
       
-      <Box sx={{ pt: { xs: 14, md: 18 }, minHeight: '100vh', position: 'relative' }}> {/* Adjusted padding for TopBar with banner + Navbar */}
+      <Box sx={{ pt: { xs: 12, md: 14 }, minHeight: '100vh', position: 'relative' }}> {/* Adjusted padding for TopBar + Navbar */}
         <BullBearBackground isDarkMode={isDarkMode} />
         
         {/* Hero Section */}

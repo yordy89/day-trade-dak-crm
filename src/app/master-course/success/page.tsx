@@ -180,7 +180,7 @@ export default function MasterCourseSuccessPage() {
   return (
     <div className="min-h-screen">
       <MainNavbar />
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 }, pt: { xs: 12, sm: 14, md: 16 } }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, sm: 6, md: 8 }, pt: { xs: 10, sm: 12, md: 14 } }}>
         <Container maxWidth="lg">
           {/* Success Header */}
           <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
