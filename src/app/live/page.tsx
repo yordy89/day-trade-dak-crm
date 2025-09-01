@@ -516,50 +516,9 @@ export default function LivePage() {
       return;
     }
 
-    try {
-      // Call API to start the meeting
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/admin/meetings/${session._id}/start`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        }
-      );
-      
-      // Update the session with live status
-      const liveSession = { ...session, status: 'live' as const };
-      
-      // Immediately update the local state
-      if (selectedMeeting?._id === session._id) {
-        setSelectedMeeting(liveSession);
-      }
-      
-      // Notify all users via WebSocket that meeting has started
-      if (socket) {
-        socket.emit('meeting-started', {
-          meetingId: session._id,
-          title: session.title,
-          host: session.host,
-        });
-      }
-      
-      // Automatically join the meeting as host
-      console.log('[Live Page] Starting meeting - setting active meeting:', liveSession);
-      setActiveMeeting({
-        ...liveSession,
-        isHost: true, // Host is always true when starting
-      });
-      
-    } catch (err: any) {
-      console.error('Failed to start meeting:', err);
-      if (err.response?.status === 401) {
-        setError('Your session has expired. Please log in again.');
-      } else {
-        setError(err.response?.data?.message || 'Failed to start meeting');
-      }
-    }
+    // Don't call the start API here - just navigate to the LiveKit pre-join screen
+    // The meeting will be started when the host clicks "Join Meeting" on that page
+    router.push(`/meeting/livekit/${session._id}`);
   };
   const getSessionStatus = (session: ScheduledSession) => {
     // Always respect the actual status from the database first

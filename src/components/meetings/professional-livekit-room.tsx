@@ -88,14 +88,39 @@ function CustomControlBar({
 
   // Handle recording
   const handleRecording = async () => {
+    console.log('Recording button clicked. isHost:', isHost, 'isRecording:', isRecording);
+    
     if (!isHost) {
       console.warn('Only host can control recording');
       return;
     }
 
     try {
-      const authToken = localStorage.getItem('custom-auth-token');
+      // Try multiple ways to get auth token
+      let authToken = localStorage.getItem('custom-auth-token');
+      
+      if (!authToken) {
+        const authStorage = localStorage.getItem('auth-storage');
+        if (authStorage) {
+          try {
+            const authData = JSON.parse(authStorage);
+            authToken = authData.state?.authToken;
+          } catch (e) {
+            console.error('Failed to parse auth storage:', e);
+          }
+        }
+      }
+      
+      if (!authToken) {
+        console.error('No auth token found');
+        alert('Authentication required. Please sign in again.');
+        return;
+      }
+      
       const endpoint = isRecording ? 'stop' : 'start';
+      
+      console.log('Calling recording endpoint:', endpoint);
+      console.log('Auth token exists:', !!authToken);
       
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/livekit/rooms/${meetingId}/recording/${endpoint}`,
@@ -106,6 +131,7 @@ function CustomControlBar({
       );
       
       setIsRecording(!isRecording);
+      console.log('Recording toggled successfully');
     } catch (error) {
       console.error('Failed to toggle recording:', error);
     }
@@ -552,6 +578,9 @@ export function ProfessionalLiveKitRoom({
           try {
             const payload = JSON.parse(atob(data.token.split('.')[1]));
             const metadata = payload.metadata ? JSON.parse(payload.metadata) : {};
+            console.log('Token payload:', payload);
+            console.log('Token metadata:', metadata);
+            console.log('Setting isHost to:', metadata.isHost === true);
             setIsHost(metadata.isHost === true);
           } catch (e) {
             console.error('Failed to parse token:', e);
@@ -569,6 +598,9 @@ export function ProfessionalLiveKitRoom({
       try {
         const payload = JSON.parse(atob(providedToken.split('.')[1]));
         const metadata = payload.metadata ? JSON.parse(payload.metadata) : {};
+        console.log('Initial token payload:', payload);
+        console.log('Initial token metadata:', metadata);
+        console.log('Setting isHost to:', metadata.isHost === true);
         setIsHost(metadata.isHost === true);
       } catch (e) {
         console.error('Failed to parse token:', e);

@@ -36,7 +36,6 @@ const allNavigationItems: NavigationItem[] = [
     key: 'masterCourse',
     href: '/master-course',
     requiresAuth: false,
-    badge: 'OFERTA',
   },
   {
     key: 'communityEvent',

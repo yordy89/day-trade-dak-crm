@@ -16,6 +16,7 @@ import {
   IconButton,
   useTheme,
   alpha,
+  Snackbar,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -26,10 +27,12 @@ import {
   ScreenShare,
   StopScreenShare,
   ExitToApp,
+  Info,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
+import io, { Socket } from 'socket.io-client';
 
 // Dynamic import LiveKit components to avoid SSR issues
 const LiveKitRoom = dynamic(
@@ -97,6 +100,9 @@ export default function LiveKitMeetingPage() {
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [micEnabled, setMicEnabled] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [showMeetingEndedNotification, setShowMeetingEndedNotification] = useState(false);
 
   // Handle auth state hydration
   useEffect(() => {
@@ -105,11 +111,84 @@ export default function LiveKitMeetingPage() {
     }
   }, [authLoading]);
 
+  // Setup WebSocket connection for meeting events
+  useEffect(() => {
+    if (!meeting || !hasAccess) return;
+    
+    // Connect to WebSocket server
+    const socketInstance = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000', {
+      transports: ['websocket', 'polling'],
+    });
+
+    socketInstance.on('connect', () => {
+      console.log('WebSocket connected');
+      // Join the meeting room to receive meeting-specific events
+      socketInstance.emit('join-meeting', { meetingId });
+    });
+
+    socketInstance.on('meeting-ended', (data: any) => {
+      console.log('Meeting ended event received:', data);
+      if (data.meetingId === meetingId) {
+        handleMeetingEnded();
+      }
+    });
+
+    socketInstance.on('meeting-status-updated', (data: any) => {
+      console.log('Meeting status updated:', data);
+      if (data.meetingId === meetingId && data.status === 'completed') {
+        handleMeetingEnded();
+      }
+    });
+
+    socketInstance.on('disconnect', () => {
+      console.log('WebSocket disconnected');
+    });
+
+    setSocket(socketInstance);
+
+    // Cleanup on unmount
+    return () => {
+      if (socketInstance) {
+        socketInstance.emit('leave-meeting', { meetingId });
+        socketInstance.disconnect();
+      }
+    };
+  }, [meeting, meetingId, hasAccess]);
+
+  // Check if user has access to live meetings
+  const checkLiveAccess = (userData: any) => {
+    if (!userData) return false;
+    
+    // Check for live subscription
+    const hasLiveSubscription = userData.subscriptions?.some((sub: any) => 
+      (sub.plan === 'LIVE_WEEKLY_MANUAL' || 
+       sub.plan === 'LIVE_WEEKLY_RECURRING' || 
+       sub.plan === 'LiveWeeklyManual' || 
+       sub.plan === 'LiveWeeklyRecurring') &&
+      (!sub.expiresAt || new Date(sub.expiresAt) > new Date())
+    );
+    
+    // Check for admin permission
+    const hasLivePermission = userData.allowLiveMeetingAccess === true;
+    
+    // Check for module permission
+    const hasModulePermission = userData.modulePermissions?.some((perm: any) => 
+      perm.module === 'LIVE_WEEKLY' && 
+      perm.hasAccess === true &&
+      (!perm.expiresAt || new Date(perm.expiresAt) > new Date())
+    );
+    
+    return hasLiveSubscription || hasLivePermission || hasModulePermission;
+  };
+
   // Fetch meeting details and token
   useEffect(() => {
     const fetchMeetingData = async () => {
       // Wait for auth to be checked
       if (!authChecked) return;
+      
+      setLoading(true);
+      setError(null);
       
       // Also check localStorage as fallback
       let actualAuthToken = authToken;
@@ -132,13 +211,15 @@ export default function LiveKitMeetingPage() {
       }
       
       if (!actualAuthToken) {
-        setError('Please sign in to join the meeting');
+        // Don't set error immediately - let the error display logic handle it
         setLoading(false);
+        setHasAccess(false);
+        setAuthChecked(true);
         return;
       }
 
       try {
-        // Fetch meeting details
+        // Fetch meeting details first
         const meetingResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/meetings/${meetingId}`,
           {
@@ -147,7 +228,14 @@ export default function LiveKitMeetingPage() {
         );
 
         const meetingData = meetingResponse.data;
-        setMeeting(meetingData);
+        
+        // Check if it's a LiveKit meeting
+        if (meetingData.provider !== 'livekit') {
+          setError('This meeting is not a LiveKit meeting');
+          setLoading(false);
+          setHasAccess(false);
+          return;
+        }
         
         // Get user data if not available from hook
         let actualUser = user;
@@ -163,13 +251,25 @@ export default function LiveKitMeetingPage() {
           }
         }
         
-        setIsHost(meetingData.host._id === actualUser?._id);
-
-        // Check if it's a LiveKit meeting
-        if (meetingData.provider !== 'livekit') {
-          setError('This meeting is not a LiveKit meeting');
+        // Check if user has access to live meetings
+        const userHasAccess = checkLiveAccess(actualUser);
+        const userIsHost = meetingData.host._id === actualUser?._id || 
+                           meetingData.host === actualUser?._id;
+        
+        // Set meeting data first
+        setMeeting(meetingData);
+        setIsHost(userIsHost);
+        
+        // Host always has access, otherwise check permissions
+        if (!userIsHost && !userHasAccess) {
+          setError('You do not have access to live meetings. Please purchase a Live subscription or contact support.');
+          setHasAccess(false);
+          setAuthChecked(true);
+          setLoading(false);
           return;
         }
+        
+        setHasAccess(true);
 
         // Fetch LiveKit token
         const tokenResponse = await axios.post(
@@ -178,7 +278,7 @@ export default function LiveKitMeetingPage() {
             identity: actualUser?._id || `guest-${Date.now()}`,
             name: actualUser ? `${actualUser.firstName} ${actualUser.lastName}` : 'Guest',
             metadata: JSON.stringify({
-              isHost: meetingData.host._id === actualUser?._id,
+              isHost: userIsHost,
               userId: actualUser?._id || null,
             }),
           },
@@ -191,10 +291,15 @@ export default function LiveKitMeetingPage() {
         );
 
         setToken(tokenResponse.data.token);
+        // Fix: Set loading to false AFTER we have everything
+        setError(null); // Clear any previous errors
+        setAuthChecked(true);
+        setLoading(false);
       } catch (err: any) {
         console.error('Failed to fetch meeting data:', err);
         setError(err.response?.data?.message || 'Failed to load meeting');
-      } finally {
+        setHasAccess(false);
+        setAuthChecked(true);
         setLoading(false);
       }
     };
@@ -202,14 +307,66 @@ export default function LiveKitMeetingPage() {
     fetchMeetingData();
   }, [meetingId, authToken, user, authChecked]);
 
-  const handleJoinMeeting = () => {
+  const handleJoinMeeting = async () => {
+    // If host, update meeting status to 'live'
+    if (isHost && meeting) {
+      try {
+        const actualAuthToken = authToken || localStorage.getItem('custom-auth-token');
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/livekit/rooms/${meetingId}/start`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${actualAuthToken}`,
+            },
+          }
+        );
+        console.log('Meeting status updated to live');
+      } catch (err) {
+        console.error('Failed to update meeting status:', err);
+        // Continue anyway - don't block joining
+      }
+    }
     setPreJoinView(false);
   };
 
-  const handleLeaveMeeting = () => {
+  const handleLeaveMeeting = async () => {
+    // If host, end the meeting first
+    if (isHost && meeting) {
+      try {
+        const actualAuthToken = authToken || localStorage.getItem('custom-auth-token');
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/livekit/rooms/${meetingId}/end`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${actualAuthToken}`,
+            },
+          }
+        );
+        console.log('Meeting ended by host');
+      } catch (err) {
+        console.error('Failed to end meeting:', err);
+        // Continue anyway - don't block leaving
+      }
+    }
+    
+    // Disconnect socket if connected
+    if (socket) {
+      socket.disconnect();
+    }
     router.push('/live');
   };
+  
+  const handleMeetingEnded = () => {
+    setShowMeetingEndedNotification(true);
+    // Wait a moment to show the notification before redirecting
+    setTimeout(() => {
+      handleLeaveMeeting();
+    }, 2000);
+  };
 
+  // Show loading screen while checking auth or fetching data
   if (loading || authLoading || !authChecked) {
     return (
       <Box
@@ -231,7 +388,9 @@ export default function LiveKitMeetingPage() {
     );
   }
 
-  if (error) {
+  // Show error only if we've finished loading and definitely don't have access
+  // Never show error if we have access or are still checking
+  if (!loading && !authLoading && authChecked && hasAccess === false && !token) {
     return (
       <Box
         sx={{
@@ -245,7 +404,7 @@ export default function LiveKitMeetingPage() {
         <Container maxWidth="sm">
           <Paper sx={{ p: 4, backgroundColor: alpha('#ffffff', 0.05) }}>
             <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
+              {error || 'Unable to join meeting. Please sign in or check your permissions.'}
             </Alert>
             <Button
               variant="contained"
@@ -266,8 +425,8 @@ export default function LiveKitMeetingPage() {
     );
   }
 
-  // Pre-join view with branding
-  if (preJoinView && meeting && token) {
+  // Pre-join view with branding - only show when we have all necessary data and no errors
+  if (preJoinView && meeting && token && hasAccess && !error) {
     return (
       <Box
         sx={{
@@ -307,11 +466,13 @@ export default function LiveKitMeetingPage() {
                 )}
               </Box>
               <Chip
-                label="LIVE MEETING"
+                label={meeting.status === 'live' ? 'LIVE MEETING' : 'SCHEDULED'}
                 size="small"
                 sx={{
-                  backgroundColor: alpha('#16a34a', 0.2),
-                  color: '#16a34a',
+                  backgroundColor: meeting.status === 'live' 
+                    ? alpha('#dc2626', 0.2) 
+                    : alpha('#16a34a', 0.2),
+                  color: meeting.status === 'live' ? '#dc2626' : '#16a34a',
                   fontWeight: 600,
                 }}
               />
@@ -408,8 +569,8 @@ export default function LiveKitMeetingPage() {
     );
   }
 
-  // Main meeting room
-  if (meeting && token && !preJoinView) {
+  // Main meeting room - only show when user has access and no errors
+  if (meeting && token && !preJoinView && hasAccess && !error) {
     // Use professional LiveKit room component with custom controls
     return (
       <ProfessionalLiveKitRoom
@@ -534,5 +695,44 @@ export default function LiveKitMeetingPage() {
     );
   }
 
-  return null;
+  // Fallback loading state if no other condition is met
+  return (
+    <>
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#0a0a0a',
+        }}
+      >
+        <CircularProgress size={60} sx={{ color: '#16a34a' }} />
+      </Box>
+      
+      {/* Meeting ended notification */}
+      <Snackbar
+        open={showMeetingEndedNotification}
+        autoHideDuration={2000}
+        onClose={() => setShowMeetingEndedNotification(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setShowMeetingEndedNotification(false)}
+          severity="info"
+          sx={{ 
+            width: '100%',
+            backgroundColor: '#1e293b',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: '#16a34a',
+            },
+          }}
+          icon={<Info />}
+        >
+          The meeting has been ended by the host
+        </Alert>
+      </Snackbar>
+    </>
+  );
 }

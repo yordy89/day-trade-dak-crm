@@ -467,25 +467,12 @@ export default function MasterCoursePage() {
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={7}>
               <Stack spacing={3}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Chip
-                    label={t('hero.badge')}
-                    color="warning"
-                    icon={<Star />}
-                    sx={{ width: 'fit-content' }}
-                  />
-                  <Chip
-                    label={t('hero.specialOffer')}
-                    sx={{
-                      backgroundColor: '#f59e0b',
-                      color: 'white',
-                      fontWeight: 700,
-                      animation: 'offerPulse 2s infinite',
-                      '& .MuiChip-icon': { color: 'white' },
-                    }}
-                    icon={<LocalOffer />}
-                  />
-                </Stack>
+                <Chip
+                  label={t('hero.badge')}
+                  color="warning"
+                  icon={<Star />}
+                  sx={{ width: 'fit-content' }}
+                />
                 <Typography variant="h2" fontWeight={800}>
                   {t('hero.title')}
                 </Typography>
@@ -1511,7 +1498,7 @@ export default function MasterCoursePage() {
                     },
                   }}
                 >
-                  {t('pricing.pricingSection.registerButton')} - ¡OFERTA LIMITADA!
+                  {t('pricing.pricingSection.registerButton')}
                 </Button>
 
                 {/* BNPL Payment Options Message */}
