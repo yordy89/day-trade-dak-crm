@@ -133,12 +133,12 @@ export function UnifiedMeetingRoom({
 
       switch (provider) {
         case 'livekit': {
-          // Option to use branded experience - redirect to dedicated LiveKit page
+          // Option to use branded experience - redirect to general meeting page
           const useBrandedExperience = true; // Can be configured based on requirements
           
           if (useBrandedExperience) {
-            // Redirect to branded LiveKit meeting page
-            router.push(`/meeting/livekit/${meeting._id}`);
+            // Redirect to general meeting page which will route to correct provider
+            router.push(`/meeting/${meeting._id}`);
             return;
           }
           
@@ -166,37 +166,17 @@ export function UnifiedMeetingRoom({
         }
 
         case 'zoom': {
-          // Fetch Zoom join URL via token endpoint
-          const zoomResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/meetings/${meeting._id}/token`,
-            {
-              headers: { Authorization: `Bearer ${authToken}` }
-            }
-          );
-          if (zoomResponse.data.zoomUrl) {
-            setZoomUrl(zoomResponse.data.zoomUrl);
-          }
+          // Redirect to general meeting page which will route to Zoom page
+          router.push(`/meeting/${meeting._id}`);
+          return;
           break;
         }
 
         case 'videosdk':
         default: {
-          // Fetch VideoSDK token
-          const videosdkResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/meetings/${meeting._id}/token`,
-            {
-              headers: { Authorization: `Bearer ${authToken}` }
-            }
-          );
-          console.log('[UnifiedMeetingRoom] VideoSDK token response:', videosdkResponse.data);
-          
-          // Check if it's actually a Zoom meeting
-          if (videosdkResponse.data.useZoom && videosdkResponse.data.zoomUrl) {
-            setZoomUrl(videosdkResponse.data.zoomUrl);
-          } else {
-            setMeetingToken(videosdkResponse.data.token);
-          }
-          break;
+          // Redirect to general meeting page which will route to correct provider
+          router.push(`/meeting/${meeting._id}`);
+          return;
         }
       }
     } catch (err: any) {

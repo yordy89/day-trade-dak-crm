@@ -230,10 +230,10 @@ export default function LiveKitMeetingPage() {
         const meetingData = meetingResponse.data;
         
         // Check if it's a LiveKit meeting
-        if (meetingData.provider !== 'livekit') {
-          setError('This meeting is not a LiveKit meeting');
-          setLoading(false);
-          setHasAccess(false);
+        if (meetingData.provider && meetingData.provider !== 'livekit') {
+          // Redirect to the appropriate provider page
+          console.log('Meeting is not LiveKit, redirecting to:', meetingData.provider);
+          router.push(`/meeting/${meetingId}`);
           return;
         }
         

@@ -516,9 +516,9 @@ export default function LivePage() {
       return;
     }
 
-    // Don't call the start API here - just navigate to the LiveKit pre-join screen
-    // The meeting will be started when the host clicks "Join Meeting" on that page
-    router.push(`/meeting/livekit/${session._id}`);
+    // Don't call the start API here - just navigate to the meeting page
+    // The meeting router will determine the correct provider and redirect accordingly
+    router.push(`/meeting/${session._id}`);
   };
   const getSessionStatus = (session: ScheduledSession) => {
     // Always respect the actual status from the database first

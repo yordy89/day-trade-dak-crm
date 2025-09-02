@@ -45,6 +45,7 @@
     "@types/video.js": "^7.3.58",
     "@videojs/http-streaming": "^3.17.2",
     "@videosdk.live/react-sdk": "^0.3.11",
+    "@zoom/meetingsdk": "^4.0.0",
     "apexcharts": "3.49.2",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.3",
