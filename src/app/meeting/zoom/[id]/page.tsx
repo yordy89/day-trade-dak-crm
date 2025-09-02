@@ -125,6 +125,15 @@ export default function ZoomMeetingPage() {
         );
 
         const meetingData = meetingResponse.data;
+        
+        // Validate meeting data
+        if (!meetingData || typeof meetingData !== 'object') {
+          console.error('Invalid meeting data received:', meetingData);
+          setError('Invalid meeting data received');
+          setLoading(false);
+          return;
+        }
+        
         console.log('Zoom meeting data:', {
           roomUrl: meetingData.roomUrl,
           zoomJoinUrl: meetingData.zoomJoinUrl,
@@ -158,12 +167,14 @@ export default function ZoomMeetingPage() {
         }
         
         // Check if user is host
-        const userIsHost = meetingData.host._id === actualUser?._id || 
-                           meetingData.host === actualUser?._id;
+        const hostId = typeof meetingData.host === 'object' && meetingData.host?._id 
+          ? meetingData.host._id 
+          : meetingData.host;
+        const userIsHost = hostId && actualUser?._id && (hostId === actualUser._id || hostId.toString() === actualUser._id.toString());
         setIsHost(userIsHost);
         
         // Get Zoom join URL - use roomUrl for everyone but add role parameter for host
-        if (meetingData.roomUrl) {
+        if (meetingData.roomUrl && typeof meetingData.roomUrl === 'string') {
           // Use the room URL which has the password included
           let finalUrl = meetingData.roomUrl;
           
@@ -199,7 +210,7 @@ export default function ZoomMeetingPage() {
           } catch (e) {
             console.log('Could not parse Zoom URL:', e);
           }
-        } else if (meetingData.zoomJoinUrl) {
+        } else if (meetingData.zoomJoinUrl && typeof meetingData.zoomJoinUrl === 'string') {
           // Fallback to zoomJoinUrl if available
           let finalUrl = meetingData.zoomJoinUrl;
           if (userIsHost) {
@@ -212,11 +223,11 @@ export default function ZoomMeetingPage() {
             }
           }
           setJoinUrl(finalUrl);
-        } else if (meetingData.zoomMeetingId) {
+        } else if (meetingData.zoomMeetingId && typeof meetingData.zoomMeetingId === 'string') {
           // Last fallback: construct URL from meeting ID and password
           const baseUrl = 'https://zoom.us/j/';
           let url = baseUrl + meetingData.zoomMeetingId;
-          if (meetingData.zoomPassword) {
+          if (meetingData.zoomPassword && typeof meetingData.zoomPassword === 'string') {
             url += '?pwd=' + meetingData.zoomPassword;
           }
           // Add role=1 for host
@@ -226,6 +237,10 @@ export default function ZoomMeetingPage() {
           setJoinUrl(url);
           setExtractedMeetingId(meetingData.zoomMeetingId);
           setExtractedPasscode(meetingData.zoomPassword || null);
+        } else {
+          // No valid URL found
+          console.error('No valid Zoom URL found in meeting data:', meetingData);
+          setError('Meeting URL not available. Please contact support.');
         }
         
         setLoading(false);
@@ -476,7 +491,8 @@ export default function ZoomMeetingPage() {
                         </Box>
                       )}
                       
-                      {(meeting.zoomPassword || extractedPasscode) && (
+                      {/* Only show passcode to hosts */}
+                      {isHost && (meeting.zoomPassword || extractedPasscode) && (
                         <Box>
                           <Typography variant="body2" color="grey.400" mb={0.5}>
                             Passcode
@@ -526,11 +542,6 @@ export default function ZoomMeetingPage() {
                   <>
                     This will open the Zoom meeting in a new tab. Make sure you have the Zoom client installed 
                     or use the web version if prompted.
-                    {extractedPasscode && (
-                      <Box mt={1}>
-                        <strong>Note:</strong> If Zoom asks for a passcode, use: <strong>{extractedPasscode}</strong>
-                      </Box>
-                    )}
                   </>
                 )}
               </Typography>
