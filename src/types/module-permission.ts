@@ -1,14 +1,14 @@
 export enum ModuleType {
-  Classes = 'classes',
-  MasterClasses = 'masterClasses',
-  LiveRecorded = 'liveRecorded',
-  Psicotrading = 'psicotrading',
-  PeaceWithMoney = 'peaceWithMoney',
-  LiveWeekly = 'liveWeekly',
-  CommunityEvents = 'communityEvents',
-  VipEvents = 'vipEvents',
-  MasterCourse = 'masterCourse',
-  Stocks = 'stocks',
+  CLASSES = 'classes',
+  MASTER_CLASSES = 'masterClasses',
+  LIVE_RECORDED = 'liveRecorded',
+  PSICOTRADING = 'psicotrading',
+  PEACE_WITH_MONEY = 'peaceWithMoney',
+  LIVE_WEEKLY = 'liveWeekly',
+  COMMUNITY_EVENTS = 'communityEvents',
+  VIP_EVENTS = 'vipEvents',
+  MASTER_COURSE = 'masterCourse',
+  STOCKS = 'stocks',
 }
 
 export interface ModuleAccessResponse {
@@ -18,14 +18,14 @@ export interface ModuleAccessResponse {
 }
 
 export const MODULE_DISPLAY_NAMES: Record<ModuleType, { es: string; en: string }> = {
-  [ModuleType.Classes]: { es: 'Clases', en: 'Classes' },
-  [ModuleType.MasterClasses]: { es: 'Masterclass', en: 'Master Classes' },
-  [ModuleType.LiveRecorded]: { es: 'Live Grabados', en: 'Live Recorded' },
-  [ModuleType.Psicotrading]: { es: 'Psicotrading', en: 'Psicotrading' },
-  [ModuleType.PeaceWithMoney]: { es: 'Paz con el Dinero', en: 'Peace with Money' },
-  [ModuleType.LiveWeekly]: { es: 'Live Semanal', en: 'Live Weekly' },
-  [ModuleType.CommunityEvents]: { es: 'Eventos Comunitarios', en: 'Community Events' },
-  [ModuleType.VipEvents]: { es: 'Eventos VIP', en: 'VIP Events' },
-  [ModuleType.MasterCourse]: { es: 'Master Course', en: 'Master Course' },
-  [ModuleType.Stocks]: { es: 'Acciones', en: 'Stocks' },
+  [ModuleType.CLASSES]: { es: 'Clases', en: 'Classes' },
+  [ModuleType.MASTER_CLASSES]: { es: 'Masterclass', en: 'Master Classes' },
+  [ModuleType.LIVE_RECORDED]: { es: 'Live Grabados', en: 'Live Recorded' },
+  [ModuleType.PSICOTRADING]: { es: 'Psicotrading', en: 'Psicotrading' },
+  [ModuleType.PEACE_WITH_MONEY]: { es: 'Paz con el Dinero', en: 'Peace with Money' },
+  [ModuleType.LIVE_WEEKLY]: { es: 'Live Semanal', en: 'Live Weekly' },
+  [ModuleType.COMMUNITY_EVENTS]: { es: 'Eventos Comunitarios', en: 'Community Events' },
+  [ModuleType.VIP_EVENTS]: { es: 'Eventos VIP', en: 'VIP Events' },
+  [ModuleType.MASTER_COURSE]: { es: 'Master Course', en: 'Master Course' },
+  [ModuleType.STOCKS]: { es: 'Acciones', en: 'Stocks' },
 }

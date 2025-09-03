@@ -15,7 +15,7 @@ export default function CalendarPage() {
   
   return (
     <ModuleAccessGuard
-      moduleType={ModuleType.CommunityEvents}
+      moduleType={ModuleType.COMMUNITY_EVENTS}
       fallback={
         <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
           <Box sx={{ textAlign: 'center', mt: 4 }}>

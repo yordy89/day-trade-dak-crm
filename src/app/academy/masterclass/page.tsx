@@ -16,7 +16,7 @@ export default function MentorshipPage() {
   const router = useRouter();
   const { t } = useTranslation('academy');
   const [viewVideos, setViewVideos] = useState(false);
-  const { hasAccess, loading } = useModuleAccess(ModuleType.MasterClasses);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.MASTER_CLASSES);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function MentorshipPage() {
   // Show videos for subscribers with module access guard
   return (
     <ModuleAccessGuard
-      moduleType={ModuleType.MasterClasses}
+      moduleType={ModuleType.MASTER_CLASSES}
       fallback={
         <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
           <Button

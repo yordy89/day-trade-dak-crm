@@ -37,7 +37,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
   const { t, i18n } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const { hasAccess } = useModuleAccess(ModuleType.PeaceWithMoney);
+  const { hasAccess } = useModuleAccess(ModuleType.PEACE_WITH_MONEY);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -274,7 +274,7 @@ export default function PeaceWithMoneyVideoPlayerPage() {
                 ) : (
                   <ProtectedVideoPlayer
                     videoId={videoKey}
-                    moduleType={ModuleType.PeaceWithMoney}
+                    moduleType={ModuleType.PEACE_WITH_MONEY}
                     videoUrl={finalVideoUrl}
                     title={videoInfo.title}
                     description={t('peaceWithMoney.video.videoDescription', { day: videoInfo.lessonNumber, title: videoInfo.title })}

@@ -28,7 +28,7 @@ export default function ClassesVideoPlayerPage() {
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const { hasAccess } = useModuleAccess(ModuleType.Classes);
+  const { hasAccess } = useModuleAccess(ModuleType.CLASSES);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -236,7 +236,7 @@ export default function ClassesVideoPlayerPage() {
           ) : (
             <ProtectedVideoPlayer
               videoId={videoKey}
-              moduleType={ModuleType.Classes}
+              moduleType={ModuleType.CLASSES}
               videoUrl={finalVideoUrl}
               title={extractVideoName()}
               description={`Lesson video for ${extractVideoName()}`}

@@ -136,7 +136,7 @@ export default function LivePage() {
   const router = useRouter();
   const { user, authToken, isLoading: authLoading } = useClientAuth();
   const { t: _t } = useTranslation();
-  const { hasAccess: hasModuleAccess, loading: _moduleLoading } = useModuleAccess(ModuleType.LiveWeekly);
+  const { hasAccess: hasModuleAccess, loading: _moduleLoading } = useModuleAccess(ModuleType.LIVE_WEEKLY);
   
   const [liveMeetingsData, setLiveMeetingsData] = useState<LiveMeetingsResponse | null>(null);
   const [publicMeetingsData, setPublicMeetingsData] = useState<PublicLiveMeetingsResponse | null>(null);

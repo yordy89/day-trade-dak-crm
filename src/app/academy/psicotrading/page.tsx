@@ -16,7 +16,7 @@ export default function Page() {
   const [viewVideos, setViewVideos] = useState(false);
   const router = useRouter();
   const { t } = useTranslation('academy');
-  const { hasAccess, loading } = useModuleAccess(ModuleType.Psicotrading);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.PSICOTRADING);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function Page() {
       {/* Show videos section when user has access and clicked to view */}
       {viewVideos && hasAccess ? (
         <ModuleAccessGuard 
-          moduleType={ModuleType.Psicotrading}
+          moduleType={ModuleType.PSICOTRADING}
           fallback={
             <Box sx={{ p: 3 }}>
               <Button 

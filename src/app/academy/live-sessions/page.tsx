@@ -16,7 +16,7 @@ export default function ClassesPage(): React.JSX.Element {
   const router = useRouter();
   const { t } = useTranslation('academy');
   const [viewVideos, setViewVideos] = useState(false);
-  const { hasAccess, loading } = useModuleAccess(ModuleType.LiveRecorded);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.LIVE_RECORDED);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function ClassesPage(): React.JSX.Element {
   // Show videos for subscribers with module access guard
   return (
     <ModuleAccessGuard
-      moduleType={ModuleType.LiveRecorded}
+      moduleType={ModuleType.LIVE_RECORDED}
       fallback={
         <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
           <Button

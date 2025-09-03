@@ -259,12 +259,12 @@ export default function AcademyOverviewPage(): React.JSX.Element {
   
   // Check module access for all content types
   const { accessMap, loading: moduleAccessLoading } = useMultipleModuleAccess([
-    ModuleType.Classes,
-    ModuleType.MasterClasses,
-    ModuleType.LiveRecorded,
-    ModuleType.Psicotrading,
-    ModuleType.Stocks,
-    ModuleType.PeaceWithMoney,
+    ModuleType.CLASSES,
+    ModuleType.MASTER_CLASSES,
+    ModuleType.LIVE_RECORDED,
+    ModuleType.PSICOTRADING,
+    ModuleType.STOCKS,
+    ModuleType.PEACE_WITH_MONEY,
   ]);
   
   // Fetch user's event registrations
@@ -333,12 +333,12 @@ export default function AcademyOverviewPage(): React.JSX.Element {
   const hasPremiumAccess = activeSubscriptions.length > 0 || isSuperAdmin;
   
   // Use module access results from the hook (which checks API for proper permissions)
-  const hasClassesAccess = accessMap[ModuleType.Classes] ?? false;
-  const hasMasterClassAccess = accessMap[ModuleType.MasterClasses] ?? false;
-  const hasLiveSessionsAccess = accessMap[ModuleType.LiveRecorded] ?? false;
-  const hasPsicoTradingAccess = accessMap[ModuleType.Psicotrading] ?? false;
-  const hasStocksAccess = accessMap[ModuleType.Stocks] ?? false;
-  const hasPeaceWithMoneyAccess = accessMap[ModuleType.PeaceWithMoney] ?? false;
+  const hasClassesAccess = accessMap[ModuleType.CLASSES] ?? false;
+  const hasMasterClassAccess = accessMap[ModuleType.MASTER_CLASSES] ?? false;
+  const hasLiveSessionsAccess = accessMap[ModuleType.LIVE_RECORDED] ?? false;
+  const hasPsicoTradingAccess = accessMap[ModuleType.PSICOTRADING] ?? false;
+  const hasStocksAccess = accessMap[ModuleType.STOCKS] ?? false;
+  const hasPeaceWithMoneyAccess = accessMap[ModuleType.PEACE_WITH_MONEY] ?? false;
   
   // Content access based on subscriptions and permissions
   const contentAccess = [

@@ -15,7 +15,7 @@ export default function PropositoPage() {
   const [viewVideos, setViewVideos] = useState(false);
   const router = useRouter();
   const { t } = useTranslation('academy');
-  const { hasAccess, loading } = useModuleAccess(ModuleType.PeaceWithMoney);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.PEACE_WITH_MONEY);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function PropositoPage() {
   // Show videos for subscribers with module access guard
   return (
     <ModuleAccessGuard
-      moduleType={ModuleType.PeaceWithMoney}
+      moduleType={ModuleType.PEACE_WITH_MONEY}
       fallback={
         <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
           <Button

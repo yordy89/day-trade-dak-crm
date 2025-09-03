@@ -30,7 +30,7 @@ export default function ClassVideoPlayerPage() {
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const { hasAccess } = useModuleAccess(ModuleType.LiveRecorded);
+  const { hasAccess } = useModuleAccess(ModuleType.LIVE_RECORDED);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -224,7 +224,7 @@ export default function ClassVideoPlayerPage() {
           ) : (
             <ProtectedVideoPlayer
               videoId={videoKey}
-              moduleType={ModuleType.LiveRecorded}
+              moduleType={ModuleType.LIVE_RECORDED}
               videoUrl={finalVideoUrl}
               title={extractVideoName(videoKey)}
               description={t('liveRecorded.video.aboutDescription')}

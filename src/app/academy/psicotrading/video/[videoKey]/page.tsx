@@ -31,7 +31,7 @@ export default function PsicoTradingVideoPlayerPage() {
   const { t } = useTranslation('academy');
   const params = useParams<{ videoKey: string }>();
   const searchParams = useSearchParams();
-  const { hasAccess } = useModuleAccess(ModuleType.Psicotrading);
+  const { hasAccess } = useModuleAccess(ModuleType.PSICOTRADING);
   
   // Decode the video key
   const videoKey = decodeURIComponent(params.videoKey);
@@ -205,7 +205,7 @@ export default function PsicoTradingVideoPlayerPage() {
               ) : (
                 <ProtectedVideoPlayer
                   videoId={videoKey}
-                  moduleType={ModuleType.Psicotrading}
+                  moduleType={ModuleType.PSICOTRADING}
                   videoUrl={finalVideoUrl}
                   title={extractVideoName(videoKey)}
                   description={t('psicotrading.video.description')}

@@ -17,7 +17,7 @@ export default function StockPage(): React.JSX.Element {
   const router = useRouter();
   const { t } = useTranslation('academy');
   const [viewVideos, setViewVideos] = useState(false);
-  const { hasAccess, loading } = useModuleAccess(ModuleType.Stocks);
+  const { hasAccess, loading } = useModuleAccess(ModuleType.STOCKS);
   
   // Check URL hash on mount and handle navigation
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function StockPage(): React.JSX.Element {
   // Show videos for subscribers with module access guard
   return (
     <ModuleAccessGuard
-      moduleType={ModuleType.Stocks}
+      moduleType={ModuleType.STOCKS}
       fallback={
         <Box sx={{ minHeight: '100vh', width: '100%', p: 3 }}>
           <Button

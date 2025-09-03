@@ -47,7 +47,7 @@ export default function StockVideoPage() {
   const videoKey = params?.videoKey as string;
   const decodedVideoKey = decodeURIComponent(videoKey || '');
   
-  const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.Stocks);
+  const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.STOCKS);
   const [showVideoList, setShowVideoList] = useState(false);
 
   // Fetch all stock videos to find the current one
