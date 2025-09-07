@@ -332,7 +332,7 @@ export default function AboutPage() {
                   }}
                 >
                   <Image
-                    src="/assets/images/mijail-profile.jpg"
+                    src="/assets/images/mijail-profile.jpg?v=2"
                     alt="Mijail Medina - CEO"
                     width={600}
                     height={600}
@@ -341,6 +341,7 @@ export default function AboutPage() {
                       height: 'auto',
                       objectFit: 'cover',
                     }}
+                    priority
                   />
                 </Box>
               </Grid>
@@ -446,7 +447,8 @@ export default function AboutPage() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Box sx={{ position: 'sticky', top: 120 }}>
-                  <Box
+                  {/* Image temporarily hidden - will be replaced */}
+                  {/* <Box
                     sx={{
                       borderRadius: 2,
                       overflow: 'hidden',
@@ -465,7 +467,7 @@ export default function AboutPage() {
                         objectFit: 'cover',
                       }}
                     />
-                  </Box>
+                  </Box> */}
                   <Card sx={{
                     backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'background.paper',
                     backdropFilter: 'blur(10px)',
@@ -565,7 +567,8 @@ export default function AboutPage() {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Box
+                {/* Image temporarily hidden - will be replaced */}
+                {/* <Box
                   sx={{
                     borderRadius: 3,
                     overflow: 'hidden',
@@ -583,7 +586,7 @@ export default function AboutPage() {
                       objectFit: 'cover',
                     }}
                   />
-                </Box>
+                </Box> */}
               </Grid>
             </Grid>
           </Container>
