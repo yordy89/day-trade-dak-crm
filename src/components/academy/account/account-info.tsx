@@ -123,9 +123,29 @@ export function AccountInfo(): React.JSX.Element {
     if (typeof sub === 'string') {
       return true; // Legacy string subscriptions
     }
-    return (!sub.status || sub.status === 'active') &&
-           (!sub.expiresAt || new Date(sub.expiresAt) > new Date()) &&
-           (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > new Date());
+    
+    // Check if subscription is active
+    if (sub.status && sub.status !== 'active') {
+      return false;
+    }
+    
+    const now = new Date();
+    
+    // Check expiresAt with 12-hour buffer for timezone differences
+    if (sub.expiresAt) {
+      const expiresDate = new Date(sub.expiresAt);
+      expiresDate.setHours(expiresDate.getHours() + 12); // Add 12-hour buffer
+      if (expiresDate <= now) return false;
+    }
+    
+    // Check currentPeriodEnd with 12-hour buffer for timezone differences
+    if (sub.currentPeriodEnd) {
+      const periodEndDate = new Date(sub.currentPeriodEnd);
+      periodEndDate.setHours(periodEndDate.getHours() + 12); // Add 12-hour buffer
+      if (periodEndDate <= now) return false;
+    }
+    
+    return true;
   }) || [];
   const isPremium = activeSubscriptions.length > 0;
 
