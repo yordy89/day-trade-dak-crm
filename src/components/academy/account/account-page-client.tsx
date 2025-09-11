@@ -279,7 +279,7 @@ export function AccountPageClient(): React.JSX.Element {
 
   // Subscription price mapping based on API pricing service
   const subscriptionPrices: Record<string, string> = {
-    [SubscriptionPlan.MasterClases]: '$299.99/mes',
+    [SubscriptionPlan.MasterClases]: '$22.99/mes',
     [SubscriptionPlan.CLASSES]: '$52.99/mes',
     [SubscriptionPlan.LiveRecorded]: '$199.99/mes',
     [SubscriptionPlan.PSICOTRADING]: '$29.99/mes',
