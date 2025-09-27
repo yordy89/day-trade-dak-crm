@@ -5,6 +5,7 @@ import React from 'react';
 // Navigation and Footer
 import { MainNavbar } from '@/components/landing/main-navbar';
 import { ProfessionalFooter } from '@/components/landing/professional-footer';
+import TradingFloatingAnnouncement from '@/components/common/TradingFloatingAnnouncement';
 
 // DayTradeDak Accurate Components
 import { DayTradeDakHero } from '@/components/landing/daytradedak-hero';
@@ -27,6 +28,7 @@ export default function HomePage() {
         <DayTradeDakCTA />
       </main>
       <ProfessionalFooter />
+      <TradingFloatingAnnouncement />
     </div>
   );
 }

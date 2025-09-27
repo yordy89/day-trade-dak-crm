@@ -10,6 +10,7 @@ import { AuthGuard } from '@/components/auth/auth-guard';
 import { MainNav } from '@/components/academy/layout/main-nav';
 import { SideNav } from '@/components/academy/layout/side-nav';
 import { useTheme } from '@/components/theme/theme-provider';
+import TradingFloatingAnnouncement from '@/components/common/TradingFloatingAnnouncement';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -138,6 +139,7 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
           </Box>
         </Box>
       </Box>
+      <TradingFloatingAnnouncement />
     </AuthGuard>
   );
 }

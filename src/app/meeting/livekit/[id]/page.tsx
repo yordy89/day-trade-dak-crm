@@ -158,26 +158,55 @@ export default function LiveKitMeetingPage() {
   // Check if user has access to live meetings
   const checkLiveAccess = (userData: any) => {
     if (!userData) return false;
-    
+
+    console.log('Checking live access for user:', {
+      subscriptions: userData.subscriptions,
+      modulePermissions: userData.modulePermissions,
+      allowLiveMeetingAccess: userData.allowLiveMeetingAccess
+    });
+
     // Check for live subscription
-    const hasLiveSubscription = userData.subscriptions?.some((sub: any) => 
-      (sub.plan === 'LIVE_WEEKLY_MANUAL' || 
-       sub.plan === 'LIVE_WEEKLY_RECURRING' || 
-       sub.plan === 'LiveWeeklyManual' || 
-       sub.plan === 'LiveWeeklyRecurring') &&
-      (!sub.expiresAt || new Date(sub.expiresAt) > new Date())
-    );
-    
-    // Check for admin permission
+    const hasLiveSubscription = userData.subscriptions?.some((sub: any) => {
+      const planName = sub.plan?.toLowerCase() || '';
+      const isLivePlan = planName.includes('live') ||
+                         planName.includes('semanal') ||
+                         sub.plan === 'LIVE_WEEKLY_MANUAL' ||
+                         sub.plan === 'LIVE_WEEKLY_RECURRING' ||
+                         sub.plan === 'LiveWeeklyManual' ||
+                         sub.plan === 'LiveWeeklyRecurring';
+      const isActive = !sub.expiresAt || new Date(sub.expiresAt) > new Date();
+      return isLivePlan && isActive;
+    });
+
+    // Check for admin permission override
     const hasLivePermission = userData.allowLiveMeetingAccess === true;
-    
-    // Check for module permission
-    const hasModulePermission = userData.modulePermissions?.some((perm: any) => 
-      perm.module === 'LIVE_WEEKLY' && 
-      perm.hasAccess === true &&
-      (!perm.expiresAt || new Date(perm.expiresAt) > new Date())
-    );
-    
+
+    // Check for module permission - handle both English and Spanish names
+    const hasModulePermission = userData.modulePermissions?.some((perm: any) => {
+      const moduleName = (perm.module || perm.moduleName || '').toLowerCase();
+      const permName = (perm.name || '').toLowerCase();
+
+      // Check for various possible module names
+      const isLiveModule = moduleName.includes('live') ||
+                          moduleName.includes('semanal') ||
+                          permName.includes('live') ||
+                          permName.includes('semanal') ||
+                          perm.module === 'LIVE_WEEKLY' ||
+                          perm.module === 'Live Semanal';
+
+      // Check if permission is active
+      const hasAccess = perm.hasAccess === true || perm.status === 'active' || perm.status === 'Permanente';
+      const isNotExpired = !perm.expiresAt || new Date(perm.expiresAt) > new Date();
+
+      return isLiveModule && hasAccess && isNotExpired;
+    });
+
+    console.log('Live access check results:', {
+      hasLiveSubscription,
+      hasLivePermission,
+      hasModulePermission
+    });
+
     return hasLiveSubscription || hasLivePermission || hasModulePermission;
   };
 
@@ -249,26 +278,48 @@ export default function LiveKitMeetingPage() {
               console.error('Failed to parse user from auth storage:', e);
             }
           }
+
+          // If still no user data, try to get from custom storage
+          if (!actualUser) {
+            const userStr = localStorage.getItem('custom-auth-user');
+            if (userStr) {
+              try {
+                actualUser = JSON.parse(userStr);
+              } catch (e) {
+                console.error('Failed to parse custom auth user:', e);
+              }
+            }
+          }
+        }
+
+        // If we have a user but need fresh data, fetch it
+        if (actualUser && actualUser._id && !actualUser.subscriptions) {
+          try {
+            console.log('Fetching fresh user data for permissions check');
+            const userResponse = await axios.get(
+              `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
+              {
+                headers: { Authorization: `Bearer ${actualAuthToken}` }
+              }
+            );
+            actualUser = userResponse.data;
+            console.log('Fresh user data fetched:', actualUser);
+          } catch (error) {
+            console.log('User profile endpoint not available, continuing with existing user data');
+            // Continue with existing user data rather than throwing error
+          }
         }
         
-        // Check if user has access to live meetings
-        const userHasAccess = checkLiveAccess(actualUser);
-        const userIsHost = meetingData.host._id === actualUser?._id || 
+        // Check if user is the host
+        const userIsHost = meetingData.host._id === actualUser?._id ||
                            meetingData.host === actualUser?._id;
-        
-        // Set meeting data first
+
+        // Set meeting data
         setMeeting(meetingData);
         setIsHost(userIsHost);
-        
-        // Host always has access, otherwise check permissions
-        if (!userIsHost && !userHasAccess) {
-          setError('You do not have access to live meetings. Please purchase a Live subscription or contact support.');
-          setHasAccess(false);
-          setAuthChecked(true);
-          setLoading(false);
-          return;
-        }
-        
+
+        // Trust the backend - if we got the meeting data, user has access
+        // The backend getMeetingForUser already checks all permissions
         setHasAccess(true);
 
         // Fetch LiveKit token
@@ -297,7 +348,16 @@ export default function LiveKitMeetingPage() {
         setLoading(false);
       } catch (err: any) {
         console.error('Failed to fetch meeting data:', err);
-        setError(err.response?.data?.message || 'Failed to load meeting');
+
+        // Handle permission errors from backend
+        if (err.response?.status === 403) {
+          setError('You do not have access to this meeting. Please contact the host or purchase a Live subscription.');
+        } else if (err.response?.status === 404) {
+          setError('Meeting not found');
+        } else {
+          setError(err.response?.data?.message || 'Failed to load meeting');
+        }
+
         setHasAccess(false);
         setAuthChecked(true);
         setLoading(false);
@@ -331,7 +391,19 @@ export default function LiveKitMeetingPage() {
   };
 
   const handleLeaveMeeting = async () => {
-    // If host, end the meeting first
+    // Just leave the meeting without ending it
+    // The host can explicitly end the meeting via the control bar
+    console.log('Leaving meeting, but not ending it');
+
+    // Disconnect socket if connected
+    if (socket) {
+      socket.disconnect();
+    }
+    router.push('/live');
+  };
+
+  const handleEndMeeting = async () => {
+    // Explicitly end the meeting (only for host)
     if (isHost && meeting) {
       try {
         const actualAuthToken = authToken || localStorage.getItem('custom-auth-token');
@@ -347,15 +419,11 @@ export default function LiveKitMeetingPage() {
         console.log('Meeting ended by host');
       } catch (err) {
         console.error('Failed to end meeting:', err);
-        // Continue anyway - don't block leaving
       }
     }
-    
-    // Disconnect socket if connected
-    if (socket) {
-      socket.disconnect();
-    }
-    router.push('/live');
+
+    // Then leave
+    handleLeaveMeeting();
   };
   
   const handleMeetingEnded = () => {

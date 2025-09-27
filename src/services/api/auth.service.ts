@@ -8,6 +8,7 @@ export interface SignUpData {
   lastName: string;
   email: string;
   password: string;
+  acceptedMediaUsageTerms?: boolean;
 }
 
 export interface SignInData {

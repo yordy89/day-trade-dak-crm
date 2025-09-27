@@ -46,11 +46,12 @@ const createSchema = (t: any) => zod.object({
   email: zod.string().min(1, { message: t('auth.signUp.errors.emailRequired') }).email(t('auth.signUp.errors.emailInvalid')),
   password: zod.string().min(6, { message: t('auth.signUp.errors.passwordRequired') }),
   terms: zod.boolean().refine((value) => value, t('auth.signUp.errors.termsRequired')),
+  mediaTerms: zod.boolean().refine((value) => value, 'Debe aceptar los términos de uso de imagen'),
 });
 
 type Values = zod.infer<ReturnType<typeof createSchema>>;
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false } satisfies Values;
+const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false, mediaTerms: false } satisfies Values;
 
 
 interface SignUpCredentials {
@@ -58,6 +59,7 @@ interface SignUpCredentials {
   lastName: string;
   email: string;
   password: string;
+  acceptedMediaUsageTerms?: boolean;
 }
 
 interface CustomInputProps {
@@ -212,9 +214,12 @@ export function SignUpForm(): React.JSX.Element {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const onSubmit = (values: Values): void => {
-    // Extract terms from values to exclude it from the API call
-    const { terms: _terms, ...signUpData } = values;
-    signUp(signUpData);
+    // Extract terms from values and prepare signup data
+    const { terms: _terms, mediaTerms, ...signUpData } = values;
+    signUp({
+      ...signUpData,
+      acceptedMediaUsageTerms: mediaTerms
+    });
   };
 
   return (
@@ -323,8 +328,8 @@ export function SignUpForm(): React.JSX.Element {
               <Box>
                 <FormControlLabel
                   control={
-                    <Checkbox 
-                      {...field} 
+                    <Checkbox
+                      {...field}
                       checked={field.value}
                       sx={{
                         color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
@@ -337,20 +342,20 @@ export function SignUpForm(): React.JSX.Element {
                   label={
                     <Typography variant="body2" color="text.secondary">
                       {t('auth.signUp.termsPrefix')}{' '}
-                      <Link 
-                        component={RouterLink} 
-                        href={`${paths.terms.terms}#terms`} 
-                        underline="hover" 
+                      <Link
+                        component={RouterLink}
+                        href={`${paths.terms.terms}#terms`}
+                        underline="hover"
                         variant="body2"
                         sx={{ color: 'primary.main' }}
                       >
                         {t('auth.signUp.termsOfService')}
                       </Link>
                       {' '}{t('auth.signUp.and')}{' '}
-                      <Link 
-                        component={RouterLink} 
-                        href={`${paths.terms.terms}#privacy`} 
-                        underline="hover" 
+                      <Link
+                        component={RouterLink}
+                        href={`${paths.terms.terms}#privacy`}
+                        underline="hover"
                         variant="body2"
                         sx={{ color: 'primary.main' }}
                       >
@@ -360,6 +365,46 @@ export function SignUpForm(): React.JSX.Element {
                   }
                 />
                 {errors.terms ? <FormHelperText error>{errors.terms.message}</FormHelperText> : null}
+              </Box>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="mediaTerms"
+            render={({ field }) => (
+              <Box>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...field}
+                      checked={field.value}
+                      sx={{
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                        '&.Mui-checked': {
+                          color: 'primary.main',
+                        },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" color="text.secondary">
+                      Acepto los{' '}
+                      <Link
+                        component={RouterLink}
+                        href="/media-usage-terms"
+                        target="_blank"
+                        underline="hover"
+                        variant="body2"
+                        sx={{ color: 'primary.main' }}
+                      >
+                        Términos de Uso de Imagen
+                      </Link>
+                      {' '}para eventos y contenido audiovisual
+                    </Typography>
+                  }
+                />
+                {errors.mediaTerms ? <FormHelperText error>{errors.mediaTerms.message}</FormHelperText> : null}
               </Box>
             )}
           />
