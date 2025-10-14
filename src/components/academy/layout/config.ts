@@ -42,6 +42,13 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
   //   icon: 'trending-up',
   //   requiredSubscription: SubscriptionPlan.Stocks,
   // },
+  // Trading Journal - Hidden until feature is complete
+  // {
+  //   id: 'trading-journal',
+  //   title: t('academy:navigation.tradingJournal'),
+  //   href: paths.academy.tradingJournal.trades,
+  //   icon: 'notebook',
+  // },
   {
     id: 'personal-growth',
     title: t('academy:navigation.personalGrowth'),

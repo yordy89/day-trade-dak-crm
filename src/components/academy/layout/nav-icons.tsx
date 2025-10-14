@@ -7,7 +7,7 @@ import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
 import { CreditCard } from '@phosphor-icons/react/dist/ssr/CreditCard';
 import { House } from '@phosphor-icons/react/dist/ssr/House';
-import { CalendarCheck, Buildings, Book, ChalkboardTeacher, Student, ChartLineUp, Brain, GraduationCap, ChartLine, TreeStructure, Leaf, TrendUp } from '@phosphor-icons/react';
+import { CalendarCheck, Buildings, Book, ChalkboardTeacher, Student, ChartLineUp, Brain, GraduationCap, ChartLine, TreeStructure, Leaf, TrendUp, Notebook } from '@phosphor-icons/react';
 
 export const navIcons = {
   house: House,
@@ -32,4 +32,5 @@ export const navIcons = {
   'personal-growth': TreeStructure,
   leaf: Leaf,
   'trending-up': TrendUp,
+  notebook: Notebook,
 } as Record<string, Icon>;

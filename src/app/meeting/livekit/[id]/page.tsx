@@ -15,6 +15,7 @@ import {
   Chip,
   IconButton,
   useTheme,
+  useMediaQuery,
   alpha,
   Snackbar,
 } from '@mui/material';
@@ -65,8 +66,14 @@ const ProfessionalLiveKitRoom = dynamic(
   { ssr: false }
 );
 
+const MobileOptimizedLiveKitRoom = dynamic(
+  () => import('@/components/meetings/mobile-optimized-livekit-room').then(mod => mod.MobileOptimizedLiveKitRoom),
+  { ssr: false }
+);
+
 // Import LiveKit styles
 import '@livekit/components-styles';
+import '@/styles/livekit-mobile.css';
 
 interface MeetingDetails {
   _id: string;
@@ -87,6 +94,8 @@ export default function LiveKitMeetingPage() {
   const params = useParams();
   const router = useRouter();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const { user, authToken, isLoading: authLoading } = useClientAuth();
   
   const meetingId = params.id as string;
@@ -639,7 +648,22 @@ export default function LiveKitMeetingPage() {
 
   // Main meeting room - only show when user has access and no errors
   if (meeting && token && !preJoinView && hasAccess && !error) {
-    // Use professional LiveKit room component with custom controls
+    // Use mobile-optimized component for mobile devices
+    if (isMobile || isTablet) {
+      return (
+        <MobileOptimizedLiveKitRoom
+          meetingId={meeting._id}
+          roomName={meeting.title}
+          userName={user ? `${user.firstName} ${user.lastName}` : 'Guest'}
+          token={token}
+          serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || 'wss://live.daytradedak.com'}
+          onDisconnect={handleLeaveMeeting}
+          isHost={isHost}
+        />
+      );
+    }
+
+    // Use professional LiveKit room component for desktop
     return (
       <ProfessionalLiveKitRoom
         meetingId={meeting._id}

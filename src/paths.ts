@@ -40,6 +40,12 @@ export const paths = {
     superation: {
       proposit: '/academy/personal-growth/peace-with-money',
       mind: '/academy/personal-growth/mind'
+    },
+    tradingJournal: {
+      trades: '/academy/trading-journal',
+      add: '/academy/trading-journal/add',
+      edit: '/academy/trading-journal/edit',
+      analytics: '/academy/trading-journal/analytics'
     }
   },
   errors: { notFound: '/errors/not-found' },

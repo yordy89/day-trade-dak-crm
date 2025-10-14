@@ -1,0 +1,200 @@
+/* Mobile-optimized LiveKit styles */
+@media (max-width: 600px) {
+  /* Ensure controls are always visible at bottom */
+  .lk-control-bar-mobile {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1400 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0) !important;
+  }
+
+  /* Video grid optimization for mobile */
+  .lk-grid-layout {
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+    height: calc(100vh - 120px) !important;
+  }
+
+  /* Smaller participant tiles on mobile */
+  .lk-participant-tile {
+    border-radius: 8px !important;
+    min-height: 120px !important;
+  }
+
+  /* Smaller metadata on mobile */
+  .lk-participant-metadata {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .lk-participant-metadata__name {
+    font-size: 0.75rem !important;
+  }
+
+  /* Focus layout adjustments */
+  .lk-focus-layout__stage {
+    padding: 0.5rem !important;
+  }
+
+  /* Hide unnecessary UI on mobile */
+  .lk-settings-menu {
+    display: none !important;
+  }
+
+  /* Chat adjustments for mobile */
+  .lk-chat {
+    width: 100% !important;
+    height: calc(100vh - 60px) !important;
+  }
+
+  .lk-chat-form {
+    padding: 8px !important;
+  }
+
+  .lk-chat-form input {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  /* Connection quality indicator */
+  .lk-connection-quality {
+    scale: 0.8 !important;
+  }
+
+  /* Screen share optimization */
+  .lk-screen-share video {
+    object-fit: contain !important;
+    max-height: calc(100vh - 140px) !important;
+  }
+
+  /* Participant list in focus mode */
+  .lk-focus-layout__sidebar {
+    display: none !important;
+  }
+
+  /* Bottom carousel for mobile */
+  .lk-focus-layout__carousel {
+    position: fixed !important;
+    bottom: 100px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 80px !important;
+    padding: 0 8px !important;
+  }
+
+  .lk-focus-layout__carousel .lk-participant-tile {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  /* Toast notifications */
+  .lk-toast {
+    bottom: 120px !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 601px) and (max-width: 900px) {
+  .lk-grid-layout {
+    padding: 1rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .lk-participant-metadata {
+    padding: 6px 10px !important;
+    font-size: 0.825rem !important;
+  }
+
+  .lk-control-bar-mobile {
+    padding: 12px 16px !important;
+  }
+
+  .lk-focus-layout__sidebar {
+    width: 120px !important;
+  }
+
+  .lk-focus-layout__carousel {
+    height: 90px !important;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari */
+  .lk-control-bar-mobile {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 8px) !important;
+  }
+
+  /* Prevent rubber band scrolling */
+  .lk-room {
+    position: fixed;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Android specific fixes */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch devices */
+  .lk-control-bar-mobile button,
+  .lk-control-bar-mobile .MuiIconButton-root {
+    min-width: 48px !important;
+    min-height: 48px !important;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .lk-control-bar-mobile {
+    padding: 8px !important;
+  }
+
+  .lk-control-bar-mobile button,
+  .lk-control-bar-mobile .MuiIconButton-root {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .lk-grid-layout {
+    padding: 0.25rem !important;
+    gap: 0.25rem !important;
+  }
+
+  .lk-participant-metadata {
+    display: none !important;
+  }
+}
+
+/* Ensure controls stay above virtual keyboard */
+.keyboard-open .lk-control-bar-mobile {
+  bottom: 0 !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .lk-control-bar-mobile {
+    background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.95) 20%) !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .lk-control-bar-mobile {
+    border-top: 2px solid currentColor !important;
+  }
+
+  .lk-control-bar-mobile button {
+    border: 2px solid currentColor !important;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .lk-control-bar-mobile * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
