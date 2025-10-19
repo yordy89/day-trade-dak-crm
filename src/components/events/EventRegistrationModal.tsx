@@ -237,6 +237,21 @@ interface EventRegistrationModalProps {
     type?: 'master_course' | 'community_event' | 'general';
     price?: number;
     requiresActiveSubscription?: boolean;
+    // Partial payment settings
+    paymentMode?: 'full_only' | 'partial_allowed';
+    minimumDepositAmount?: number;
+    depositPercentage?: number;
+    minimumInstallmentAmount?: number;
+    allowedFinancingPlans?: string[];
+    allowCustomPaymentPlan?: boolean;
+    paymentSettings?: {
+      enablePartialPayments?: boolean;
+      autoReminderDays?: number[];
+      gracePeriodDays?: number;
+      lateFeeAmount?: number;
+      lateFeePercentage?: number;
+      maxPaymentAttempts?: number;
+    };
   };
   userId?: string;
   userEmail?: string;
@@ -269,7 +284,12 @@ export function EventRegistrationModal({
   const [additionalChildren, setAdditionalChildren] = useState(0);
   const [totalPrice, setTotalPrice] = useState(event.price || 0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'klarna' | 'afterpay' | 'local_financing' | null>(null);
-  
+
+  // Partial payment states
+  const [paymentMode, setPaymentMode] = useState<'full' | 'partial'>('full');
+  const [depositAmount, setDepositAmount] = useState(0);
+  const [selectedDepositOption, setSelectedDepositOption] = useState<'percentage' | 'custom'>('percentage');
+
   // Referral code states
   const [referralCode, setReferralCode] = useState('');
   const [isValidatingCode, setIsValidatingCode] = useState(false);
@@ -310,7 +330,7 @@ export function EventRegistrationModal({
     const basePrice = event.price || 0;
     const attendeesPrice = (additionalAdults * ADULT_PRICE) + (additionalChildren * CHILD_PRICE);
     const subtotal = basePrice + attendeesPrice;
-    
+
     // Apply discount if validated
     let finalPrice = subtotal;
     if (codeValidated) {
@@ -323,9 +343,17 @@ export function EventRegistrationModal({
       setDiscountAmount(calculatedDiscount);
       finalPrice = subtotal - calculatedDiscount;
     }
-    
+
     setTotalPrice(finalPrice);
-  }, [additionalAdults, additionalChildren, event.price, codeValidated, discountPercentage, discountFixedAmount, discountType]);
+
+    // Calculate default deposit (50% or minimum deposit amount)
+    if (event.paymentMode === 'partial_allowed' && paymentMode === 'partial') {
+      const defaultDeposit = event.depositPercentage
+        ? (finalPrice * event.depositPercentage / 100)
+        : event.minimumDepositAmount || (finalPrice * 0.5);
+      setDepositAmount(Math.max(event.minimumDepositAmount || 0, defaultDeposit));
+    }
+  }, [additionalAdults, additionalChildren, event.price, event.paymentMode, event.depositPercentage, event.minimumDepositAmount, codeValidated, discountPercentage, discountFixedAmount, discountType, paymentMode]);
 
   // Reset form when modal closes
   useEffect(() => {
@@ -335,8 +363,19 @@ export function EventRegistrationModal({
     }
   }, [isOpen]);
 
-  // Debug event data
-  console.log('Event data in modal:', event);
+  // Debug event data and payment settings
+  useEffect(() => {
+    if (isOpen) {
+      console.log('=== Event Registration Modal Debug ===');
+      console.log('Full event object:', event);
+      console.log('Payment Mode:', event.paymentMode);
+      console.log('Minimum Deposit:', event.minimumDepositAmount);
+      console.log('Deposit Percentage:', event.depositPercentage);
+      console.log('Minimum Installment:', event.minimumInstallmentAmount);
+      console.log('Event Type:', event.type);
+      console.log('Event Price:', event.price);
+    }
+  }, [isOpen, event]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -434,13 +473,30 @@ export function EventRegistrationModal({
         return;
       }
 
+      // Validate deposit amount for partial payments
+      if (paymentMode === 'partial' && event.paymentMode === 'partial_allowed') {
+        const minDeposit = event.minimumDepositAmount || 0;
+        if (depositAmount < minDeposit) {
+          toast.error(`El depósito mínimo es $${minDeposit.toFixed(2)}`);
+          setIsLoading(false);
+          setSelectedPaymentMethod(null);
+          return;
+        }
+        if (depositAmount >= totalPrice) {
+          toast.error('El depósito debe ser menor al total');
+          setIsLoading(false);
+          setSelectedPaymentMethod(null);
+          return;
+        }
+      }
+
       // Prepare additional info based on event type
       const additionalInfo: any = {};
       if (event.type === 'master_course') {
         additionalInfo.tradingExperience = formData.tradingExperience;
         additionalInfo.expectations = formData.expectations;
       }
-      
+
       // Add attendees information if it's a community event
       if (event.type === 'community_event' && (additionalAdults > 0 || additionalChildren > 0)) {
         additionalInfo.additionalAttendees = {
@@ -450,7 +506,34 @@ export function EventRegistrationModal({
         };
       }
 
-      // Create checkout session with payment method and affiliate data
+      // Handle partial payment
+      if (paymentMode === 'partial' && event.paymentMode === 'partial_allowed') {
+        const partialPaymentData = {
+          eventId: event._id,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          depositAmount,
+          userId,
+          financingPlanId,
+          paymentMethod,
+          additionalInfo,
+          affiliateCode: codeValidated && affiliateDetails ? affiliateDetails.affiliateCode : undefined,
+        };
+
+        const response = await eventService.initiatePartialPayment(partialPaymentData);
+
+        // Redirect to Stripe checkout for deposit
+        if (response.url) {
+          window.location.href = response.url;
+        } else {
+          throw new Error('No checkout URL received');
+        }
+        return;
+      }
+
+      // Full payment flow
       const checkoutData: any = {
         eventId: event._id,
         firstName: formData.firstName,
@@ -459,10 +542,10 @@ export function EventRegistrationModal({
         phoneNumber: formData.phoneNumber,
         additionalInfo,
         userId,
-        paymentMethod, // Add payment method to checkout data
-        financingPlanId, // Add financing plan ID if using local financing
+        paymentMethod,
+        financingPlanId,
       };
-      
+
       // Add affiliate data if code is validated
       if (codeValidated && affiliateDetails) {
         checkoutData.affiliateCode = affiliateDetails.affiliateCode;
@@ -474,7 +557,7 @@ export function EventRegistrationModal({
       }
 
       const response = await eventService.createEventCheckout(checkoutData);
-      
+
       // Redirect to Stripe hosted checkout
       if (response.url) {
         window.location.href = response.url;
@@ -483,10 +566,10 @@ export function EventRegistrationModal({
       }
     } catch (error: any) {
       console.error('Registration error:', error);
-      
+
       // The errorHandler returns an ApiError object with a message property
       const errorMessage = error.message || error.response?.data?.message || '';
-      
+
       if (errorMessage.includes('Ya te has registrado con este correo electrónico')) {
         toast.error(t('events.registration.errors.alreadyRegistered'));
       } else if (errorMessage.includes('active subscription required')) {
@@ -1222,15 +1305,192 @@ export function EventRegistrationModal({
 
 
               {/* Step 2 (or last step): Payment Methods */}
-              {((event.type === 'community_event' && activeStep === 2) || 
+              {((event.type === 'community_event' && activeStep === 2) ||
                 (event.type !== 'community_event' && activeStep === 1)) && (
                 <Grid container spacing={2}>
+                  {/* Payment Mode Selection - Only show if partial payments are allowed */}
+                  {event.paymentMode === 'partial_allowed' && (
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight={600}
+                        sx={{
+                          color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                          mb: 1.5
+                        }}
+                      >
+                        Opciones de Pago
+                      </Typography>
+
+                      <Stack spacing={2}>
+                        {/* Full Payment Option */}
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 2,
+                            cursor: 'pointer',
+                            border: paymentMode === 'full'
+                              ? '2px solid #16a34a'
+                              : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                            backgroundColor: paymentMode === 'full'
+                              ? alpha('#16a34a', 0.05)
+                              : isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                            borderRadius: 2,
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              backgroundColor: alpha('#16a34a', 0.08),
+                            },
+                          }}
+                          onClick={() => setPaymentMode('full')}
+                        >
+                          <Stack direction="row" alignItems="center" justifyContent="space-between">
+                            <Box>
+                              <Typography variant="body1" fontWeight={600}>
+                                Pagar el Total
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Paga el monto completo ahora
+                              </Typography>
+                            </Box>
+                            <Typography variant="h6" fontWeight={700} color="primary">
+                              ${totalPrice.toFixed(2)}
+                            </Typography>
+                          </Stack>
+                        </Paper>
+
+                        {/* Partial Payment Option */}
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 2,
+                            cursor: 'pointer',
+                            border: paymentMode === 'partial'
+                              ? '2px solid #ec4899'
+                              : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                            backgroundColor: paymentMode === 'partial'
+                              ? alpha('#ec4899', 0.05)
+                              : isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                            borderRadius: 2,
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              backgroundColor: alpha('#ec4899', 0.08),
+                            },
+                          }}
+                          onClick={() => setPaymentMode('partial')}
+                        >
+                          <Stack spacing={2}>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                              <Box>
+                                <Typography variant="body1" fontWeight={600}>
+                                  Pago Parcial (Depósito)
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  Paga un depósito ahora y el resto después
+                                </Typography>
+                              </Box>
+                            </Stack>
+
+                            {/* Deposit Amount Selection */}
+                            {paymentMode === 'partial' && (
+                              <Box>
+                                <Divider sx={{ my: 1 }} />
+                                <Stack spacing={1.5}>
+                                  <Typography variant="body2" fontWeight={600}>
+                                    Selecciona el monto del depósito:
+                                  </Typography>
+
+                                  {/* Percentage Options */}
+                                  {event.depositPercentage && (
+                                    <Button
+                                      variant={selectedDepositOption === 'percentage' ? 'contained' : 'outlined'}
+                                      size="small"
+                                      onClick={() => {
+                                        setSelectedDepositOption('percentage');
+                                        setDepositAmount(totalPrice * event.depositPercentage! / 100);
+                                      }}
+                                      sx={{
+                                        justifyContent: 'space-between',
+                                        textTransform: 'none',
+                                      }}
+                                    >
+                                      <span>{event.depositPercentage}% Depósito</span>
+                                      <span>${(totalPrice * event.depositPercentage / 100).toFixed(2)}</span>
+                                    </Button>
+                                  )}
+
+                                  {/* Custom Amount */}
+                                  <Stack spacing={0.5}>
+                                    <Button
+                                      variant={selectedDepositOption === 'custom' ? 'contained' : 'outlined'}
+                                      size="small"
+                                      onClick={() => setSelectedDepositOption('custom')}
+                                      sx={{
+                                        textTransform: 'none',
+                                      }}
+                                    >
+                                      Monto Personalizado
+                                    </Button>
+
+                                    {selectedDepositOption === 'custom' && (
+                                      <CustomInput
+                                        icon={<CreditCard />}
+                                        label="Monto del Depósito"
+                                        name="depositAmount"
+                                        type="number"
+                                        value={depositAmount.toString()}
+                                        onChange={(e) => {
+                                          const value = parseFloat(e.target.value) || 0;
+                                          setDepositAmount(value);
+                                        }}
+                                        placeholder={`Mínimo $${event.minimumDepositAmount || 0}`}
+                                        isDarkMode={isDarkMode}
+                                        muiTheme={theme}
+                                      />
+                                    )}
+                                  </Stack>
+
+                                  {/* Payment Summary */}
+                                  <Paper
+                                    elevation={0}
+                                    sx={{
+                                      p: 1.5,
+                                      backgroundColor: alpha('#ec4899', 0.1),
+                                      border: `1px solid ${alpha('#ec4899', 0.2)}`,
+                                      borderRadius: 1,
+                                    }}
+                                  >
+                                    <Stack spacing={0.5}>
+                                      <Stack direction="row" justifyContent="space-between">
+                                        <Typography variant="caption">Depósito Hoy:</Typography>
+                                        <Typography variant="caption" fontWeight={700}>
+                                          ${depositAmount.toFixed(2)}
+                                        </Typography>
+                                      </Stack>
+                                      <Stack direction="row" justifyContent="space-between">
+                                        <Typography variant="caption">Saldo Pendiente:</Typography>
+                                        <Typography variant="caption" fontWeight={700}>
+                                          ${(totalPrice - depositAmount).toFixed(2)}
+                                        </Typography>
+                                      </Stack>
+                                    </Stack>
+                                  </Paper>
+                                </Stack>
+                              </Box>
+                            )}
+                          </Stack>
+                        </Paper>
+                      </Stack>
+
+                      <Divider sx={{ my: 2 }} />
+                    </Grid>
+                  )}
+
                   <Grid item xs={12}>
-                    <Typography 
-                      variant="h6" 
-                      fontWeight={600} 
+                    <Typography
+                      variant="h6"
+                      fontWeight={600}
                       gutterBottom
-                      sx={{ 
+                      sx={{
                         color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
                         mb: 2
                       }}
@@ -1291,8 +1551,8 @@ export function EventRegistrationModal({
                           py: 2,
                           borderRadius: 2,
                           borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'card' && isLoading 
-                            ? 'primary.main' 
+                          borderColor: selectedPaymentMethod === 'card' && isLoading
+                            ? 'primary.main'
                             : 'divider',
                           backgroundColor: selectedPaymentMethod === 'card' && isLoading
                             ? alpha(theme.palette.primary.main, 0.08)
@@ -1306,11 +1566,16 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            Pagar con Tarjeta
+                            {paymentMode === 'partial' ? 'Pagar Depósito' : 'Pagar con Tarjeta'}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} color="primary">
-                            ${totalPrice.toFixed(2)} USD
+                            ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                           </Typography>
+                          {paymentMode === 'partial' && (
+                            <Typography variant="caption" color="text.secondary">
+                              Saldo: ${(totalPrice - depositAmount).toFixed(2)}
+                            </Typography>
+                          )}
                           {isLoading && selectedPaymentMethod === 'card' && (
                             <CircularProgress size={20} />
                           )}
@@ -1328,8 +1593,8 @@ export function EventRegistrationModal({
                           py: 2,
                           borderRadius: 2,
                           borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'klarna' && isLoading 
-                            ? '#ec4899' 
+                          borderColor: selectedPaymentMethod === 'klarna' && isLoading
+                            ? '#ec4899'
                             : 'divider',
                           backgroundColor: selectedPaymentMethod === 'klarna' && isLoading
                             ? alpha('#ec4899', 0.08)
@@ -1343,14 +1608,19 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            Financiar con Klarna
+                            {paymentMode === 'partial' ? 'Financiar Depósito con Klarna' : 'Financiar con Klarna'}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
-                            ${(totalPrice * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
+                            ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             Incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento
                           </Typography>
+                          {paymentMode === 'partial' && (
+                            <Typography variant="caption" color="text.secondary">
+                              Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                            </Typography>
+                          )}
                           {isLoading && selectedPaymentMethod === 'klarna' && (
                             <CircularProgress size={20} />
                           )}
@@ -1368,8 +1638,8 @@ export function EventRegistrationModal({
                           py: 2,
                           borderRadius: 2,
                           borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'afterpay' && isLoading 
-                            ? '#00d4aa' 
+                          borderColor: selectedPaymentMethod === 'afterpay' && isLoading
+                            ? '#00d4aa'
                             : 'divider',
                           backgroundColor: selectedPaymentMethod === 'afterpay' && isLoading
                             ? alpha('#00d4aa', 0.08)
@@ -1383,14 +1653,19 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            Pagar con Afterpay
+                            {paymentMode === 'partial' ? 'Pagar Depósito con Afterpay' : 'Pagar con Afterpay'}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} sx={{ color: '#00d4aa' }}>
-                            ${(totalPrice * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
+                            ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             4 pagos sin intereses
                           </Typography>
+                          {paymentMode === 'partial' && (
+                            <Typography variant="caption" color="text.secondary">
+                              Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                            </Typography>
+                          )}
                           {isLoading && selectedPaymentMethod === 'afterpay' && (
                             <CircularProgress size={20} />
                           )}
@@ -1409,8 +1684,8 @@ export function EventRegistrationModal({
                             py: 2,
                             borderRadius: 2,
                             borderWidth: 2,
-                            borderColor: selectedPaymentMethod === 'local_financing' && isLoading 
-                              ? '#8B5CF6' 
+                            borderColor: selectedPaymentMethod === 'local_financing' && isLoading
+                              ? '#8B5CF6'
                               : 'divider',
                             backgroundColor: selectedPaymentMethod === 'local_financing' && isLoading
                               ? alpha('#8B5CF6', 0.08)
@@ -1424,14 +1699,19 @@ export function EventRegistrationModal({
                         >
                           <Stack alignItems="center" spacing={0.5}>
                             <Typography variant="body1" fontWeight={600}>
-                              Financiamiento DayTradeDak
+                              {paymentMode === 'partial' ? 'Financiar Depósito' : 'Financiamiento DayTradeDak'}
                             </Typography>
                             <Typography variant="h6" fontWeight={700} sx={{ color: '#8B5CF6' }}>
-                              ${totalPrice.toFixed(2)} USD
+                              ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
                               4 pagos quincenales sin intereses
                             </Typography>
+                            {paymentMode === 'partial' && (
+                              <Typography variant="caption" color="text.secondary">
+                                Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                              </Typography>
+                            )}
                             {isLoading && selectedPaymentMethod === 'local_financing' && (
                               <CircularProgress size={20} />
                             )}
@@ -1740,6 +2020,257 @@ export function EventRegistrationModal({
               </>
             )}
 
+            {/* Payment Mode Selection - Desktop Version */}
+            {event.paymentMode === 'partial_allowed' && event.price && event.price > 0 && (
+              <>
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography
+                    variant="h6"
+                    fontWeight={600}
+                    gutterBottom
+                    sx={{
+                      color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+                      mb: 2
+                    }}
+                  >
+                    Opciones de Pago
+                  </Typography>
+                </Grid>
+
+                {/* Full Payment Option */}
+                <Grid item xs={12} sm={6}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2.5,
+                      cursor: 'pointer',
+                      border: paymentMode === 'full'
+                        ? '2px solid #16a34a'
+                        : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                      backgroundColor: paymentMode === 'full'
+                        ? alpha('#16a34a', 0.08)
+                        : isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                      borderRadius: 2,
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        backgroundColor: alpha('#16a34a', 0.12),
+                        borderColor: '#16a34a',
+                      },
+                    }}
+                    onClick={() => setPaymentMode('full')}
+                  >
+                    <Stack spacing={1}>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography variant="h6" fontWeight={700}>
+                          Pagar el Total
+                        </Typography>
+                        {paymentMode === 'full' && (
+                          <CheckCircle sx={{ color: '#16a34a' }} />
+                        )}
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary">
+                        Paga el monto completo ahora
+                      </Typography>
+                      <Typography variant="h5" fontWeight={700} color="primary.main" sx={{ mt: 1 }}>
+                        ${totalPrice.toFixed(2)} USD
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                </Grid>
+
+                {/* Partial Payment Option */}
+                <Grid item xs={12} sm={6}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2.5,
+                      cursor: 'pointer',
+                      border: paymentMode === 'partial'
+                        ? '2px solid #ec4899'
+                        : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                      backgroundColor: paymentMode === 'partial'
+                        ? alpha('#ec4899', 0.08)
+                        : isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                      borderRadius: 2,
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        backgroundColor: alpha('#ec4899', 0.12),
+                        borderColor: '#ec4899',
+                      },
+                    }}
+                    onClick={() => setPaymentMode('partial')}
+                  >
+                    <Stack spacing={1}>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography variant="h6" fontWeight={700}>
+                          Pago Parcial
+                        </Typography>
+                        {paymentMode === 'partial' && (
+                          <CheckCircle sx={{ color: '#ec4899' }} />
+                        )}
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary">
+                        Paga un depósito ahora, el resto después
+                      </Typography>
+                      <Typography variant="h5" fontWeight={700} sx={{ color: '#ec4899', mt: 1 }}>
+                        Desde ${event.minimumDepositAmount || 0} USD
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                </Grid>
+
+                {/* Deposit Amount Selection - Only show when partial mode is selected */}
+                {paymentMode === 'partial' && (
+                  <Grid item xs={12}>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: 3,
+                        backgroundColor: alpha('#ec4899', 0.05),
+                        border: `1px solid ${alpha('#ec4899', 0.2)}`,
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                        Selecciona el monto del depósito:
+                      </Typography>
+
+                      <Stack spacing={2}>
+                        {/* Percentage-based deposit option */}
+                        {event.depositPercentage && (
+                          <Button
+                            variant={selectedDepositOption === 'percentage' ? 'contained' : 'outlined'}
+                            fullWidth
+                            onClick={() => {
+                              setSelectedDepositOption('percentage');
+                              const calculatedDeposit = totalPrice * event.depositPercentage! / 100;
+                              setDepositAmount(Math.max(event.minimumDepositAmount || 0, calculatedDeposit));
+                            }}
+                            sx={{
+                              py: 2,
+                              justifyContent: 'space-between',
+                              textTransform: 'none',
+                              background: selectedDepositOption === 'percentage'
+                                ? 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)'
+                                : 'transparent',
+                              '&:hover': {
+                                background: selectedDepositOption === 'percentage'
+                                  ? 'linear-gradient(135deg, #db2777 0%, #be185d 100%)'
+                                  : alpha('#ec4899', 0.08),
+                              },
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body1" fontWeight={600} sx={{ textAlign: 'left' }}>
+                                {event.depositPercentage}% Depósito Recomendado
+                              </Typography>
+                              <Typography variant="caption" sx={{ textAlign: 'left', display: 'block', opacity: 0.8 }}>
+                                Opción más común
+                              </Typography>
+                            </Box>
+                            <Typography variant="h6" fontWeight={700}>
+                              ${(totalPrice * event.depositPercentage / 100).toFixed(2)}
+                            </Typography>
+                          </Button>
+                        )}
+
+                        {/* Custom amount option */}
+                        <Button
+                          variant={selectedDepositOption === 'custom' ? 'contained' : 'outlined'}
+                          fullWidth
+                          onClick={() => setSelectedDepositOption('custom')}
+                          sx={{
+                            py: 1.5,
+                            textTransform: 'none',
+                            background: selectedDepositOption === 'custom'
+                              ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
+                              : 'transparent',
+                            '&:hover': {
+                              background: selectedDepositOption === 'custom'
+                                ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
+                                : alpha('#8b5cf6', 0.08),
+                            },
+                          }}
+                        >
+                          <Typography variant="body1" fontWeight={600}>
+                            Monto Personalizado
+                          </Typography>
+                        </Button>
+
+                        {/* Custom amount input */}
+                        {selectedDepositOption === 'custom' && (
+                          <Box sx={{ mt: 2 }}>
+                            <CustomInput
+                              icon={<CreditCard />}
+                              label="Monto del Depósito (USD)"
+                              name="depositAmount"
+                              type="number"
+                              value={depositAmount.toString()}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                setDepositAmount(value);
+                              }}
+                              placeholder={`Mínimo $${event.minimumDepositAmount || 0}`}
+                              isDarkMode={isDarkMode}
+                              muiTheme={theme}
+                              helperText={`Mínimo: $${event.minimumDepositAmount || 0} | Máximo: $${totalPrice.toFixed(2)}`}
+                            />
+                          </Box>
+                        )}
+
+                        {/* Payment Summary */}
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 2,
+                            backgroundColor: alpha('#ec4899', 0.1),
+                            border: `1px solid ${alpha('#ec4899', 0.3)}`,
+                            borderRadius: 2,
+                          }}
+                        >
+                          <Stack spacing={1}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                              <Typography variant="body2" fontWeight={600}>
+                                Depósito Hoy:
+                              </Typography>
+                              <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
+                                ${depositAmount.toFixed(2)}
+                              </Typography>
+                            </Stack>
+                            <Divider />
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                              <Typography variant="body2" fontWeight={600}>
+                                Saldo Pendiente:
+                              </Typography>
+                              <Typography variant="h6" fontWeight={700} color="text.secondary">
+                                ${(totalPrice - depositAmount).toFixed(2)}
+                              </Typography>
+                            </Stack>
+                            <Divider />
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                              <Typography variant="body2" fontWeight={600} sx={{ color: '#16a34a' }}>
+                                Total del Curso:
+                              </Typography>
+                              <Typography variant="h6" fontWeight={700} sx={{ color: '#16a34a' }}>
+                                ${totalPrice.toFixed(2)}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+                        </Paper>
+
+                        <Alert severity="info" sx={{ mt: 1 }}>
+                          <Typography variant="caption">
+                            Después de pagar tu depósito, podrás realizar pagos adicionales en cualquier momento desde la página "Mi Registro"
+                          </Typography>
+                        </Alert>
+                      </Stack>
+                    </Paper>
+                  </Grid>
+                )}
+              </>
+            )}
+
           </Grid>
           )}
         </Box>
@@ -1827,16 +2358,23 @@ export function EventRegistrationModal({
                   t('status.processing')
                 ) : (
                   <>
-                    <span>{t('events.registration.modal.payWithCard', 'Pagar al contado')}</span>
+                    <span>
+                      {paymentMode === 'partial' ? 'Pagar Depósito' : t('events.registration.modal.payWithCard', 'Pagar al contado')}
+                    </span>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {codeValidated && discountAmount > 0 && (
+                      {codeValidated && discountAmount > 0 && paymentMode === 'full' && (
                         <span style={{ fontSize: '0.75rem', textDecoration: 'line-through', opacity: 0.7 }}>
                           ${(totalPrice + discountAmount).toFixed(2)} USD
                         </span>
                       )}
                       <span style={{ fontSize: '1.05rem', fontWeight: 700 }}>
-                        ${totalPrice.toFixed(2)} USD
+                        ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                       </span>
+                      {paymentMode === 'partial' && (
+                        <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+                          Saldo: ${(totalPrice - depositAmount).toFixed(2)}
+                        </span>
+                      )}
                     </Box>
                   </>
                 )}
@@ -1922,13 +2460,20 @@ export function EventRegistrationModal({
                   t('status.processing')
                 ) : (
                   <>
-                    <span>{t('events.registration.modal.payWithKlarna', 'Financiar con Klarna')}</span>
+                    <span>
+                      {paymentMode === 'partial' ? 'Financiar Depósito con Klarna' : t('events.registration.modal.payWithKlarna', 'Financiar con Klarna')}
+                    </span>
                     <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
-                      ${(totalPrice * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
+                      ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
                     </span>
                     <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
                       (incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento)
                     </span>
+                    {paymentMode === 'partial' && (
+                      <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+                        Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                      </span>
+                    )}
                   </>
                 )}
               </Button>
@@ -1974,13 +2519,20 @@ export function EventRegistrationModal({
                   t('status.processing')
                 ) : (
                   <>
-                    <span>{t('events.registration.modal.payWithAfterpay', 'Pagar con Afterpay')}</span>
+                    <span>
+                      {paymentMode === 'partial' ? 'Financiar Depósito con Afterpay' : t('events.registration.modal.payWithAfterpay', 'Pagar con Afterpay')}
+                    </span>
                     <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
-                      ${(totalPrice * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
+                      ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
                     </span>
                     <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
                       {t('events.registration.modal.afterpayDescription', '4 pagos sin intereses')}
                     </span>
+                    {paymentMode === 'partial' && (
+                      <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+                        Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                      </span>
+                    )}
                   </>
                 )}
               </Button>
@@ -2028,13 +2580,23 @@ export function EventRegistrationModal({
                     t('status.processing')
                   ) : (
                     <>
-                      <span>{t('events.registration.modal.payWithLocalFinancing', 'Financiamiento DayTradeDak')}</span>
+                      <span>
+                        {paymentMode === 'partial' ? 'Financiar Depósito' : t('events.registration.modal.payWithLocalFinancing', 'Financiamiento DayTradeDak')}
+                      </span>
                       <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
-                        4 pagos de ${(totalPrice / 4).toFixed(2)} USD
+                        {paymentMode === 'partial'
+                          ? `${depositAmount.toFixed(2)} USD`
+                          : `4 pagos de $${(totalPrice / 4).toFixed(2)} USD`
+                        }
                       </span>
                       <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
-                        {t('events.registration.modal.localFinancingDescription', 'Sin verificación de crédito')}
+                        {paymentMode === 'partial' ? '4 pagos quincenales' : t('events.registration.modal.localFinancingDescription', 'Sin verificación de crédito')}
                       </span>
+                      {paymentMode === 'partial' && (
+                        <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+                          Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                        </span>
+                      )}
                     </>
                   )}
                 </Button>

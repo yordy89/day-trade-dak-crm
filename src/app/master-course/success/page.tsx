@@ -56,6 +56,11 @@ export default function MasterCourseSuccessPage() {
   const { i18n } = useTranslation();
   const isSpanish = i18n.language === 'es';
   const [isLoading, setIsLoading] = useState(false);
+  const [eventDates, setEventDates] = useState({
+    startDate: '24 de enero, 2026',
+    endDate: '26 de enero, 2026',
+    liveTrainingDates: '24-26 de Enero, 2026',
+  });
 
   useEffect(() => {
     // Trigger confetti animation
@@ -72,11 +77,11 @@ export default function MasterCourseSuccessPage() {
   }, []);
 
   const courseDetails = {
-    name: isSpanish ? 'Curso Intensivo de Trading 2025' : 'Master Trading Course 2025',
+    name: isSpanish ? 'Curso Intensivo de Trading 2026' : 'Master Trading Course 2026',
     duration: isSpanish ? '3 Días Intensivos + 2.5 Meses de Práctica' : '3 Intensive Days + 2.5 Months of Practice',
-    startDate: isSpanish ? '26 de Septiembre, 2025' : 'September 26, 2025',
-    endDate: isSpanish ? '13 de Diciembre, 2025' : 'December 13, 2025',
-    liveTrainingDates: isSpanish ? '11-13 de Octubre, 2025' : 'October 11-13, 2025',
+    startDate: eventDates.startDate,
+    endDate: eventDates.endDate,
+    liveTrainingDates: eventDates.liveTrainingDates,
     location: 'Tampa, Florida',
     venue: 'Tampa, Florida',
     format: isSpanish ? 'Online (15 días) + Presencial (3 días) + Práctica Supervisada (2 meses)' : 'Online (15 days) + In-Person (3 days) + Supervised Practice (2 months)',
@@ -86,9 +91,9 @@ export default function MasterCourseSuccessPage() {
     {
       phase: isSpanish ? 'Fase 1: Aprendizaje Online' : 'Phase 1: Online Learning',
       duration: isSpanish ? '15 días antes del presencial' : '15 days before in-person',
-      dates: isSpanish ? '26 Sep - 10 Oct' : 'Sep 26 - Oct 10',
+      dates: isSpanish ? 'Previo al presencial' : 'Before in-person',
       icon: <VideoLibrary />,
-      description: isSpanish 
+      description: isSpanish
         ? '8 lecciones en video + 4 mentorías vía Zoom'
         : '8 video lessons + 4 Zoom mentorships',
       color: '#16a34a'
@@ -96,19 +101,19 @@ export default function MasterCourseSuccessPage() {
     {
       phase: isSpanish ? 'Fase 2: Entrenamiento Presencial' : 'Phase 2: In-Person Training',
       duration: isSpanish ? '3 Días Intensivos' : '3 Intensive Days',
-      dates: isSpanish ? '11-13 Oct 2025' : 'Oct 11-13, 2025',
+      dates: eventDates.liveTrainingDates,
       icon: <Groups />,
-      description: isSpanish 
-        ? 'Sábado, Domingo y Lunes en Tampa - Trading en vivo con capital real'
-        : 'Saturday, Sunday and Monday in Tampa - Live trading with real capital',
+      description: isSpanish
+        ? 'Viernes, Sábado y Domingo en Tampa - Trading en vivo con capital real'
+        : 'Friday, Saturday and Sunday in Tampa - Live trading with real capital',
       color: '#3b82f6'
     },
     {
       phase: isSpanish ? 'Fase 3: Práctica Supervisada' : 'Phase 3: Supervised Practice',
       duration: isSpanish ? '2 Meses (100% Online)' : '2 Months (100% Online)',
-      dates: isSpanish ? '14 Oct - 13 Dic' : 'Oct 14 - Dec 13',
+      dates: isSpanish ? 'Después del presencial' : 'After in-person',
       icon: <TrendingUp />,
-      description: isSpanish 
+      description: isSpanish
         ? 'Lunes a Viernes: Trading en vivo + 16 mentorías (8 técnicas + 8 psicotrading)'
         : 'Monday to Friday: Live trading + 16 mentorships (8 technical + 8 psycho-trading)',
       color: '#f59e0b'
@@ -489,7 +494,7 @@ export default function MasterCourseSuccessPage() {
                       {isSpanish ? 'Primera Sesión Online' : 'First Online Session'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {isSpanish ? '26 de Septiembre, 2025 a las 7:00 PM EST' : 'September 26, 2025 at 7:00 PM EST'}
+                      {courseDetails.startDate} {isSpanish ? 'a las 7:00 PM EST' : 'at 7:00 PM EST'}
                     </Typography>
                   </Box>
                   <Divider />
@@ -510,7 +515,7 @@ export default function MasterCourseSuccessPage() {
                       {isSpanish ? 'Graduación' : 'Graduation'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {isSpanish ? '13 de Diciembre, 2025' : 'December 13, 2025'}
+                      {courseDetails.endDate}
                     </Typography>
                   </Box>
                 </Stack>

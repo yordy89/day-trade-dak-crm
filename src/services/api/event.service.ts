@@ -21,6 +21,22 @@ export interface Event {
   requiresActiveSubscription?: boolean;
   capacity?: number;
   currentRegistrations?: number;
+  featuredInCRM?: boolean; // Whether this event is featured in the CRM
+  // Partial payment fields
+  paymentMode?: 'full_only' | 'partial_allowed';
+  minimumDepositAmount?: number;
+  depositPercentage?: number;
+  minimumInstallmentAmount?: number;
+  allowedFinancingPlans?: string[];
+  allowCustomPaymentPlan?: boolean;
+  paymentSettings?: {
+    enablePartialPayments?: boolean;
+    autoReminderDays?: number[];
+    gracePeriodDays?: number;
+    lateFeeAmount?: number;
+    lateFeePercentage?: number;
+    maxPaymentAttempts?: number;
+  };
 }
 
 export interface CreateEventData {
@@ -283,6 +299,138 @@ class EventService {
         fallbackMessage: 'Failed to check event capacity.',
       });
       throw new Error(apiError.message);
+    }
+  }
+
+  // Partial Payment Methods
+
+  async initiatePartialPayment(data: {
+    eventId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    depositAmount: number;
+    userId?: string;
+    financingPlanId?: string;
+    paymentMethod?: string;
+    additionalInfo?: any;
+    promoCode?: string;
+    affiliateCode?: string;
+  }): Promise<any> {
+    try {
+      const response = await API.post('/event-registrations/initiate-partial', data);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to initiate partial payment.',
+      });
+      throw apiError;
+    }
+  }
+
+  async searchRegistrations(data: {
+    email?: string;
+    phoneNumber?: string;
+    registrationId?: string;
+    eventId?: string;
+    eventType?: string;
+  }): Promise<any[]> {
+    try {
+      const response = await API.post('/event-registrations/search', data);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to search registrations.',
+      });
+      throw apiError;
+    }
+  }
+
+  async getRegistrationBalance(registrationId: string): Promise<any> {
+    try {
+      const response = await API.get(`/event-registrations/check-balance/${registrationId}`);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to get registration balance.',
+      });
+      throw apiError;
+    }
+  }
+
+  async makePartialPayment(registrationId: string, data: {
+    amount: number;
+    paymentMethod?: string;
+    description?: string;
+    metadata?: any;
+  }): Promise<any> {
+    try {
+      const response = await API.post(`/event-registrations/make-payment/${registrationId}`, data);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to process payment.',
+      });
+      throw apiError;
+    }
+  }
+
+  async getPaymentHistory(registrationId: string): Promise<any> {
+    try {
+      const response = await API.get(`/event-registrations/payment-history/${registrationId}`);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to get payment history.',
+      });
+      throw apiError;
+    }
+  }
+
+  async updateEventPaymentSettings(eventId: string, settings: {
+    paymentMode?: 'full_only' | 'partial_allowed';
+    minimumDepositAmount?: number;
+    depositPercentage?: number;
+    minimumInstallmentAmount?: number;
+    allowedFinancingPlans?: string[];
+    allowCustomPaymentPlan?: boolean;
+    paymentSettings?: any;
+  }): Promise<any> {
+    try {
+      const response = await API.put(`/event-registrations/events/${eventId}/payment-settings`, settings);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to update payment settings.',
+      });
+      throw apiError;
+    }
+  }
+
+  async togglePaymentMode(eventId: string): Promise<any> {
+    try {
+      const response = await API.post(`/event-registrations/events/${eventId}/toggle-payment-mode`);
+      return response.data;
+    } catch (error) {
+      const apiError = errorHandler.handle(error, {
+        showToast: true,
+        logError: true,
+        fallbackMessage: 'Failed to toggle payment mode.',
+      });
+      throw apiError;
     }
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Container,
@@ -297,6 +298,7 @@ const TradingPatternGraphic = () => (
 );
 
 export default function MasterCoursePage() {
+  const router = useRouter();
   const theme = useTheme();
   const { isDarkMode } = useAppTheme();
   const { user } = useClientAuth();
@@ -317,23 +319,37 @@ export default function MasterCoursePage() {
     const fetchData = async () => {
       try {
         // First, get all events and find the master course
-        const eventsResponse = await eventService.getEvents({ 
+        const eventsResponse = await eventService.getEvents({
           isActive: true
         });
-        
-        // Find the first active master course event
-        const masterCourseEvent = eventsResponse.data.find(
+
+        // Find the featured master course event (or fall back to first active one)
+        const masterCourseEvents = eventsResponse.data.filter(
           (e: any) => e.type === 'master_course' && e.isActive
         );
-        
+
+        // Prioritize the featured event
+        const masterCourseEvent = masterCourseEvents.find((e: any) => e.featuredInCRM) || masterCourseEvents[0];
+
+        console.log('=== Master Course Event Selection Debug ===');
+        console.log('All Master Course Events:', masterCourseEvents);
+        console.log('Featured Event:', masterCourseEvents.find((e: any) => e.featuredInCRM));
+        console.log('Selected Event:', masterCourseEvent);
+
         if (masterCourseEvent) {
           // Use the real event from database
           setEvent(masterCourseEvent);
-          setPricing({ 
-            basePrice: masterCourseEvent.price || 2999.99, 
-            currency: 'usd' 
+          setPricing({
+            basePrice: masterCourseEvent.price || 2999.99,
+            currency: 'usd'
           });
-          console.log('Found Master Course event:', masterCourseEvent._id);
+          console.log('=== Event Loaded ===');
+          console.log('Event ID:', masterCourseEvent._id);
+          console.log('Event Name:', masterCourseEvent.name);
+          console.log('Payment Mode:', masterCourseEvent.paymentMode);
+          console.log('Featured in CRM:', masterCourseEvent.featuredInCRM);
+          console.log('Minimum Deposit:', masterCourseEvent.minimumDepositAmount);
+          console.log('Deposit Percentage:', masterCourseEvent.depositPercentage);
         } else {
           // No master course event found
           console.warn('No active Master Course event found in database');
@@ -1501,21 +1517,62 @@ export default function MasterCoursePage() {
                   {t('pricing.pricingSection.registerButton')}
                 </Button>
 
-                {/* BNPL Payment Options Message */}
-                <Alert 
-                  severity="success" 
-                  icon={<LocalOffer />}
+                {/* Payment Options Message */}
+                {event?.paymentMode === 'partial_allowed' ? (
+                  <Alert
+                    severity="success"
+                    icon={<LocalOffer />}
+                    sx={{
+                      backgroundColor: alpha(theme.palette.success.main, 0.1),
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight={600}>
+                      ¡Opciones de Pago Flexibles Disponibles!
+                    </Typography>
+                    <Typography variant="caption" component="div">
+                      • Paga el total ahora con tarjeta
+                    </Typography>
+                    <Typography variant="caption" component="div">
+                      • O paga un depósito desde ${event.minimumDepositAmount || 0} ({event.depositPercentage || 50}% sugerido) y el resto después
+                    </Typography>
+                    <Typography variant="caption" component="div">
+                      • También disponible: Klarna y Afterpay para financiamiento
+                    </Typography>
+                  </Alert>
+                ) : (
+                  <Alert
+                    severity="success"
+                    icon={<LocalOffer />}
+                    sx={{
+                      backgroundColor: alpha(theme.palette.success.main, 0.1),
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight={600}>
+                      {t('pricing.flexiblePayments', 'Multiple Payment Options Available')}
+                    </Typography>
+                    <Typography variant="caption">
+                      {t('pricing.bnplOptions', 'Paga completo con tarjeta o elige Klarna y Afterpay para pagos flexibles')}
+                    </Typography>
+                  </Alert>
+                )}
+
+                {/* Always show the "search my registration" button - users with partial payments need to complete them */}
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  fullWidth
+                  onClick={() => router.push('/master-course/my-registration')}
                   sx={{
-                    backgroundColor: alpha(theme.palette.success.main, 0.1),
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    '&:hover': {
+                      borderColor: 'primary.dark',
+                      backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                    },
                   }}
                 >
-                  <Typography variant="body2" fontWeight={600}>
-                    {t('pricing.flexiblePayments', 'Multiple Payment Options Available')}
-                  </Typography>
-                  <Typography variant="caption">
-                    {t('pricing.bnplOptions', 'Paga completo con tarjeta o elige Klarna y Afterpay para pagos flexibles')}
-                  </Typography>
-                </Alert>
+                  ¿Ya te registraste? Ver mi registro y hacer pagos
+                </Button>
 
                 <Stack spacing={1}>
                   <Stack direction="row" spacing={1} alignItems="center">

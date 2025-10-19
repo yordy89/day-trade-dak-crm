@@ -3,9 +3,9 @@
     "badge": "Solo 25 plazas disponibles",
     "specialOffer": "¡OFERTA ESPECIAL!",
     "title": "Curso Intensivo de Trading",
-    "subtitle": "Del 11 al 13 de octubre de 2025",
+    "subtitle": "Del 24 al 26 de enero de 2026",
     "description": "Aprende, opera en vivo y da el salto a la rentabilidad con acompañamiento real. Tampa, la sede del trading.",
-    "startDate": "11-13 Octubre, 2025",
+    "startDate": "24-26 Enero, 2026",
     "duration": "3 Días Intensivos + 2.5 Meses de Práctica",
     "location": "Tampa, Florida",
     "stats": {
@@ -71,7 +71,7 @@
       "number": "02",
       "name": "Entrenamiento Presencial",
       "duration": "3 Días",
-      "dates": "11-13 de Octubre, 2025 (Sábado, Domingo y Lunes)",
+      "dates": "24-26 de Enero, 2026 (Viernes, Sábado y Domingo)",
       "location": "Tampa, Florida",
       "description": "Entrenamiento intensivo con sesiones de trading en vivo",
       "activities": [
@@ -217,7 +217,7 @@
     "questions": [
       {
         "question": "¿Cómo es el formato del curso?",
-        "answer": "Fase 1: 15 días online con 8 lecciones y 4 mentorías. Fase 2: 3 días intensivos presenciales en Tampa (11-13 octubre). Fase 3: 2 meses de práctica supervisada con 16 mentorías."
+        "answer": "Fase 1: 15 días online con 8 lecciones y 4 mentorías. Fase 2: 3 días intensivos presenciales en Tampa (24-26 enero 2026). Fase 3: 2 meses de práctica supervisada con 16 mentorías."
       },
       {
         "question": "¿Qué aprenderé exactamente?",
@@ -229,7 +229,7 @@
       },
       {
         "question": "¿Qué modalidades están disponibles?",
-        "answer": "El entrenamiento presencial es en Tampa, FL (11-13 octubre). Las fases 1 y 3 son 100% online vía Zoom con acceso completo a todas las sesiones en vivo."
+        "answer": "El entrenamiento presencial es en Tampa, FL (24-26 enero 2026). Las fases 1 y 3 son 100% online vía Zoom con acceso completo a todas las sesiones en vivo."
       },
       {
         "question": "¿Qué incluye el precio?",
@@ -362,7 +362,7 @@
       "modulesTitle": "Módulos del Curso"
     },
     "phase2": {
-      "badge": "FASE 2 - Entrenamiento presencial intensivo (11-13 de octubre)",
+      "badge": "FASE 2 - Entrenamiento presencial intensivo (24-26 de enero 2026)",
       "title": "Entrenamiento Presencial Intensivo",
       "subtitle": "Entrenamiento intensivo con sesiones de trading en vivo"
     },
@@ -425,7 +425,7 @@
     }
   },
   "seo": {
-    "title": "Curso Intensivo de Trading 2025 - Educación Profesional en Trading",
+    "title": "Curso Intensivo de Trading 2026 - Educación Profesional en Trading",
     "description": "Únete a nuestro programa intensivo de trading de 3 meses. Aprende de profesionales, opera en vivo en Tampa y obtén tu certificación. Limitado a 50 estudiantes.",
     "keywords": "curso de trading, trading profesional, taller de trading Tampa, certificación en trading, educación day trading"
   }
