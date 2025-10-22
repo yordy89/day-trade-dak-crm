@@ -416,6 +416,12 @@
   "alreadyRegistered": {
     "button": "Already registered? View my registration and make payments"
   },
+  "flexiblePaymentOptions": {
+    "title": "Flexible Payment Options Available!",
+    "option1": "• Pay the full amount now with card",
+    "option2": "• Or pay a deposit from ${{amount}} ({{percentage}}% suggested) and the rest later",
+    "option3": "• Also available: Klarna and Afterpay for financing"
+  },
   "registrationSteps": {
     "personalInfo": "Personal Information",
     "guests": "Guests",

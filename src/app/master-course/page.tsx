@@ -1524,16 +1524,16 @@ export default function MasterCoursePage() {
                     }}
                   >
                     <Typography variant="body2" fontWeight={600}>
-                      ¡Opciones de Pago Flexibles Disponibles!
+                      {t('flexiblePaymentOptions.title')}
                     </Typography>
                     <Typography variant="caption" component="div">
-                      • Paga el total ahora con tarjeta
+                      {t('flexiblePaymentOptions.option1')}
                     </Typography>
                     <Typography variant="caption" component="div">
-                      • O paga un depósito desde ${event.minimumDepositAmount || 0} ({event.depositPercentage || 50}% sugerido) y el resto después
+                      {t('flexiblePaymentOptions.option2', { amount: event.minimumDepositAmount || 0, percentage: event.depositPercentage || 50 })}
                     </Typography>
                     <Typography variant="caption" component="div">
-                      • También disponible: Klarna y Afterpay para financiamiento
+                      {t('flexiblePaymentOptions.option3')}
                     </Typography>
                   </Alert>
                 ) : (
