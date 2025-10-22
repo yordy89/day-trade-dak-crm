@@ -1475,13 +1475,10 @@ export default function MasterCoursePage() {
                 >
                   <Stack spacing={0.5}>
                     <Typography variant="body2" fontWeight={700}>
-                      ⚠️ Política de No Reembolso
+                      ⚠️ {t('noRefundPolicy.title')}
                     </Typography>
                     <Typography variant="caption" sx={{ display: 'block', lineHeight: 1.5 }}>
-                      Los pagos por el CURSO INTENSIVO DE TRADING no son reembolsables. 
-                      Esta política se implementa para asegurar la planificación y el compromiso 
-                      tanto de los participantes, del equipo y de nuestro Mentor, garantizando así 
-                      la calidad y el valor de la experiencia educativa.
+                      {t('noRefundPolicy.description')}
                     </Typography>
                   </Stack>
                 </Alert>
@@ -1571,7 +1568,7 @@ export default function MasterCoursePage() {
                     },
                   }}
                 >
-                  ¿Ya te registraste? Ver mi registro y hacer pagos
+                  {t('alreadyRegistered.button')}
                 </Button>
 
                 <Stack spacing={1}>

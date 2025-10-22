@@ -48,10 +48,10 @@
       "number": "01",
       "name": "Aprendizaje Online",
       "duration": "15 días online antes del presencial",
-      "dates": "8 lecciones en video + 4 mentorías vía Zoom",
+      "dates": "8 lecciones en video + 16 mentorías grupales vía Zoom",
       "description": "Aprende lo esencial sin complicarte",
       "activities": [
-        "4 mentorías en vivo para configurar tu plataforma",
+        "4 mentorías preparatorias en vivo para configurar tu plataforma",
         "Aclarar dudas y prepararte para el entrenamiento presencial",
         "Acceso a comunidad exclusiva de trading",
         "Preparación completa para vivir el entrenamiento presencial al máximo"
@@ -71,7 +71,7 @@
       "number": "02",
       "name": "Entrenamiento Presencial",
       "duration": "3 Días",
-      "dates": "24-26 de Enero, 2026 (Viernes, Sábado y Domingo)",
+      "dates": "24-26 de Enero, 2026 (Sábado, Domingo y Lunes)",
       "location": "Tampa, Florida",
       "description": "Entrenamiento intensivo con sesiones de trading en vivo",
       "activities": [
@@ -217,7 +217,7 @@
     "questions": [
       {
         "question": "¿Cómo es el formato del curso?",
-        "answer": "Fase 1: 15 días online con 8 lecciones y 4 mentorías. Fase 2: 3 días intensivos presenciales en Tampa (24-26 enero 2026). Fase 3: 2 meses de práctica supervisada con 16 mentorías."
+        "answer": "Fase 1: 15 días online con 8 lecciones y 16 mentorías grupales. Fase 2: 3 días intensivos presenciales en Tampa (24-26 enero 2026, Sábado-Domingo-Lunes). Fase 3: 2 meses de práctica supervisada con acompañamiento diario."
       },
       {
         "question": "¿Qué aprenderé exactamente?",
@@ -303,7 +303,7 @@
       "description": "Videos HD con estrategias paso a paso"
     },
     "groupMentoring": {
-      "number": "4",
+      "number": "16",
       "title": "Mentorías Grupales",
       "description": "Sesiones en vivo vía Zoom cada semana"
     },
@@ -428,5 +428,108 @@
     "title": "Curso Intensivo de Trading 2026 - Educación Profesional en Trading",
     "description": "Únete a nuestro programa intensivo de trading de 3 meses. Aprende de profesionales, opera en vivo en Tampa y obtén tu certificación. Limitado a 50 estudiantes.",
     "keywords": "curso de trading, trading profesional, taller de trading Tampa, certificación en trading, educación day trading"
+  },
+  "noRefundPolicy": {
+    "title": "Política de No Reembolso",
+    "description": "Los pagos por el CURSO INTENSIVO DE TRADING no son reembolsables. Esta política se implementa para asegurar la planificación y el compromiso tanto de los participantes, del equipo y de nuestro Mentor, garantizando así la calidad y el valor de la experiencia educativa."
+  },
+  "alreadyRegistered": {
+    "button": "¿Ya te registraste? Ver mi registro y hacer pagos"
+  },
+  "registrationSteps": {
+    "personalInfo": "Información Personal",
+    "guests": "Invitados",
+    "paymentMethod": "Método de Pago"
+  },
+  "paymentModal": {
+    "paymentOptions": "Opciones de Pago",
+    "payInFull": "Pagar el Total",
+    "payFullDescription": "Paga el monto completo ahora",
+    "partialPayment": "Pago Parcial",
+    "partialDescription": "Paga un depósito ahora, el resto después",
+    "from": "Desde",
+    "selectDeposit": "Selecciona el monto del depósito:",
+    "recommendedDeposit": "{{percentage}}% Depósito Recomendado",
+    "mostCommon": "Opción más común",
+    "customAmount": "Monto Personalizado",
+    "enterOwnAmount": "Ingresa tu propio monto",
+    "depositAmount": "Monto del Depósito",
+    "deposit": "Depósito",
+    "minimum": "Mínimo",
+    "depositToday": "Depósito Hoy:",
+    "remainingBalance": "Saldo Pendiente:",
+    "courseTotal": "Total del Curso:",
+    "afterDepositNotice": "Después de pagar tu depósito, podrás realizar pagos adicionales en cualquier momento desde la página \"Mi Registro\"",
+    "payDepositButton": "Pagar Depósito",
+    "balance": "Saldo",
+    "cancel": "Cancelar",
+    "paymentMethod": "Método de Pago",
+    "choosePaymentMethod": "Elige cómo quieres pagar",
+    "selectPaymentMethod": "Selecciona tu método de pago",
+    "payWithCard": "Pagar con Tarjeta",
+    "payDeposit": "Pagar Depósito",
+    "financeDeposit": "Financiar Depósito",
+    "financeDepositWith": "Financiar Depósito con {{provider}}",
+    "financeWith": "Financiar con {{provider}}",
+    "payDepositWith": "Pagar Depósito con {{provider}}",
+    "payWith": "Pagar con {{provider}}",
+    "localFinancing": "Financiamiento DayTradeDak",
+    "includes": "(incluye {{fee}}% por financiamiento)",
+    "interestFree": "4 pagos sin intereses",
+    "balance": "Saldo:",
+    "balanceAfter": "Saldo después:",
+    "balanceAfterDeposit": "Saldo después del depósito:"
+  },
+  "myRegistration": {
+    "title": "Mi Registro - Master Course",
+    "subtitle": "Consulta el estado de tu registro y realiza pagos adicionales",
+    "searchTitle": "Buscar mi registro",
+    "searchDescription": "Ingresa cualquiera de los siguientes datos para encontrar tu registro",
+    "emailLabel": "Correo electrónico",
+    "registrationNumberLabel": "Número de registro",
+    "searchButton": "Buscar Registro",
+    "searching": "Buscando...",
+    "backButton": "Volver al Master Course",
+    "registrationInfo": "Información del Registro",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "registrationDate": "Fecha de registro",
+    "event": "Evento",
+    "regNumber": "Número de registro",
+    "paymentSummary": "Resumen de Pagos",
+    "paymentProgress": "Progreso del pago",
+    "totalPrice": "Precio total:",
+    "totalPaid": "Total pagado:",
+    "remainingBalance": "Balance restante:",
+    "fullyPaid": "Pagado Completo",
+    "partialPayment": "Pago Parcial",
+    "balanceNotice": "Tienes un balance pendiente de {{balance}}. Puedes realizar el pago en cualquier momento antes del evento.",
+    "makePaymentTitle": "Realizar Pago Adicional",
+    "makePaymentDescription": "Reduce tu saldo pendiente con un pago seguro",
+    "amountLabel": "Monto a pagar",
+    "payButton": "Pagar {{amount}}",
+    "minimum": "Mínimo",
+    "maximum": "Máximo",
+    "quickAmounts": "Montos rápidos:",
+    "payAll": "Pagar Todo",
+    "completeFinalPayment": "Completar Pago Final",
+    "finalPaymentNotice": "Este es tu pago final. Debes pagar el saldo restante completo: {{balance}}",
+    "minimumPaymentError": "El monto mínimo de pago es ${{amount}} USD",
+    "paymentHistory": "Historial de Pagos",
+    "paymentStatus": {
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "failed": "Fallido"
+    },
+    "paymentDescriptions": {
+      "initialDeposit": "Depósito Inicial",
+      "additionalPayment": "Pago Adicional",
+      "finalPayment": "Pago Final"
+    },
+    "notFound": "No se encontró ningún registro",
+    "notFoundDescription": "Verifica que los datos ingresados sean correctos. Si necesitas ayuda, contacta a nuestro equipo de soporte.",
+    "processing": "Procesando...",
+    "searchError": "Error al buscar el registro"
   }
 }

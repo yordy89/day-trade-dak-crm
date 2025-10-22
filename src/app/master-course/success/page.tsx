@@ -94,8 +94,8 @@ export default function MasterCourseSuccessPage() {
       dates: isSpanish ? 'Previo al presencial' : 'Before in-person',
       icon: <VideoLibrary />,
       description: isSpanish
-        ? '8 lecciones en video + 4 mentorías vía Zoom'
-        : '8 video lessons + 4 Zoom mentorships',
+        ? '8 lecciones en video + 16 mentorías grupales vía Zoom'
+        : '8 video lessons + 16 group mentorships',
       color: '#16a34a'
     },
     {
@@ -104,8 +104,8 @@ export default function MasterCourseSuccessPage() {
       dates: eventDates.liveTrainingDates,
       icon: <Groups />,
       description: isSpanish
-        ? 'Viernes, Sábado y Domingo en Tampa - Trading en vivo con capital real'
-        : 'Friday, Saturday and Sunday in Tampa - Live trading with real capital',
+        ? 'Sábado, Domingo y Lunes en Tampa - Trading en vivo con capital real'
+        : 'Saturday, Sunday and Monday in Tampa - Live trading with real capital',
       color: '#3b82f6'
     },
     {

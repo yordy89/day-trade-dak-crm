@@ -60,6 +60,7 @@ import { useTheme as useAppTheme } from '@/components/theme/theme-provider';
 import { eventService } from '@/services/api/event.service';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 interface Registration {
   id: string;
@@ -92,6 +93,7 @@ export default function MyRegistrationPage() {
   const theme = useTheme();
   const { isDarkMode } = useAppTheme();
   const router = useRouter();
+  const { t } = useTranslation('masterCourse');
 
   console.log('Dark mode:', isDarkMode);
 
@@ -218,7 +220,7 @@ export default function MyRegistrationPage() {
       }
     } catch (error) {
       console.error('Search error:', error);
-      toast.error('Error al buscar el registro');
+      toast.error(t('myRegistration.searchError'));
     } finally {
       setIsSearching(false);
     }
@@ -246,7 +248,7 @@ export default function MyRegistrationPage() {
     } else {
       // Regular partial payment - validate minimum and maximum
       if (paymentAmount < MINIMUM_PAYMENT) {
-        toast.error(`El monto mínimo de pago es $${MINIMUM_PAYMENT.toFixed(2)} USD`);
+        toast.error(t('myRegistration.minimumPaymentError', { amount: MINIMUM_PAYMENT.toFixed(2) }));
         return;
       }
 
@@ -261,7 +263,7 @@ export default function MyRegistrationPage() {
       const response = await eventService.makePartialPayment(registration.id, {
         amount: paymentAmount,
         paymentMethod: 'card',
-        description: 'Pago adicional',
+        description: t('myRegistration.paymentDescriptions.additionalPayment'),
       });
 
       if (response.checkoutUrl) {
@@ -332,14 +334,14 @@ export default function MyRegistrationPage() {
               },
             }}
           >
-            Volver al Master Course
+            {t('myRegistration.backButton')}
           </Button>
 
           <Typography variant="h3" fontWeight={700} gutterBottom align="center">
-            Mi Registro - Master Course
+            {t('myRegistration.title')}
           </Typography>
           <Typography variant="h6" color="text.secondary" align="center" sx={{ mb: 6 }}>
-            Consulta el estado de tu registro y realiza pagos adicionales
+            {t('myRegistration.subtitle')}
           </Typography>
 
           {/* Search Section */}
@@ -357,10 +359,10 @@ export default function MyRegistrationPage() {
                 <Search sx={{ fontSize: 32, color: 'primary.main' }} />
                 <Box>
                   <Typography variant="h5" fontWeight={700}>
-                    Buscar mi registro
+                    {t('myRegistration.searchTitle')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Ingresa cualquiera de los siguientes datos para encontrar tu registro
+                    {t('myRegistration.searchDescription')}
                   </Typography>
                 </Box>
               </Stack>
@@ -369,7 +371,7 @@ export default function MyRegistrationPage() {
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
                     <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}>
-                      Correo electrónico
+                      {t('myRegistration.emailLabel')}
                     </Typography>
                     <Box
                       sx={{
@@ -418,7 +420,7 @@ export default function MyRegistrationPage() {
 
                   <Grid item xs={12} md={6}>
                     <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}>
-                      Número de registro
+                      {t('myRegistration.registrationNumberLabel')}
                     </Typography>
                     <Box
                       sx={{
@@ -491,7 +493,7 @@ export default function MyRegistrationPage() {
                     },
                   }}
                 >
-                  {isSearching ? 'Buscando...' : 'Buscar Registro'}
+                  {isSearching ? t('myRegistration.searching') : t('myRegistration.searchButton')}
                 </Button>
               </Stack>
             </CardContent>
@@ -514,11 +516,11 @@ export default function MyRegistrationPage() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Person sx={{ fontSize: 32, color: 'primary.main' }} />
                       <Typography variant="h5" fontWeight={700}>
-                        Información del Registro
+                        {t('myRegistration.registrationInfo')}
                       </Typography>
                     </Stack>
                     <Chip
-                      label={registration.isFullyPaid ? 'Pagado Completo' : 'Pago Parcial'}
+                      label={registration.isFullyPaid ? t('myRegistration.fullyPaid') : t('myRegistration.partialPayment')}
                       color={registration.isFullyPaid ? 'success' : 'warning'}
                       icon={registration.isFullyPaid ? <CheckCircle /> : <Schedule />}
                       sx={{ px: 1, fontWeight: 600 }}
@@ -533,7 +535,7 @@ export default function MyRegistrationPage() {
                             <Person />
                           </ListItemIcon>
                           <ListItemText
-                            primary="Nombre completo"
+                            primary={t('myRegistration.fullName')}
                             secondary={`${registration.firstName} ${registration.lastName}`}
                           />
                         </ListItem>
@@ -541,13 +543,13 @@ export default function MyRegistrationPage() {
                           <ListItemIcon>
                             <Email />
                           </ListItemIcon>
-                          <ListItemText primary="Correo electrónico" secondary={registration.email} />
+                          <ListItemText primary={t('myRegistration.email')} secondary={registration.email} />
                         </ListItem>
                         <ListItem>
                           <ListItemIcon>
                             <Phone />
                           </ListItemIcon>
-                          <ListItemText primary="Teléfono" secondary={registration.phoneNumber} />
+                          <ListItemText primary={t('myRegistration.phone')} secondary={registration.phoneNumber} />
                         </ListItem>
                       </List>
                     </Grid>
@@ -559,7 +561,7 @@ export default function MyRegistrationPage() {
                             <Receipt />
                           </ListItemIcon>
                           <ListItemText
-                            primary="Número de registro"
+                            primary={t('myRegistration.regNumber')}
                             secondary={registration.registrationNumber || registration.id}
                           />
                         </ListItem>
@@ -568,7 +570,7 @@ export default function MyRegistrationPage() {
                             <CalendarToday />
                           </ListItemIcon>
                           <ListItemText
-                            primary="Fecha de registro"
+                            primary={t('myRegistration.registrationDate')}
                             secondary={formatDate(registration.createdAt)}
                           />
                         </ListItem>
@@ -576,7 +578,7 @@ export default function MyRegistrationPage() {
                           <ListItemIcon>
                             <Info />
                           </ListItemIcon>
-                          <ListItemText primary="Evento" secondary={registration.eventName} />
+                          <ListItemText primary={t('myRegistration.event')} secondary={registration.eventName} />
                         </ListItem>
                       </List>
                     </Grid>
@@ -597,7 +599,7 @@ export default function MyRegistrationPage() {
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
                     <Payment sx={{ fontSize: 32, color: registration.isFullyPaid ? 'success.main' : 'warning.main' }} />
                     <Typography variant="h5" fontWeight={700}>
-                      Resumen de Pagos
+                      {t('myRegistration.paymentSummary')}
                     </Typography>
                   </Stack>
 
@@ -605,7 +607,7 @@ export default function MyRegistrationPage() {
                   <Box sx={{ mb: 4 }}>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
                       <Typography variant="body2" color="text.secondary">
-                        Progreso del pago
+                        {t('myRegistration.paymentProgress')}
                       </Typography>
                       <Typography variant="body2" fontWeight={600}>
                         {calculateProgress().toFixed(0)}%
@@ -631,18 +633,18 @@ export default function MyRegistrationPage() {
                   <Paper sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
                     <Stack spacing={2}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography>Precio total:</Typography>
+                        <Typography>{t('myRegistration.totalPrice')}</Typography>
                         <Typography fontWeight={600}>{formatCurrency(registration.totalAmount)}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography>Total pagado:</Typography>
+                        <Typography>{t('myRegistration.totalPaid')}</Typography>
                         <Typography fontWeight={600} color="success.main">
                           {formatCurrency(registration.totalPaid)}
                         </Typography>
                       </Box>
                       <Divider />
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography fontWeight={600}>Balance restante:</Typography>
+                        <Typography fontWeight={600}>{t('myRegistration.remainingBalance')}</Typography>
                         <Typography fontWeight={700} color="primary" variant="h6">
                           {formatCurrency(registration.remainingBalance)}
                         </Typography>
@@ -653,8 +655,7 @@ export default function MyRegistrationPage() {
                   {!registration.isFullyPaid && (
                     <Alert severity="info" sx={{ mt: 3 }}>
                       <Typography variant="body2">
-                        Tienes un balance pendiente de {formatCurrency(registration.remainingBalance)}.
-                        Puedes realizar el pago en cualquier momento antes del evento.
+                        {t('myRegistration.balanceNotice', { balance: formatCurrency(registration.remainingBalance) })}
                       </Typography>
                     </Alert>
                   )}
@@ -677,10 +678,10 @@ export default function MyRegistrationPage() {
                       <CreditCard sx={{ fontSize: 32, color: 'success.main' }} />
                       <Box>
                         <Typography variant="h5" fontWeight={700}>
-                          Realizar Pago Adicional
+                          {t('myRegistration.makePaymentTitle')}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Reduce tu saldo pendiente con un pago seguro
+                          {t('myRegistration.makePaymentDescription')}
                         </Typography>
                       </Box>
                     </Stack>
@@ -688,7 +689,7 @@ export default function MyRegistrationPage() {
                     <Stack spacing={3}>
                       <Box>
                         <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}>
-                          Monto a pagar
+                          {t('myRegistration.amountLabel')}
                         </Typography>
                         <Box
                           sx={{
@@ -757,12 +758,12 @@ export default function MyRegistrationPage() {
                         {isFinalPayment ? (
                           <Alert severity="info" sx={{ mt: 1 }}>
                             <Typography variant="caption">
-                              Este es tu pago final. Debes pagar el saldo restante completo: {formatCurrency(registration.remainingBalance)}
+                              {t('myRegistration.finalPaymentNotice', { balance: formatCurrency(registration.remainingBalance) })}
                             </Typography>
                           </Alert>
                         ) : (
                           <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                            Mínimo: ${MINIMUM_PAYMENT.toFixed(2)} | Máximo: {formatCurrency(registration.remainingBalance)}
+                            {t('myRegistration.minimum')}: ${MINIMUM_PAYMENT.toFixed(2)} | {t('myRegistration.maximum')}: {formatCurrency(registration.remainingBalance)}
                           </Typography>
                         )}
                       </Box>
@@ -770,7 +771,7 @@ export default function MyRegistrationPage() {
                       {!isFinalPayment && (
                         <Box>
                           <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                            Montos rápidos:
+                            {t('myRegistration.quickAmounts')}
                           </Typography>
                           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                             <Button
@@ -850,7 +851,7 @@ export default function MyRegistrationPage() {
                                 },
                               }}
                             >
-                              Pagar Todo (${registration.remainingBalance.toFixed(2)})
+                              {t('myRegistration.payAll')} (${registration.remainingBalance.toFixed(2)})
                             </Button>
                           </Stack>
                         </Box>
@@ -891,15 +892,15 @@ export default function MyRegistrationPage() {
                         }}
                       >
                         {isLoadingPayment
-                          ? 'Procesando...'
+                          ? t('myRegistration.processing')
                           : isFinalPayment
-                          ? `Completar Pago Final (${formatCurrency(paymentAmount || 0)})`
-                          : `Pagar ${formatCurrency(paymentAmount || 0)}`}
+                          ? `${t('myRegistration.completeFinalPayment')} (${formatCurrency(paymentAmount || 0)})`
+                          : t('myRegistration.payButton', { amount: formatCurrency(paymentAmount || 0) })}
                       </Button>
 
                       {!isFinalPayment && paymentAmount > 0 && paymentAmount < MINIMUM_PAYMENT && (
                         <Alert severity="warning" sx={{ mt: 2 }}>
-                          El monto mínimo de pago es ${MINIMUM_PAYMENT.toFixed(2)} USD
+                          {t('myRegistration.minimumPaymentError', { amount: MINIMUM_PAYMENT.toFixed(2) })}
                         </Alert>
                       )}
                       {!isFinalPayment && parseFloat(paymentAmount.toFixed(2)) > parseFloat(registration.remainingBalance.toFixed(2)) && (
@@ -930,7 +931,7 @@ export default function MyRegistrationPage() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Receipt sx={{ fontSize: 32, color: 'info.main' }} />
                       <Typography variant="h5" fontWeight={700}>
-                        Historial de Pagos
+                        {t('myRegistration.paymentHistory')}
                       </Typography>
                     </Stack>
                     <IconButton
@@ -952,7 +953,7 @@ export default function MyRegistrationPage() {
                         {paymentHistory.map((payment, index) => (
                           <TimelineItem key={payment.paymentId}>
                             <TimelineOppositeContent color="text.secondary">
-                              {payment.processedAt ? formatDate(payment.processedAt) : 'Pendiente'}
+                              {payment.processedAt ? formatDate(payment.processedAt) : t('myRegistration.paymentStatus.pending')}
                             </TimelineOppositeContent>
                             <TimelineSeparator>
                               <TimelineDot
@@ -984,7 +985,13 @@ export default function MyRegistrationPage() {
                                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
                                   <Typography fontWeight={600}>{formatCurrency(payment.amount)}</Typography>
                                   <Chip
-                                    label={payment.status === 'completed' ? 'Completado' : payment.status === 'pending' ? 'Pendiente' : 'Fallido'}
+                                    label={
+                                      payment.status === 'completed'
+                                        ? t('myRegistration.paymentStatus.completed')
+                                        : payment.status === 'pending'
+                                        ? t('myRegistration.paymentStatus.pending')
+                                        : t('myRegistration.paymentStatus.failed')
+                                    }
                                     color={payment.status === 'completed' ? 'success' : payment.status === 'pending' ? 'warning' : 'error'}
                                     size="small"
                                   />

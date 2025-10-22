@@ -272,6 +272,7 @@ export function EventRegistrationModal({
   const { isDarkMode } = useAppTheme();
   const { t } = useTranslation();
   const { t: tCommunity } = useTranslation('communityEvent');
+  const { t: tMasterCourse } = useTranslation('masterCourse');
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -627,10 +628,10 @@ export function EventRegistrationModal({
   // Define steps based on event type and mobile view
   const steps = React.useMemo(() => {
     if (event.type === 'community_event') {
-      return ['Información Personal', 'Invitados', 'Método de Pago'];
+      return [tMasterCourse('registrationSteps.personalInfo'), tCommunity('registration.additionalAttendees.title'), tMasterCourse('registrationSteps.paymentMethod')];
     }
-    return ['Información Personal', 'Método de Pago'];
-  }, [event.type]);
+    return [tMasterCourse('registrationSteps.personalInfo'), tMasterCourse('registrationSteps.paymentMethod')];
+  }, [event.type, tMasterCourse, tCommunity]);
 
   // Validate current step before proceeding - memoize to prevent recreation
   const validateStep = React.useCallback((step: number): boolean => {
@@ -1344,7 +1345,7 @@ export function EventRegistrationModal({
                           mb: 1.5
                         }}
                       >
-                        Opciones de Pago
+                        {tMasterCourse('paymentModal.paymentOptions')}
                       </Typography>
 
                       <Stack spacing={2}>
@@ -1371,10 +1372,10 @@ export function EventRegistrationModal({
                           <Stack direction="row" alignItems="center" justifyContent="space-between">
                             <Box>
                               <Typography variant="body1" fontWeight={600}>
-                                Pagar el Total
+                                {tMasterCourse('paymentModal.payInFull')}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                Paga el monto completo ahora
+                                {tMasterCourse('paymentModal.payFullDescription')}
                               </Typography>
                             </Box>
                             <Typography variant="h6" fontWeight={700} color="primary">
@@ -1407,7 +1408,7 @@ export function EventRegistrationModal({
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                               <Box>
                                 <Typography variant="body1" fontWeight={600}>
-                                  Pago Parcial (Depósito)
+                                  {tMasterCourse('paymentModal.partialPayment')}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
                                   Paga un depósito ahora y el resto después
@@ -1421,7 +1422,7 @@ export function EventRegistrationModal({
                                 <Divider sx={{ my: 1 }} />
                                 <Stack spacing={1.5}>
                                   <Typography variant="body2" fontWeight={600}>
-                                    Selecciona el monto del depósito:
+                                    {tMasterCourse('paymentModal.selectDeposit')}
                                   </Typography>
 
                                   {/* Percentage Options */}
@@ -1438,7 +1439,7 @@ export function EventRegistrationModal({
                                         textTransform: 'none',
                                       }}
                                     >
-                                      <span>{event.depositPercentage}% Depósito</span>
+                                      <span>{event.depositPercentage}% {tMasterCourse('paymentModal.deposit')}</span>
                                       <span>${(totalPrice * event.depositPercentage / 100).toFixed(2)}</span>
                                     </Button>
                                   )}
@@ -1453,13 +1454,13 @@ export function EventRegistrationModal({
                                         textTransform: 'none',
                                       }}
                                     >
-                                      Monto Personalizado
+                                      {tMasterCourse('paymentModal.customAmount')}
                                     </Button>
 
                                     {selectedDepositOption === 'custom' && (
                                       <CustomInput
                                         icon={<CreditCard />}
-                                        label="Monto del Depósito"
+                                        label={tMasterCourse('paymentModal.depositAmount')}
                                         name="depositAmount"
                                         type="number"
                                         value={depositAmount.toString()}
@@ -1467,7 +1468,7 @@ export function EventRegistrationModal({
                                           const value = parseFloat(e.target.value) || 0;
                                           setDepositAmount(value);
                                         }}
-                                        placeholder={`Mínimo $${event.minimumDepositAmount || 0}`}
+                                        placeholder={`${tMasterCourse('paymentModal.minimum')} $${event.minimumDepositAmount || 0}`}
                                         isDarkMode={isDarkMode}
                                         muiTheme={theme}
                                       />
@@ -1520,7 +1521,7 @@ export function EventRegistrationModal({
                         mb: 2
                       }}
                     >
-                      Selecciona tu método de pago
+                      {tMasterCourse('paymentModal.selectPaymentMethod')}
                     </Typography>
                   </Grid>
 
@@ -1591,14 +1592,14 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            {paymentMode === 'partial' ? 'Pagar Depósito' : 'Pagar con Tarjeta'}
+                            {paymentMode === 'partial' ? tMasterCourse('paymentModal.payDepositButton') : tMasterCourse('paymentModal.payWithCard')}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} color="primary">
                             ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                           </Typography>
                           {paymentMode === 'partial' && (
                             <Typography variant="caption" color="text.secondary">
-                              Saldo: ${(totalPrice - depositAmount).toFixed(2)}
+                              {tMasterCourse('paymentModal.balance')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'card' && (
@@ -1633,17 +1634,17 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            {paymentMode === 'partial' ? 'Financiar Depósito con Klarna' : 'Financiar con Klarna'}
+                            {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDepositWith', { provider: 'Klarna' }) : tMasterCourse('paymentModal.financeWith', { provider: 'Klarna' })}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
                             ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento
+                            {tMasterCourse('paymentModal.includes', { fee: (KLARNA_FEE_PERCENTAGE * 100).toFixed(2) })}
                           </Typography>
                           {paymentMode === 'partial' && (
                             <Typography variant="caption" color="text.secondary">
-                              Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                              {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'klarna' && (
@@ -1678,17 +1679,17 @@ export function EventRegistrationModal({
                       >
                         <Stack alignItems="center" spacing={0.5}>
                           <Typography variant="body1" fontWeight={600}>
-                            {paymentMode === 'partial' ? 'Pagar Depósito con Afterpay' : 'Pagar con Afterpay'}
+                            {paymentMode === 'partial' ? tMasterCourse('paymentModal.payDepositWith', { provider: 'Afterpay' }) : tMasterCourse('paymentModal.payWith', { provider: 'Afterpay' })}
                           </Typography>
                           <Typography variant="h6" fontWeight={700} sx={{ color: '#00d4aa' }}>
                             ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            4 pagos sin intereses
+                            {tMasterCourse('paymentModal.interestFree')}
                           </Typography>
                           {paymentMode === 'partial' && (
                             <Typography variant="caption" color="text.secondary">
-                              Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                              {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'afterpay' && (
@@ -1724,7 +1725,7 @@ export function EventRegistrationModal({
                         >
                           <Stack alignItems="center" spacing={0.5}>
                             <Typography variant="body1" fontWeight={600}>
-                              {paymentMode === 'partial' ? 'Financiar Depósito' : 'Financiamiento DayTradeDak'}
+                              {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDeposit') : tMasterCourse('paymentModal.localFinancing')}
                             </Typography>
                             <Typography variant="h6" fontWeight={700} sx={{ color: '#8B5CF6' }}>
                               ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
@@ -1734,7 +1735,7 @@ export function EventRegistrationModal({
                             </Typography>
                             {paymentMode === 'partial' && (
                               <Typography variant="caption" color="text.secondary">
-                                Saldo después del depósito: ${(totalPrice - depositAmount).toFixed(2)}
+                                {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                               </Typography>
                             )}
                             {isLoading && selectedPaymentMethod === 'local_financing' && (
@@ -2059,7 +2060,7 @@ export function EventRegistrationModal({
                       mb: 2
                     }}
                   >
-                    Opciones de Pago
+                    {tMasterCourse('paymentModal.paymentOptions')}
                   </Typography>
                 </Grid>
 
@@ -2088,14 +2089,14 @@ export function EventRegistrationModal({
                     <Stack spacing={1}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="h6" fontWeight={700}>
-                          Pagar el Total
+                          {tMasterCourse('paymentModal.payInFull')}
                         </Typography>
                         {paymentMode === 'full' && (
                           <CheckCircle sx={{ color: '#16a34a' }} />
                         )}
                       </Stack>
                       <Typography variant="body2" color="text.secondary">
-                        Paga el monto completo ahora
+                        {tMasterCourse('paymentModal.payFullDescription')}
                       </Typography>
                       <Typography variant="h5" fontWeight={700} color="primary.main" sx={{ mt: 1 }}>
                         ${totalPrice.toFixed(2)} USD
@@ -2129,17 +2130,17 @@ export function EventRegistrationModal({
                     <Stack spacing={1}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="h6" fontWeight={700}>
-                          Pago Parcial
+                          {tMasterCourse('paymentModal.partialPayment')}
                         </Typography>
                         {paymentMode === 'partial' && (
                           <CheckCircle sx={{ color: '#ec4899' }} />
                         )}
                       </Stack>
                       <Typography variant="body2" color="text.secondary">
-                        Paga un depósito ahora, el resto después
+                        {tMasterCourse('paymentModal.partialDescription')}
                       </Typography>
                       <Typography variant="h5" fontWeight={700} sx={{ color: '#ec4899', mt: 1 }}>
-                        Desde ${event.minimumDepositAmount || 0} USD
+                        {tMasterCourse('paymentModal.from')} ${event.minimumDepositAmount || 0} USD
                       </Typography>
                     </Stack>
                   </Paper>
@@ -2158,7 +2159,7 @@ export function EventRegistrationModal({
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                        Selecciona el monto del depósito:
+                        {tMasterCourse('paymentModal.selectDeposit')}
                       </Typography>
 
                       <Stack spacing={2}>
@@ -2188,10 +2189,10 @@ export function EventRegistrationModal({
                           >
                             <Box>
                               <Typography variant="body1" fontWeight={600} sx={{ textAlign: 'left' }}>
-                                {event.depositPercentage}% Depósito Recomendado
+                                {tMasterCourse('paymentModal.recommendedDeposit', { percentage: event.depositPercentage })}
                               </Typography>
                               <Typography variant="caption" sx={{ textAlign: 'left', display: 'block', opacity: 0.8 }}>
-                                Opción más común
+                                {tMasterCourse('paymentModal.mostCommon')}
                               </Typography>
                             </Box>
                             <Typography variant="h6" fontWeight={700}>
@@ -2219,7 +2220,7 @@ export function EventRegistrationModal({
                           }}
                         >
                           <Typography variant="body1" fontWeight={600}>
-                            Monto Personalizado
+                            {tMasterCourse('paymentModal.customAmount')}
                           </Typography>
                         </Button>
 
@@ -2228,7 +2229,7 @@ export function EventRegistrationModal({
                           <Box sx={{ mt: 2 }}>
                             <CustomInput
                               icon={<CreditCard />}
-                              label="Monto del Depósito (USD)"
+                              label={`${tMasterCourse('paymentModal.depositAmount')} (USD)`}
                               name="depositAmount"
                               type="number"
                               value={depositAmount.toString()}
@@ -2257,7 +2258,7 @@ export function EventRegistrationModal({
                           <Stack spacing={1}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
                               <Typography variant="body2" fontWeight={600}>
-                                Depósito Hoy:
+                                {tMasterCourse('paymentModal.depositToday')}
                               </Typography>
                               <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
                                 ${depositAmount.toFixed(2)}
@@ -2266,7 +2267,7 @@ export function EventRegistrationModal({
                             <Divider />
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
                               <Typography variant="body2" fontWeight={600}>
-                                Saldo Pendiente:
+                                {tMasterCourse('paymentModal.remainingBalance')}
                               </Typography>
                               <Typography variant="h6" fontWeight={700} color="text.secondary">
                                 ${(totalPrice - depositAmount).toFixed(2)}
@@ -2275,7 +2276,7 @@ export function EventRegistrationModal({
                             <Divider />
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
                               <Typography variant="body2" fontWeight={600} sx={{ color: '#16a34a' }}>
-                                Total del Curso:
+                                {tMasterCourse('paymentModal.courseTotal')}
                               </Typography>
                               <Typography variant="h6" fontWeight={700} sx={{ color: '#16a34a' }}>
                                 ${totalPrice.toFixed(2)}
@@ -2286,7 +2287,7 @@ export function EventRegistrationModal({
 
                         <Alert severity="info" sx={{ mt: 1 }}>
                           <Typography variant="caption">
-                            Después de pagar tu depósito, podrás realizar pagos adicionales en cualquier momento desde la página "Mi Registro"
+                            {tMasterCourse('paymentModal.afterDepositNotice')}
                           </Typography>
                         </Alert>
                       </Stack>
@@ -2384,7 +2385,7 @@ export function EventRegistrationModal({
                 ) : (
                   <>
                     <span>
-                      {paymentMode === 'partial' ? 'Pagar Depósito' : t('events.registration.modal.payWithCard', 'Pagar al contado')}
+                      {paymentMode === 'partial' ? tMasterCourse('paymentModal.payDeposit') : tMasterCourse('paymentModal.payWithCard')}
                     </span>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       {codeValidated && discountAmount > 0 && paymentMode === 'full' && (
@@ -2397,7 +2398,7 @@ export function EventRegistrationModal({
                       </span>
                       {paymentMode === 'partial' && (
                         <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-                          Saldo: ${(totalPrice - depositAmount).toFixed(2)}
+                          {tMasterCourse('paymentModal.balance')} ${(totalPrice - depositAmount).toFixed(2)}
                         </span>
                       )}
                     </Box>
@@ -2486,17 +2487,17 @@ export function EventRegistrationModal({
                 ) : (
                   <>
                     <span>
-                      {paymentMode === 'partial' ? 'Financiar Depósito con Klarna' : t('events.registration.modal.payWithKlarna', 'Financiar con Klarna')}
+                      {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDepositWith', { provider: 'Klarna' }) : tMasterCourse('paymentModal.financeWith', { provider: 'Klarna' })}
                     </span>
                     <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
                       ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
                     </span>
                     <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
-                      (incluye {(KLARNA_FEE_PERCENTAGE * 100).toFixed(2)}% por financiamiento)
+                      {tMasterCourse('paymentModal.includes', { fee: (KLARNA_FEE_PERCENTAGE * 100).toFixed(2) })}
                     </span>
                     {paymentMode === 'partial' && (
                       <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-                        Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                        {tMasterCourse('paymentModal.balanceAfter')} ${(totalPrice - depositAmount).toFixed(2)}
                       </span>
                     )}
                   </>
@@ -2545,17 +2546,17 @@ export function EventRegistrationModal({
                 ) : (
                   <>
                     <span>
-                      {paymentMode === 'partial' ? 'Financiar Depósito con Afterpay' : t('events.registration.modal.payWithAfterpay', 'Pagar con Afterpay')}
+                      {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDepositWith', { provider: 'Afterpay' }) : tMasterCourse('paymentModal.payWith', { provider: 'Afterpay' })}
                     </span>
                     <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
                       ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
                     </span>
                     <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '-1px' }}>
-                      {t('events.registration.modal.afterpayDescription', '4 pagos sin intereses')}
+                      {tMasterCourse('paymentModal.interestFree')}
                     </span>
                     {paymentMode === 'partial' && (
                       <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-                        Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                        {tMasterCourse('paymentModal.balanceAfter')} ${(totalPrice - depositAmount).toFixed(2)}
                       </span>
                     )}
                   </>
@@ -2606,7 +2607,7 @@ export function EventRegistrationModal({
                   ) : (
                     <>
                       <span>
-                        {paymentMode === 'partial' ? 'Financiar Depósito' : t('events.registration.modal.payWithLocalFinancing', 'Financiamiento DayTradeDak')}
+                        {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDeposit') : tMasterCourse('paymentModal.localFinancing')}
                       </span>
                       <span style={{ fontSize: '1.05rem', fontWeight: 700, marginTop: '1px' }}>
                         {paymentMode === 'partial'
@@ -2619,7 +2620,7 @@ export function EventRegistrationModal({
                       </span>
                       {paymentMode === 'partial' && (
                         <span style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-                          Saldo después: ${(totalPrice - depositAmount).toFixed(2)}
+                          {tMasterCourse('paymentModal.balanceAfter')} ${(totalPrice - depositAmount).toFixed(2)}
                         </span>
                       )}
                     </>
