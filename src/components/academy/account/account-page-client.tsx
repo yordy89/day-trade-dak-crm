@@ -55,6 +55,7 @@ import API from '@/lib/axios';
 import { SubscriptionPlan } from '@/types/user';
 import { mapMembershipName } from '@/lib/memberships';
 import { formatDate } from '@/lib/date-format';
+import { PrivacyTab } from './privacy-tab';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -506,7 +507,8 @@ export function AccountPageClient(): React.JSX.Element {
                 {[
                   { icon: <User size={18} />, label: t('academy:account.info') },
                   { icon: <CreditCard size={18} />, label: t('academy:navigation.subscriptions') },
-                  { icon: <LockKey size={18} />, label: t('academy:settings.privacy.short') },
+                  { icon: <Shield size={18} />, label: 'Privacidad' },
+                  { icon: <LockKey size={18} />, label: 'Seguridad' },
                   { icon: <Bell size={18} />, label: t('academy:settings.notifications.short') },
                 ].map((tab, index) => (
                   <Button
@@ -567,7 +569,8 @@ export function AccountPageClient(): React.JSX.Element {
               {[
                 { icon: <User size={20} />, label: t('academy:account.personalInfo') },
                 { icon: <CreditCard size={20} />, label: t('academy:navigation.subscriptions') },
-                { icon: <LockKey size={20} />, label: t('academy:settings.privacy.title') },
+                { icon: <Shield size={20} />, label: 'Privacidad & Datos' },
+                { icon: <LockKey size={20} />, label: 'Seguridad' },
                 { icon: <Bell size={20} />, label: t('academy:settings.notifications.title') },
               ].map((tab, index) => (
                 <Button
@@ -1114,6 +1117,10 @@ export function AccountPageClient(): React.JSX.Element {
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>
+        <PrivacyTab />
+      </TabPanel>
+
+      <TabPanel value={tabValue} index={3}>
         <Card>
           <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Typography variant="h6" fontWeight={600} mb={3}>
@@ -1294,7 +1301,7 @@ export function AccountPageClient(): React.JSX.Element {
         </Card>
       </TabPanel>
 
-      <TabPanel value={tabValue} index={3}>
+      <TabPanel value={tabValue} index={4}>
         <Card>
           <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Typography variant="h6" fontWeight={600} mb={3}>

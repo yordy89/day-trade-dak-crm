@@ -44,7 +44,7 @@ const getServices = (t: any) => [
     description: t('services.items.videoCourses.description'),
     features: t('services.items.videoCourses.features', { returnObjects: true }),
     color: '#3b82f6',
-    href: '/academy/overview',
+    href: '/academy/classes',
   },
   {
     icon: Groups,
@@ -52,7 +52,7 @@ const getServices = (t: any) => [
     description: t('services.items.mentorships.description'),
     features: t('services.items.mentorships.features', { returnObjects: true }),
     color: '#16a34a',
-    href: '/academy/mentorship',
+    href: '/academy/masterclass',
   },
   {
     icon: School,

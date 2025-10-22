@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@/components/core/localization-provider';
 import { CustomThemeProvider } from '@/components/theme/theme-provider';
 import { I18nProvider } from '@/components/providers/i18n-provider';
 import { Toaster } from 'react-hot-toast';
+import { CookieConsentBanner } from '@/components/common/CookieConsentBanner';
 
 interface RootProvidersProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export function RootProviders({ children }: RootProvidersProps): React.JSX.Eleme
         <LocalizationProvider>
           <CustomThemeProvider>
             {children}
-            <Toaster 
+            <Toaster
               position="top-right"
               toastOptions={{
                 duration: 4000,
@@ -39,6 +40,7 @@ export function RootProviders({ children }: RootProvidersProps): React.JSX.Eleme
                 },
               }}
             />
+            <CookieConsentBanner />
           </CustomThemeProvider>
         </LocalizationProvider>
       </I18nProvider>

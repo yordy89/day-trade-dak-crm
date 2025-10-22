@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { eventService } from '@/services/api/event.service';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
@@ -290,6 +291,9 @@ export function EventRegistrationModal({
   const [depositAmount, setDepositAmount] = useState(0);
   const [selectedDepositOption, setSelectedDepositOption] = useState<'percentage' | 'custom'>('percentage');
 
+  // Feature flags from settings
+  const [enableReferralCode, setEnableReferralCode] = useState(false);
+
   // Referral code states
   const [referralCode, setReferralCode] = useState('');
   const [isValidatingCode, setIsValidatingCode] = useState(false);
@@ -304,6 +308,27 @@ export function EventRegistrationModal({
   // Mobile responsive states
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeStep, setActiveStep] = useState(0);
+
+  // Fetch feature flags from settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/settings/public`);
+        const settings = response.data;
+
+        // Check if referral code is enabled in settings
+        if (settings?.features?.enable_referral_code !== undefined) {
+          setEnableReferralCode(settings.features.enable_referral_code);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        // Default to false if settings can't be fetched
+        setEnableReferralCode(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   // Price constants
   const ADULT_PRICE = 75;
@@ -932,8 +957,8 @@ export function EventRegistrationModal({
               />
                   </Grid>
 
-                  {/* Referral Code Field - Only for Master Course */}
-                  {event.type === 'master_course' && (
+                  {/* Referral Code Field - Only for Master Course and if enabled in settings */}
+                  {enableReferralCode && event.type === 'master_course' && (
                     <Grid item xs={12}>
                 <CustomInput
                   icon={<LocalOffer />}
@@ -1906,8 +1931,8 @@ export function EventRegistrationModal({
               />
             </Grid>
 
-            {/* Referral Code Field - Only for Master Course */}
-            {event.type === 'master_course' && (
+            {/* Referral Code Field - Only for Master Course and if enabled in settings */}
+            {enableReferralCode && event.type === 'master_course' && (
               <Grid item xs={12}>
                 <CustomInput
                   icon={<LocalOffer />}

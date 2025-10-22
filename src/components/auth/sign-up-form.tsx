@@ -44,7 +44,13 @@ const createSchema = (t: any) => zod.object({
   firstName: zod.string().min(1, { message: t('auth.signUp.errors.firstNameRequired') }),
   lastName: zod.string().min(1, { message: t('auth.signUp.errors.lastNameRequired') }),
   email: zod.string().min(1, { message: t('auth.signUp.errors.emailRequired') }).email(t('auth.signUp.errors.emailInvalid')),
-  password: zod.string().min(6, { message: t('auth.signUp.errors.passwordRequired') }),
+  password: zod
+    .string()
+    .min(12, { message: 'La contraseña debe tener al menos 12 caracteres' })
+    .regex(/[A-Z]/, { message: 'La contraseña debe contener al menos una letra mayúscula' })
+    .regex(/[a-z]/, { message: 'La contraseña debe contener al menos una letra minúscula' })
+    .regex(/[0-9]/, { message: 'La contraseña debe contener al menos un número' })
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'La contraseña debe contener al menos un carácter especial' }),
   terms: zod.boolean().refine((value) => value, t('auth.signUp.errors.termsRequired')),
   mediaTerms: zod.boolean().refine((value) => value, 'Debe aceptar los términos de uso de imagen'),
 });

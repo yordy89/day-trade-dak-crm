@@ -28,6 +28,7 @@ import {
   Minus,
 } from 'lucide-react';
 import { useTheme as useCustomTheme } from '@/components/theme/theme-provider';
+import DOMPurify from 'dompurify';
 
 interface Announcement {
   _id: string;
@@ -444,9 +445,16 @@ export default function TradingFloatingAnnouncement() {
             {announcement.customHtml ? (
               <Box
                 dangerouslySetInnerHTML={{
-                  __html: announcement.customHtml
-                    .replace('{{title}}', announcement.title)
-                    .replace('{{content}}', announcement.content)
+                  __html: DOMPurify.sanitize(
+                    announcement.customHtml
+                      .replace('{{title}}', announcement.title)
+                      .replace('{{content}}', announcement.content),
+                    {
+                      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'div'],
+                      ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style'],
+                      ALLOW_DATA_ATTR: false,
+                    }
+                  )
                 }}
                 sx={{
                   '& button, & a': {
