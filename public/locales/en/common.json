@@ -220,6 +220,7 @@
       "liveRecorded": {
         "name": "Recorded Live",
         "description": "Complete library of live trading sessions",
+        "limitReached": "Subscription limit reached for this plan",
         "features": [
           "Access to all recorded sessions",
           "New content daily",

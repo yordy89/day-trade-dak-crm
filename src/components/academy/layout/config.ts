@@ -34,6 +34,12 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
     icon: 'psicotrading',
     requiredSubscription: SubscriptionPlan.PSICOTRADING,
   },
+  {
+    id: 'support-videos',
+    title: t('academy:navigation.supportVideos'),
+    href: paths.academy.supportVideos,
+    icon: 'help-circle',
+  },
   // Hidden for now - will be enabled in the future
   // {
   //   id: 'stocks',

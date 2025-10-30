@@ -6,6 +6,7 @@
     "masterClasses": "Master Classes",
     "recordedLiveSessions": "Recorded Live Sessions",
     "psicoTrading": "PsicoTrading",
+    "supportVideos": "Support Videos",
     "stocks": "Stock Market",
     "tradingJournal": "Trading Journal",
     "personalGrowth": "Personal Growth",
@@ -995,5 +996,93 @@
     "myCourses": "My Courses",
     "achievements": "Achievements",
     "logout": "Logout"
+  },
+  "supportVideos": {
+    "title": "Support Videos",
+    "subtitle": "Learn how to configure and use our platform",
+    "description": "Step-by-step video guides to help you get the most out of our trading platform. Learn how to set up your account, configure charts, use trading tools, and more.",
+    "viewVideos": "View Support Videos",
+    "contactSupport": "Contact Support",
+    "getAccess": "Get Access",
+    "backToIntro": "Back to Introduction",
+    "accessRequired": "Access Required",
+    "accessDescription": "Support videos are available exclusively for Live subscription members. These comprehensive guides will help you configure and optimize your trading setup.",
+    "requiresLiveSubscription": "Requires Live Subscription",
+    "contactSupportForAccess": "If you need assistance, please contact our support team.",
+    "chips": {
+      "stepByStepGuides": "Step-by-Step Guides",
+      "videoTutorials": "Video Tutorials",
+      "platformSetup": "Platform Setup"
+    },
+    "topics": {
+      "platformConfig": {
+        "title": "Platform Configuration",
+        "description": "Learn to configure TC2000, Thinkorswim, Webull and other platforms"
+      },
+      "tradingTools": {
+        "title": "Trading Tools",
+        "description": "Master charting tools, indicators, and analysis features"
+      },
+      "accountSetup": {
+        "title": "Account Setup",
+        "description": "Step-by-step account creation and configuration guides"
+      }
+    },
+    "features": {
+      "whatsIncluded": "What's Included",
+      "howItHelps": "How It Helps You",
+      "list": {
+        "platformSetup": "Platform setup and configuration",
+        "chartCustomization": "Chart customization guides",
+        "tradingTools": "Trading tools tutorial",
+        "accountManagement": "Account management",
+        "technicalIndicators": "Technical indicator setup",
+        "hotkeys": "Hotkeys and shortcuts",
+        "troubleshooting": "Troubleshooting common issues",
+        "mobileApp": "Mobile app configuration"
+      },
+      "help": {
+        "saveTime": {
+          "title": "Save Time",
+          "description": "Quick video guides get you configured fast without trial and error"
+        },
+        "avoidMistakes": {
+          "title": "Avoid Mistakes",
+          "description": "Follow proven setup procedures to configure platforms correctly"
+        },
+        "getSupport": {
+          "title": "Get Support",
+          "description": "Visual guides complement our support team assistance"
+        }
+      }
+    },
+    "cta": {
+      "ready": "Ready to Get Started?",
+      "access": "Access professional setup guides and tutorials"
+    },
+    "video": {
+      "supportGuide": "Support Guide",
+      "aboutTitle": "About this guide",
+      "aboutDescription": "This support video provides step-by-step instructions to help you configure and use specific features of our trading platform effectively.",
+      "keyTopics": "Topics Covered",
+      "backToSupportVideos": "Back to Support Videos",
+      "errorLoading": "Error loading video",
+      "failedToLoad": "Failed to load video. Please try again.",
+      "notFound": "Video not found."
+    },
+    "benefits": {
+      "stepByStep": {
+        "title": "Step-by-Step Guides",
+        "description": "Clear instructions for platform configuration and setup"
+      },
+      "visualLearning": {
+        "title": "Visual Learning",
+        "description": "Watch and follow along with video demonstrations"
+      },
+      "quickReference": {
+        "title": "Quick Reference",
+        "description": "Find solutions to common questions and issues"
+      }
+    }
   }
 }

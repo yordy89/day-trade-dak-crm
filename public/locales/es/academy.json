@@ -6,6 +6,7 @@
     "masterClasses": "Master Clases",
     "recordedLiveSessions": "Sesiones en Vivo Grabadas",
     "psicoTrading": "PsicoTrading",
+    "supportVideos": "Videos de Soporte",
     "stocks": "Mercado de Acciones",
     "tradingJournal": "Diario de Trading",
     "personalGrowth": "Crecimiento Personal",
@@ -1005,5 +1006,93 @@
     "myCourses": "Mis Cursos",
     "achievements": "Logros",
     "logout": "Cerrar Sesión"
+  },
+  "supportVideos": {
+    "title": "Videos de Soporte",
+    "subtitle": "Aprende a configurar y usar nuestra plataforma",
+    "description": "Guías en video paso a paso para ayudarte a aprovechar al máximo nuestra plataforma de trading. Aprende a configurar tu cuenta, gráficos, herramientas de trading y más.",
+    "viewVideos": "Ver Videos de Soporte",
+    "contactSupport": "Contactar Soporte",
+    "getAccess": "Obtener Acceso",
+    "backToIntro": "Volver a Introducción",
+    "accessRequired": "Acceso Requerido",
+    "accessDescription": "Los videos de soporte están disponibles exclusivamente para miembros con suscripción Live. Estas guías comprensivas te ayudarán a configurar y optimizar tu setup de trading.",
+    "requiresLiveSubscription": "Requiere Suscripción Live",
+    "contactSupportForAccess": "Si necesitas asistencia, por favor contacta a nuestro equipo de soporte.",
+    "chips": {
+      "stepByStepGuides": "Guías Paso a Paso",
+      "videoTutorials": "Tutoriales en Video",
+      "platformSetup": "Configuración de Plataforma"
+    },
+    "topics": {
+      "platformConfig": {
+        "title": "Configuración de Plataformas",
+        "description": "Aprende a configurar TC2000, Thinkorswim, Webull y otras plataformas"
+      },
+      "tradingTools": {
+        "title": "Herramientas de Trading",
+        "description": "Domina las herramientas de gráficos, indicadores y análisis"
+      },
+      "accountSetup": {
+        "title": "Configuración de Cuenta",
+        "description": "Guías paso a paso para creación y configuración de cuentas"
+      }
+    },
+    "features": {
+      "whatsIncluded": "Qué Incluye",
+      "howItHelps": "Cómo Te Ayuda",
+      "list": {
+        "platformSetup": "Configuración e instalación de plataformas",
+        "chartCustomization": "Guías de personalización de gráficos",
+        "tradingTools": "Tutorial de herramientas de trading",
+        "accountManagement": "Gestión de cuentas",
+        "technicalIndicators": "Configuración de indicadores técnicos",
+        "hotkeys": "Atajos de teclado y shortcuts",
+        "troubleshooting": "Solución de problemas comunes",
+        "mobileApp": "Configuración de app móvil"
+      },
+      "help": {
+        "saveTime": {
+          "title": "Ahorra Tiempo",
+          "description": "Guías rápidas en video te ayudan a configurar sin prueba y error"
+        },
+        "avoidMistakes": {
+          "title": "Evita Errores",
+          "description": "Sigue procedimientos probados para configurar plataformas correctamente"
+        },
+        "getSupport": {
+          "title": "Obtén Soporte",
+          "description": "Las guías visuales complementan la asistencia de nuestro equipo"
+        }
+      }
+    },
+    "cta": {
+      "ready": "¿Listo para Comenzar?",
+      "access": "Accede a guías profesionales de configuración y tutoriales"
+    },
+    "video": {
+      "supportGuide": "Guía de Soporte",
+      "aboutTitle": "Acerca de esta guía",
+      "aboutDescription": "Este video de soporte proporciona instrucciones paso a paso para ayudarte a configurar y usar funciones específicas de nuestra plataforma de trading de manera efectiva.",
+      "keyTopics": "Temas Cubiertos",
+      "backToSupportVideos": "Volver a Videos de Soporte",
+      "errorLoading": "Error al cargar el video",
+      "failedToLoad": "No se pudo cargar el video. Por favor intenta de nuevo.",
+      "notFound": "Video no encontrado."
+    },
+    "benefits": {
+      "stepByStep": {
+        "title": "Guías Paso a Paso",
+        "description": "Instrucciones claras para configuración y setup de la plataforma"
+      },
+      "visualLearning": {
+        "title": "Aprendizaje Visual",
+        "description": "Mira y sigue las demostraciones en video"
+      },
+      "quickReference": {
+        "title": "Referencia Rápida",
+        "description": "Encuentra soluciones a preguntas e issues comunes"
+      }
+    }
   }
 }

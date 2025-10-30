@@ -299,6 +299,31 @@ class VideoService {
     }
   }
 
+  async getSupportVideos(): Promise<VideoMetadata[]> {
+    try {
+      const response = await API.get<VideoMetadata[]>('/videos/supportVideos');
+      return response.data;
+    } catch (error) {
+      // Check if it's an access denied error
+      const isAccessError = error && typeof error === 'object' && 'response' in error &&
+        error.response && typeof error.response === 'object' && 'status' in error.response &&
+        (error.response.status === 403 || error.response.status === 401);
+
+      if (isAccessError) {
+        // Return empty array for access denied to avoid breaking the UI
+        console.warn('Access denied for support videos - user may not have permission');
+        return [];
+      }
+
+      const apiError = errorHandler.handle(error, {
+        showToast: false, // Don't show toast for access errors
+        logError: true,
+        fallbackMessage: 'Failed to load support videos.',
+      });
+      throw new Error(apiError.message);
+    }
+  }
+
   // Video class (user progress) endpoints
   async getUserVideoClasses(): Promise<VideoClass[]> {
     try {

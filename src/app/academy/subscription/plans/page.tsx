@@ -68,6 +68,8 @@ interface PricingPlan {
   features: PlanFeature[];
   duration?: string;
   tag?: string;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 const getLivePlans = (t: any): PricingPlan[] => [
@@ -115,7 +117,7 @@ const getLivePlans = (t: any): PricingPlan[] => [
   },
 ];
 
-const getMonthlyPlans = (t: any): PricingPlan[] => [
+const getMonthlyPlans = (t: any, tCommon: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.MasterClases,
     name: t('subscriptions.plans.masterClasses.name'),
@@ -145,6 +147,8 @@ const getMonthlyPlans = (t: any): PricingPlan[] => [
     description: t('subscriptions.plans.liveRecorded.description'),
     icon: <VideoCamera size={32} />,
     color: '#3b82f6',
+    disabled: true,
+    disabledMessage: tCommon('subscriptionPlans.plans.liveRecorded.limitReached'),
     features: [
       { text: t('subscriptions.planFeatures.accessAllRecorded'), included: true },
       { text: t('subscriptions.planFeatures.newDailyContent'), included: true },
@@ -245,6 +249,7 @@ export default function PlansPage() {
   const _isDarkMode = theme.palette.mode === 'dark';
   const { user, authToken } = useClientAuth();
   const { t } = useTranslation('academy');
+  const { t: tCommon } = useTranslation('common');
   const [selectedView, setSelectedView] = useState<'all' | 'live' | 'monthly' | 'fixed'>('all');
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [prices, setPrices] = useState<Record<string, number>>({});
@@ -254,7 +259,7 @@ export default function PlansPage() {
   
   // Get translated plans
   const LIVE_PLANS = getLivePlans(t);
-  const MONTHLY_PLANS = getMonthlyPlans(t);
+  const MONTHLY_PLANS = getMonthlyPlans(t, tCommon);
   const FIXED_PLANS = getFixedPlans(t);
   
   // Get the highlighted plan from URL params
@@ -647,10 +652,25 @@ export default function PlansPage() {
             </List>
 
             {/* CTA Button or Access Message */}
-            {isLiveRecordedWithAccess ? (
+            {plan.disabled ? (
+              <Alert
+                severity="warning"
+                icon={<Info size={20} />}
+                sx={{
+                  borderRadius: 2,
+                  '& .MuiAlert-message': {
+                    width: '100%',
+                  },
+                }}
+              >
+                <Typography variant="body2" fontWeight={500}>
+                  {plan.disabledMessage}
+                </Typography>
+              </Alert>
+            ) : isLiveRecordedWithAccess ? (
               <Stack spacing={1}>
-                <Alert 
-                  severity="success" 
+                <Alert
+                  severity="success"
                   icon={<Check size={20} />}
                   sx={{ 
                     borderRadius: 2,
@@ -688,13 +708,13 @@ export default function PlansPage() {
             ) : (
               <Button
                 fullWidth
-                variant={(needsPermission || needsLiveSubscription) ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
+                variant={(needsPermission || needsLiveSubscription || plan.disabled) ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
                 onClick={() => handleSubscribe(plan.id)}
-                disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission || needsLiveSubscription}
+                disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission || needsLiveSubscription || plan.disabled}
                 sx={{
-                  borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : plan.color,
-                  color: (needsPermission || needsLiveSubscription) ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
-                  backgroundColor: (needsPermission || needsLiveSubscription) ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
+                  borderColor: (needsPermission || needsLiveSubscription || plan.disabled) ? 'grey.400' : plan.color,
+                  color: (needsPermission || needsLiveSubscription || plan.disabled) ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
+                  backgroundColor: (needsPermission || needsLiveSubscription || plan.disabled) ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
                   py: 1.5,
                   fontWeight: 600,
                   '&:hover': {

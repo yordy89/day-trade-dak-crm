@@ -21,6 +21,7 @@ export const paths = {
     stock: '/academy/stock',
     stocks: '/academy/stock',
     psicotrading: '/academy/psicotrading',
+    supportVideos: '/academy/support-videos',
     books: '/academy/books',
     companies: '/academy/companies',
     calendar: '/academy/calendar',

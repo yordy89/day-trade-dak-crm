@@ -220,6 +220,7 @@
       "liveRecorded": {
         "name": "Clases Diarias Grabadas",
         "description": "Biblioteca completa de sesiones de trading en vivo",
+        "limitReached": "Límite de suscripciones alcanzado para este plan",
         "features": [
           "Acceso a todas las sesiones grabadas",
           "Nuevos contenidos diarios",
