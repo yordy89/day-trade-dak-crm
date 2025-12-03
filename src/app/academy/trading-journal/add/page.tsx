@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -19,6 +19,7 @@ import {
   Divider,
   MenuItem,
   InputAdornment,
+  CircularProgress,
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -43,6 +44,7 @@ import {
   Tag,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
+import { paths } from '@/paths';
 import { tradingJournalService } from '@/services/trading-journal.service';
 import {
   CreateTradeDto,
@@ -53,6 +55,11 @@ import {
 import { CustomInput, CustomSelect } from '@/components/shared/CustomInput';
 import { CustomDatePicker } from '@/components/shared/CustomDatePicker';
 import { CustomAutocomplete } from '@/components/shared/CustomAutocomplete';
+import { useModuleAccess } from '@/hooks/use-module-access';
+import { ModuleType } from '@/types/module-permission';
+import { TradingJournalAccessDenied } from '@/components/trading-journal/access-denied';
+import { useTranslation } from 'react-i18next';
+import API from '@/lib/axios';
 
 // Options specific enums
 enum OptionType {
@@ -83,11 +90,6 @@ interface OptionsData {
   daysToExpiration?: number;
   underlyingPrice?: number;
   optionStrategy?: OptionStrategy;
-  delta?: number;
-  gamma?: number;
-  theta?: number;
-  vega?: number;
-  rho?: number;
   legs?: Array<{
     optionType: OptionType;
     strikePrice: number;
@@ -107,21 +109,28 @@ export default function AddTradePage() {
   const theme = useTheme();
   const router = useRouter();
   const isDarkMode = theme.palette.mode === 'dark';
+  const { t } = useTranslation('academy');
+
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [enabledMarkets, setEnabledMarkets] = useState<string[]>([
+    'stocks',
+    'forex',
+    'crypto',
+    'futures',
+    'options',
+  ]);
   const [formData, setFormData] = useState<TradeFormData>({
     symbol: '',
-    market: MarketType.STOCKS,
+    market: MarketType.OPTIONS,
     direction: TradeDirection.LONG,
-    positionSize: 100,
+    positionSize: 1,
     entryPrice: 0,
     entryTime: new Date(),
     stopLoss: 0,
     takeProfit: 0,
     tradeDate: new Date(),
-    timeframe: '1D',
-    strategy: '',
     setup: '',
     riskAmount: 0,
     riskPercentage: 1,
@@ -130,12 +139,43 @@ export default function AddTradePage() {
     setupNotes: '',
     tags: [],
   });
-
   const [optionsData, setOptionsData] = useState<OptionsData>({
     optionType: OptionType.CALL,
     contracts: 1,
     optionStrategy: OptionStrategy.SINGLE,
   });
+
+  // Check module access AFTER all useState hooks
+  const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.TRADING_JOURNAL);
+
+  // Fetch enabled markets on mount
+  useEffect(() => {
+    const fetchEnabledMarkets = async () => {
+      try {
+        const response = await API.get('/settings/trading/markets');
+        if (response.data?.markets) {
+          setEnabledMarkets(response.data.markets);
+        }
+      } catch (err) {
+        console.error('Failed to fetch enabled markets:', err);
+        // Use default markets if fetch fails
+      }
+    };
+    fetchEnabledMarkets();
+  }, []);
+
+  // Early returns for access control - AFTER all hooks
+  if (accessLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!hasAccess) {
+    return <TradingJournalAccessDenied />;
+  }
 
   const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -151,6 +191,26 @@ export default function AddTradePage() {
 
   const handleOptionsChange = (field: string, value: any) => {
     setOptionsData(prev => ({ ...prev, [field]: value }));
+
+    // Auto-set direction based on option type
+    if (field === 'optionType') {
+      if (value === OptionType.CALL) {
+        setFormData(prev => ({ ...prev, direction: TradeDirection.LONG }));
+      } else if (value === OptionType.PUT) {
+        setFormData(prev => ({ ...prev, direction: TradeDirection.SHORT }));
+      }
+    }
+
+    // Auto-calculate risk amount for options
+    if (field === 'premium' || field === 'contracts') {
+      const premium = field === 'premium' ? value : optionsData.premium;
+      const contracts = field === 'contracts' ? value : optionsData.contracts;
+
+      if (premium && contracts) {
+        const totalRisk = premium * 100 * contracts;
+        setFormData(prev => ({ ...prev, riskAmount: totalRisk }));
+      }
+    }
   };
 
   const validateForm = () => {
@@ -162,25 +222,21 @@ export default function AddTradePage() {
 
     if (formData.market === MarketType.OPTIONS) {
       if (!optionsData.strikePrice) {
-        errors.push('Strike price is required for options');
+        errors.push(t('tradingJournal.validation.strikePriceRequired'));
       }
       if (!optionsData.expirationDate) {
-        errors.push('Expiration date is required for options');
+        errors.push(t('tradingJournal.validation.expirationRequired'));
       }
       if (!optionsData.premium) {
-        errors.push('Premium is required for options');
+        errors.push(t('tradingJournal.validation.optionPriceRequired'));
       }
     } else {
       if (!formData.entryPrice || formData.entryPrice <= 0) {
-        errors.push('Entry price must be greater than 0');
+        errors.push(t('tradingJournal.validation.entryPriceRequired'));
       }
       if (!formData.positionSize || formData.positionSize <= 0) {
-        errors.push('Position size must be greater than 0');
+        errors.push(t('tradingJournal.validation.positionSizeRequired'));
       }
-    }
-
-    if (!formData.strategy) {
-      errors.push('Strategy is required');
     }
 
     return errors;
@@ -204,15 +260,11 @@ export default function AddTradePage() {
         optionsMetadata = `\n\n--- Options Details ---\n`;
         optionsMetadata += `Type: ${optionsData.optionType || 'N/A'}\n`;
         optionsMetadata += `Strike: $${optionsData.strikePrice || 0}\n`;
-        optionsMetadata += `Premium: $${optionsData.premium || 0}\n`;
+        optionsMetadata += `Option Price: $${optionsData.premium || 0}\n`;
         optionsMetadata += `Contracts: ${optionsData.contracts || 0}\n`;
         optionsMetadata += `Expiration: ${optionsData.expirationDate ? new Date(optionsData.expirationDate).toLocaleDateString() : 'N/A'}\n`;
         optionsMetadata += `Strategy: ${optionsData.optionStrategy || 'single'}\n`;
 
-        if (optionsData.delta) optionsMetadata += `Delta: ${optionsData.delta}\n`;
-        if (optionsData.gamma) optionsMetadata += `Gamma: ${optionsData.gamma}\n`;
-        if (optionsData.theta) optionsMetadata += `Theta: ${optionsData.theta}\n`;
-        if (optionsData.vega) optionsMetadata += `Vega: ${optionsData.vega}\n`;
         if (optionsData.impliedVolatility) optionsMetadata += `IV: ${optionsData.impliedVolatility}%\n`;
       }
 
@@ -220,9 +272,7 @@ export default function AddTradePage() {
         symbol: formData.symbol,
         market: formData.market,
         direction: formData.direction,
-        strategy: formData.strategy,
         setup: formData.setupNotes || 'Manual Trade',
-        timeframe: formData.timeframe || '1D',
         entryPrice: formData.market === MarketType.OPTIONS ? (optionsData.premium || formData.entryPrice) : formData.entryPrice,
         positionSize: formData.market === MarketType.OPTIONS ? (optionsData.contracts || formData.positionSize) : formData.positionSize,
         stopLoss: formData.stopLoss || 0,
@@ -240,7 +290,7 @@ export default function AddTradePage() {
       };
 
       await tradingJournalService.createTrade(submitData);
-      router.push('/academy/trading-journal');
+      router.push(paths.academy.tradingJournal.trades);
     } catch (err: any) {
       console.error('Failed to create trade:', err);
       setError(err.message || 'Failed to create trade');
@@ -250,7 +300,7 @@ export default function AddTradePage() {
   };
 
   const handleCancel = () => {
-    router.push('/academy/trading-journal');
+    router.push(paths.academy.tradingJournal.trades);
   };
 
   const commonStrategies = [
@@ -272,13 +322,18 @@ export default function AddTradePage() {
     { value: OptionStrategy.DIAGONAL, label: 'Diagonal Spread' },
   ];
 
-  const marketOptions = [
-    { value: MarketType.STOCKS, label: 'Stocks' },
-    { value: MarketType.OPTIONS, label: 'Options' },
-    { value: MarketType.FUTURES, label: 'Futures' },
-    { value: MarketType.FOREX, label: 'Forex' },
-    { value: MarketType.CRYPTO, label: 'Crypto' },
+  const allMarketOptions = [
+    { value: MarketType.STOCKS, label: t('tradingJournal.markets.stocks') },
+    { value: MarketType.OPTIONS, label: t('tradingJournal.markets.options') },
+    { value: MarketType.FUTURES, label: t('tradingJournal.markets.futures') },
+    { value: MarketType.FOREX, label: t('tradingJournal.markets.forex') },
+    { value: MarketType.CRYPTO, label: t('tradingJournal.markets.crypto') },
   ];
+
+  // Filter market options based on enabled markets from settings
+  const marketOptions = allMarketOptions.filter((option) =>
+    enabledMarkets.includes(option.value)
+  );
 
   const timeframeOptions = [
     { value: '1m', label: '1 Minute' },
@@ -294,7 +349,7 @@ export default function AddTradePage() {
 
   const emotionOptions = Object.values(EmotionType).map(emotion => ({
     value: emotion,
-    label: emotion.charAt(0).toUpperCase() + emotion.slice(1).toLowerCase(),
+    label: t(`tradingJournal.emotions.${emotion}`),
   }));
 
   const formatCurrency = (value: number): string => {
@@ -343,10 +398,10 @@ export default function AddTradePage() {
 
               <Box flex={1}>
                 <Typography variant="h4" fontWeight={700} mb={0.5}>
-                  Log New Trade
+                  {t('tradingJournal.addTrade')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Record your trade details for performance tracking and analysis
+                  {t('tradingJournal.subtitle')}
                 </Typography>
               </Box>
 
@@ -363,7 +418,7 @@ export default function AddTradePage() {
                     }
                   }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   variant="contained"
@@ -372,7 +427,7 @@ export default function AddTradePage() {
                   disabled={loading}
                   size="large"
                 >
-                  {loading ? 'Saving...' : 'Save Trade'}
+                  {loading ? t('common.loading') : t('common.save')}
                 </Button>
               </Stack>
             </Stack>
@@ -403,14 +458,14 @@ export default function AddTradePage() {
                       <ChartLine size={24} color={theme.palette.primary.main} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      Trade Details
+                      {t('tradingJournal.tradeDetails')}
                     </Typography>
                   </Stack>
 
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Symbol / Ticker"
+                        label={t('tradingJournal.fields.symbol')}
                         value={formData.symbol}
                         onChange={(e) => handleChange('symbol', e.target.value.toUpperCase())}
                         placeholder="AAPL"
@@ -421,7 +476,7 @@ export default function AddTradePage() {
 
                     <Grid item xs={12} md={4}>
                       <CustomSelect
-                        label="Market"
+                        label={t('tradingJournal.fields.market')}
                         value={formData.market}
                         onChange={(value) => handleChange('market', value)}
                         options={marketOptions}
@@ -430,69 +485,67 @@ export default function AddTradePage() {
                       />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
-                      <CustomSelect
-                        label="Timeframe"
-                        value={formData.timeframe || '1D'}
-                        onChange={(value) => handleChange('timeframe', value)}
-                        options={timeframeOptions}
-                        icon={<Clock size={20} />}
-                      />
-                    </Grid>
-
                     <Grid item xs={12}>
                       <Divider sx={{ my: 1 }} />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                        Trade Direction
-                      </Typography>
-                      <ToggleButtonGroup
-                        value={formData.direction}
-                        exclusive
-                        onChange={(e, value) => value && handleChange('direction', value)}
-                        fullWidth
-                        sx={{
-                          '& .MuiToggleButton-root': {
-                            py: 1.5,
-                            border: '1px solid',
-                            borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                            '&.Mui-selected': {
-                              bgcolor: formData.direction === TradeDirection.LONG
-                                ? alpha(theme.palette.success.main, 0.15)
-                                : alpha(theme.palette.error.main, 0.15),
-                              color: formData.direction === TradeDirection.LONG
-                                ? theme.palette.success.main
-                                : theme.palette.error.main,
-                              borderColor: formData.direction === TradeDirection.LONG
-                                ? theme.palette.success.main
-                                : theme.palette.error.main,
+                    {/* Trade Direction - Hidden for Options (auto-set based on CALL/PUT) */}
+                    {formData.market !== MarketType.OPTIONS && (
+                      <Grid item xs={12} md={6}>
+                        <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                          {t('tradingJournal.fields.direction')}
+                        </Typography>
+                        <ToggleButtonGroup
+                          value={formData.direction}
+                          exclusive
+                          onChange={(e, value) => value && handleChange('direction', value)}
+                          fullWidth
+                          sx={{
+                            '& .MuiToggleButton-root': {
+                              py: 1.5,
+                              border: '1px solid',
+                              borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                              '&.Mui-selected': {
+                                bgcolor: formData.direction === TradeDirection.LONG
+                                  ? alpha(theme.palette.success.main, 0.15)
+                                  : alpha(theme.palette.error.main, 0.15),
+                                color: formData.direction === TradeDirection.LONG
+                                  ? theme.palette.success.main
+                                  : theme.palette.error.main,
+                                borderColor: formData.direction === TradeDirection.LONG
+                                  ? theme.palette.success.main
+                                  : theme.palette.error.main,
+                              }
                             }
-                          }
-                        }}
-                      >
-                        <ToggleButton value={TradeDirection.LONG}>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <TrendUp size={20} />
-                            <Typography>Long</Typography>
-                          </Stack>
-                        </ToggleButton>
-                        <ToggleButton value={TradeDirection.SHORT}>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <TrendDown size={20} />
-                            <Typography>Short</Typography>
-                          </Stack>
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </Grid>
+                          }}
+                        >
+                          <ToggleButton value={TradeDirection.LONG}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <TrendUp size={20} />
+                              <Typography>{t('tradingJournal.fields.long')}</Typography>
+                            </Stack>
+                          </ToggleButton>
+                          <ToggleButton value={TradeDirection.SHORT}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <TrendDown size={20} />
+                              <Typography>{t('tradingJournal.fields.short')}</Typography>
+                            </Stack>
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      </Grid>
+                    )}
 
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12}>
                       <CustomDatePicker
-                        label="Entry Time"
+                        label="Trade Date & Time"
                         value={dayjs(formData.entryTime)}
-                        onChange={(value) => handleChange('entryTime', value?.toDate())}
+                        onChange={(value) => {
+                          const date = value?.toDate();
+                          handleChange('entryTime', date);
+                          handleChange('tradeDate', date);
+                        }}
                         dateTime
+                        required
                       />
                     </Grid>
                   </Grid>
@@ -514,7 +567,7 @@ export default function AddTradePage() {
                         <ChartBar size={24} color={theme.palette.warning.main} />
                       </Box>
                       <Typography variant="h6" fontWeight={600}>
-                        Options Details
+                        {t('tradingJournal.optionsDetails')}
                       </Typography>
                     </Stack>
 
@@ -530,7 +583,7 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={4}>
                         <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                          Option Type
+                          {t('tradingJournal.fields.optionType')}
                         </Typography>
                         <ToggleButtonGroup
                           value={optionsData.optionType}
@@ -576,12 +629,13 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Premium"
+                          label="Option Price"
                           type="number"
                           value={optionsData.premium || ''}
                           onChange={(e) => handleOptionsChange('premium', parseFloat(e.target.value))}
                           required
                           icon={<CurrencyDollar size={20} />}
+                          helperText="Price you paid per share"
                         />
                       </Grid>
 
@@ -593,79 +647,18 @@ export default function AddTradePage() {
                           onChange={(e) => handleOptionsChange('contracts', parseInt(e.target.value))}
                           required
                           icon={<Hash size={20} />}
+                          helperText="1 contract = 100 shares"
                         />
                       </Grid>
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Underlying Price"
+                          label="Stock Price"
                           type="number"
                           value={optionsData.underlyingPrice || ''}
                           onChange={(e) => handleOptionsChange('underlyingPrice', parseFloat(e.target.value))}
                           icon={<CurrencyDollar size={20} />}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Divider sx={{ my: 1 }} />
-                        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 2 }}>
-                          Greeks & Risk Metrics
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={6} md={2.4}>
-                        <CustomInput
-                          label="Delta"
-                          type="number"
-                          value={optionsData.delta || ''}
-                          onChange={(e) => handleOptionsChange('delta', parseFloat(e.target.value))}
-                        />
-                      </Grid>
-
-                      <Grid item xs={6} md={2.4}>
-                        <CustomInput
-                          label="Gamma"
-                          type="number"
-                          value={optionsData.gamma || ''}
-                          onChange={(e) => handleOptionsChange('gamma', parseFloat(e.target.value))}
-                        />
-                      </Grid>
-
-                      <Grid item xs={6} md={2.4}>
-                        <CustomInput
-                          label="Theta"
-                          type="number"
-                          value={optionsData.theta || ''}
-                          onChange={(e) => handleOptionsChange('theta', parseFloat(e.target.value))}
-                        />
-                      </Grid>
-
-                      <Grid item xs={6} md={2.4}>
-                        <CustomInput
-                          label="Vega"
-                          type="number"
-                          value={optionsData.vega || ''}
-                          onChange={(e) => handleOptionsChange('vega', parseFloat(e.target.value))}
-                        />
-                      </Grid>
-
-                      <Grid item xs={6} md={2.4}>
-                        <CustomInput
-                          label="IV %"
-                          type="number"
-                          value={optionsData.impliedVolatility || ''}
-                          onChange={(e) => handleOptionsChange('impliedVolatility', parseFloat(e.target.value))}
-                          endAdornment={
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
-                                pr: 1
-                              }}
-                            >
-                              %
-                            </Typography>
-                          }
+                          helperText="Current market price"
                         />
                       </Grid>
                     </Grid>
@@ -695,7 +688,7 @@ export default function AddTradePage() {
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={4}>
                         <CustomInput
-                          label="Position Size"
+                          label={t('tradingJournal.fields.positionSize')}
                           type="number"
                           value={formData.positionSize}
                           onChange={(e) => handleChange('positionSize', parseInt(e.target.value))}
@@ -707,7 +700,7 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={4}>
                         <CustomInput
-                          label="Entry Price"
+                          label={t('tradingJournal.fields.entryPrice')}
                           type="number"
                           value={formData.entryPrice || ''}
                           onChange={(e) => handleChange('entryPrice', parseFloat(e.target.value))}
@@ -744,36 +737,36 @@ export default function AddTradePage() {
                       <Warning size={24} color={theme.palette.error.main} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      Risk Management
+                      {t('tradingJournal.riskManagement')}
                     </Typography>
                   </Stack>
 
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Stop Loss"
+                        label={t('tradingJournal.fields.stopLoss')}
                         type="number"
                         value={formData.stopLoss || ''}
                         onChange={(e) => handleChange('stopLoss', parseFloat(e.target.value))}
-                        helperText="Max loss price"
+                        helperText={t('tradingJournal.fields.stopLossHelper')}
                         icon={<TrendDown size={20} />}
                       />
                     </Grid>
 
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Take Profit"
+                        label={t('tradingJournal.fields.takeProfit')}
                         type="number"
                         value={formData.takeProfit || ''}
                         onChange={(e) => handleChange('takeProfit', parseFloat(e.target.value))}
-                        helperText="Target profit price"
+                        helperText={t('tradingJournal.fields.takeProfitHelper')}
                         icon={<Target size={20} />}
                       />
                     </Grid>
 
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Total $ at Risk"
+                        label={t('tradingJournal.fields.totalRisk')}
                         value={formatCurrency(formData.riskAmount || 0)}
                         disabled
                         onChange={() => {}}
@@ -783,22 +776,36 @@ export default function AddTradePage() {
 
                     <Grid item xs={12}>
                       <Typography variant="subtitle2" gutterBottom>
-                        Risk Percentage: {formData.riskPercentage}%
+                        {t('tradingJournal.fields.riskPercentage')}: {formData.riskPercentage}%
                       </Typography>
                       <Slider
                         value={formData.riskPercentage}
                         onChange={(e, value) => handleChange('riskPercentage', value)}
-                        min={0.5}
-                        max={5}
-                        step={0.5}
-                        marks
+                        min={0.1}
+                        max={100}
+                        step={0.1}
                         valueLabelDisplay="auto"
                         sx={{
-                          color: (formData.riskPercentage || 0) > 2
+                          color: (formData.riskPercentage || 0) > 5
                             ? theme.palette.error.main
+                            : (formData.riskPercentage || 0) > 2
+                            ? theme.palette.warning.main
                             : theme.palette.success.main,
                         }}
                       />
+                      <Stack direction="row" justifyContent="space-between" mt={0.5}>
+                        <Typography variant="caption" color="text.secondary">
+                          0.1% ({t('tradingJournal.fields.conservative')})
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('tradingJournal.fields.accountSize')}: {formData.riskAmount && (formData.riskPercentage ?? 0) > 0
+                            ? `$${((formData.riskAmount / ((formData.riskPercentage ?? 1) / 100))).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                            : '$0'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          100% ({t('tradingJournal.fields.maxRisk')})
+                        </Typography>
+                      </Stack>
                     </Grid>
                   </Grid>
                 </Card>
@@ -808,7 +815,7 @@ export default function AddTradePage() {
             {/* Right Column - Strategy & Analysis */}
             <Grid item xs={12} lg={4}>
               <Stack spacing={3}>
-                {/* Strategy & Setup */}
+                {/* Trade Setup */}
                 <Card sx={{ p: 3 }}>
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
@@ -823,33 +830,23 @@ export default function AddTradePage() {
                       <Brain size={22} color={theme.palette.secondary.main} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      Strategy & Setup
+                      {t('tradingJournal.tradeSetup')}
                     </Typography>
                   </Stack>
 
                   <Stack spacing={3}>
-                    <CustomAutocomplete
-                      label="Strategy"
-                      value={formData.strategy}
-                      onChange={(value) => handleChange('strategy', value)}
-                      options={commonStrategies}
-                      placeholder="Select or type strategy"
-                      required
-                      icon={<Brain size={20} />}
-                    />
-
                     <CustomInput
-                      label="Setup Description"
+                      label={t('tradingJournal.fields.setupDescription')}
                       value={formData.setupNotes}
                       onChange={(e) => handleChange('setupNotes', e.target.value)}
                       multiline
                       rows={4}
-                      placeholder="Describe your setup, entry triggers, and reasoning..."
+                      placeholder={t('tradingJournal.fields.setupPlaceholder')}
                     />
 
                     <Box>
                       <Typography variant="subtitle2" gutterBottom>
-                        Confidence Level: {formData.confidence}/10
+                        {t('tradingJournal.fields.confidenceLevel')}: {formData.confidence}/10
                       </Typography>
                       <Slider
                         value={formData.confidence}
@@ -885,12 +882,12 @@ export default function AddTradePage() {
                       <Heart size={22} color={theme.palette.info.main} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      Emotional State
+                      {t('tradingJournal.emotionalState')}
                     </Typography>
                   </Stack>
 
                   <CustomSelect
-                    label="Before Trade"
+                    label={t('tradingJournal.fields.emotionBefore')}
                     value={formData.emotionBefore || EmotionType.NEUTRAL}
                     onChange={(value) => handleChange('emotionBefore', value)}
                     options={emotionOptions}

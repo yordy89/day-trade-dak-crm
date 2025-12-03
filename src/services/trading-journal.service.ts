@@ -3,6 +3,7 @@ import {
   Trade,
   CreateTradeDto,
   UpdateTradeDto,
+  CloseTradeDto,
   Feedback,
   CreateFeedbackDto,
   FilterTradesDto,
@@ -43,6 +44,11 @@ export class TradingJournalService {
 
   async updateTrade(tradeId: string, data: UpdateTradeDto): Promise<Trade> {
     const response = await API.put(`/trading-journal/trades/${tradeId}`, data);
+    return response.data;
+  }
+
+  async closeTrade(tradeId: string, data: CloseTradeDto): Promise<Trade> {
+    const response = await API.post(`/trading-journal/trades/${tradeId}/close`, data);
     return response.data;
   }
 

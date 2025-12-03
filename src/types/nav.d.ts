@@ -1,4 +1,5 @@
 import type { SubscriptionPlan, Role } from './user';
+import type { ModuleType } from './module-permission';
 
 export interface NavItemConfig {
   id: string;
@@ -17,4 +18,5 @@ export interface NavItemConfig {
   matcher?: { type: 'startsWith' | 'equals'; href: string };
   requiredSubscription?: SubscriptionPlan;
   requiredRole?: Role;
+  requiredModule?: ModuleType;
 }

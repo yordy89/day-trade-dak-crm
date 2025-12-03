@@ -10,6 +10,7 @@ export enum ModuleType {
   MASTER_COURSE = 'masterCourse',
   STOCKS = 'stocks',
   SUPPORT_VIDEOS = 'supportVideos',
+  TRADING_JOURNAL = 'tradingJournal',
 }
 
 export interface ModuleAccessResponse {
@@ -30,4 +31,5 @@ export const MODULE_DISPLAY_NAMES: Record<ModuleType, { es: string; en: string }
   [ModuleType.MASTER_COURSE]: { es: 'Master Course', en: 'Master Course' },
   [ModuleType.STOCKS]: { es: 'Acciones', en: 'Stocks' },
   [ModuleType.SUPPORT_VIDEOS]: { es: 'Videos de Soporte', en: 'Support Videos' },
+  [ModuleType.TRADING_JOURNAL]: { es: 'Diario de Trading', en: 'Trading Journal' },
 }

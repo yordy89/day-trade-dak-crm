@@ -43,10 +43,11 @@ export const paths = {
       mind: '/academy/personal-growth/mind'
     },
     tradingJournal: {
+      root: '/academy/trading-journal',
       trades: '/academy/trading-journal',
       add: '/academy/trading-journal/add',
-      edit: '/academy/trading-journal/edit',
-      analytics: '/academy/trading-journal/analytics'
+      analytics: '/academy/trading-journal/analytics',
+      admin: '/academy/trading-journal/admin',
     }
   },
   errors: { notFound: '/errors/not-found' },

@@ -1,5 +1,6 @@
 import { type NavItemConfig } from '@/types/nav';
 import { SubscriptionPlan } from '@/types/user';
+import { ModuleType } from '@/types/module-permission';
 import { paths } from '@/paths';
 import type { TFunction } from 'i18next';
 
@@ -48,12 +49,13 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
   //   icon: 'trending-up',
   //   requiredSubscription: SubscriptionPlan.Stocks,
   // },
-  // Trading Journal - Hidden until feature is complete
+  // Trading Journal - Hidden for now, will be enabled when feature is complete
   // {
   //   id: 'trading-journal',
   //   title: t('academy:navigation.tradingJournal'),
-  //   href: paths.academy.tradingJournal.trades,
+  //   href: paths.academy.tradingJournal,
   //   icon: 'notebook',
+  //   requiredModule: ModuleType.TRADING_JOURNAL,
   // },
   {
     id: 'personal-growth',

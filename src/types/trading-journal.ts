@@ -19,6 +19,25 @@ export enum EmotionType {
   NEUTRAL = 'neutral',
   EXCITED = 'excited',
   FRUSTRATED = 'frustrated',
+  CALM = 'calm',
+}
+
+export enum ExitReason {
+  HIT_STOP_LOSS = 'hit_stop_loss',
+  HIT_TAKE_PROFIT = 'hit_take_profit',
+  MANUAL_EXIT = 'manual_exit',
+  TIME_BASED_EXIT = 'time_based_exit',
+  TRAILING_STOP = 'trailing_stop',
+  TECHNICAL_SIGNAL = 'technical_signal',
+  NEWS_EVENT = 'news_event',
+  RISK_MANAGEMENT = 'risk_management',
+  // Options-specific
+  EXPIRED_WORTHLESS = 'expired_worthless',
+  SOLD_FOR_PROFIT = 'sold_for_profit',
+  SOLD_FOR_LOSS = 'sold_for_loss',
+  EXERCISED = 'exercised',
+  ASSIGNED = 'assigned',
+  ROLLED_POSITION = 'rolled_position',
 }
 
 export enum TimeFilter {
@@ -60,6 +79,13 @@ export interface Trade {
   exitTime?: Date;
   exitPrice?: number;
   exitReason?: string;
+  exitReasonType?: ExitReason;
+  exitReasonNotes?: string;
+  exitPremium?: number;
+  underlyingPriceAtExit?: number;
+  lessonsLearnedOnExit?: string;
+  wouldRepeatTrade?: boolean;
+  exitEmotionState?: EmotionType;
   stopLoss: number;
   takeProfit?: number;
   riskAmount: number;
@@ -80,8 +106,9 @@ export interface Trade {
   screenshots?: string[];
   isOpen: boolean;
   pnl: number;
+  pnlPercentage?: number;
   netPnl: number;
-  rMultiple: number;
+  rMultiple?: number;
   isWinner: boolean;
   holdingTime?: number;
   isReviewed: boolean;
@@ -123,6 +150,20 @@ export interface CreateTradeDto {
 }
 
 export interface UpdateTradeDto extends Partial<CreateTradeDto> {}
+
+export interface CloseTradeDto {
+  exitPrice: number;
+  exitTime: Date;
+  exitReasonType: ExitReason;
+  exitReasonNotes?: string;
+  // Options-specific
+  exitPremium?: number;
+  underlyingPriceAtExit?: number;
+  // Self-reflection
+  lessonsLearnedOnExit?: string;
+  wouldRepeatTrade?: boolean;
+  exitEmotionState?: EmotionType;
+}
 
 export interface Feedback {
   _id: string;

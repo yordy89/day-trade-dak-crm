@@ -46,6 +46,9 @@ import { paths } from '@/paths';
 import { tradingJournalService } from '@/services/trading-journal.service';
 import { TimeFilter, MarketType, Analytics } from '@/types/trading-journal';
 import { formatCurrency } from '@/utils/format';
+import { useModuleAccess } from '@/hooks/use-module-access';
+import { ModuleType } from '@/types/module-permission';
+import { TradingJournalAccessDenied } from '@/components/trading-journal/access-denied';
 
 interface PerformanceMetric {
   label: string;
@@ -58,32 +61,53 @@ interface PerformanceMetric {
 export default function AnalyticsPage() {
   const theme = useTheme();
   const router = useRouter();
+
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>(TimeFilter.MONTH);
   const [error, setError] = useState<string | null>(null);
 
+  // Check module access AFTER all useState hooks
+  const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.TRADING_JOURNAL);
+
+  // useEffect MUST be before early returns
   useEffect(() => {
-    loadAnalytics();
-  }, [timeFilter]);
+    if (!hasAccess || accessLoading) return;
 
-  const loadAnalytics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    const loadAnalytics = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const data = await tradingJournalService.getStatistics({ timeFilter });
-      setAnalytics(data as any);
-    } catch (err) {
+        const data = await tradingJournalService.getStatistics({ timeFilter });
+        setAnalytics(data as any);
+      } catch (err) {
       console.error('Failed to load analytics:', err);
       setError('Failed to load analytics data');
     } finally {
       setLoading(false);
     }
-  };
+    };
+
+    loadAnalytics();
+  }, [timeFilter, hasAccess, accessLoading]);
+
+  // Early returns for access control - AFTER all hooks
+  if (accessLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!hasAccess) {
+    return <TradingJournalAccessDenied />;
+  }
 
   const handleBack = () => {
-    router.push('/academy/trading-journal');
+    router.push(paths.academy.tradingJournal.trades);
   };
 
   const handleExport = () => {
