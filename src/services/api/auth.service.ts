@@ -9,6 +9,7 @@ export interface SignUpData {
   email: string;
   password: string;
   acceptedMediaUsageTerms?: boolean;
+  recaptchaToken?: string;
 }
 
 export interface SignInData {

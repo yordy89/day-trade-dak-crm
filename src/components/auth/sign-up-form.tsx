@@ -39,6 +39,7 @@ import { paths } from '@/paths';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
+import { useRecaptcha } from '@/hooks/use-recaptcha';
 
 const createSchema = (t: any) => zod.object({
   firstName: zod.string().min(1, { message: t('auth.signUp.errors.firstNameRequired') }),
@@ -66,6 +67,7 @@ interface SignUpCredentials {
   email: string;
   password: string;
   acceptedMediaUsageTerms?: boolean;
+  recaptchaToken?: string;
 }
 
 interface CustomInputProps {
@@ -190,7 +192,8 @@ export function SignUpForm(): React.JSX.Element {
   const muiTheme = useMuiTheme();
   const { isDarkMode } = useTheme();
   const { t } = useTranslation();
-  
+  const { executeRecaptcha, isLoaded: recaptchaLoaded } = useRecaptcha();
+
   const schema = React.useMemo(() => createSchema(t), [t]);
 
   const {
@@ -219,12 +222,24 @@ export function SignUpForm(): React.JSX.Element {
 
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-  const onSubmit = (values: Values): void => {
+  const onSubmit = async (values: Values): Promise<void> => {
+    // Execute reCAPTCHA before submitting
+    const recaptchaToken = await executeRecaptcha('signup');
+
+    if (!recaptchaToken) {
+      setError('root', {
+        type: 'recaptcha',
+        message: 'Error de verificación de seguridad. Por favor, recarga la página e intenta de nuevo.',
+      });
+      return;
+    }
+
     // Extract terms from values and prepare signup data
     const { terms: _terms, mediaTerms, ...signUpData } = values;
     signUp({
       ...signUpData,
-      acceptedMediaUsageTerms: mediaTerms
+      acceptedMediaUsageTerms: mediaTerms,
+      recaptchaToken,
     });
   };
 
@@ -417,9 +432,9 @@ export function SignUpForm(): React.JSX.Element {
           
           {errors.root ? <Alert severity="error">{errors.root.message}</Alert> : null}
           
-          <Button 
-            disabled={isPending} 
-            type="submit" 
+          <Button
+            disabled={isPending || !recaptchaLoaded}
+            type="submit"
             variant="contained"
             size="large"
             fullWidth
