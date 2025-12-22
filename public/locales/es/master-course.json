@@ -3,9 +3,9 @@
     "badge": "Solo 25 plazas disponibles",
     "specialOffer": "¡OFERTA ESPECIAL!",
     "title": "Curso Intensivo de Trading",
-    "subtitle": "Del 24 al 26 de enero de 2026",
+    "subtitle": "Del 4 al 6 de abril de 2026",
     "description": "Aprende, opera en vivo y da el salto a la rentabilidad con acompañamiento real. Tampa, la sede del trading.",
-    "startDate": "24-26 Enero, 2026",
+    "startDate": "4-6 Abril, 2026",
     "duration": "3 Días Intensivos + 2.5 Meses de Práctica",
     "location": "Tampa, Florida",
     "stats": {
@@ -47,7 +47,7 @@
     "phase1": {
       "number": "01",
       "name": "Aprendizaje Online",
-      "duration": "15 días online antes del presencial",
+      "duration": "15 días online (20 marzo - 3 abril 2026)",
       "dates": "8 lecciones en video + 16 mentorías grupales vía Zoom",
       "description": "Aprende lo esencial sin complicarte",
       "activities": [
@@ -71,7 +71,7 @@
       "number": "02",
       "name": "Entrenamiento Presencial",
       "duration": "3 Días",
-      "dates": "24-26 de Enero, 2026 (Sábado, Domingo y Lunes)",
+      "dates": "4-6 de Abril, 2026 (Sábado, Domingo y Lunes)",
       "location": "Tampa, Florida",
       "description": "Entrenamiento intensivo con sesiones de trading en vivo",
       "activities": [
@@ -90,7 +90,7 @@
       "number": "03",
       "name": "Práctica Supervisada",
       "duration": "2 Meses",
-      "dates": "2 meses posteriores al entrenamiento presencial",
+      "dates": "2 meses posteriores (abril - junio 2026)",
       "description": "100% online vía Zoom. El primer mes opera en cuenta demo (paper money), y el segundo mes en cuenta real",
       "activities": [
         "De lunes a viernes: trading en vivo y acompañamiento diario",
@@ -217,7 +217,7 @@
     "questions": [
       {
         "question": "¿Cómo es el formato del curso?",
-        "answer": "Fase 1: 15 días online con 8 lecciones y 16 mentorías grupales. Fase 2: 3 días intensivos presenciales en Tampa (24-26 enero 2026, Sábado-Domingo-Lunes). Fase 3: 2 meses de práctica supervisada con acompañamiento diario."
+        "answer": "Fase 1: 15 días online con 8 lecciones y 16 mentorías grupales (20 marzo - 3 abril 2026). Fase 2: 3 días intensivos presenciales en Tampa (4-6 abril 2026, Sábado-Domingo-Lunes). Fase 3: 2 meses de práctica supervisada con acompañamiento diario (abril - junio 2026)."
       },
       {
         "question": "¿Qué aprenderé exactamente?",
@@ -229,7 +229,7 @@
       },
       {
         "question": "¿Qué modalidades están disponibles?",
-        "answer": "El entrenamiento presencial es en Tampa, FL (24-26 enero 2026). Las fases 1 y 3 son 100% online vía Zoom con acceso completo a todas las sesiones en vivo."
+        "answer": "El entrenamiento presencial es en Tampa, FL (4-6 abril 2026). Las fases 1 y 3 son 100% online vía Zoom con acceso completo a todas las sesiones en vivo."
       },
       {
         "question": "¿Qué incluye el precio?",
@@ -362,7 +362,7 @@
       "modulesTitle": "Módulos del Curso"
     },
     "phase2": {
-      "badge": "FASE 2 - Entrenamiento presencial intensivo (24-26 de enero 2026)",
+      "badge": "FASE 2 - Entrenamiento presencial intensivo (4-6 de abril 2026)",
       "title": "Entrenamiento Presencial Intensivo",
       "subtitle": "Entrenamiento intensivo con sesiones de trading en vivo"
     },
@@ -424,8 +424,20 @@
       ]
     }
   },
+  "bonusExtra": {
+    "title": "BONO EXTRA – Seguimiento Personalizado de Operaciones",
+    "description": "Como parte exclusiva de este curso, los participantes tendrán la oportunidad de subir sus operaciones (\"trades\") directamente en la plataforma durante los dos meses de práctica real.",
+    "subtitle": "El mentor revisará cada operación, ofreciendo retroalimentación personalizada que será discutida y analizada durante las mentorías de seguimiento.",
+    "benefits": "De esta forma, cada alumno podrá mejorar su estrategia, fortalecer su disciplina y optimizar su desempeño real en el mercado.",
+    "features": [
+      "Sube tus operaciones directamente en la plataforma",
+      "El mentor revisará cada operación con retroalimentación personalizada",
+      "Análisis discutido durante las mentorías de seguimiento",
+      "Mejora tu estrategia, fortalece tu disciplina y optimiza tu desempeño"
+    ]
+  },
   "seo": {
-    "title": "Curso Intensivo de Trading 2026 - Educación Profesional en Trading",
+    "title": "Curso Intensivo de Trading - Edición Abril 2026 - Educación Profesional en Trading",
     "description": "Únete a nuestro programa intensivo de trading de 3 meses. Aprende de profesionales, opera en vivo en Tampa y obtén tu certificación. Limitado a 50 estudiantes.",
     "keywords": "curso de trading, trading profesional, taller de trading Tampa, certificación en trading, educación day trading"
   },

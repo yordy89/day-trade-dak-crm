@@ -47,6 +47,7 @@ import {
   Psychology,
   ArrowForward,
   LocalOffer,
+  EmojiEvents,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { MainNavbar } from '@/components/landing/main-navbar';
@@ -1021,6 +1022,67 @@ export default function MasterCoursePage() {
                     <Grid item xs={12} md={6} key={feature}>
                       <Stack direction="row" spacing={2} alignItems="flex-start">
                         <CheckCircle sx={{ color: '#f59e0b', flexShrink: 0, mt: 0.5 }} />
+                        <Typography variant="body1">{feature}</Typography>
+                      </Stack>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Stack>
+            </Paper>
+          </Box>
+
+          {/* BONO EXTRA - Personalized Trade Follow-Up */}
+          <Box sx={{ mb: 10 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                background: `linear-gradient(135deg, ${alpha('#9333ea', 0.08)} 0%, ${alpha('#9333ea', 0.03)} 100%)`,
+                border: '2px solid',
+                borderColor: '#9333ea',
+                borderRadius: 4,
+                p: { xs: 4, md: 6 },
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.1 }}>
+                <EmojiEvents sx={{ fontSize: 200, color: '#9333ea' }} />
+              </Box>
+              <Stack spacing={4} position="relative">
+                <Box>
+                  <Chip
+                    icon={<EmojiEvents sx={{ color: 'white !important' }} />}
+                    label="BONUS"
+                    sx={{
+                      backgroundColor: '#9333ea',
+                      color: 'white',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      px: 2,
+                      py: 3,
+                      height: 'auto',
+                      mb: 2,
+                    }}
+                  />
+                  <Typography variant="h3" fontWeight={700} color="#9333ea" gutterBottom>
+                    {t('bonusExtra.title')}
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                    {t('bonusExtra.description')}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                    {t('bonusExtra.subtitle')}
+                  </Typography>
+                  <Typography variant="body1" fontWeight={600} color="#9333ea">
+                    {t('bonusExtra.benefits')}
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={3}>
+                  {(t('bonusExtra.features', { returnObjects: true }) as string[])?.map((feature: string, _idx: number) => (
+                    <Grid item xs={12} md={6} key={feature}>
+                      <Stack direction="row" spacing={2} alignItems="flex-start">
+                        <CheckCircle sx={{ color: '#9333ea', flexShrink: 0, mt: 0.5 }} />
                         <Typography variant="body1">{feature}</Typography>
                       </Stack>
                     </Grid>

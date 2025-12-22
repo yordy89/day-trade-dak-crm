@@ -2,10 +2,10 @@
   "hero": {
     "badge": "Limited Spots Available",
     "specialOffer": "SPECIAL OFFER!",
-    "title": "Master Trading Course 2025",
+    "title": "Master Trading Course 2026",
     "subtitle": "3-Month Intensive Trading Transformation Program",
     "description": "Complete trading education program that combines online learning, in-person training in Tampa, and supervised practice with professional mentorship.",
-    "startDate": "October 11-13, 2025",
+    "startDate": "April 4-6, 2026",
     "duration": "3 Days + 2.5 Months",
     "location": "Tampa, Florida",
     "stats": {
@@ -47,7 +47,7 @@
     "phase1": {
       "number": "01",
       "name": "Online Learning",
-      "duration": "15 days before in-person",
+      "duration": "15 days online (March 20 - April 3, 2026)",
       "dates": "8 video lessons + 16 group mentorships via Zoom",
       "description": "Learn the essentials without complication",
       "activities": [
@@ -71,7 +71,7 @@
       "number": "02",
       "name": "In-Person Training",
       "duration": "3 Days",
-      "dates": "January 24-26, 2026 (Saturday, Sunday and Monday)",
+      "dates": "April 4-6, 2026 (Saturday, Sunday and Monday)",
       "location": "Tampa, Florida",
       "description": "Intensive training with live trading sessions",
       "activities": [
@@ -91,7 +91,7 @@
       "number": "03",
       "name": "Supervised Practice",
       "duration": "2 Months",
-      "dates": "Oct 28 - Dec 28, 2025",
+      "dates": "April - June 2026",
       "description": "Apply your knowledge with professional guidance and support",
       "activities": [
         "Weekly Q&A sessions with mentors",
@@ -361,7 +361,7 @@
       "modulesTitle": "Course Modules"
     },
     "phase2": {
-      "badge": "PHASE 2 - 3 in-person days (Oct 25-27)",
+      "badge": "PHASE 2 - 3 in-person days (April 4-6, 2026)",
       "title": "Intensive In-Person Training",
       "subtitle": "Intensive hands-on training with live trading sessions"
     },
@@ -404,8 +404,20 @@
       ]
     }
   },
+  "bonusExtra": {
+    "title": "BONUS - Personalized Trade Follow-Up",
+    "description": "As an exclusive part of this course, participants will have the opportunity to upload their trades directly to the platform during the two months of real practice.",
+    "subtitle": "The mentor will review each operation, offering personalized feedback that will be discussed and analyzed during the follow-up mentorships.",
+    "benefits": "This way, each student can improve their strategy, strengthen their discipline, and optimize their real market performance.",
+    "features": [
+      "Upload your trades directly to the platform",
+      "Mentor reviews each operation with personalized feedback",
+      "Analysis discussed during follow-up mentorships",
+      "Improve your strategy, strengthen discipline, and optimize performance"
+    ]
+  },
   "seo": {
-    "title": "Master Trading Course 2025 - Professional Trading Education",
+    "title": "Master Trading Course - April 2026 Edition - Professional Trading Education",
     "description": "Join our 3-month intensive trading program. Learn from professionals, trade live in Tampa, and get certified. Limited to 50 students.",
     "keywords": "trading course, professional trading, Tampa trading workshop, trading certification, day trading education"
   },

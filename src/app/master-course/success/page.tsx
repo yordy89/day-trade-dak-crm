@@ -57,9 +57,9 @@ export default function MasterCourseSuccessPage() {
   const isSpanish = i18n.language === 'es';
   const [isLoading, setIsLoading] = useState(false);
   const [eventDates, setEventDates] = useState({
-    startDate: '24 de enero, 2026',
-    endDate: '26 de enero, 2026',
-    liveTrainingDates: '24-26 de Enero, 2026',
+    startDate: '4 de abril, 2026',
+    endDate: '6 de abril, 2026',
+    liveTrainingDates: '4-6 de Abril, 2026',
   });
 
   useEffect(() => {
