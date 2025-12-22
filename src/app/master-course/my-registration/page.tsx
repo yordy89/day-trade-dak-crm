@@ -162,21 +162,15 @@ export default function MyRegistrationPage() {
     setIsSearching(true);
     setHasSearched(true);
     try {
-      // Build search params - prioritize eventId over eventType for accuracy
+      // Build search params - use eventType to search across ALL master_course events
+      // This allows users with registrations in old events (e.g., January) to find
+      // their registration even when a new event (e.g., April) becomes featured
       const searchParams: any = {
         email: searchData.email || undefined,
         registrationId: searchData.registrationId || undefined,
+        eventType: 'master_course',
       };
-
-      // If we have the Master Course event ID, search by specific event
-      if (masterCourseEventId) {
-        searchParams.eventId = masterCourseEventId;
-        console.log('Searching for registrations with eventId:', masterCourseEventId);
-      } else {
-        // Fallback to eventType if event ID not loaded yet
-        searchParams.eventType = 'master_course';
-        console.log('Searching for registrations with eventType: master_course');
-      }
+      console.log('Searching for registrations with eventType: master_course');
 
       console.log('Sending search request with params:', searchParams);
       const response = await eventService.searchRegistrations(searchParams);
