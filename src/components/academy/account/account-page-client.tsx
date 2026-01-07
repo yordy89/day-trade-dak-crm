@@ -161,6 +161,18 @@ export function AccountPageClient(): React.JSX.Element {
     onSuccess: async () => {
       void queryClient.invalidateQueries({ queryKey: ['user-profile'] });
       setIsCancelDialogOpen(false);
+      setSnackbar({
+        open: true,
+        message: t('account.subscriptionCancelledSuccess'),
+        severity: 'success',
+      });
+    },
+    onError: () => {
+      setSnackbar({
+        open: true,
+        message: t('account.subscriptionCancelledError'),
+        severity: 'error',
+      });
     },
   });
 
@@ -889,25 +901,27 @@ export function AccountPageClient(): React.JSX.Element {
                     if (!subscription) return null; // Handle null/undefined subscription
                     const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
                     const expiresAt = typeof subscription === 'object' ? subscription?.expiresAt : null;
-                    
-                    
-                    // Determine if subscription is recurring or one-time
-                    // If it has an expiresAt date, it's a one-time payment
-                    const hasExpirationDate = Boolean(expiresAt);
-                    const isRecurring = !hasExpirationDate && [
+
+                    // Check if this is a recurring plan type
+                    const isRecurringPlanType = [
                       SubscriptionPlan.LiveWeeklyManual,
                       SubscriptionPlan.LiveWeeklyRecurring,
                       SubscriptionPlan.MasterClases,
                       SubscriptionPlan.LiveRecorded,
                       SubscriptionPlan.PSICOTRADING
                     ].includes(plan as SubscriptionPlan);
-                    
+
+                    // Determine if subscription was cancelled (recurring plan with expiration = cancelled)
+                    const hasExpirationDate = Boolean(expiresAt);
+                    const isCancelled = isRecurringPlanType && hasExpirationDate;
+                    const isRecurring = isRecurringPlanType && !hasExpirationDate;
+
                     return (
                     <Grid item xs={12} lg={6} key={plan}>
                       <Card
                         sx={{
                           border: '2px solid',
-                          borderColor: 'success.main',
+                          borderColor: isCancelled ? 'warning.main' : 'success.main',
                           position: 'relative',
                           overflow: 'visible',
                         }}
@@ -917,7 +931,7 @@ export function AccountPageClient(): React.JSX.Element {
                             position: 'absolute',
                             top: -12,
                             right: 20,
-                            bgcolor: 'success.main',
+                            bgcolor: isCancelled ? 'warning.main' : 'success.main',
                             color: 'white',
                             px: 2,
                             py: 0.5,
@@ -926,7 +940,7 @@ export function AccountPageClient(): React.JSX.Element {
                             fontWeight: 600,
                           }}
                         >
-                          {t('account.active')}
+                          {isCancelled ? t('account.cancelled') : t('account.active')}
                         </Box>
                         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
@@ -935,8 +949,12 @@ export function AccountPageClient(): React.JSX.Element {
                               <Typography variant="h6" fontWeight={600}>
                                 {mapMembershipName(plan as SubscriptionPlan)}
                               </Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                {expiresAt ? t('account.activeUntil', { date: formatDate(expiresAt) }) : t('account.autoRenewalActive')}
+                              <Typography variant="body2" color={isCancelled ? 'warning.main' : 'text.secondary'}>
+                                {isCancelled
+                                  ? t('account.cancelledAccessUntil', { date: formatDate(expiresAt) })
+                                  : expiresAt
+                                    ? t('account.activeUntil', { date: formatDate(expiresAt) })
+                                    : t('account.autoRenewalActive')}
                               </Typography>
                             </Box>
                           </Stack>
@@ -955,13 +973,13 @@ export function AccountPageClient(): React.JSX.Element {
                               </Stack>
                             ) : null}
                             {/* Show status for recurring subscriptions */}
-                            {isRecurring && !expiresAt ? (
+                            {isRecurringPlanType ? (
                               <Stack direction="row" justifyContent="space-between">
                                 <Typography variant="body2" color="text.secondary">
                                   {t('account.status')}:
                                 </Typography>
-                                <Typography variant="body2" fontWeight={500} color="success.main">
-                                  {t('account.activeAutoRenewal')}
+                                <Typography variant="body2" fontWeight={500} color={isCancelled ? 'warning.main' : 'success.main'}>
+                                  {isCancelled ? t('account.cancelledStatus') : t('account.activeAutoRenewal')}
                                 </Typography>
                               </Stack>
                             ) : null}
@@ -1002,13 +1020,11 @@ export function AccountPageClient(): React.JSX.Element {
                             </Typography>
                             <Typography variant="body2" fontWeight={500}>
                               {(() => {
-                                if (hasExpirationDate) {
-                                  return t('account.oneTimePayment');
-                                }
+                                // For recurring plan types (active or cancelled), show subscription type
                                 if ([SubscriptionPlan.LiveWeeklyManual, SubscriptionPlan.LiveWeeklyRecurring].includes(plan as SubscriptionPlan)) {
                                   return t('account.weeklySubscription');
                                 }
-                                if (isRecurring) {
+                                if (isRecurringPlanType) {
                                   return t('account.monthlySubscription');
                                 }
                                 return t('account.oneTimePayment');
@@ -1017,7 +1033,8 @@ export function AccountPageClient(): React.JSX.Element {
                           </Stack>
                           </Stack>
 
-                          {isRecurring ? (
+                          {/* Only show cancel button for active recurring subscriptions (not already cancelled) */}
+                          {isRecurring && !isCancelled ? (
                             <Button
                               fullWidth
                               variant="outlined"
@@ -1075,14 +1092,14 @@ export function AccountPageClient(): React.JSX.Element {
             return expiredSubscriptions.length > 0 ? (
               <Grid item xs={12}>
                 <Typography variant="h6" fontWeight={600} mb={2}>
-                  Historial de Suscripciones
+                  {t('account.subscriptionHistory')}
                 </Typography>
                 <Stack spacing={2}>
                   {expiredSubscriptions.map((subscription: any) => {
                     if (!subscription) return null; // Handle null/undefined subscription
                     const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
                     const expiredDate = typeof subscription === 'object' ? subscription?.expiresAt : null;
-                    
+
                     return (
                       <Card key={`expired-${plan}`} sx={{ opacity: 0.7 }}>
                         <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
@@ -1094,12 +1111,12 @@ export function AccountPageClient(): React.JSX.Element {
                                   {mapMembershipName(plan as SubscriptionPlan)}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
-                                  Expiró el {formatDate(expiredDate)}
+                                  {t('account.expiredOn', { date: formatDate(expiredDate) })}
                                 </Typography>
                               </Box>
                             </Stack>
                             <Chip
-                              label="Expirado"
+                              label={t('account.expired')}
                               size="small"
                               variant="outlined"
                               color="default"
@@ -1338,22 +1355,25 @@ export function AccountPageClient(): React.JSX.Element {
         <DialogTitle>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Warning size={24} weight="duotone" color={theme.palette.error.main} />
-            <Typography variant="h6">Cancelar suscripción</Typography>
+            <Typography variant="h6">{t('account.cancelSubscriptionTitle')}</Typography>
           </Stack>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" color="text.secondary">
-            ¿Estás seguro de que quieres cancelar tu suscripción{' '}
-            <strong>{mapMembershipName(selectedPlan as SubscriptionPlan)}</strong>?
-            Mantendrás el acceso hasta el final de tu ciclo de facturación.
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t('account.cancelSubscriptionConfirm', { plan: mapMembershipName(selectedPlan as SubscriptionPlan) })}
           </Typography>
+          <Box sx={{ bgcolor: 'rgba(237, 108, 2, 0.1)', p: 2, borderRadius: 1 }}>
+            <Typography variant="body2" fontWeight={500}>
+              {t('account.accessUntilDate', { date: formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) })}
+            </Typography>
+          </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
           <Button
             onClick={() => setIsCancelDialogOpen(false)}
             variant="outlined"
           >
-            Mantener suscripción
+            {t('account.keepSubscription')}
           </Button>
           <Button
             color="error"
@@ -1361,7 +1381,7 @@ export function AccountPageClient(): React.JSX.Element {
             onClick={() => cancelSubscriptionMutation.mutate(selectedPlan!)}
             disabled={cancelSubscriptionMutation.isPending}
           >
-            {cancelSubscriptionMutation.isPending ? 'Procesando...' : 'Sí, cancelar'}
+            {cancelSubscriptionMutation.isPending ? t('account.processing') : t('account.yesCancel')}
           </Button>
         </DialogActions>
       </Dialog>

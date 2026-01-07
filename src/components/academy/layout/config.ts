@@ -4,6 +4,9 @@ import { ModuleType } from '@/types/module-permission';
 import { paths } from '@/paths';
 import type { TFunction } from 'i18next';
 
+// Export the modules required by nav items for access checking
+export const NAV_REQUIRED_MODULES: ModuleType[] = [ModuleType.TRADING_JOURNAL];
+
 export const getNavItems = (t: TFunction): NavItemConfig[] => [
   { id: 'home', title: t('academy:navigation.home'), href: paths.home, icon: 'house' },
   { id: 'overview', title: t('academy:navigation.dashboard'), href: paths.academy.overview, icon: 'chart-pie' },
@@ -49,14 +52,14 @@ export const getNavItems = (t: TFunction): NavItemConfig[] => [
   //   icon: 'trending-up',
   //   requiredSubscription: SubscriptionPlan.Stocks,
   // },
-  // Trading Journal - Hidden for now, will be enabled when feature is complete
-  // {
-  //   id: 'trading-journal',
-  //   title: t('academy:navigation.tradingJournal'),
-  //   href: paths.academy.tradingJournal,
-  //   icon: 'notebook',
-  //   requiredModule: ModuleType.TRADING_JOURNAL,
-  // },
+  // Trading Journal - Users can add trades and mentor reviews them
+  {
+    id: 'trading-journal',
+    title: t('academy:navigation.tradingJournal'),
+    href: paths.academy.tradingJournal.root,
+    icon: 'notebook',
+    requiredModule: ModuleType.TRADING_JOURNAL,
+  },
   {
     id: 'personal-growth',
     title: t('academy:navigation.personalGrowth'),

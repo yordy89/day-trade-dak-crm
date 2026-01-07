@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -19,7 +20,6 @@ import {
   useTheme,
   alpha,
   LinearProgress,
-  Divider,
   List,
   ListItem,
   ListItemText,
@@ -30,8 +30,6 @@ import {
   ChartLine,
   TrendUp,
   TrendDown,
-  Calendar,
-  Target,
   Lightning,
   Clock,
   Trophy,
@@ -61,12 +59,14 @@ interface PerformanceMetric {
 export default function AnalyticsPage() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation('academy');
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>(TimeFilter.MONTH);
   const [error, setError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   // Check module access AFTER all useState hooks
   const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.TRADING_JOURNAL);
@@ -110,9 +110,25 @@ export default function AnalyticsPage() {
     router.push(paths.academy.tradingJournal.trades);
   };
 
-  const handleExport = () => {
-    // TODO: Implement export functionality
-    console.log('Exporting analytics report...');
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const blob = await tradingJournalService.exportTrades({ timeFilter });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trades_report_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export trades:', err);
+      alert(t('tradingJournal.tradesList.exportFailed'));
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loading) {
@@ -131,41 +147,49 @@ export default function AnalyticsPage() {
     );
   }
 
+  // Format holding time from minutes to a readable format
+  const formatHoldingTime = (minutes: number | null | undefined): string => {
+    if (!minutes || minutes <= 0) return '0 min';
+    if (minutes < 60) return `${Math.round(minutes)} min`;
+    if (minutes < 1440) return `${(minutes / 60).toFixed(1)} hrs`;
+    return `${(minutes / 1440).toFixed(1)} days`;
+  };
+
   const performanceMetrics: PerformanceMetric[] = [
     {
-      label: 'Total P&L',
+      label: t('tradingJournal.analytics.totalPnl'),
       value: formatCurrency(analytics?.totalPnl || 0),
       change: analytics?.pnlChange,
       icon: <ChartLine size={24} />,
       color: (analytics?.totalPnl || 0) >= 0 ? theme.palette.success.main : theme.palette.error.main,
     },
     {
-      label: 'Win Rate',
+      label: t('tradingJournal.analytics.totalTrades'),
+      value: analytics?.totalTrades || 0,
+      icon: <TrendUp size={24} />,
+      color: theme.palette.info.main,
+    },
+    {
+      label: t('tradingJournal.analytics.winRate'),
       value: `${analytics?.winRate?.toFixed(1) || 0}%`,
       icon: <Trophy size={24} />,
       color: theme.palette.primary.main,
     },
     {
-      label: 'Profit Factor',
+      label: t('tradingJournal.analytics.profitFactor'),
       value: analytics?.profitFactor?.toFixed(2) || '0.00',
       icon: <Scales size={24} />,
       color: theme.palette.secondary.main,
     },
     {
-      label: 'Avg R-Multiple',
-      value: `${analytics?.avgRMultiple?.toFixed(2) || '0.00'}R`,
-      icon: <Target size={24} />,
-      color: theme.palette.info.main,
-    },
-    {
-      label: 'Expectancy',
+      label: t('tradingJournal.analytics.expectancy'),
       value: formatCurrency(analytics?.expectancy || 0),
       icon: <Lightning size={24} />,
       color: theme.palette.warning.main,
     },
     {
-      label: 'Avg Hold Time',
-      value: `${analytics?.avgHoldingTime || 0} days`,
+      label: t('tradingJournal.analytics.avgHoldTime'),
+      value: formatHoldingTime(analytics?.avgHoldingTime),
       icon: <Clock size={24} />,
       color: theme.palette.text.secondary,
     },
@@ -187,33 +211,34 @@ export default function AnalyticsPage() {
         </IconButton>
         <Box flex={1}>
           <Typography variant="h4" fontWeight={600} mb={1}>
-            Trading Analytics
+            {t('tradingJournal.analytics.title')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Performance metrics and insights from your trading journal
+            {t('tradingJournal.analytics.overview')}
           </Typography>
         </Box>
         <FormControl sx={{ minWidth: 140 }}>
-          <InputLabel>Time Period</InputLabel>
+          <InputLabel>{t('tradingJournal.tradesList.timePeriod')}</InputLabel>
           <Select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
-            label="Time Period"
+            label={t('tradingJournal.tradesList.timePeriod')}
           >
-            <MenuItem value={TimeFilter.TODAY}>Today</MenuItem>
-            <MenuItem value={TimeFilter.WEEK}>This Week</MenuItem>
-            <MenuItem value={TimeFilter.MONTH}>This Month</MenuItem>
-            <MenuItem value={TimeFilter.QUARTER}>Quarter</MenuItem>
-            <MenuItem value={TimeFilter.YEAR}>This Year</MenuItem>
-            <MenuItem value={TimeFilter.ALL}>All Time</MenuItem>
+            <MenuItem value={TimeFilter.TODAY}>{t('tradingJournal.tradesList.today')}</MenuItem>
+            <MenuItem value={TimeFilter.WEEK}>{t('tradingJournal.tradesList.thisWeek')}</MenuItem>
+            <MenuItem value={TimeFilter.MONTH}>{t('tradingJournal.tradesList.thisMonth')}</MenuItem>
+            <MenuItem value={TimeFilter.QUARTER}>{t('tradingJournal.tradesList.quarter')}</MenuItem>
+            <MenuItem value={TimeFilter.YEAR}>{t('tradingJournal.tradesList.thisYear')}</MenuItem>
+            <MenuItem value={TimeFilter.ALL}>{t('tradingJournal.tradesList.allTime')}</MenuItem>
           </Select>
         </FormControl>
         <Button
           variant="outlined"
-          startIcon={<Download />}
+          startIcon={exporting ? <CircularProgress size={16} /> : <Download />}
           onClick={handleExport}
+          disabled={exporting}
         >
-          Export Report
+          {exporting ? t('tradingJournal.analytics.exporting') : t('tradingJournal.analytics.exportReport')}
         </Button>
       </Stack>
 
@@ -255,7 +280,7 @@ export default function AnalyticsPage() {
                         variant="caption"
                         color={metric.change > 0 ? 'success.main' : 'error.main'}
                       >
-                        {Math.abs(metric.change)}% from last period
+                        {Math.abs(metric.change)}% {t('tradingJournal.analytics.fromLastPeriod')}
                       </Typography>
                     </Stack>
                   )}
@@ -267,37 +292,60 @@ export default function AnalyticsPage() {
       </Grid>
 
       <Grid container spacing={3}>
-        {/* Performance by Strategy */}
+        {/* Performance by Option Type (CALL/PUT) */}
         <Grid item xs={12} md={6}>
           <Card sx={{ p: 3, height: '100%' }}>
             <Stack direction="row" alignItems="center" spacing={2} mb={3}>
               <Brain size={24} color={theme.palette.primary.main} />
               <Typography variant="h6" fontWeight={600}>
-                Performance by Strategy
+                {t('tradingJournal.analytics.byOptionType')}
               </Typography>
             </Stack>
-            <List>
-              {analytics?.performanceByStrategy?.map((strategy, index) => (
-                <ListItem key={index} sx={{ px: 0 }}>
-                  <ListItemText
-                    primary={strategy.name}
-                    secondary={`${strategy.trades} trades`}
-                  />
-                  <Stack alignItems="flex-end">
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color={strategy.pnl >= 0 ? 'success.main' : 'error.main'}
+            {analytics?.optionTypeStats && analytics.optionTypeStats.length > 0 ? (
+              <List>
+                {analytics.optionTypeStats.map((optionType, index) => (
+                  <ListItem key={index} sx={{ px: 0 }}>
+                    <Avatar
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: optionType._id === 'call'
+                          ? alpha(theme.palette.success.main, 0.1)
+                          : alpha(theme.palette.error.main, 0.1),
+                        color: optionType._id === 'call'
+                          ? theme.palette.success.main
+                          : theme.palette.error.main,
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        mr: 2,
+                      }}
                     >
-                      {formatCurrency(strategy.pnl)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Win Rate: {strategy.winRate?.toFixed(1)}%
-                    </Typography>
-                  </Stack>
-                </ListItem>
-              ))}
-            </List>
+                      {optionType._id?.toUpperCase() || 'N/A'}
+                    </Avatar>
+                    <ListItemText
+                      primary={optionType._id === 'call' ? 'CALL Options' : 'PUT Options'}
+                      secondary={`${optionType.trades} ${t('tradingJournal.analytics.trades')}`}
+                    />
+                    <Stack alignItems="flex-end">
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color={optionType.pnl >= 0 ? 'success.main' : 'error.main'}
+                      >
+                        {formatCurrency(optionType.pnl)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('tradingJournal.analytics.winRate')}: {optionType.winRate?.toFixed(1)}%
+                      </Typography>
+                    </Stack>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                {t('tradingJournal.analytics.noOptionData')}
+              </Typography>
+            )}
           </Card>
         </Grid>
 
@@ -307,135 +355,159 @@ export default function AnalyticsPage() {
             <Stack direction="row" alignItems="center" spacing={2} mb={3}>
               <ChartLine size={24} color={theme.palette.primary.main} />
               <Typography variant="h6" fontWeight={600}>
-                Performance by Market
+                {t('tradingJournal.analytics.byMarket')}
               </Typography>
             </Stack>
-            <Stack spacing={2}>
-              {analytics?.performanceByMarket?.map((market, index) => (
-                <Box key={index}>
-                  <Stack direction="row" justifyContent="space-between" mb={1}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Chip
-                        label={market.market}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {market.trades} trades
+            {analytics?.performanceByMarket && analytics.performanceByMarket.length > 0 ? (
+              <Stack spacing={2}>
+                {analytics.performanceByMarket.map((market, index) => (
+                  <Box key={index}>
+                    <Stack direction="row" justifyContent="space-between" mb={1}>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Chip
+                          label={market.market?.toUpperCase() || 'Unknown'}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                        />
+                        <Typography variant="body2" color="text.secondary">
+                          {market.trades} {t('tradingJournal.analytics.trades')}
+                        </Typography>
+                      </Stack>
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color={market.pnl >= 0 ? 'success.main' : 'error.main'}
+                      >
+                        {formatCurrency(market.pnl)}
                       </Typography>
                     </Stack>
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color={market.pnl >= 0 ? 'success.main' : 'error.main'}
-                    >
-                      {formatCurrency(market.pnl)}
+                    <LinearProgress
+                      variant="determinate"
+                      value={Math.min(market.winRate || 0, 100)}
+                      sx={{
+                        height: 8,
+                        borderRadius: 1,
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        '& .MuiLinearProgress-bar': {
+                          bgcolor: market.pnl >= 0
+                            ? theme.palette.success.main
+                            : theme.palette.error.main,
+                        },
+                      }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                      {t('tradingJournal.analytics.winRate')}: {market.winRate?.toFixed(1) || 0}%
                     </Typography>
-                  </Stack>
-                  <LinearProgress
-                    variant="determinate"
-                    value={market.winRate}
-                    sx={{
-                      height: 8,
-                      borderRadius: 1,
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
-                      '& .MuiLinearProgress-bar': {
-                        bgcolor: market.pnl >= 0
-                          ? theme.palette.success.main
-                          : theme.palette.error.main,
-                      },
-                    }}
-                  />
-                  <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Win Rate: {market.winRate?.toFixed(1)}%
-                  </Typography>
-                </Box>
-              ))}
-            </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                {t('tradingJournal.analytics.noMarketData')}
+              </Typography>
+            )}
           </Card>
         </Grid>
 
         {/* Best & Worst Trades */}
         <Grid item xs={12} md={6}>
           <Card sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight={600} mb={3}>
-              Best Trades
-            </Typography>
-            <List>
-              {analytics?.bestTrades?.slice(0, 5).map((trade, index) => (
-                <ListItem key={index} sx={{ px: 0 }}>
-                  <Avatar
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      bgcolor: alpha(theme.palette.success.main, 0.1),
-                      color: theme.palette.success.main,
-                      mr: 2,
-                    }}
-                  >
-                    {index + 1}
-                  </Avatar>
-                  <ListItemText
-                    primary={trade.symbol}
-                    secondary={new Date(trade.tradeDate).toLocaleDateString()}
-                  />
-                  <Stack alignItems="flex-end">
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color="success.main"
+            <Stack direction="row" alignItems="center" spacing={2} mb={3}>
+              <Trophy size={24} color={theme.palette.success.main} />
+              <Typography variant="h6" fontWeight={600}>
+                {t('tradingJournal.analytics.bestTrades')}
+              </Typography>
+            </Stack>
+            {analytics?.bestTrades && analytics.bestTrades.length > 0 ? (
+              <List>
+                {analytics.bestTrades.slice(0, 5).map((trade, index) => (
+                  <ListItem key={trade._id || index} sx={{ px: 0 }}>
+                    <Avatar
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        bgcolor: alpha(theme.palette.success.main, 0.1),
+                        color: theme.palette.success.main,
+                        mr: 2,
+                      }}
                     >
-                      {formatCurrency(trade.netPnl)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {trade.rMultiple?.toFixed(2)}R
-                    </Typography>
-                  </Stack>
-                </ListItem>
-              ))}
-            </List>
+                      {index + 1}
+                    </Avatar>
+                    <ListItemText
+                      primary={trade.symbol}
+                      secondary={new Date(trade.tradeDate).toLocaleDateString()}
+                    />
+                    <Stack alignItems="flex-end">
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color="success.main"
+                      >
+                        {formatCurrency(trade.netPnl)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {trade.rMultiple?.toFixed(2) || '0.00'}R
+                      </Typography>
+                    </Stack>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                {t('tradingJournal.analytics.noBestTrades')}
+              </Typography>
+            )}
           </Card>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Card sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight={600} mb={3}>
-              Worst Trades
-            </Typography>
-            <List>
-              {analytics?.worstTrades?.slice(0, 5).map((trade, index) => (
-                <ListItem key={index} sx={{ px: 0 }}>
-                  <Avatar
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      bgcolor: alpha(theme.palette.error.main, 0.1),
-                      color: theme.palette.error.main,
-                      mr: 2,
-                    }}
-                  >
-                    {index + 1}
-                  </Avatar>
-                  <ListItemText
-                    primary={trade.symbol}
-                    secondary={new Date(trade.tradeDate).toLocaleDateString()}
-                  />
-                  <Stack alignItems="flex-end">
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color="error.main"
+            <Stack direction="row" alignItems="center" spacing={2} mb={3}>
+              <TrendDown size={24} color={theme.palette.error.main} />
+              <Typography variant="h6" fontWeight={600}>
+                {t('tradingJournal.analytics.worstTrades')}
+              </Typography>
+            </Stack>
+            {analytics?.worstTrades && analytics.worstTrades.length > 0 ? (
+              <List>
+                {analytics.worstTrades.slice(0, 5).map((trade, index) => (
+                  <ListItem key={trade._id || index} sx={{ px: 0 }}>
+                    <Avatar
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        bgcolor: alpha(theme.palette.error.main, 0.1),
+                        color: theme.palette.error.main,
+                        mr: 2,
+                      }}
                     >
-                      {formatCurrency(trade.netPnl)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {trade.rMultiple?.toFixed(2)}R
-                    </Typography>
-                  </Stack>
-                </ListItem>
-              ))}
-            </List>
+                      {index + 1}
+                    </Avatar>
+                    <ListItemText
+                      primary={trade.symbol}
+                      secondary={new Date(trade.tradeDate).toLocaleDateString()}
+                    />
+                    <Stack alignItems="flex-end">
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color="error.main"
+                      >
+                        {formatCurrency(trade.netPnl)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {trade.rMultiple?.toFixed(2) || '0.00'}R
+                      </Typography>
+                    </Stack>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                {t('tradingJournal.analytics.noWorstTrades')}
+              </Typography>
+            )}
           </Card>
         </Grid>
 
@@ -445,59 +517,61 @@ export default function AnalyticsPage() {
             <Stack direction="row" alignItems="center" spacing={2} mb={3}>
               <Warning size={24} color={theme.palette.warning.main} />
               <Typography variant="h6" fontWeight={600}>
-                Risk Analysis
+                {t('tradingJournal.analytics.riskAnalysis')}
               </Typography>
             </Stack>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6} md={3}>
                 <Paper sx={{ p: 2, bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
                   <Typography variant="caption" color="text.secondary">
-                    Max Drawdown
+                    {t('tradingJournal.analytics.maxDrawdown')}
                   </Typography>
                   <Typography variant="h6" fontWeight={600} color="error.main">
                     {formatCurrency(analytics?.maxDrawdown || 0)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {analytics?.maxDrawdownPercent?.toFixed(2)}% of capital
+                    {t('tradingJournal.analytics.maxDrawdownDesc')}
                   </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Paper sx={{ p: 2, bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
                   <Typography variant="caption" color="text.secondary">
-                    Sharpe Ratio
+                    {t('tradingJournal.analytics.riskRewardRatio')}
                   </Typography>
                   <Typography variant="h6" fontWeight={600}>
-                    {analytics?.sharpeRatio?.toFixed(2) || '0.00'}
+                    {analytics?.avgLoss && analytics.avgLoss !== 0
+                      ? `1:${Math.abs((analytics?.avgWin || 0) / analytics.avgLoss).toFixed(2)}`
+                      : 'N/A'}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Risk-adjusted returns
+                    {t('tradingJournal.analytics.riskRewardDesc')}
                   </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Paper sx={{ p: 2, bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
                   <Typography variant="caption" color="text.secondary">
-                    Avg Winner
+                    {t('tradingJournal.analytics.avgWin')}
                   </Typography>
                   <Typography variant="h6" fontWeight={600} color="success.main">
-                    {formatCurrency(analytics?.avgWinner || 0)}
+                    {formatCurrency(analytics?.avgWin || 0)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Per winning trade
+                    {t('tradingJournal.analytics.avgWinDesc')}
                   </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Paper sx={{ p: 2, bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
                   <Typography variant="caption" color="text.secondary">
-                    Avg Loser
+                    {t('tradingJournal.analytics.avgLoss')}
                   </Typography>
                   <Typography variant="h6" fontWeight={600} color="error.main">
-                    {formatCurrency(analytics?.avgLoser || 0)}
+                    {formatCurrency(analytics?.avgLoss || 0)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Per losing trade
+                    {t('tradingJournal.analytics.avgLossDesc')}
                   </Typography>
                 </Paper>
               </Grid>

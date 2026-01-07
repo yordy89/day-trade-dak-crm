@@ -35,10 +35,12 @@ import {
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
-import { getNavItems } from './config';
+import { getNavItems, NAV_REQUIRED_MODULES } from './config';
 import { navIcons } from './nav-icons';
 import { Role } from '@/types/user';
 import { useTranslation } from 'react-i18next';
+import { useMultipleModuleAccess } from '@/hooks/use-module-access';
+import { ModuleType } from '@/types/module-permission';
 
 // Export the context and provider for mobile menu state
 export const MobileMenuContext = React.createContext<{
@@ -505,14 +507,22 @@ function NavItemList({
   const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const navItems = getNavItems(t);
-  
-  // Filter items based on role and mobile visibility
+
+  // Check module access for nav items that require it
+  const { accessMap, loading: moduleAccessLoading } = useMultipleModuleAccess(NAV_REQUIRED_MODULES);
+
+  // Filter items based on role, mobile visibility, and module access
   const filteredItems = navItems.filter(
     (item) => {
       // Filter out home item on desktop
       if (item.id === 'home' && !isMobile) return false;
       // Check role requirements
-      return !item.requiredRole || item.requiredRole === userRole;
+      if (item.requiredRole && item.requiredRole !== userRole) return false;
+      // Check module access requirements (hide if no access and not loading)
+      if (item.requiredModule && !moduleAccessLoading) {
+        if (!accessMap[item.requiredModule]) return false;
+      }
+      return true;
     }
   );
 

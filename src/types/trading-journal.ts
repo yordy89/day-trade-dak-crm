@@ -11,6 +11,12 @@ export enum TradeDirection {
   SHORT = 'short',
 }
 
+// For options: CALL = bullish on stock, PUT = bearish on stock
+export enum OptionType {
+  CALL = 'call',
+  PUT = 'put',
+}
+
 export enum EmotionType {
   CONFIDENT = 'confident',
   ANXIOUS = 'anxious',
@@ -76,6 +82,10 @@ export interface Trade {
   entryPrice: number;
   positionSize: number;
   direction: TradeDirection;
+  // Options-specific fields
+  optionType?: OptionType;
+  strikePrice?: number;
+  expirationDate?: Date;
   exitTime?: Date;
   exitPrice?: number;
   exitReason?: string;
@@ -126,6 +136,10 @@ export interface CreateTradeDto {
   entryPrice: number;
   positionSize: number;
   direction: TradeDirection;
+  // Options-specific fields
+  optionType?: OptionType;
+  strikePrice?: number;
+  expirationDate?: Date;
   exitTime?: Date;
   exitPrice?: number;
   exitReason?: string;
@@ -290,9 +304,6 @@ export interface Analytics extends TradeStatistics {
   pnlChange?: number;
   maxDrawdown?: number;
   maxDrawdownPercent?: number;
-  sharpeRatio?: number;
-  avgWinner?: number;
-  avgLoser?: number;
   performanceByStrategy?: Array<{
     name: string;
     trades: number;
@@ -301,6 +312,13 @@ export interface Analytics extends TradeStatistics {
   }>;
   performanceByMarket?: Array<{
     market: string;
+    trades: number;
+    pnl: number;
+    winRate: number;
+  }>;
+  // Performance by option type (CALL/PUT)
+  optionTypeStats?: Array<{
+    _id: string; // 'call' or 'put'
     trades: number;
     pnl: number;
     winRate: number;

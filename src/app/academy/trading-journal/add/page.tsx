@@ -180,6 +180,12 @@ export default function AddTradePage() {
   const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
+    // For OPTIONS, always set direction to LONG (Buy to Open)
+    // since we only need CALL/PUT to determine the trade direction
+    if (field === 'market' && value === MarketType.OPTIONS) {
+      setFormData(prev => ({ ...prev, direction: TradeDirection.LONG }));
+    }
+
     // Auto-calculate risk amount
     if ((field === 'stopLoss' || field === 'entryPrice' || field === 'positionSize') &&
         formData.entryPrice && formData.stopLoss && formData.positionSize) {
@@ -192,14 +198,10 @@ export default function AddTradePage() {
   const handleOptionsChange = (field: string, value: any) => {
     setOptionsData(prev => ({ ...prev, [field]: value }));
 
-    // Auto-set direction based on option type
-    if (field === 'optionType') {
-      if (value === OptionType.CALL) {
-        setFormData(prev => ({ ...prev, direction: TradeDirection.LONG }));
-      } else if (value === OptionType.PUT) {
-        setFormData(prev => ({ ...prev, direction: TradeDirection.SHORT }));
-      }
-    }
+    // For options: direction means Buy/Sell the contract, NOT bullish/bearish
+    // Most retail traders BUY options (Buy to Open), so default to LONG
+    // CALL/PUT determines bullish/bearish on the stock, not the contract position
+    // DON'T auto-change direction based on option type!
 
     // Auto-calculate risk amount for options
     if (field === 'premium' || field === 'contracts') {
@@ -217,7 +219,7 @@ export default function AddTradePage() {
     const errors: string[] = [];
 
     if (!formData.symbol || formData.symbol.trim() === '') {
-      errors.push('Symbol is required');
+      errors.push(t('tradingJournal.validation.symbolRequired'));
     }
 
     if (formData.market === MarketType.OPTIONS) {
@@ -289,6 +291,13 @@ export default function AddTradePage() {
         screenshots: formData.screenshots || [],
       };
 
+      // Add options-specific fields
+      if (formData.market === MarketType.OPTIONS) {
+        submitData.optionType = optionsData.optionType;
+        submitData.strikePrice = optionsData.strikePrice;
+        submitData.expirationDate = optionsData.expirationDate;
+      }
+
       await tradingJournalService.createTrade(submitData);
       router.push(paths.academy.tradingJournal.trades);
     } catch (err: any) {
@@ -310,16 +319,16 @@ export default function AddTradePage() {
   ];
 
   const optionStrategies = [
-    { value: OptionStrategy.SINGLE, label: 'Single Option' },
-    { value: OptionStrategy.COVERED_CALL, label: 'Covered Call' },
-    { value: OptionStrategy.CASH_SECURED_PUT, label: 'Cash Secured Put' },
-    { value: OptionStrategy.VERTICAL_SPREAD, label: 'Vertical Spread' },
-    { value: OptionStrategy.IRON_CONDOR, label: 'Iron Condor' },
-    { value: OptionStrategy.STRADDLE, label: 'Straddle' },
-    { value: OptionStrategy.STRANGLE, label: 'Strangle' },
-    { value: OptionStrategy.BUTTERFLY, label: 'Butterfly' },
-    { value: OptionStrategy.CALENDAR, label: 'Calendar Spread' },
-    { value: OptionStrategy.DIAGONAL, label: 'Diagonal Spread' },
+    { value: OptionStrategy.SINGLE, label: t('tradingJournal.optionStrategies.single') },
+    { value: OptionStrategy.COVERED_CALL, label: t('tradingJournal.optionStrategies.coveredCall') },
+    { value: OptionStrategy.CASH_SECURED_PUT, label: t('tradingJournal.optionStrategies.cashSecuredPut') },
+    { value: OptionStrategy.VERTICAL_SPREAD, label: t('tradingJournal.optionStrategies.verticalSpread') },
+    { value: OptionStrategy.IRON_CONDOR, label: t('tradingJournal.optionStrategies.ironCondor') },
+    { value: OptionStrategy.STRADDLE, label: t('tradingJournal.optionStrategies.straddle') },
+    { value: OptionStrategy.STRANGLE, label: t('tradingJournal.optionStrategies.strangle') },
+    { value: OptionStrategy.BUTTERFLY, label: t('tradingJournal.optionStrategies.butterfly') },
+    { value: OptionStrategy.CALENDAR, label: t('tradingJournal.optionStrategies.calendarSpread') },
+    { value: OptionStrategy.DIAGONAL, label: t('tradingJournal.optionStrategies.diagonalSpread') },
   ];
 
   const allMarketOptions = [
@@ -336,15 +345,15 @@ export default function AddTradePage() {
   );
 
   const timeframeOptions = [
-    { value: '1m', label: '1 Minute' },
-    { value: '5m', label: '5 Minutes' },
-    { value: '15m', label: '15 Minutes' },
-    { value: '30m', label: '30 Minutes' },
-    { value: '1h', label: '1 Hour' },
-    { value: '4h', label: '4 Hours' },
-    { value: '1D', label: 'Daily' },
-    { value: '1W', label: 'Weekly' },
-    { value: '1M', label: 'Monthly' },
+    { value: '1m', label: t('tradingJournal.timeframes.1m') },
+    { value: '5m', label: t('tradingJournal.timeframes.5m') },
+    { value: '15m', label: t('tradingJournal.timeframes.15m') },
+    { value: '30m', label: t('tradingJournal.timeframes.30m') },
+    { value: '1h', label: t('tradingJournal.timeframes.1h') },
+    { value: '4h', label: t('tradingJournal.timeframes.4h') },
+    { value: '1D', label: t('tradingJournal.timeframes.daily') },
+    { value: '1W', label: t('tradingJournal.timeframes.weekly') },
+    { value: '1M', label: t('tradingJournal.timeframes.monthly') },
   ];
 
   const emotionOptions = Object.values(EmotionType).map(emotion => ({
@@ -489,7 +498,8 @@ export default function AddTradePage() {
                       <Divider sx={{ my: 1 }} />
                     </Grid>
 
-                    {/* Trade Direction - Hidden for Options (auto-set based on CALL/PUT) */}
+                    {/* Trade Direction - Only show for non-OPTIONS markets */}
+                    {/* For OPTIONS, we only need CALL/PUT - direction is always "Buy to Open" (LONG) */}
                     {formData.market !== MarketType.OPTIONS && (
                       <Grid item xs={12} md={6}>
                         <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
@@ -537,7 +547,7 @@ export default function AddTradePage() {
 
                     <Grid item xs={12}>
                       <CustomDatePicker
-                        label="Trade Date & Time"
+                        label={t('tradingJournal.fields.entryTime')}
                         value={dayjs(formData.entryTime)}
                         onChange={(value) => {
                           const date = value?.toDate();
@@ -574,7 +584,7 @@ export default function AddTradePage() {
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={4}>
                         <CustomSelect
-                          label="Option Strategy"
+                          label={t('tradingJournal.fields.optionStrategy')}
                           value={optionsData.optionStrategy}
                           onChange={(value) => handleOptionsChange('optionStrategy', value)}
                           options={optionStrategies}
@@ -599,17 +609,17 @@ export default function AddTradePage() {
                           }}
                         >
                           <ToggleButton value={OptionType.CALL} color="success">
-                            CALL
+                            {t('tradingJournal.optionTypes.call')}
                           </ToggleButton>
                           <ToggleButton value={OptionType.PUT} color="error">
-                            PUT
+                            {t('tradingJournal.optionTypes.put')}
                           </ToggleButton>
                         </ToggleButtonGroup>
                       </Grid>
 
                       <Grid item xs={12} md={4}>
                         <CustomDatePicker
-                          label="Expiration Date"
+                          label={t('tradingJournal.fields.expirationDate')}
                           value={optionsData.expirationDate ? dayjs(optionsData.expirationDate) : null}
                           onChange={(value) => handleOptionsChange('expirationDate', value?.toDate())}
                           required
@@ -618,7 +628,7 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Strike Price"
+                          label={t('tradingJournal.fields.strikePrice')}
                           type="number"
                           value={optionsData.strikePrice || ''}
                           onChange={(e) => handleOptionsChange('strikePrice', parseFloat(e.target.value))}
@@ -629,36 +639,36 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Option Price"
+                          label={t('tradingJournal.fields.optionPrice')}
                           type="number"
                           value={optionsData.premium || ''}
                           onChange={(e) => handleOptionsChange('premium', parseFloat(e.target.value))}
                           required
                           icon={<CurrencyDollar size={20} />}
-                          helperText="Price you paid per share"
+                          helperText={t('tradingJournal.fields.optionPriceHelper')}
                         />
                       </Grid>
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Contracts"
+                          label={t('tradingJournal.fields.contracts')}
                           type="number"
                           value={optionsData.contracts || 1}
                           onChange={(e) => handleOptionsChange('contracts', parseInt(e.target.value))}
                           required
                           icon={<Hash size={20} />}
-                          helperText="1 contract = 100 shares"
+                          helperText={t('tradingJournal.fields.contractsHelper')}
                         />
                       </Grid>
 
                       <Grid item xs={12} md={3}>
                         <CustomInput
-                          label="Stock Price"
+                          label={t('tradingJournal.fields.stockPrice')}
                           type="number"
                           value={optionsData.underlyingPrice || ''}
                           onChange={(e) => handleOptionsChange('underlyingPrice', parseFloat(e.target.value))}
                           icon={<CurrencyDollar size={20} />}
-                          helperText="Current market price"
+                          helperText={t('tradingJournal.fields.stockPriceHelper')}
                         />
                       </Grid>
                     </Grid>
@@ -681,7 +691,7 @@ export default function AddTradePage() {
                         <CurrencyDollar size={24} color={theme.palette.success.main} />
                       </Box>
                       <Typography variant="h6" fontWeight={600}>
-                        Position & Pricing
+                        {t('tradingJournal.positionPricing')}
                       </Typography>
                     </Stack>
 
@@ -693,7 +703,7 @@ export default function AddTradePage() {
                           value={formData.positionSize}
                           onChange={(e) => handleChange('positionSize', parseInt(e.target.value))}
                           required
-                          helperText="Number of shares/contracts"
+                          helperText={t('tradingJournal.fields.positionSizeHelper')}
                           icon={<Hash size={20} />}
                         />
                       </Grid>
@@ -711,7 +721,7 @@ export default function AddTradePage() {
 
                       <Grid item xs={12} md={4}>
                         <CustomInput
-                          label="Position Value"
+                          label={t('tradingJournal.fields.positionValue')}
                           value={formatCurrency((formData.entryPrice || 0) * (formData.positionSize || 0))}
                           disabled
                           onChange={() => {}}
@@ -742,29 +752,20 @@ export default function AddTradePage() {
                   </Stack>
 
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={6}>
                       <CustomInput
-                        label={t('tradingJournal.fields.stopLoss')}
-                        type="number"
-                        value={formData.stopLoss || ''}
-                        onChange={(e) => handleChange('stopLoss', parseFloat(e.target.value))}
-                        helperText={t('tradingJournal.fields.stopLossHelper')}
-                        icon={<TrendDown size={20} />}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} md={4}>
-                      <CustomInput
-                        label={t('tradingJournal.fields.takeProfit')}
+                        label={`${t('tradingJournal.fields.takeProfit')}${formData.market === MarketType.OPTIONS ? ` (${t('tradingJournal.fields.perShare')})` : ''}`}
                         type="number"
                         value={formData.takeProfit || ''}
                         onChange={(e) => handleChange('takeProfit', parseFloat(e.target.value))}
-                        helperText={t('tradingJournal.fields.takeProfitHelper')}
+                        helperText={formData.market === MarketType.OPTIONS
+                          ? t('tradingJournal.fields.takeProfitOptionsHelper')
+                          : t('tradingJournal.fields.takeProfitHelper')}
                         icon={<Target size={20} />}
                       />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={6}>
                       <CustomInput
                         label={t('tradingJournal.fields.totalRisk')}
                         value={formatCurrency(formData.riskAmount || 0)}
@@ -909,16 +910,16 @@ export default function AddTradePage() {
                       <Tag size={22} color={theme.palette.primary.main} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      Tags & Notes
+                      {t('tradingJournal.tagsNotes')}
                     </Typography>
                   </Stack>
 
                   <CustomAutocomplete
-                    label="Tags"
+                    label={t('tradingJournal.fields.tags')}
                     value={formData.tags || []}
                     onChange={(value) => handleChange('tags', value)}
                     options={['earnings', 'news', 'technical', 'fundamental', 'momentum', 'reversal', 'breakout']}
-                    placeholder="Add tags..."
+                    placeholder={t('tradingJournal.fields.tagsPlaceholder')}
                     multiple
                   />
                 </Card>

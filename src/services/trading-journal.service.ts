@@ -135,7 +135,7 @@ export class TradingJournalService {
   }
 
   // Export functionality
-  async exportTrades(filters: FilterTradesDto = {}, format: 'csv' | 'excel' = 'csv'): Promise<Blob> {
+  async exportTrades(filters: FilterTradesDto = {}): Promise<Blob> {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -146,7 +146,6 @@ export class TradingJournalService {
         }
       }
     });
-    params.append('format', format);
 
     const response = await API.get(`/trading-journal/export?${params.toString()}`, {
       responseType: 'blob',

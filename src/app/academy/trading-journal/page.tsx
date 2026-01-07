@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -62,15 +63,19 @@ import { ModuleType } from '@/types/module-permission';
 import { TradingJournalAccessDenied } from '@/components/trading-journal/access-denied';
 import { CloseTradeModal } from '@/components/trading-journal/close-trade-modal';
 
+type TradeStatus = 'all' | 'open' | 'pending_review' | 'reviewed';
+
 interface Filters {
   search: string;
   market: MarketType | 'all';
   direction: TradeDirection | 'all';
   timeFilter: TimeFilter;
   isWinner: 'all' | 'winner' | 'loser';
+  status: TradeStatus;
 }
 
 export default function TradingJournalPage() {
+  const { t } = useTranslation('academy');
   const theme = useTheme();
   const router = useRouter();
 
@@ -94,7 +99,9 @@ export default function TradingJournalPage() {
     direction: 'all',
     timeFilter: TimeFilter.MONTH,
     isWinner: 'all',
+    status: 'all',
   });
+  const [exporting, setExporting] = useState(false);
 
   // Check module access AFTER all useState hooks
   const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.TRADING_JOURNAL);
@@ -124,6 +131,17 @@ export default function TradingJournalPage() {
       setLoading(true);
       setError(null);
 
+      // Build status filter params
+      const statusParams: { openOnly?: boolean; reviewedOnly?: boolean } = {};
+      if (filters.status === 'open') {
+        statusParams.openOnly = true;
+      } else if (filters.status === 'reviewed') {
+        statusParams.reviewedOnly = true;
+      } else if (filters.status === 'pending_review') {
+        statusParams.openOnly = false;
+        statusParams.reviewedOnly = false;
+      }
+
       const [tradesResponse, statsData] = await Promise.all([
         tradingJournalService.getTrades({
           timeFilter: filters.timeFilter,
@@ -135,6 +153,7 @@ export default function TradingJournalPage() {
           result: filters.isWinner !== 'all'
             ? filters.isWinner === 'winner' ? TradeResult.WINNERS : TradeResult.LOSERS
             : undefined,
+          ...statusParams,
           sortBy,
           sortOrder,
         }),
@@ -146,7 +165,7 @@ export default function TradingJournalPage() {
       setStatistics(statsData);
     } catch (err) {
       console.error('Failed to load trades:', err);
-      setError('Failed to load trades');
+      setError(t('tradingJournal.tradesList.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -177,14 +196,14 @@ export default function TradingJournalPage() {
   };
 
   const handleDeleteTrade = async (tradeId: string) => {
-    if (!confirm('Are you sure you want to delete this trade?')) return;
+    if (!confirm(t('tradingJournal.tradesList.confirmDelete'))) return;
 
     try {
       await tradingJournalService.deleteTrade(tradeId);
       loadData();
     } catch (err) {
       console.error('Failed to delete trade:', err);
-      alert('Failed to delete trade');
+      alert(t('tradingJournal.tradesList.deleteFailed'));
     }
   };
 
@@ -216,6 +235,35 @@ export default function TradingJournalPage() {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const blob = await tradingJournalService.exportTrades({
+        timeFilter: filters.timeFilter,
+        symbol: filters.search || undefined,
+        market: filters.market !== 'all' ? filters.market : undefined,
+        direction: filters.direction !== 'all' ? filters.direction : undefined,
+        result: filters.isWinner !== 'all'
+          ? filters.isWinner === 'winner' ? TradeResult.WINNERS : TradeResult.LOSERS
+          : undefined,
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trades_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export trades:', err);
+      alert(t('tradingJournal.tradesList.exportFailed'));
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const getMarketColor = (market: MarketType) => {
     const colors = {
       [MarketType.STOCKS]: theme.palette.primary.main,
@@ -241,10 +289,10 @@ export default function TradingJournalPage() {
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
           <Typography variant="h4" fontWeight={600} mb={1}>
-            Trading Journal
+            {t('tradingJournal.tradesList.title')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Track, analyze, and improve your trading performance
+            {t('tradingJournal.tradesList.subtitle')}
           </Typography>
         </Box>
         <Stack direction="row" spacing={2}>
@@ -253,14 +301,14 @@ export default function TradingJournalPage() {
             startIcon={<ChartLine />}
             onClick={handleViewAnalytics}
           >
-            Analytics
+            {t('tradingJournal.analytics.title')}
           </Button>
           <Button
             variant="contained"
             startIcon={<Plus />}
             onClick={handleAddTrade}
           >
-            Add Trade
+            {t('tradingJournal.addTrade')}
           </Button>
         </Stack>
       </Stack>
@@ -271,7 +319,7 @@ export default function TradingJournalPage() {
           <Card sx={{ p: 3 }}>
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
-                Total P&L
+                {t('tradingJournal.stats.totalPnl')}
               </Typography>
               <Typography
                 variant="h5"
@@ -281,7 +329,7 @@ export default function TradingJournalPage() {
                 {formatCurrency(statistics?.totalPnl || 0)}
               </Typography>
               <Chip
-                label={`${statistics?.totalTrades || 0} trades`}
+                label={t('tradingJournal.stats.tradesCount', { count: statistics?.totalTrades || 0 })}
                 size="small"
                 variant="outlined"
               />
@@ -293,7 +341,7 @@ export default function TradingJournalPage() {
           <Card sx={{ p: 3 }}>
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
-                Win Rate
+                {t('tradingJournal.stats.winRate')}
               </Typography>
               <Typography variant="h5" fontWeight={600}>
                 {statistics?.winRate?.toFixed(1) || 0}%
@@ -309,13 +357,13 @@ export default function TradingJournalPage() {
           <Card sx={{ p: 3 }}>
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
-                Profit Factor
+                {t('tradingJournal.stats.profitFactor')}
               </Typography>
               <Typography variant="h5" fontWeight={600}>
                 {statistics?.profitFactor?.toFixed(2) || 0}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Risk/Reward
+                {t('tradingJournal.stats.riskReward')}
               </Typography>
             </Stack>
           </Card>
@@ -325,7 +373,7 @@ export default function TradingJournalPage() {
           <Card sx={{ p: 3 }}>
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
-                Expectancy
+                {t('tradingJournal.stats.expectancy')}
               </Typography>
               <Typography
                 variant="h5"
@@ -335,7 +383,7 @@ export default function TradingJournalPage() {
                 {formatCurrency(statistics?.expectancy || 0)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Per Trade Avg
+                {t('tradingJournal.stats.perTradeAvg')}
               </Typography>
             </Stack>
           </Card>
@@ -346,7 +394,7 @@ export default function TradingJournalPage() {
       <Paper sx={{ p: 2, mb: 3 }}>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
           <TextField
-            placeholder="Search by symbol..."
+            placeholder={t('tradingJournal.tradesList.searchPlaceholder')}
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
             InputProps={{
@@ -360,69 +408,85 @@ export default function TradingJournalPage() {
           />
 
           <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Market</InputLabel>
+            <InputLabel>{t('tradingJournal.tradesList.market')}</InputLabel>
             <Select
               value={filters.market}
               onChange={(e) => setFilters({ ...filters, market: e.target.value as any })}
-              label="Market"
+              label={t('tradingJournal.tradesList.market')}
             >
-              <MenuItem value="all">All</MenuItem>
-              {Object.values(MarketType).map(market => (
-                <MenuItem key={market} value={market}>
-                  {market.charAt(0).toUpperCase() + market.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Direction</InputLabel>
-            <Select
-              value={filters.direction}
-              onChange={(e) => setFilters({ ...filters, direction: e.target.value as any })}
-              label="Direction"
-            >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value={TradeDirection.LONG}>Long</MenuItem>
-              <MenuItem value={TradeDirection.SHORT}>Short</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Result</InputLabel>
-            <Select
-              value={filters.isWinner}
-              onChange={(e) => setFilters({ ...filters, isWinner: e.target.value as any })}
-              label="Result"
-            >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="winner">Winners</MenuItem>
-              <MenuItem value="loser">Losers</MenuItem>
+              <MenuItem value="all">{t('tradingJournal.tradesList.allMarkets')}</MenuItem>
+              <MenuItem value={MarketType.STOCKS}>{t('tradingJournal.markets.stocks')}</MenuItem>
+              <MenuItem value={MarketType.OPTIONS}>{t('tradingJournal.markets.options')}</MenuItem>
+              <MenuItem value={MarketType.FUTURES}>{t('tradingJournal.markets.futures')}</MenuItem>
+              <MenuItem value={MarketType.FOREX}>{t('tradingJournal.markets.forex')}</MenuItem>
+              <MenuItem value={MarketType.CRYPTO}>{t('tradingJournal.markets.crypto')}</MenuItem>
             </Select>
           </FormControl>
 
           <FormControl sx={{ minWidth: 140 }}>
-            <InputLabel>Time Period</InputLabel>
+            <InputLabel>{t('tradingJournal.tradesList.direction')}</InputLabel>
+            <Select
+              value={filters.direction}
+              onChange={(e) => setFilters({ ...filters, direction: e.target.value as any })}
+              label={t('tradingJournal.tradesList.direction')}
+            >
+              <MenuItem value="all">{t('tradingJournal.tradesList.allDirections')}</MenuItem>
+              <MenuItem value={TradeDirection.LONG}>{t('tradingJournal.directions.longCall')}</MenuItem>
+              <MenuItem value={TradeDirection.SHORT}>{t('tradingJournal.directions.shortPut')}</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel>{t('tradingJournal.tradesList.result')}</InputLabel>
+            <Select
+              value={filters.isWinner}
+              onChange={(e) => setFilters({ ...filters, isWinner: e.target.value as any })}
+              label={t('tradingJournal.tradesList.result')}
+            >
+              <MenuItem value="all">{t('tradingJournal.tradesList.allResults')}</MenuItem>
+              <MenuItem value="winner">{t('tradingJournal.tradesList.winners')}</MenuItem>
+              <MenuItem value="loser">{t('tradingJournal.tradesList.losers')}</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ minWidth: 150 }}>
+            <InputLabel>{t('tradingJournal.tradesList.status')}</InputLabel>
+            <Select
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value as TradeStatus })}
+              label={t('tradingJournal.tradesList.status')}
+            >
+              <MenuItem value="all">{t('tradingJournal.status.allStatus')}</MenuItem>
+              <MenuItem value="open">{t('tradingJournal.status.open')}</MenuItem>
+              <MenuItem value="pending_review">{t('tradingJournal.status.pendingReview')}</MenuItem>
+              <MenuItem value="reviewed">{t('tradingJournal.status.reviewed')}</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ minWidth: 140 }}>
+            <InputLabel>{t('tradingJournal.tradesList.timePeriod')}</InputLabel>
             <Select
               value={filters.timeFilter}
               onChange={(e) => setFilters({ ...filters, timeFilter: e.target.value as TimeFilter })}
-              label="Time Period"
+              label={t('tradingJournal.tradesList.timePeriod')}
             >
-              <MenuItem value={TimeFilter.TODAY}>Today</MenuItem>
-              <MenuItem value={TimeFilter.WEEK}>This Week</MenuItem>
-              <MenuItem value={TimeFilter.MONTH}>This Month</MenuItem>
-              <MenuItem value={TimeFilter.QUARTER}>Quarter</MenuItem>
-              <MenuItem value={TimeFilter.YEAR}>This Year</MenuItem>
-              <MenuItem value={TimeFilter.ALL}>All Time</MenuItem>
+              <MenuItem value={TimeFilter.TODAY}>{t('tradingJournal.tradesList.today')}</MenuItem>
+              <MenuItem value={TimeFilter.WEEK}>{t('tradingJournal.tradesList.thisWeek')}</MenuItem>
+              <MenuItem value={TimeFilter.MONTH}>{t('tradingJournal.tradesList.thisMonth')}</MenuItem>
+              <MenuItem value={TimeFilter.QUARTER}>{t('tradingJournal.tradesList.quarter')}</MenuItem>
+              <MenuItem value={TimeFilter.YEAR}>{t('tradingJournal.tradesList.thisYear')}</MenuItem>
+              <MenuItem value={TimeFilter.ALL}>{t('tradingJournal.tradesList.allTime')}</MenuItem>
             </Select>
           </FormControl>
 
           <Button
             variant="outlined"
-            startIcon={<Download />}
+            startIcon={exporting ? <CircularProgress size={16} /> : <Download />}
+            onClick={handleExport}
+            disabled={exporting}
             sx={{ ml: 'auto' }}
           >
-            Export
+            {exporting ? t('tradingJournal.tradesList.exporting') : t('tradingJournal.tradesList.export')}
           </Button>
         </Stack>
       </Paper>
@@ -449,7 +513,7 @@ export default function TradingJournalPage() {
                       ) : null
                     }
                   >
-                    Date
+                    {t('tradingJournal.tradesList.date')}
                   </Button>
                 </TableCell>
                 <TableCell>
@@ -462,14 +526,14 @@ export default function TradingJournalPage() {
                       ) : null
                     }
                   >
-                    Symbol
+                    {t('tradingJournal.tradesList.symbol')}
                   </Button>
                 </TableCell>
-                <TableCell>Market</TableCell>
-                <TableCell>Direction</TableCell>
-                <TableCell>Entry</TableCell>
-                <TableCell>Exit</TableCell>
-                <TableCell>Size</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.market')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.direction')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.entry')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.exit')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.size')}</TableCell>
                 <TableCell>
                   <Button
                     size="small"
@@ -480,12 +544,13 @@ export default function TradingJournalPage() {
                       ) : null
                     }
                   >
-                    P&L
+                    {t('tradingJournal.tradesList.pnl')}
                   </Button>
                 </TableCell>
-                <TableCell>R-Multiple</TableCell>
-                <TableCell>Setup</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.rMultiple')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.status')}</TableCell>
+                <TableCell>{t('tradingJournal.tradesList.setup')}</TableCell>
+                <TableCell align="right">{t('tradingJournal.tradesList.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -531,10 +596,18 @@ export default function TradingJournalPage() {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={trade.direction}
+                      label={
+                        trade.market === MarketType.OPTIONS
+                          ? (trade.optionType?.toUpperCase() || 'OPTION')
+                          : trade.direction
+                      }
                       size="small"
                       variant="outlined"
-                      color={trade.direction === TradeDirection.LONG ? 'success' : 'error'}
+                      color={
+                        trade.market === MarketType.OPTIONS
+                          ? (trade.optionType === 'call' ? 'success' : 'error')
+                          : (trade.direction === TradeDirection.LONG ? 'success' : 'error')
+                      }
                     />
                   </TableCell>
                   <TableCell>{formatCurrency(trade.entryPrice)}</TableCell>
@@ -544,7 +617,7 @@ export default function TradingJournalPage() {
                   <TableCell>{trade.positionSize}</TableCell>
                   <TableCell>
                     {trade.isOpen ? (
-                      <Chip label="Open" size="small" color="info" variant="outlined" />
+                      <Chip label={t('tradingJournal.status.open')} size="small" color="info" variant="outlined" />
                     ) : (
                       <Typography
                         fontWeight={600}
@@ -565,6 +638,31 @@ export default function TradingJournalPage() {
                       >
                         {trade.rMultiple?.toFixed(2) || '0.00'}R
                       </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {trade.isOpen ? (
+                      <Chip
+                        label={t('tradingJournal.status.open')}
+                        size="small"
+                        color="info"
+                        variant="outlined"
+                      />
+                    ) : trade.isReviewed ? (
+                      <Chip
+                        label={t('tradingJournal.status.reviewed')}
+                        size="small"
+                        color="success"
+                        variant="filled"
+                        icon={<CheckCircle size={14} />}
+                      />
+                    ) : (
+                      <Chip
+                        label={t('tradingJournal.status.pendingReview')}
+                        size="small"
+                        color="warning"
+                        variant="outlined"
+                      />
                     )}
                   </TableCell>
                   <TableCell>{trade.setup}</TableCell>
@@ -609,7 +707,7 @@ export default function TradingJournalPage() {
           }}
         >
           <Eye size={18} />
-          <Box ml={1}>View Details</Box>
+          <Box ml={1}>{t('tradingJournal.tradesList.viewDetails')}</Box>
         </MenuItem>
         {selectedTrade?.isOpen && (
           <MenuItem
@@ -619,7 +717,7 @@ export default function TradingJournalPage() {
             sx={{ color: 'primary.main' }}
           >
             <CheckCircle size={18} />
-            <Box ml={1}>Close Position</Box>
+            <Box ml={1}>{t('tradingJournal.tradesList.closePosition')}</Box>
           </MenuItem>
         )}
         <MenuItem
@@ -630,7 +728,7 @@ export default function TradingJournalPage() {
           sx={{ color: 'error.main' }}
         >
           <Trash size={18} />
-          <Box ml={1}>Delete</Box>
+          <Box ml={1}>{t('tradingJournal.tradesList.delete')}</Box>
         </MenuItem>
       </Menu>
 

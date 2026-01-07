@@ -33,7 +33,7 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
-import { Trade, CloseTradeDto, ExitReason, EmotionType, MarketType } from '@/types/trading-journal';
+import { Trade, CloseTradeDto, ExitReason, EmotionType, MarketType, OptionType } from '@/types/trading-journal';
 import { tradingJournalService } from '@/services/trading-journal.service';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -82,15 +82,46 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
 
   const isOptions = trade.market === MarketType.OPTIONS;
 
+  // For options: get the option type label (CALL/PUT)
+  const getOptionLabel = () => {
+    if (!isOptions) return trade.direction.toUpperCase();
+    // For options, show CALL/PUT if available
+    if (trade.optionType) {
+      return trade.optionType.toUpperCase();
+    }
+    // Fallback: return empty if we don't know the type (avoid redundant "OPTION")
+    return '';
+  };
+
+  // Calculate total investment for options
+  const getTotalInvestment = () => {
+    if (isOptions) {
+      return trade.entryPrice * trade.positionSize * 100;
+    }
+    return trade.entryPrice * trade.positionSize;
+  };
+
   // Calculate P&L in real-time
   const calculatePnL = () => {
     const price = isOptions ? Number(exitPremium) : Number(exitPrice);
     if (!price || !trade.entryPrice || !trade.positionSize) return null;
 
-    const priceDiff =
-      trade.direction === 'long' ? price - trade.entryPrice : trade.entryPrice - price;
+    // For OPTIONS: P&L is ALWAYS (exit - entry) because:
+    // - You BUY an option (pay premium) and SELL to close (receive premium)
+    // - Profit = What you received - What you paid = exit - entry
+    // - This is true for BOTH calls and puts!
+    //
+    // For STOCKS: Use direction to determine P&L
+    // - Long: profit when price goes up (exit - entry)
+    // - Short: profit when price goes down (entry - exit)
+    const priceDiff = isOptions
+      ? price - trade.entryPrice  // Options: always exit - entry
+      : (trade.direction === 'long' ? price - trade.entryPrice : trade.entryPrice - price);
 
-    const grossPnl = priceDiff * trade.positionSize;
+    // For options, positionSize is number of contracts, each contract = 100 shares
+    const contractMultiplier = isOptions ? 100 : 1;
+
+    const grossPnl = priceDiff * trade.positionSize * contractMultiplier;
     const netPnl = grossPnl - (trade.commission || 0);
 
     return {
@@ -107,15 +138,15 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
   const handleSubmit = async () => {
     // Validation
     if (isOptions && !exitPremium) {
-      toast.error('Exit premium is required for options');
+      toast.error(t('tradingJournal.closeModal.exitPremiumRequired'));
       return;
     }
     if (!isOptions && !exitPrice) {
-      toast.error('Exit price is required');
+      toast.error(t('tradingJournal.closeModal.exitPriceRequired'));
       return;
     }
     if (wouldRepeat === null) {
-      toast.error('Please indicate if you would repeat this trade');
+      toast.error(t('tradingJournal.validation.wouldRepeatRequired'));
       return;
     }
 
@@ -142,12 +173,12 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
 
       await tradingJournalService.closeTrade(trade._id, closeData);
 
-      toast.success('Trade closed successfully');
+      toast.success(t('tradingJournal.closeModal.tradeClosedSuccess'));
       onSuccess();
       onClose();
     } catch (error: any) {
       console.error('Error closing trade:', error);
-      toast.error(error.response?.data?.message || 'Failed to close trade');
+      toast.error(error.response?.data?.message || t('tradingJournal.closeModal.failedToClose'));
     } finally {
       setLoading(false);
     }
@@ -163,32 +194,19 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
   };
 
   const exitReasonOptions = [
-    { value: ExitReason.HIT_STOP_LOSS, label: 'Hit Stop Loss' },
-    { value: ExitReason.HIT_TAKE_PROFIT, label: 'Hit Take Profit' },
-    { value: ExitReason.MANUAL_EXIT, label: 'Manual Exit' },
-    { value: ExitReason.TIME_BASED_EXIT, label: 'Time-Based Exit' },
-    { value: ExitReason.TRAILING_STOP, label: 'Trailing Stop' },
-    { value: ExitReason.TECHNICAL_SIGNAL, label: 'Technical Signal' },
-    { value: ExitReason.NEWS_EVENT, label: 'News Event' },
-    { value: ExitReason.RISK_MANAGEMENT, label: 'Risk Management' },
-    ...(isOptions ? [
-      { value: ExitReason.EXPIRED_WORTHLESS, label: 'Expired Worthless' },
-      { value: ExitReason.SOLD_FOR_PROFIT, label: 'Sold for Profit' },
-      { value: ExitReason.SOLD_FOR_LOSS, label: 'Sold for Loss' },
-      { value: ExitReason.EXERCISED, label: 'Exercised' },
-      { value: ExitReason.ASSIGNED, label: 'Assigned' },
-    ] : []),
+    { value: ExitReason.MANUAL_EXIT, label: t('tradingJournal.closeModal.exitReasonManual') },
+    { value: ExitReason.HIT_TAKE_PROFIT, label: t('tradingJournal.closeModal.exitReasonLimit') },
   ];
 
   const emotionOptions = [
-    { value: EmotionType.CONFIDENT, label: 'Confident' },
-    { value: EmotionType.CALM, label: 'Calm' },
-    { value: EmotionType.NEUTRAL, label: 'Neutral' },
-    { value: EmotionType.ANXIOUS, label: 'Anxious' },
-    { value: EmotionType.FEARFUL, label: 'Fearful' },
-    { value: EmotionType.GREEDY, label: 'Greedy' },
-    { value: EmotionType.FRUSTRATED, label: 'Frustrated' },
-    { value: EmotionType.EXCITED, label: 'Excited' },
+    { value: EmotionType.CONFIDENT, label: t('tradingJournal.emotions.confident') },
+    { value: EmotionType.CALM, label: t('tradingJournal.emotions.calm') },
+    { value: EmotionType.NEUTRAL, label: t('tradingJournal.emotions.neutral') },
+    { value: EmotionType.ANXIOUS, label: t('tradingJournal.emotions.anxious') },
+    { value: EmotionType.FEARFUL, label: t('tradingJournal.emotions.fearful') },
+    { value: EmotionType.GREEDY, label: t('tradingJournal.emotions.greedy') },
+    { value: EmotionType.FRUSTRATED, label: t('tradingJournal.emotions.frustrated') },
+    { value: EmotionType.EXCITED, label: t('tradingJournal.emotions.excited') },
   ];
 
   return (
@@ -233,10 +251,10 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               </Box>
               <Box>
                 <Typography variant="h5" fontWeight={700}>
-                  Close Position
+                  {t('tradingJournal.closeModal.title')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {trade.symbol} • {trade.market.toUpperCase()} • {trade.direction.toUpperCase()}
+                  {trade.symbol} • {trade.market.toUpperCase()}{getOptionLabel() ? ` • ${getOptionLabel()}` : ''}
                 </Typography>
               </Box>
             </Stack>
@@ -270,9 +288,12 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               }}
             >
               <Typography variant="body2">
-                <strong>Entry:</strong> {formatCurrency(trade.entryPrice)} on{' '}
+                <strong>Entry:</strong> {formatCurrency(trade.entryPrice)}{isOptions ? '/share' : ''} on{' '}
                 {new Date(trade.entryTime).toLocaleString()} • Position: {trade.positionSize}{' '}
                 {isOptions ? 'contracts' : 'shares'}
+                {isOptions && (
+                  <> • <strong>Total:</strong> {formatCurrency(getTotalInvestment())} ({trade.positionSize} × 100 × {formatCurrency(trade.entryPrice)})</>
+                )}
               </Typography>
             </Alert>
 
@@ -302,7 +323,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   <CurrencyDollar size={20} color={theme.palette.success.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
-                  Exit Details
+                  {t('tradingJournal.closeModal.exitDetails')}
                 </Typography>
               </Stack>
 
@@ -311,30 +332,30 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   <>
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Option Price (Exit)"
+                        label={t('tradingJournal.fields.exitPriceOptions')}
                         type="number"
                         value={exitPremium}
                         onChange={(e) => setExitPremium(e.target.value ? parseFloat(e.target.value) : '')}
                         placeholder="e.g., 6.25"
                         required
-                        helperText="Price you sold the option for (per share)"
+                        helperText={t('tradingJournal.fields.exitPriceOptionsHelper')}
                         icon={<CurrencyDollar size={20} />}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <CustomInput
-                        label="Stock Price (at Exit)"
+                        label={t('tradingJournal.fields.stockPriceExit')}
                         type="number"
                         value={underlyingPriceAtExit}
                         onChange={(e) => setUnderlyingPriceAtExit(e.target.value ? parseFloat(e.target.value) : '')}
                         placeholder="e.g., 185.50"
-                        helperText="Stock market price when you closed"
+                        helperText={t('tradingJournal.fields.stockPriceExitHelper')}
                         icon={<CurrencyDollar size={20} />}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <CustomDatePicker
-                        label="Exit Time"
+                        label={t('tradingJournal.closeModal.exitTime')}
                         value={exitTime}
                         onChange={(value) => setExitTime(value || dayjs())}
                         dateTime
@@ -346,7 +367,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   <>
                     <Grid item xs={12} md={6}>
                       <CustomInput
-                        label="Exit Price"
+                        label={t('tradingJournal.fields.exitPrice')}
                         type="number"
                         value={exitPrice}
                         onChange={(e) => setExitPrice(e.target.value ? parseFloat(e.target.value) : '')}
@@ -357,7 +378,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <CustomDatePicker
-                        label="Exit Time"
+                        label={t('tradingJournal.closeModal.exitTime')}
                         value={exitTime}
                         onChange={(value) => setExitTime(value || dayjs())}
                         dateTime
@@ -403,7 +424,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   </Box>
                   <Box flex={1}>
                     <Typography variant="caption" color="text.secondary">
-                      Projected Net P&L
+                      {t('tradingJournal.closeModal.projectedPnl')}
                     </Typography>
                     <Typography
                       variant="h4"
@@ -454,13 +475,13 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   <Warning size={20} color={theme.palette.warning.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
-                  Exit Analysis
+                  {t('tradingJournal.closeModal.exitAnalysis')}
                 </Typography>
               </Stack>
 
               <Stack spacing={3}>
                 <CustomSelect
-                  label="Exit Reason"
+                  label={t('tradingJournal.fields.exitReason')}
                   value={exitReason}
                   onChange={(value) => setExitReason(value)}
                   options={exitReasonOptions}
@@ -469,12 +490,12 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                 />
 
                 <CustomInput
-                  label="Exit Notes"
+                  label={t('tradingJournal.fields.exitNotes')}
                   value={exitNotes}
                   onChange={(e) => setExitNotes(e.target.value)}
                   multiline
                   rows={3}
-                  placeholder="Why did you exit at this price? What happened?"
+                  placeholder={t('tradingJournal.fields.exitNotesPlaceholder')}
                   icon={<Notebook size={20} />}
                 />
               </Stack>
@@ -506,23 +527,23 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                   <Heart size={20} color={theme.palette.info.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
-                  Self-Reflection
+                  {t('tradingJournal.closeModal.selfReflection')}
                 </Typography>
               </Stack>
 
               <Stack spacing={3}>
                 <CustomInput
-                  label="Lessons Learned"
+                  label={t('tradingJournal.fields.lessonsLearned')}
                   value={lessonsLearned}
                   onChange={(e) => setLessonsLearned(e.target.value)}
                   multiline
                   rows={3}
-                  placeholder="What did you learn from this trade? What will you do differently?"
+                  placeholder={t('tradingJournal.fields.lessonsPlaceholder')}
                   icon={<Notebook size={20} />}
                 />
 
                 <CustomSelect
-                  label="Emotion at Exit"
+                  label={t('tradingJournal.fields.exitEmotion')}
                   value={exitEmotion}
                   onChange={(value) => setExitEmotion(value)}
                   options={emotionOptions}
@@ -531,7 +552,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
 
                 <Box>
                   <Typography variant="body2" sx={{ mb: 2, fontWeight: 500 }}>
-                    Would you repeat this trade? <span style={{ color: theme.palette.error.main }}>*</span>
+                    {t('tradingJournal.fields.wouldRepeat')} <span style={{ color: theme.palette.error.main }}>*</span>
                   </Typography>
                   <ToggleButtonGroup
                     value={wouldRepeat === null ? '' : wouldRepeat.toString()}
@@ -560,13 +581,13 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                     <ToggleButton value="true">
                       <Stack direction="row" spacing={1} alignItems="center">
                         <CheckCircle size={20} />
-                        <Typography>Yes, good setup</Typography>
+                        <Typography>{t('tradingJournal.closeModal.wouldRepeatYes')}</Typography>
                       </Stack>
                     </ToggleButton>
                     <ToggleButton value="false">
                       <Stack direction="row" spacing={1} alignItems="center">
                         <X size={20} />
-                        <Typography>No, won't repeat</Typography>
+                        <Typography>{t('tradingJournal.closeModal.wouldRepeatNo')}</Typography>
                       </Stack>
                     </ToggleButton>
                   </ToggleButtonGroup>
@@ -595,7 +616,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                 borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
               }}
             >
-              Cancel
+              {t('tradingJournal.closeModal.cancel')}
             </Button>
             <Button
               variant="contained"
@@ -605,7 +626,7 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               disabled={loading || (!exitPrice && !exitPremium) || wouldRepeat === null}
               startIcon={loading ? <CircularProgress size={20} /> : <CheckCircle size={20} />}
             >
-              {loading ? 'Closing Position...' : 'Close Position'}
+              {loading ? t('tradingJournal.closeModal.closing') : t('tradingJournal.closeModal.closeTradeButton')}
             </Button>
           </Stack>
         </Box>
