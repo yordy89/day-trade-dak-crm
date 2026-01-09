@@ -45,7 +45,6 @@ import {
   SelfImprovement,
   Groups,
   CameraAlt,
-  RestaurantMenu,
   Warning,
 } from '@mui/icons-material';
 import { useClientAuth } from '@/hooks/use-client-auth';
@@ -208,153 +207,17 @@ export default function CommunityEventPage() {
     });
   };
 
-  // Get formatted date range for display
+  // Get formatted date range for display - Hardcoded for March 2026 event
   const getDateRangeDisplay = () => {
-    if (!event?.startDate || !event?.endDate) {
-      return 'Fechas por confirmar';
-    }
-    
-    const start = new Date(event.startDate);
-    const end = new Date(event.endDate);
-    
-    const _startDay = start.getDate();
-    const month = start.toLocaleDateString('es-ES', { month: 'long' });
-    const year = start.getFullYear();
-    
-    const dayNames = [];
-    const days = [];
-    const current = new Date(start);
-    while (current <= end) {
-      dayNames.push(getDayName(current));
-      days.push(current.getDate());
-      current.setDate(current.getDate() + 1);
-    }
-    
-    return `${dayNames.join(' – ')}. ${days.join(', ')} de ${month.charAt(0).toUpperCase() + month.slice(1)} ${year}`;
+    return 'Martes – Miércoles – Jueves. 17, 18, 19 de Marzo 2026';
   };
 
-  // Generate dynamic schedule based on event dates
+  // Hardcoded schedule for March 2026 event
   const generateDynamicSchedule = () => {
-    if (!event?.startDate || !event?.endDate) {
-      // Return default schedule if no dates
-      return [
-        {
-          day: 'DÍA 1 - Jueves',
-          title: 'Operación en Vivo & Análisis Técnico',
-          icon: <TrendingUp />,
-          color: '#16a34a',
-          morning: {
-            title: 'MAÑANA - Operación en Vivo con el Mentor',
-            time: '8:30 AM - 12:00 PM',
-            activities: [
-              'Revisión del calendario económico y noticias clave',
-              'Selección de activos con potencial (watchlist real)',
-              'Análisis técnico y definición de zonas estratégicas',
-              'Entrada justificada, clara y explicada paso a paso',
-              'Gestión profesional del trade en vivo',
-              'Comentarios mentales del mentor durante la operación',
-              'Reflexión post-trade: ¿Qué se respetó? ¿Qué se aprendió?',
-            ],
-          },
-          afternoon: {
-            title: 'TARDE - Módulo 1: Análisis Técnico Pre-Market',
-            time: '2:00 PM - 5:30 PM',
-            activities: [
-              'Cómo interpretar el comportamiento del mercado',
-              'Identificación de soportes, resistencias, liquidez y volumen',
-              'Lectura de gráficos en varias temporalidades',
-              'Construcción de un plan de acción diario',
-              'Cómo evitar la improvisación con una estructura clara',
-              'Ejercicio práctico: Análisis pre-market con feedback en vivo',
-            ],
-          },
-        },
-        {
-          day: 'DÍA 2 - Viernes',
-          title: 'Entradas Profesionales & Gestión de Riesgo',
-          icon: <BarChart />,
-          color: '#3b82f6',
-          morning: {
-            title: 'MAÑANA - Segunda Sesión de Trading en Vivo',
-            time: '8:30 AM - 12:00 PM',
-            activities: [
-              'Aplicación práctica de lo aprendido el día anterior',
-              'Identificación de nuevas oportunidades en tiempo real',
-              'Análisis de correlaciones entre activos',
-              'Manejo de posiciones múltiples',
-              'Control emocional bajo presión del mercado',
-              'Evaluación y ajuste de estrategias en vivo',
-            ],
-          },
-          afternoon: {
-            title: 'TARDE - Módulos 2, 3 y 4',
-            time: '2:00 PM - 5:30 PM',
-            modules: [
-              {
-                name: 'Módulo 2: Entradas Profesionales',
-                content: [
-                  'Tipos de entrada: ruptura, pullback y rebote',
-                  'Confirmaciones visuales y contextuales',
-                  'Lectura del precio y comportamiento del volumen',
-                  'Cómo filtrar entradas de bajo nivel',
-                  'Checklist de entrada profesional',
-                ],
-              },
-              {
-                name: 'Módulo 3: Gestión de Riesgo',
-                content: [
-                  'Cálculo de riesgo por operación basado en tu capital',
-                  'Cómo definir el tamaño de posición ideal',
-                  'Uso correcto del stop loss y take profits',
-                  'Planificación mensual de crecimiento de cuenta',
-                ],
-              },
-              {
-                name: 'Módulo 4: Precisión Bajo Presión',
-                content: [
-                  'Cuándo reforzar una entrada ya abierta',
-                  'Cómo distinguir entre pullback y nueva oportunidad',
-                  'Simulación de entradas con feedback en tiempo real',
-                ],
-              },
-            ],
-          },
-        },
-        {
-          day: 'DÍA 3 - Sábado',
-          title: 'Psicotrading & Celebración',
-          icon: <Psychology />,
-          color: '#f59e0b',
-          morning: {
-            title: 'MAÑANA - Módulo Especial: Psicotrading',
-            time: '8:30 AM - 12:00 PM',
-            activities: [
-              'Cómo eliminar el miedo a perder y la ansiedad por ganar',
-              'Técnicas mentales para mantener la calma bajo presión',
-              'Identificar patrones mentales que sabotean tus trades',
-              'Construcción de un ritual mental pre-sesión',
-              'Disciplina emocional en entornos de incertidumbre',
-              'Ejercicio guiado: Visualización del "Yo Trader" profesional',
-            ],
-          },
-          afternoon: {
-            title: 'TARDE - Actividad Recreativa & Cierre',
-            time: '2:00 PM - 5:30 PM',
-            activities: [
-              'Actividad relajante (comida y experiencia grupal)',
-              'Conversaciones abiertas con el mentor y compañeros',
-              'Círculo de visión: ¿A dónde voy como trader después de esto?',
-              'Foto oficial y cierre inspirador',
-              'Networking y creación de lazos con la comunidad',
-            ],
-          },
-        },
-      ];
-    }
-
-    const scheduleTemplate = [
+    return [
       {
-        title: 'Operación en Vivo & Análisis Técnico',
+        day: 'DÍA 1 - Martes 17 de Marzo',
+        title: 'Operación en Vivo & Metodología de 3 Cuentas',
         icon: <TrendingUp />,
         color: '#16a34a',
         morning: {
@@ -371,115 +234,133 @@ export default function CommunityEventPage() {
           ],
         },
         afternoon: {
-          title: 'TARDE - Módulo 1: Análisis Técnico Pre-Market',
+          title: 'TARDE - Módulos de Inversión',
           time: '2:00 PM - 5:30 PM',
-          activities: [
-            'Cómo interpretar el comportamiento del mercado',
-            'Identificación de soportes, resistencias, liquidez y volumen',
-            'Lectura de gráficos en varias temporalidades',
-            'Construcción de un plan de acción diario',
-            'Cómo evitar la improvisación con una estructura clara',
-            'Ejercicio práctico: Análisis pre-market con feedback en vivo',
+          modules: [
+            {
+              name: 'Módulo 1: Metodología de 3 Cuentas – Mapa de Ciclos',
+              content: [
+                'Estructurar tu capital en tres cuentas: semilla, crecimiento y largo plazo',
+                'Transformar las ganancias del trading en patrimonio real',
+                'Ciclos de inversión y flujo de capital disciplinado',
+              ],
+            },
+            {
+              name: 'Módulo 2: Inversión en Activos desde Cero',
+              content: [
+                'Diferencia entre ahorro e inversión',
+                'Mentalidad del inversionista exitoso',
+                'Errores comunes al empezar a invertir',
+              ],
+            },
+            {
+              name: 'Módulo 3: Inversión Flexible 70% del Capital (S&P-500)',
+              content: [
+                'Estrategia tipo Cuenta de Ahorro Flexible',
+                'Cómo funciona esta inversión y sus ventajas',
+                'Configuración y gestión del S&P-500',
+              ],
+            },
           ],
         },
       },
       {
-        title: 'Entradas Profesionales & Gestión de Riesgo',
+        day: 'DÍA 2 - Miércoles 18 de Marzo',
+        title: 'Operación en Vivo & Estrategias de Inversión',
         icon: <BarChart />,
         color: '#3b82f6',
         morning: {
-          title: 'MAÑANA - Segunda Sesión de Trading en Vivo',
+          title: 'MAÑANA - Operación en Vivo con el Mentor',
           time: '8:30 AM - 12:00 PM',
           activities: [
+            'Revisión del calendario económico y oportunidades del día',
             'Aplicación práctica de lo aprendido el día anterior',
             'Identificación de nuevas oportunidades en tiempo real',
             'Análisis de correlaciones entre activos',
-            'Manejo de posiciones múltiples',
             'Control emocional bajo presión del mercado',
             'Evaluación y ajuste de estrategias en vivo',
           ],
         },
         afternoon: {
-          title: 'TARDE - Módulos 2, 3 y 4',
+          title: 'TARDE - Módulos de Inversión',
           time: '2:00 PM - 5:30 PM',
           modules: [
             {
-              name: 'Módulo 2: Entradas Profesionales',
+              name: 'Módulo 4: Inversión con Depósito Automático (S&P-500)',
               content: [
-                'Tipos de entrada: ruptura, pullback y rebote',
-                'Confirmaciones visuales y contextuales',
-                'Lectura del precio y comportamiento del volumen',
-                'Cómo filtrar entradas de bajo nivel',
-                'Checklist de entrada profesional',
+                'Introducción al depósito automático',
+                'Dollar Cost Averaging (DCA) explicado',
+                'Configuración y automatización de inversiones',
               ],
             },
             {
-              name: 'Módulo 3: Gestión de Riesgo',
+              name: 'Módulo 5: Inversión a Corto Plazo (20% del Capital)',
               content: [
-                'Cálculo de riesgo por operación basado en tu capital',
-                'Cómo definir el tamaño de posición ideal',
-                'Uso correcto del stop loss y take profits',
-                'Planificación mensual de crecimiento de cuenta',
+                'Estrategias para crecimiento a corto plazo',
+                'Activos, ETFs e Inversiones Inversas',
+                'Gestión activa de posiciones',
               ],
             },
             {
-              name: 'Módulo 4: Precisión Bajo Presión',
+              name: 'Módulo 6: Inversión a Largo Plazo (20% del Capital)',
               content: [
-                'Cuándo reforzar una entrada ya abierta',
-                'Cómo distinguir entre pullback y nueva oportunidad',
-                'Simulación de entradas con feedback en tiempo real',
+                'Construcción de riqueza a largo plazo',
+                'El poder del interés compuesto',
+                'ETFs e inversiones para el futuro',
               ],
             },
           ],
         },
       },
       {
-        title: 'Psicotrading & Celebración',
+        day: 'DÍA 3 - Jueves 19 de Marzo',
+        title: 'Operación en Vivo & Psicotrading',
         icon: <Psychology />,
         color: '#f59e0b',
         morning: {
-          title: 'MAÑANA - Módulo Especial: Psicotrading',
+          title: 'MAÑANA - Operación en Vivo con el Mentor',
           time: '8:30 AM - 12:00 PM',
           activities: [
-            'Cómo eliminar el miedo a perder y la ansiedad por ganar',
-            'Técnicas mentales para mantener la calma bajo presión',
-            'Identificar patrones mentales que sabotean tus trades',
-            'Construcción de un ritual mental pre-sesión',
-            'Disciplina emocional en entornos de incertidumbre',
-            'Ejercicio guiado: Visualización del "Yo Trader" profesional',
+            'Última sesión de trading en vivo del evento',
+            'Revisión del calendario económico',
+            'Selección de activos y ejecución de trades',
+            'Integración de todos los conceptos aprendidos',
+            'Sesión de preguntas y respuestas en vivo',
+            'Reflexión final sobre la semana de operaciones',
           ],
         },
         afternoon: {
-          title: 'TARDE - Actividad Recreativa & Cierre',
+          title: 'TARDE - Módulos Finales & Cierre',
           time: '2:00 PM - 5:30 PM',
-          activities: [
-            'Actividad relajante (comida y experiencia grupal)',
-            'Conversaciones abiertas con el mentor y compañeros',
-            'Círculo de visión: ¿A dónde voy como trader después de esto?',
-            'Foto oficial y cierre inspirador',
-            'Networking y creación de lazos con la comunidad',
+          modules: [
+            {
+              name: 'Módulo 7: Cómo Combinar Todo en una Estrategia Personal',
+              content: [
+                'Flexibilidad vs. automatización',
+                'Corto plazo vs. largo plazo: cuándo y cómo',
+                'Recomendaciones personalizadas según tus ingresos',
+              ],
+            },
+            {
+              name: 'Módulo Especial: Psicotrading – Domina tu Mente',
+              content: [
+                'Técnicas para controlar impulsos emocionales',
+                'Operar desde el enfoque, no desde el miedo',
+                'Crear tu libertad financiera con disciplina mental',
+              ],
+            },
+            {
+              name: '🎁 BONO ESPECIAL',
+              content: [
+                'Acceso a programa de ejercicios grabados durante 3 meses',
+                'Transformación de mentalidad para inversores',
+                'Foto oficial, certificado y cierre inspirador',
+              ],
+            },
           ],
         },
       },
     ];
-
-    const start = new Date(event.startDate);
-    const dynamicSchedule = [];
-    
-    for (let i = 0; i < 3 && i < scheduleTemplate.length; i++) {
-      const currentDate = new Date(start);
-      currentDate.setDate(start.getDate() + i);
-      
-      const dayName = getDayName(currentDate);
-      const dayMonth = getDayMonth(currentDate);
-      
-      dynamicSchedule.push({
-        ...scheduleTemplate[i],
-        day: `DÍA ${i + 1} - ${dayName} ${dayMonth}`,
-      });
-    }
-    
-    return dynamicSchedule;
   };
 
   const daySchedule = generateDynamicSchedule();
@@ -884,8 +765,7 @@ export default function CommunityEventPage() {
                                   color="secondary"
                                 />
                               </Box>
-                              {day.afternoon.modules ? (
-                                <Stack spacing={2}>
+                              <Stack spacing={2}>
                                   {day.afternoon.modules.map((module, idx) => (
                                     <Box key={idx}>
                                       <Typography variant="subtitle2" fontWeight={600} color={day.color} gutterBottom>
@@ -897,7 +777,7 @@ export default function CommunityEventPage() {
                                             <ListItemIcon sx={{ minWidth: 36 }}>
                                               <CheckCircle sx={{ color: day.color, fontSize: 20 }} />
                                             </ListItemIcon>
-                                            <ListItemText 
+                                            <ListItemText
                                               primary={item}
                                               primaryTypographyProps={{ variant: 'body2' }}
                                             />
@@ -907,21 +787,6 @@ export default function CommunityEventPage() {
                                     </Box>
                                   ))}
                                 </Stack>
-                              ) : (
-                                <List dense>
-                                  {day.afternoon.activities.map((activity, idx) => (
-                                    <ListItem key={idx}>
-                                      <ListItemIcon sx={{ minWidth: 36 }}>
-                                        <CheckCircle sx={{ color: day.color, fontSize: 20 }} />
-                                      </ListItemIcon>
-                                      <ListItemText 
-                                        primary={activity}
-                                        primaryTypographyProps={{ variant: 'body2' }}
-                                      />
-                                    </ListItem>
-                                  ))}
-                                </List>
-                              )}
                             </Stack>
                           </Paper>
                         </Grid>
@@ -950,13 +815,14 @@ export default function CommunityEventPage() {
                     Operación en Vivo
                   </Typography>
                   <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Verás cómo opera en tiempo real un trader rentable, con pantalla proyectada, 
-                    explicando en voz alta su análisis, decisión de entrada, ejecución y manejo emocional.
+                    Observa cómo el mentor opera en tiempo real con pantalla proyectada,
+                    explicando su análisis, decisión de entrada, ejecución y manejo emocional.
+                    Incluye revisión del calendario económico y gestión del trade en vivo.
                   </Typography>
                 </Stack>
               </Card>
             </Grid>
-            
+
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
                 <Stack spacing={3} alignItems="center">
@@ -964,28 +830,79 @@ export default function CommunityEventPage() {
                     <AttachMoney sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Gestión Profesional
+                    Metodología de 3 Cuentas
                   </Typography>
                   <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Construye un sistema que te proteja y te permita escalar tu cuenta de forma estable. 
-                    Aprenderás cómo cuidar tu capital, crecerlo y evitar el autosabotaje financiero.
+                    Aprende a estructurar tu capital en tres cuentas (semilla, crecimiento y largo plazo)
+                    para transformar las ganancias del trading en patrimonio real y duradero.
                   </Typography>
                 </Stack>
               </Card>
             </Grid>
-            
+
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
                 <Stack spacing={3} alignItems="center">
                   <Avatar sx={{ width: 80, height: 80, backgroundColor: 'success.main' }}>
+                    <TrendingUp sx={{ fontSize: 40 }} />
+                  </Avatar>
+                  <Typography variant="h5" fontWeight={600} textAlign="center">
+                    Inversión Inteligente
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" textAlign="center">
+                    Desde inversión en S&P-500 hasta estrategias con ETFs y Dollar Cost Averaging (DCA).
+                    Aprende a combinar inversión a corto y largo plazo según tus ingresos.
+                  </Typography>
+                </Stack>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', p: 3 }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'warning.main' }}>
                     <SelfImprovement sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h5" fontWeight={600} textAlign="center">
                     Psicotrading
                   </Typography>
                   <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Muchos saben analizar, pero pocos saben controlar sus impulsos. 
-                    Este módulo transformador te ayudará a operar desde el enfoque, no desde el miedo.
+                    Domina tu mente y crea tu libertad financiera. Técnicas para controlar impulsos
+                    y operar desde el enfoque, no desde el miedo o la ansiedad.
+                  </Typography>
+                </Stack>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', p: 3 }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'info.main' }}>
+                    <BarChart sx={{ fontSize: 40 }} />
+                  </Avatar>
+                  <Typography variant="h5" fontWeight={600} textAlign="center">
+                    Estrategia Personalizada
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" textAlign="center">
+                    Aprende a combinar flexibilidad vs. automatización, corto vs. largo plazo,
+                    con recomendaciones específicas según tu nivel de ingresos y objetivos.
+                  </Typography>
+                </Stack>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', p: 3, backgroundColor: alpha(theme.palette.primary.main, 0.05), border: `2px solid ${theme.palette.primary.main}` }}>
+                <Stack spacing={3} alignItems="center">
+                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'primary.main' }}>
+                    <EmojiEvents sx={{ fontSize: 40 }} />
+                  </Avatar>
+                  <Typography variant="h5" fontWeight={600} textAlign="center" color="primary">
+                    🎁 Bono Especial
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" textAlign="center">
+                    Acceso a un programa de ejercicios grabados durante 3 meses
+                    para transformar tu mentalidad como inversionista.
                   </Typography>
                 </Stack>
               </Card>
@@ -1006,7 +923,7 @@ export default function CommunityEventPage() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
                       <Typography variant="h6">
-                        Ya estás operando o aprendiendo en serio
+                        Eres estudiante de la academia y quieres profundizar tu formación
                       </Typography>
                     </Stack>
                   </Paper>
@@ -1014,7 +931,7 @@ export default function CommunityEventPage() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
                       <Typography variant="h6">
-                        Quieres resultados reales, no más teoría sin ejecución
+                        Quieres presenciar operaciones reales y aprender en vivo
                       </Typography>
                     </Stack>
                   </Paper>
@@ -1022,22 +939,39 @@ export default function CommunityEventPage() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
                       <Typography variant="h6">
-                        Estás listo para llevar tu operativa a un nivel profesional
+                        Buscas estructurar tu capital de forma disciplinada
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                  <Paper sx={{ p: 3 }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
+                      <Typography variant="h6">
+                        Deseas desarrollar una mentalidad de inversión a largo plazo
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                  <Paper sx={{ p: 3 }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
+                      <Typography variant="h6">
+                        Quieres aprender a transformar ganancias de trading en patrimonio real
                       </Typography>
                     </Stack>
                   </Paper>
                 </Stack>
               </Grid>
             </Grid>
-            
+
             <Box textAlign="center" sx={{ mt: 6 }}>
               <Alert severity="info" sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
                 <Typography variant="body1" fontWeight={600}>
-                  Herramienta incluida: Plantilla para plan de crecimiento y control de riesgo
+                  ¿Dónde colocas tu dinero? $10,000 en el banco pueden crecer a $10,500 en 5 años.
+                  Los mismos $10,000 invertidos en activos como el ETF Vanguard Growth (VOOG) podrían convertirse en más de $30,000.
                 </Typography>
               </Alert>
               <Typography variant="h5" fontWeight={600} color="primary">
-                &quot;Decidir bien bajo presión no es talento, es entrenamiento.&quot;
+                &quot;La verdadera diferencia está entre dejar tu dinero en el banco y ponerlo a trabajar en activos.&quot;
               </Typography>
             </Box>
           </Container>
@@ -1091,44 +1025,44 @@ export default function CommunityEventPage() {
                 </Typography>
                 <List>
                   <ListItem>
+                    <ListItemIcon><Visibility sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemText
+                      primary="Operación en vivo cada mañana"
+                      secondary="3 sesiones de trading real con el mentor explicando cada decisión"
+                    />
+                  </ListItem>
+                  <ListItem>
                     <ListItemIcon><School sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="3 días intensivos de mentoría presencial" 
-                      secondary="Operación en vivo y entrenamiento con Mijail Medina"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><RestaurantMenu sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="Cena especial del sábado incluida" 
-                      secondary="Evento de networking y celebración con la comunidad"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><Groups sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="Networking exclusivo" 
-                      secondary="Conexión con traders serios y el mentor"
+                    <ListItemText
+                      primary="7 módulos de inversión completos"
+                      secondary="Metodología de 3 Cuentas, S&P-500, ETFs, DCA y estrategias a corto/largo plazo"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><Psychology sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="Módulo de Psicotrading" 
-                      secondary="Técnicas mentales para operar con disciplina"
+                    <ListItemText
+                      primary="Módulo Especial de Psicotrading"
+                      secondary="Domina tu mente y opera desde el enfoque, no desde el miedo"
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemIcon><TrendingUp sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="Material y plantillas profesionales" 
-                      secondary="Herramientas para plan de crecimiento y control de riesgo"
+                    <ListItemIcon><EmojiEvents sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemText
+                      primary="Bono: Programa de 3 meses"
+                      secondary="Acceso a ejercicios grabados para transformar tu mentalidad"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon><Groups sx={{ color: 'primary.main' }} /></ListItemIcon>
+                    <ListItemText
+                      primary="Networking exclusivo"
+                      secondary="Conexión con traders e inversionistas serios y el mentor"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><CameraAlt sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText 
-                      primary="Certificado y foto oficial" 
+                    <ListItemText
+                      primary="Certificado y foto oficial"
                       secondary="Reconocimiento de tu participación en el evento"
                     />
                   </ListItem>

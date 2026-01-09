@@ -1141,6 +1141,8 @@
       "entryTime": "Entry Time",
       "entryPrice": "Entry Price",
       "positionSize": "Position Size",
+      "positionSizeHelper": "Number of shares",
+      "positionValue": "Position Value",
       "stopLoss": "Stop Loss",
       "stopLossHelper": "Max loss price",
       "takeProfit": "Take Profit",
@@ -1167,7 +1169,15 @@
       "exitEmotion": "Exit Emotion",
       "wouldRepeat": "Would you take this trade again?",
       "wouldRepeatYes": "Yes - Setup was good, execution was solid",
-      "wouldRepeatNo": "No - I would avoid this setup/situation"
+      "wouldRepeatNo": "No - I would avoid this setup/situation",
+      "exitTime": "Exit Time",
+      "riskAmount": "Risk Amount",
+      "rMultiple": "R-Multiple",
+      "optionStrategy": "Option Strategy",
+      "tags": "Tags",
+      "tagsPlaceholder": "Select tags...",
+      "perShare": "(per share)",
+      "takeProfitOptionsHelper": "Target price to exit with profit"
     },
     "markets": {
       "stocks": "Stocks",
@@ -1324,6 +1334,7 @@
       "exitAnalysis": "Exit Analysis",
       "exitReason": "Exit Reason",
       "notes": "Notes",
+      "lessonsLearned": "Lessons Learned",
       "wouldRepeat": "Would Repeat?",
       "yes": "Yes",
       "no": "No",
@@ -1336,7 +1347,8 @@
       "strengths": "Strengths",
       "areasForImprovement": "Areas for Improvement",
       "entryAnalysis": "Entry Analysis",
-      "recommendations": "Recommendations"
+      "recommendations": "Recommendations",
+      "closePosition": "Close Position"
     },
     "closeModal": {
       "title": "Close Position",
@@ -1402,6 +1414,7 @@
       "noTradesMessage": "You haven't logged any trades yet. Start tracking your performance!",
       "deletedSuccess": "Trade deleted successfully",
       "closedSuccess": "Trade closed successfully",
+      "delete": "Delete",
       "export": "Export",
       "exporting": "Exporting...",
       "exportFailed": "Failed to export trades",
@@ -1409,7 +1422,12 @@
       "symbol": "Symbol",
       "direction": "Direction",
       "pnl": "P&L",
-      "status": "Status"
+      "status": "Status",
+      "confirmDelete": "Are you sure you want to delete this trade?",
+      "deleteFailed": "Failed to delete trade",
+      "loadFailed": "Failed to load trades",
+      "quarter": "Quarter",
+      "timePeriod": "Time Period"
     },
     "analytics": {
       "title": "Trading Analytics",
@@ -1470,7 +1488,11 @@
       "verticalSpread": "Vertical Spread",
       "ironCondor": "Iron Condor",
       "straddle": "Straddle",
-      "strangle": "Strangle"
+      "strangle": "Strangle",
+      "butterfly": "Butterfly",
+      "calendarSpread": "Calendar Spread",
+      "cashSecuredPut": "Cash Secured Put",
+      "diagonalSpread": "Diagonal Spread"
     },
     "timeframes": {
       "1m": "1 Minute",
@@ -1480,7 +1502,8 @@
       "1h": "1 Hour",
       "4h": "4 Hours",
       "daily": "Daily",
-      "weekly": "Weekly"
+      "weekly": "Weekly",
+      "monthly": "Monthly"
     }
   }
 }
