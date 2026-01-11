@@ -256,6 +256,7 @@ export default function PlansPage() {
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [_billingPeriod, _setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [hasMasterClassesPurchasePermission, setHasMasterClassesPurchasePermission] = useState(false);
   
   // Get translated plans
   const LIVE_PLANS = getLivePlans(t);
@@ -295,9 +296,36 @@ export default function PlansPage() {
 
   // Check if user has live access through subscriptions OR admin permissions
   const hasLiveAccess = Boolean(
-    hasLiveSubscription || 
+    hasLiveSubscription ||
     (user?.allowLiveMeetingAccess === true)
   );
+
+  // Check if user can purchase Master Classes (has Live access OR Master Classes Purchase permission)
+  const canPurchaseMasterClasses = hasLiveAccess || hasMasterClassesPurchasePermission;
+
+  // Fetch Master Classes eligibility
+  useEffect(() => {
+    const checkMasterClassesEligibility = async () => {
+      if (!user || !authToken) return;
+
+      try {
+        const response = await API.get('/payments/check-eligibility/MasterClases', {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        // If eligible is true, user can purchase (has permission)
+        if (response.data.eligible) {
+          setHasMasterClassesPurchasePermission(true);
+        }
+      } catch (err) {
+        // If error, default to false (will show the "Requiere Membresía Live" badge)
+        console.error('Error checking Master Classes eligibility:', err);
+      }
+    };
+
+    void checkMasterClassesEligibility();
+  }, [user, authToken]);
 
   // Fetch dynamic prices
   useEffect(() => {
@@ -440,10 +468,10 @@ export default function PlansPage() {
     ].includes(plan.id);
     const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
     
-    // Check if Master Classes needs Live subscription or access
+    // Check if Master Classes needs Live subscription or access or Master Classes Purchase permission
     const isMasterClasses = plan.id === SubscriptionPlan.MasterClases;
-    const needsLiveSubscription = isMasterClasses && !hasLiveAccess;
-    
+    const needsLiveSubscription = isMasterClasses && !canPurchaseMasterClasses;
+
     // Debug logging for Master Classes
     if (isMasterClasses) {
       console.log('Master Classes Debug (page.tsx):', {
@@ -452,6 +480,8 @@ export default function PlansPage() {
         allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
         allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
         hasLiveAccess,
+        hasMasterClassesPurchasePermission,
+        canPurchaseMasterClasses,
         needsLiveSubscription,
         userSubscriptions: user?.subscriptions
       });
