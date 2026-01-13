@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -51,12 +51,13 @@ const iconComponents = {
 };
 
 export function EnhancedSubscriptionManagerV2() {
-  const { user } = useClientAuth();
+  const { user, authToken } = useClientAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language as 'en' | 'es';
   const userSubscriptions = user?.subscriptions || [];
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasMasterClassesPurchasePermission, setHasMasterClassesPurchasePermission] = useState(false);
 
   // Fetch plans from API
   const { data: plansData, isLoading: plansLoading, error: plansError } = useQuery({
@@ -71,6 +72,24 @@ export function EnhancedSubscriptionManagerV2() {
     enabled: Boolean(user),
   });
 
+  // Check Master Classes purchase permission
+  useEffect(() => {
+    const checkMasterClassesEligibility = async () => {
+      if (!user || !authToken) return;
+      try {
+        const response = await API.get('/payments/check-eligibility/MasterClases', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (response.data.eligible) {
+          setHasMasterClassesPurchasePermission(true);
+        }
+      } catch (err) {
+        console.error('Error checking Master Classes eligibility:', err);
+      }
+    };
+    void checkMasterClassesEligibility();
+  }, [user, authToken]);
+
   // Subscribe mutation
   const { mutate: subscribe } = useMutation({
     mutationFn: async ({ 
@@ -81,16 +100,16 @@ export function EnhancedSubscriptionManagerV2() {
       paymentMethods?: string[] 
     }) => {
       // Final safety check for Master Classes
-      const isMasterClassesPlan = 
+      const isMasterClassesPlan =
         plan === SubscriptionPlan.MasterClases ||
         plan.toString() === 'MasterClases' ||
         plan.toString().toLowerCase().includes('master');
-      
-      if (isMasterClassesPlan && !hasLiveAccess()) {
-        console.error('FINAL CHECK BLOCKED: Cannot subscribe to Master Classes without Live access');
-        console.error('User needs either: Live subscription OR allowLiveMeetingAccess permission');
-        setError('You need Live access to purchase Master Classes. Please subscribe to Live or contact support.');
-        throw new Error('Live access required for Master Classes');
+
+      if (isMasterClassesPlan && !canPurchaseMasterClasses()) {
+        console.error('FINAL CHECK BLOCKED: Cannot subscribe to Master Classes without proper access');
+        console.error('User needs either: Live subscription, allowLiveMeetingAccess permission, OR Master Classes Purchase permission');
+        setError('You need Live access or purchase permission to buy Master Classes. Please subscribe to Live or contact support.');
+        throw new Error('Purchase permission required for Master Classes');
       }
       
       setProcessingPlan(plan);
@@ -160,18 +179,23 @@ export function EnhancedSubscriptionManagerV2() {
     if (hasLiveSubscription()) {
       return true;
     }
-    
+
     // Check for admin-granted live meeting access
     // This is for users who have been granted access to live content
     if (user?.allowLiveMeetingAccess === true) {
       return true;
     }
-    
-    // Note: We do NOT check allowLiveWeeklyAccess here because that's 
+
+    // Note: We do NOT check allowLiveWeeklyAccess here because that's
     // specifically for allowing users to PURCHASE Live subscriptions,
     // not for having access to Live content
-    
+
     return false;
+  };
+
+  // Check if user can purchase Master Classes (via Live access OR specific permission)
+  const canPurchaseMasterClasses = (): boolean => {
+    return hasLiveAccess() || hasMasterClassesPurchasePermission;
   };
 
   const renderPriceTag = (plan: SubscriptionPlanData, price?: CalculatedPrice) => {
@@ -474,8 +498,8 @@ export function EnhancedSubscriptionManagerV2() {
                   plan.planId === 'MASTER_CLASSES' ||
                   (plan.displayName && plan.displayName.toLowerCase().includes('master'));
                 
-                const hasLiveAccessValue = hasLiveAccess();
-                const needsLiveForMasterClasses = isMasterClasses && !hasLiveAccessValue;
+                const canPurchase = canPurchaseMasterClasses();
+                const needsLiveForMasterClasses = isMasterClasses && !canPurchase;
                 
                 // Debug logging for ALL plans, especially Master Classes
                 if (isMasterClasses || plan.displayName?.includes('Master')) {
@@ -485,11 +509,10 @@ export function EnhancedSubscriptionManagerV2() {
                     isMasterClasses,
                     hasLiveSubscription: hasLiveSubscription(),
                     allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
-                    allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
-                    hasLiveAccess: hasLiveAccessValue,
+                    hasMasterClassesPurchasePermission,
+                    canPurchaseMasterClasses: canPurchase,
                     needsLiveForMasterClasses,
                     willBeDisabled: needsLiveForMasterClasses,
-                    user
                   });
                 }
                 
