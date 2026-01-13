@@ -331,6 +331,9 @@ export function EventRegistrationModal({
     fetchSettings();
   }, []);
 
+  // Feature flags
+  const SHOW_ADDITIONAL_ATTENDEES_STEP = false; // Temporarily disabled - can be re-enabled when needed
+
   // Price constants
   const ADULT_PRICE = 75;
   const CHILD_PRICE = 48;
@@ -626,12 +629,10 @@ export function EventRegistrationModal({
   const buttonHoverBackground = 'linear-gradient(135deg, #15803d 0%, #14532d 100%)';
 
   // Define steps based on event type and mobile view
+  // Note: Additional attendees step is temporarily disabled for community events
   const steps = React.useMemo(() => {
-    if (event.type === 'community_event') {
-      return [tMasterCourse('registrationSteps.personalInfo'), tCommunity('registration.additionalAttendees.title'), tMasterCourse('registrationSteps.paymentMethod')];
-    }
     return [tMasterCourse('registrationSteps.personalInfo'), tMasterCourse('registrationSteps.paymentMethod')];
-  }, [event.type, tMasterCourse, tCommunity]);
+  }, [tMasterCourse]);
 
   // Validate current step before proceeding - memoize to prevent recreation
   const validateStep = React.useCallback((step: number): boolean => {
@@ -650,13 +651,8 @@ export function EventRegistrationModal({
       return true;
     }
     
-    if (event.type === 'community_event' && step === 1) {
-      // No validation needed for attendees
-      return true;
-    }
-    
     return true;
-  }, [formData.firstName, formData.lastName, formData.email, formData.phoneNumber, event.type]);
+  }, [formData.firstName, formData.lastName, formData.email, formData.phoneNumber]);
 
   // Handle step navigation - memoize to prevent recreation
   const handleNext = React.useCallback(() => {
@@ -1074,8 +1070,8 @@ export function EventRegistrationModal({
                 </Grid>
               )}
 
-              {/* Step 1: Additional Attendees for Community Event */}
-              {event.type === 'community_event' && activeStep === 1 && (
+              {/* Step 1: Additional Attendees for Community Event - TEMPORARILY DISABLED */}
+              {SHOW_ADDITIONAL_ATTENDEES_STEP && event.type === 'community_event' && activeStep === 1 && (
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                   <Divider sx={{ my: 1 }} />
@@ -1330,9 +1326,8 @@ export function EventRegistrationModal({
               )}
 
 
-              {/* Step 2 (or last step): Payment Methods */}
-              {((event.type === 'community_event' && activeStep === 2) ||
-                (event.type !== 'community_event' && activeStep === 1)) && (
+              {/* Step 1 (Payment Methods) - Was Step 2 before additional attendees was disabled */}
+              {activeStep === 1 && (
                 <Grid container spacing={2}>
                   {/* Payment Mode Selection - Only show if partial payments are allowed */}
                   {event.paymentMode === 'partial_allowed' && (
@@ -1751,8 +1746,8 @@ export function EventRegistrationModal({
 
               {/* Mobile Navigation Buttons */}
               {isMobile && (
-                <Box 
-                  sx={{ 
+                <Box
+                  sx={{
                     position: 'fixed',
                     bottom: 0,
                     left: 0,
@@ -1766,35 +1761,35 @@ export function EventRegistrationModal({
                     zIndex: 1,
                   }}
                 >
-                  <Button
-                    onClick={handleBack}
-                    disabled={activeStep === 0}
-                    variant="outlined"
-                    startIcon={<ArrowBack />}
-                    sx={{
-                      flex: activeStep === 0 ? 0 : 1,
-                      visibility: activeStep === 0 ? 'hidden' : 'visible',
-                    }}
-                  >
-                    Anterior
-                  </Button>
-                  {/* Show Next button only if not on last step */}
-                  {!((event.type === 'community_event' && activeStep === 2) || 
-                     (event.type !== 'community_event' && activeStep === 1)) && (
+                  {/* Only show Back button when not on first step */}
+                  {activeStep > 0 && (
+                    <Button
+                      onClick={handleBack}
+                      variant="outlined"
+                      startIcon={<ArrowBack />}
+                      sx={{
+                        flex: 1,
+                      }}
+                    >
+                      Anterior
+                    </Button>
+                  )}
+                  {/* Show Next button only if not on last step (step 1 is now payment) */}
+                  {activeStep === 0 && (
                     <Button
                       onClick={handleNext}
                       disabled={isLoading}
                       variant="contained"
+                      fullWidth
                       endIcon={<ArrowForward />}
                       sx={{
-                        flex: 1,
                         background: buttonBackground,
                         '&:hover': {
                           background: buttonHoverBackground,
                         },
                       }}
                     >
-                      {activeStep === steps.length - 2 ? 'Continuar al Pago' : 'Siguiente'}
+                      Continuar al Pago
                     </Button>
                   )}
                 </Box>
