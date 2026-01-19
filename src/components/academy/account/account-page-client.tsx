@@ -911,10 +911,10 @@ export function AccountPageClient(): React.JSX.Element {
                       SubscriptionPlan.PSICOTRADING
                     ].includes(plan as SubscriptionPlan);
 
-                    // Determine if subscription was cancelled (recurring plan with expiration = cancelled)
-                    const hasExpirationDate = Boolean(expiresAt);
-                    const isCancelled = isRecurringPlanType && hasExpirationDate;
-                    const isRecurring = isRecurringPlanType && !hasExpirationDate;
+                    // Determine if subscription was cancelled based on status field from database
+                    const subscriptionStatus = typeof subscription === 'object' ? subscription?.status : null;
+                    const isCancelled = subscriptionStatus === 'cancelled' || subscriptionStatus === 'canceled';
+                    const isRecurring = isRecurringPlanType && !isCancelled;
 
                     return (
                     <Grid item xs={12} lg={6} key={plan}>
