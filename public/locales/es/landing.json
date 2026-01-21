@@ -579,7 +579,8 @@
         "links": {
           "about": "Sobre Nosotros",
           "success": "Historias de Éxito",
-          "contact": "Contacto"
+          "contact": "Contacto",
+          "communityGuidelines": "Normas de la Comunidad"
         }
       },
       "support": {

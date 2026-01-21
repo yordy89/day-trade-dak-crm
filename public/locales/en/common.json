@@ -581,6 +581,12 @@
       "termsOfService": "Terms of Service",
       "and": "and",
       "privacyPolicy": "Privacy Policy",
+      "mediaTermsPrefix": "I agree to the",
+      "mediaTerms": "Media Usage Terms",
+      "mediaTermsSuffix": "for events and audiovisual content",
+      "communityGuidelinesPrefix": "I agree to the",
+      "communityGuidelines": "Community Guidelines",
+      "communityGuidelinesSuffix": "of the Academy",
       "submitButton": "Create Trading Account",
       "submittingButton": "Creating Account...",
       "hasAccount": "Already have an account?",
@@ -593,6 +599,8 @@
         "emailInvalid": "Invalid email address",
         "passwordRequired": "Password must be at least 6 characters",
         "termsRequired": "You must accept the terms and conditions",
+        "mediaTermsRequired": "You must accept the media usage terms",
+        "communityGuidelinesRequired": "You must accept the community guidelines",
         "signupFailed": "Sign-up failed"
       },
       "success": "Account created successfully! Please sign in to continue."
@@ -919,5 +927,87 @@
     "allRightsReserved": "All rights reserved.",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms and Conditions"
+  },
+  "communityGuidelines": {
+    "title": "Community Guidelines",
+    "subtitle": "Day Trade Dak - Trading Academy",
+    "description": "Regulatory framework to ensure an orderly, professional training environment aligned with the Academy's values and methodology.",
+    "sections": {
+      "regulation": {
+        "title": "Regulatory Framework",
+        "description": "Rules and regulations"
+      },
+      "methodology": {
+        "title": "Methodology",
+        "description": "Structured training"
+      },
+      "responsibility": {
+        "title": "Responsibility",
+        "description": "Professional conduct"
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "Mandatory rules"
+      }
+    },
+    "keyPointsTitle": "Key Points",
+    "keyPoints": {
+      "acceptance": "Mandatory acceptance of rules from the moment of joining",
+      "methodology": "Absolute respect for the Academy's methodology",
+      "responsibility": "Individual responsibility for actions and their impact on the community",
+      "noSpam": "Prohibition of spam, promotion of other academies or unrelated content",
+      "consequences": "Disciplinary measures for repeated violations"
+    },
+    "content": {
+      "framework": {
+        "title": "Regulatory Framework and Objective",
+        "text": "The Academy establishes this regulatory framework with the objective of guaranteeing an orderly, professional training environment aligned with the values and methodology that underpin its activity. All members, regardless of their level of experience or seniority, are subject to compliance with the rules set forth here from the moment of their incorporation. Acceptance of these rules constitutes an indispensable requirement for active participation in training activities, communication channels, and spaces associated with the Academy."
+      },
+      "membership": {
+        "title": "Membership Conditions",
+        "text": "The Academy does not operate as an open-access environment. Entry is conditional upon having the required training and meeting the criteria established by the institution itself. Similarly, any voluntary departure must be communicated in advance to the support team. In case of requesting readmission, this will be subject to the deadlines, conditions, and validations that the Academy determines at any given time."
+      },
+      "methodology": {
+        "title": "Academy Methodology",
+        "text": "The methodology taught constitutes an essential pillar of the training and has been developed, validated, and applied under criteria of discipline, coherence, and operational consistency. All actions, interactions, or content shared within the Academy must respect this methodological framework and not interfere, directly or indirectly, with one's own training process or that of other members."
+      },
+      "values": {
+        "title": "Community Values",
+        "text": "The Academy trains conscious traders, understanding that each individual action has an impact on both personal objectives and the collective objectives of the institution. Within this environment, each member is valued as an active part of the training system; however, this consideration implies the obligation to strictly comply with the established rules."
+      },
+      "responsibility": {
+        "title": "Individual Responsibility",
+        "text": "Each member is responsible for their actions and the impact they may generate within the community. Conduct based on respect, individual responsibility, and professionalism is required, assuming that any non-compliance can affect the development, results, and objectives of third parties."
+      },
+      "prohibited": {
+        "title": "Prohibited Activities",
+        "text": "Spam, promoting other academies, businesses, services, or sharing content unrelated to trading or the academy's methodology is not permitted. Any attempt at direct or indirect advertising will be subject to intervention by the team.",
+        "warning": "Any attempt at direct or indirect advertising will be subject to intervention by the Academy team."
+      },
+      "compliance": {
+        "title": "Compliance and Consequences",
+        "text": "Compliance with this regulatory framework is mandatory and aims to preserve training quality, internal order, and the achievement of common objectives. The Academy, in the face of repeated non-compliance with these rules, reserves the right to adopt appropriate measures against any violation of the rules established here.",
+        "warning": "Measures may include warnings, participation restrictions, or expulsion from live sessions, with the sole objective of protecting focus, learning, and respect within the community."
+      }
+    },
+    "summary": {
+      "title": "Guidelines Summary",
+      "objectives": {
+        "title": "Objectives:",
+        "quality": "Preserve training quality",
+        "order": "Maintain internal order",
+        "goals": "Achieve common objectives"
+      },
+      "consequences": {
+        "title": "Disciplinary Measures:",
+        "warning": "Warnings",
+        "restriction": "Participation restriction",
+        "expulsion": "Expulsion from live sessions"
+      }
+    },
+    "contact": {
+      "title": "Have questions about these guidelines?",
+      "text": "Contact our support team at: support@daytradedak.com"
+    }
   }
 }

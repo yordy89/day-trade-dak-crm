@@ -53,12 +53,13 @@ const createSchema = (t: any) => zod.object({
     .regex(/[0-9]/, { message: 'La contraseña debe contener al menos un número' })
     .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'La contraseña debe contener al menos un carácter especial' }),
   terms: zod.boolean().refine((value) => value, t('auth.signUp.errors.termsRequired')),
-  mediaTerms: zod.boolean().refine((value) => value, 'Debe aceptar los términos de uso de imagen'),
+  mediaTerms: zod.boolean().refine((value) => value, t('auth.signUp.errors.mediaTermsRequired')),
+  communityGuidelines: zod.boolean().refine((value) => value, t('auth.signUp.errors.communityGuidelinesRequired')),
 });
 
 type Values = zod.infer<ReturnType<typeof createSchema>>;
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false, mediaTerms: false } satisfies Values;
+const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false, mediaTerms: false, communityGuidelines: false } satisfies Values;
 
 
 interface SignUpCredentials {
@@ -67,6 +68,7 @@ interface SignUpCredentials {
   email: string;
   password: string;
   acceptedMediaUsageTerms?: boolean;
+  acceptedCommunityGuidelines?: boolean;
   recaptchaToken?: string;
 }
 
@@ -235,10 +237,11 @@ export function SignUpForm(): React.JSX.Element {
     }
 
     // Extract terms from values and prepare signup data
-    const { terms: _terms, mediaTerms, ...signUpData } = values;
+    const { terms: _terms, mediaTerms, communityGuidelines, ...signUpData } = values;
     signUp({
       ...signUpData,
       acceptedMediaUsageTerms: mediaTerms,
+      acceptedCommunityGuidelines: communityGuidelines,
       recaptchaToken,
     });
   };
@@ -410,7 +413,7 @@ export function SignUpForm(): React.JSX.Element {
                   }
                   label={
                     <Typography variant="body2" color="text.secondary">
-                      Acepto los{' '}
+                      {t('auth.signUp.mediaTermsPrefix')}{' '}
                       <Link
                         component={RouterLink}
                         href="/media-usage-terms"
@@ -419,9 +422,9 @@ export function SignUpForm(): React.JSX.Element {
                         variant="body2"
                         sx={{ color: 'primary.main' }}
                       >
-                        Términos de Uso de Imagen
+                        {t('auth.signUp.mediaTerms')}
                       </Link>
-                      {' '}para eventos y contenido audiovisual
+                      {' '}{t('auth.signUp.mediaTermsSuffix')}
                     </Typography>
                   }
                 />
@@ -429,7 +432,47 @@ export function SignUpForm(): React.JSX.Element {
               </Box>
             )}
           />
-          
+
+          <Controller
+            control={control}
+            name="communityGuidelines"
+            render={({ field }) => (
+              <Box>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...field}
+                      checked={field.value}
+                      sx={{
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                        '&.Mui-checked': {
+                          color: 'primary.main',
+                        },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" color="text.secondary">
+                      {t('auth.signUp.communityGuidelinesPrefix')}{' '}
+                      <Link
+                        component={RouterLink}
+                        href="/community-guidelines"
+                        target="_blank"
+                        underline="hover"
+                        variant="body2"
+                        sx={{ color: 'primary.main' }}
+                      >
+                        {t('auth.signUp.communityGuidelines')}
+                      </Link>
+                      {' '}{t('auth.signUp.communityGuidelinesSuffix')}
+                    </Typography>
+                  }
+                />
+                {errors.communityGuidelines ? <FormHelperText error>{errors.communityGuidelines.message}</FormHelperText> : null}
+              </Box>
+            )}
+          />
+
           {errors.root ? <Alert severity="error">{errors.root.message}</Alert> : null}
           
           <Button

@@ -51,6 +51,7 @@ const getFooterLinks = (t: any) => ({
       { label: t('footer.sections.company.links.about'), href: '/about' },
       { label: t('footer.sections.company.links.success'), href: '/success-stories' },
       { label: t('footer.sections.company.links.contact'), href: '/contact' },
+      { label: t('footer.sections.company.links.communityGuidelines'), href: '/community-guidelines' },
     ],
   },
   support: {

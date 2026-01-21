@@ -10,6 +10,8 @@ export const paths = {
   terms: {
     terms: '/terms/terms-conditions',
   },
+  communityGuidelines: '/community-guidelines',
+  mediaUsageTerms: '/media-usage-terms',
   academy: {
     overview: '/academy/overview',
     market: '/academy/market',

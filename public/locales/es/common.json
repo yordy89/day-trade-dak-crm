@@ -581,6 +581,12 @@
       "termsOfService": "Términos de Servicio",
       "and": "y la",
       "privacyPolicy": "Política de Privacidad",
+      "mediaTermsPrefix": "Acepto los",
+      "mediaTerms": "Términos de Uso de Imagen",
+      "mediaTermsSuffix": "para eventos y contenido audiovisual",
+      "communityGuidelinesPrefix": "Acepto las",
+      "communityGuidelines": "Normas de la Comunidad",
+      "communityGuidelinesSuffix": "de la Academia",
       "submitButton": "Crear Cuenta de Trading",
       "submittingButton": "Creando cuenta...",
       "hasAccount": "¿Ya tienes una cuenta?",
@@ -593,6 +599,8 @@
         "emailInvalid": "Correo electrónico inválido",
         "passwordRequired": "La contraseña debe tener al menos 6 caracteres",
         "termsRequired": "Debes aceptar los términos y condiciones",
+        "mediaTermsRequired": "Debes aceptar los términos de uso de imagen",
+        "communityGuidelinesRequired": "Debes aceptar las normas de la comunidad",
         "signupFailed": "Error al registrarse"
       },
       "success": "¡Cuenta creada exitosamente! Por favor inicia sesión para continuar."
@@ -919,5 +927,87 @@
     "allRightsReserved": "Todos los derechos reservados.",
     "privacyPolicy": "Política de Privacidad",
     "termsConditions": "Términos y Condiciones"
+  },
+  "communityGuidelines": {
+    "title": "Normas de la Comunidad",
+    "subtitle": "Day Trade Dak - Academia de Trading",
+    "description": "Marco normativo para garantizar un entorno formativo ordenado, profesional y alineado con los valores y la metodología de la Academia.",
+    "sections": {
+      "regulation": {
+        "title": "Marco Normativo",
+        "description": "Normas y regulaciones"
+      },
+      "methodology": {
+        "title": "Metodología",
+        "description": "Formación estructurada"
+      },
+      "responsibility": {
+        "title": "Responsabilidad",
+        "description": "Conducta profesional"
+      },
+      "compliance": {
+        "title": "Cumplimiento",
+        "description": "Normas obligatorias"
+      }
+    },
+    "keyPointsTitle": "Puntos Importantes",
+    "keyPoints": {
+      "acceptance": "Aceptación obligatoria de las normas desde el momento de incorporación",
+      "methodology": "Respeto absoluto a la metodología impartida por la Academia",
+      "responsibility": "Responsabilidad individual sobre las acciones y su impacto en la comunidad",
+      "noSpam": "Prohibición de spam, promoción de otras academias o contenidos ajenos",
+      "consequences": "Medidas disciplinarias ante incumplimientos reiterados"
+    },
+    "content": {
+      "framework": {
+        "title": "Marco Normativo y Objetivo",
+        "text": "La Academia establece el presente marco normativo con el objetivo de garantizar un entorno formativo ordenado, profesional y alineado con los valores y la metodología que fundamentan su actividad. Todos los miembros, independientemente de su nivel de experiencia o antigüedad, están sujetos al cumplimiento de las normas aquí expuestas desde el momento de su incorporación. La aceptación de estas normas constituye un requisito indispensable para la participación activa en las actividades formativas, canales de comunicación y espacios asociados a la Academia."
+      },
+      "membership": {
+        "title": "Condiciones de Membresía",
+        "text": "La Academia no opera como un entorno de libre acceso. El ingreso está condicionado a contar con la formación requerida y al cumplimiento de los criterios establecidos por la propia institución. Del mismo modo, cualquier salida voluntaria deberá ser comunicada previamente al equipo de soporte. En caso de solicitar un reingreso, este quedará sujeto a los plazos, condiciones y validaciones que la Academia determine en cada momento."
+      },
+      "methodology": {
+        "title": "Metodología de la Academia",
+        "text": "La metodología impartida constituye un pilar esencial de la formación y ha sido desarrollada, validada y aplicada bajo criterios de disciplina, coherencia y consistencia operativa. Toda actuación, interacción o contenido compartido dentro de la Academia deberá respetar dicho marco metodológico y no interferir, directa o indirectamente, en el proceso formativo propio ni en el de otros miembros."
+      },
+      "values": {
+        "title": "Valores de la Comunidad",
+        "text": "La Academia forma traders conscientes, entendiendo que cada acción individual tiene un impacto tanto en los objetivos personales como en los objetivos colectivos de la institución. Dentro de este entorno, cada miembro es valorado como parte activa del sistema formativo; no obstante, dicha consideración implica la obligación de cumplir estrictamente las normas establecidas."
+      },
+      "responsibility": {
+        "title": "Responsabilidad Individual",
+        "text": "Cada miembro es responsable de sus acciones y del impacto que estas puedan generar dentro de la comunidad. Se exige una conducta basada en el respeto, la responsabilidad individual y la profesionalidad, asumiendo que cualquier incumplimiento puede afectar al desarrollo, los resultados y los objetivos de terceros."
+      },
+      "prohibited": {
+        "title": "Actividades Prohibidas",
+        "text": "No está permitido hacer spam, promocionar otras academias, negocios, servicios o compartir contenidos ajenos al trading o a la metodología de la academia. Cualquier intento de publicidad directa o indirecta será motivo de intervención por parte del equipo.",
+        "warning": "Cualquier intento de publicidad directa o indirecta será motivo de intervención por parte del equipo de la Academia."
+      },
+      "compliance": {
+        "title": "Cumplimiento y Consecuencias",
+        "text": "El cumplimiento de este marco normativo es obligatorio y tiene como finalidad preservar la calidad formativa, el orden interno y la consecución de objetivos comunes. La Academia ante el incumplimiento reiterado de estas normas se reserva el derecho de adoptar las medidas oportunas ante cualquier vulneración de las normas aquí establecidas.",
+        "warning": "Las medidas pueden incluir llamadas de atención, restricción de participación o expulsión del directo, con el único objetivo de proteger el enfoque, el aprendizaje y el respeto dentro de la comunidad."
+      }
+    },
+    "summary": {
+      "title": "Resumen de Normas",
+      "objectives": {
+        "title": "Objetivos:",
+        "quality": "Preservar la calidad formativa",
+        "order": "Mantener el orden interno",
+        "goals": "Lograr objetivos comunes"
+      },
+      "consequences": {
+        "title": "Medidas Disciplinarias:",
+        "warning": "Llamadas de atención",
+        "restriction": "Restricción de participación",
+        "expulsion": "Expulsión del directo"
+      }
+    },
+    "contact": {
+      "title": "¿Tienes preguntas sobre estas normas?",
+      "text": "Contacta a nuestro equipo de soporte en: support@daytradedak.com"
+    }
   }
 }

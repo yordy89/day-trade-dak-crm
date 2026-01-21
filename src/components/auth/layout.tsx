@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import RouterLink from 'next/link';
-import { Button, Card, List, ListItem, ListItemIcon, ListItemText, useTheme, alpha } from '@mui/material';
+import { Card, List, ListItem, ListItemIcon, ListItemText, useTheme, alpha } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { 
@@ -159,16 +158,16 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           
           <List sx={{ p: 0 }}>
             {features.map((feature, _index) => (
-              <ListItem 
-                key={feature.text} 
-                sx={{ 
+              <ListItem
+                key={feature.text}
+                sx={{
                   px: 0,
                   py: 2,
                   alignItems: 'flex-start',
                 }}
               >
-                <ListItemIcon 
-                  sx={{ 
+                <ListItemIcon
+                  sx={{
                     minWidth: 48,
                     mt: 0.5,
                     color: 'primary.main',
@@ -176,7 +175,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
                 >
                   {feature.icon}
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary={
                     <Typography variant="subtitle1" fontWeight={600}>
                       {feature.text}
@@ -191,34 +190,6 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               </ListItem>
             ))}
           </List>
-
-          <Box sx={{ mt: 6, p: 3, borderRadius: 2, bgcolor: 'action.hover' }}>
-            <Typography variant="subtitle2" color="primary" sx={{ mb: 1 }}>
-              {t('auth.layout.upcomingEvent.label')}
-            </Typography>
-            <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-              {t('auth.layout.upcomingEvent.title')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              📍 {t('auth.layout.upcomingEvent.location')} | 📅 {t('auth.layout.upcomingEvent.date')}
-            </Typography>
-            <Button
-              variant="outlined"
-              component={RouterLink}
-              href="/events/680fe27154c9b64e54e2424f"
-              fullWidth
-              sx={{
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': {
-                  borderColor: 'primary.dark',
-                  bgcolor: alpha(theme.palette.primary.main, 0.08),
-                },
-              }}
-            >
-              {t('auth.layout.upcomingEvent.learnMore')}
-            </Button>
-          </Box>
         </Box>
       </Box>
 
