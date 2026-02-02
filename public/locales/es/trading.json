@@ -1,0 +1,159 @@
+{
+  "tradingJournal": {
+    "title": "Diario de Trading",
+    "subtitle": "Registra, analiza y mejora tu rendimiento de trading",
+    "buttons": {
+      "analytics": "Análisis",
+      "addTrade": "Agregar Operación"
+    },
+    "stats": {
+      "totalPnl": "P&L Total",
+      "trades": "operaciones",
+      "winRate": "Tasa de Éxito",
+      "winsLosses": "{{wins}}G / {{losses}}P",
+      "profitFactor": "Factor de Beneficio",
+      "riskRewardRatio": "Ratio Riesgo/Beneficio",
+      "expectancy": "Expectativa",
+      "perTradeAvg": "Promedio por Operación"
+    },
+    "recentTrades": {
+      "title": "Operaciones Recientes",
+      "viewAll": "Ver Todas las Operaciones",
+      "shown": "({{count}} mostradas)"
+    },
+    "filter": {
+      "title": "Filtrar operaciones",
+      "allTrades": "Todas las Operaciones",
+      "winnersOnly": "Solo Ganadoras",
+      "losersOnly": "Solo Perdedoras",
+      "noWinning": "No se encontraron operaciones ganadoras",
+      "noLosing": "No se encontraron operaciones perdedoras",
+      "showAll": "Mostrar todas las operaciones"
+    },
+    "export": {
+      "title": "Exportar a CSV",
+      "noTrades": "No hay operaciones para exportar",
+      "success": "{{count}} operaciones exportadas a CSV",
+      "headers": {
+        "date": "Fecha",
+        "symbol": "Símbolo",
+        "market": "Mercado",
+        "direction": "Dirección",
+        "entryPrice": "Precio Entrada",
+        "exitPrice": "Precio Salida",
+        "positionSize": "Tamaño Posición",
+        "netPnl": "P&L Neto",
+        "rMultiple": "R-Múltiple",
+        "strategy": "Estrategia"
+      }
+    },
+    "errors": {
+      "loadFailed": "Error al cargar los datos del diario de trading"
+    },
+    "tradesList": {
+      "title": "Mis Operaciones",
+      "subtitle": "Gestiona y analiza tu historial completo de trading",
+      "market": "Mercado",
+      "result": "Resultado",
+      "entry": "Entrada",
+      "exit": "Salida",
+      "size": "Tamaño",
+      "timeFilter": "Período",
+      "allMarkets": "Todos los Mercados",
+      "allDirections": "Todas las Direcciones",
+      "allResults": "Todos los Resultados",
+      "winners": "Ganadoras",
+      "losers": "Perdedoras",
+      "searchPlaceholder": "Buscar por símbolo...",
+      "noTrades": "Sin operaciones aún",
+      "noTradesMessage": "Comienza a registrar tus operaciones para ver análisis y mejorar tu rendimiento",
+      "addFirstTrade": "Agregar Primera Operación"
+    },
+    "fields": {
+      "date": "Fecha",
+      "symbol": "Símbolo",
+      "direction": "Dirección",
+      "entryTime": "Hora de Entrada",
+      "exitTime": "Hora de Salida",
+      "entryPrice": "Precio de Entrada",
+      "exitPrice": "Precio de Salida",
+      "positionSize": "Tamaño de Posición",
+      "stopLoss": "Stop Loss",
+      "takeProfit": "Take Profit",
+      "riskAmount": "Monto en Riesgo",
+      "riskPercentage": "Porcentaje de Riesgo",
+      "rMultiple": "R-Múltiple",
+      "pnl": "P&L",
+      "netPnl": "P&L Neto",
+      "commission": "Comisión",
+      "strategy": "Estrategia",
+      "setup": "Setup",
+      "confidence": "Confianza",
+      "notes": "Notas"
+    },
+    "detail": {
+      "title": "Detalles de la Operación",
+      "tradeInfo": "Información de la Operación",
+      "riskManagement": "Gestión de Riesgo",
+      "preTradeAnalysis": "Análisis Pre-Operación",
+      "postTradeNotes": "Notas Post-Operación",
+      "exitAnalysis": "Análisis de Salida",
+      "exitReason": "Razón de Salida",
+      "lessonsLearned": "Lecciones Aprendidas",
+      "wouldRepeat": "¿Repetirías?",
+      "emotionalState": "Estado Emocional",
+      "beforeTrade": "Antes de Operar",
+      "duringTrade": "Durante la Operación",
+      "afterTrade": "Después de Operar",
+      "tags": "Etiquetas",
+      "strikePrice": "Precio de Ejercicio",
+      "expiration": "Vencimiento",
+      "contracts": "contratos"
+    },
+    "analytics": {
+      "title": "Análisis de Trading",
+      "subtitle": "Métricas de rendimiento e información de tu historial de trading",
+      "totalPnl": "P&L Total",
+      "totalTrades": "Total de Operaciones",
+      "winRate": "Tasa de Aciertos",
+      "profitFactor": "Factor de Beneficio",
+      "expectancy": "Expectativa",
+      "avgHoldingTime": "Tiempo Promedio de Posición",
+      "performanceByOptionType": "Desempeño por Tipo de Opción",
+      "performanceByMarket": "Desempeño por Mercado",
+      "bestTrades": "Mejores Operaciones",
+      "worstTrades": "Peores Operaciones"
+    },
+    "timeFilters": {
+      "today": "Hoy",
+      "thisWeek": "Esta Semana",
+      "thisMonth": "Este Mes",
+      "thisQuarter": "Este Trimestre",
+      "thisYear": "Este Año",
+      "allTime": "Todo el Tiempo"
+    },
+    "actions": {
+      "addTrade": "Registrar Nueva Operación",
+      "editTrade": "Editar Operación",
+      "deleteTrade": "Eliminar Operación",
+      "viewDetails": "Ver Detalles",
+      "export": "Exportar",
+      "exportReport": "Exportar Reporte"
+    },
+    "markets": {
+      "stocks": "Acciones",
+      "options": "Opciones",
+      "futures": "Futuros",
+      "forex": "Forex",
+      "crypto": "Cripto"
+    },
+    "directions": {
+      "long": "Long",
+      "short": "Short"
+    },
+    "optionTypes": {
+      "call": "CALL",
+      "put": "PUT"
+    }
+  }
+}

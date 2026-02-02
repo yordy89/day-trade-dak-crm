@@ -212,15 +212,13 @@ export default function BooksPage() {
   return (
     <>
       <MainNavbar />
-      <Box sx={{ pt: 18, minHeight: '100vh', position: 'relative' }}>
+      <Box sx={{ pt: 18, minHeight: '100vh', position: 'relative', backgroundColor: '#0d1117' }}>
         <MarketBackground isDarkMode={isDarkMode} />
-        
+
         {/* Hero Section with CEO Book */}
         <Box
           sx={{
-            background: isDarkMode 
-              ? 'linear-gradient(180deg, rgba(22, 163, 74, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
-              : 'linear-gradient(180deg, rgba(22, 163, 74, 0.05) 0%, rgba(255, 255, 255, 0) 100%)',
+            background: 'linear-gradient(180deg, rgba(22, 163, 74, 0.15) 0%, rgba(13, 17, 23, 0) 100%)',
             pb: 10,
             position: 'relative',
           }}
@@ -229,12 +227,21 @@ export default function BooksPage() {
             {/* Page Header */}
             <Box sx={{ textAlign: 'center', mb: 8 }}>
               <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 3 }}>
-                <AutoStories sx={{ fontSize: 48, color: 'primary.main' }} />
-                <Typography variant="h2" component="h1" sx={{ fontWeight: 800 }}>
+                <AutoStories sx={{ fontSize: 48, color: '#22c55e' }} />
+                <Typography
+                  variant="h2"
+                  component="h1"
+                  sx={{
+                    fontWeight: 800,
+                    background: 'linear-gradient(135deg, #ffffff 0%, #22c55e 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
                   {t('books.title')}
                 </Typography>
               </Stack>
-              <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto' }}>
+              <Typography variant="h5" sx={{ maxWidth: 800, mx: 'auto', color: 'rgba(255, 255, 255, 0.7)' }}>
                 {t('books.subtitle')}
               </Typography>
             </Box>
@@ -245,14 +252,12 @@ export default function BooksPage() {
                 key={book.id}
                 elevation={0}
                 sx={{
-                  background: isDarkMode 
-                    ? 'linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%)'
-                    : 'linear-gradient(135deg, rgba(22, 163, 74, 0.08) 0%, rgba(22, 163, 74, 0.03) 100%)',
-                  border: '2px solid',
-                  borderColor: alpha(muiTheme.palette.primary.main, 0.3),
+                  background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(22, 163, 74, 0.05) 100%)',
+                  border: '2px solid rgba(22, 163, 74, 0.4)',
                   borderRadius: 4,
                   overflow: 'hidden',
                   position: 'relative',
+                  boxShadow: '0 8px 32px rgba(22, 163, 74, 0.2)',
                 }}
               >
                 {/* Success Badge */}
@@ -265,12 +270,14 @@ export default function BooksPage() {
                   }}
                 >
                   <Chip
-                    icon={<EmojiEvents />}
+                    icon={<EmojiEvents sx={{ color: '#fbbf24 !important' }} />}
                     label={t('books.ceoBook.label')}
-                    color="primary"
                     sx={{
                       fontWeight: 700,
-                      boxShadow: 2,
+                      backgroundColor: 'rgba(251, 191, 36, 0.15)',
+                      color: '#fbbf24',
+                      border: '1px solid rgba(251, 191, 36, 0.3)',
+                      boxShadow: '0 4px 14px rgba(251, 191, 36, 0.2)',
                     }}
                   />
                 </Box>
@@ -283,9 +290,7 @@ export default function BooksPage() {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        background: isDarkMode
-                          ? 'radial-gradient(circle, rgba(22, 163, 74, 0.1) 0%, transparent 70%)'
-                          : 'radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(22, 163, 74, 0.15) 0%, transparent 70%)',
                       }}
                     >
                       <Box sx={{ position: 'relative' }}>
@@ -331,30 +336,42 @@ export default function BooksPage() {
                   <Grid item xs={12} md={7}>
                     <Box sx={{ p: 6, height: '100%', display: 'flex', flexDirection: 'column' }}>
                       {/* Title and Author */}
-                      <Typography variant="h3" gutterBottom sx={{ fontWeight: 800, mb: 1 }}>
+                      <Typography
+                        variant="h3"
+                        gutterBottom
+                        sx={{
+                          fontWeight: 800,
+                          mb: 1,
+                          color: '#ffffff',
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                        }}
+                      >
                         {i18n.language === 'es' ? book.title : (book.titleEn || book.title)}
                       </Typography>
-                      <Typography variant="h5" color="text.secondary" gutterBottom sx={{ mb: 3 }}>
+                      <Typography variant="h5" gutterBottom sx={{ mb: 3, color: '#22c55e' }}>
                         {t('books.author')} {book.author}
                       </Typography>
 
                       {/* Rating */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                        <Rating value={book.rating} readOnly precision={0.5} size="large" />
-                        <Typography variant="body1" color="text.secondary">
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3, flexWrap: 'wrap' }}>
+                        <Rating value={book.rating} readOnly precision={0.5} size="large" sx={{ '& .MuiRating-iconFilled': { color: '#fbbf24' } }} />
+                        <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                           ({book.rating}/5.0)
                         </Typography>
                         <Chip
-                          icon={<Verified />}
+                          icon={<Verified sx={{ color: '#22c55e !important' }} />}
                           label={i18n.language === 'es' ? 'Verificado' : 'Verified'}
                           size="small"
-                          color="success"
-                          variant="outlined"
+                          sx={{
+                            backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                            color: '#22c55e',
+                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                          }}
                         />
                       </Box>
 
                       {/* Description */}
-                      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.8 }}>
+                      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.8, color: 'rgba(255, 255, 255, 0.8)' }}>
                         {i18n.language === 'es' ? book.description : (book.descriptionEn || book.description)}
                       </Typography>
 
@@ -362,14 +379,24 @@ export default function BooksPage() {
                       <Box sx={{ mb: 4 }}>
                         <Grid container spacing={2}>
                           {[
-                            { icon: <TrendingUp />, text: i18n.language === 'es' ? 'Estrategias Probadas' : 'Proven Strategies', id: 'strategies' },
-                            { icon: <Psychology />, text: i18n.language === 'es' ? 'Mentalidad Ganadora' : 'Winning Mindset', id: 'mindset' },
-                            { icon: <CheckCircle />, text: i18n.language === 'es' ? 'Casos Reales' : 'Real Cases', id: 'cases' },
+                            { icon: <TrendingUp />, text: i18n.language === 'es' ? 'Estrategias Probadas' : 'Proven Strategies', id: 'strategies', color: '#22c55e' },
+                            { icon: <Psychology />, text: i18n.language === 'es' ? 'Mentalidad Ganadora' : 'Winning Mindset', id: 'mindset', color: '#60a5fa' },
+                            { icon: <CheckCircle />, text: i18n.language === 'es' ? 'Casos Reales' : 'Real Cases', id: 'cases', color: '#a78bfa' },
                           ].map((benefit) => (
                             <Grid item xs={12} sm={4} key={benefit.id}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Box sx={{ color: 'primary.main' }}>{benefit.icon}</Box>
-                                <Typography variant="body2" fontWeight={600}>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 1,
+                                  p: 1.5,
+                                  borderRadius: 2,
+                                  backgroundColor: `rgba(${benefit.color === '#22c55e' ? '34, 197, 94' : benefit.color === '#60a5fa' ? '96, 165, 250' : '167, 139, 250'}, 0.1)`,
+                                  border: `1px solid rgba(${benefit.color === '#22c55e' ? '34, 197, 94' : benefit.color === '#60a5fa' ? '96, 165, 250' : '167, 139, 250'}, 0.3)`,
+                                }}
+                              >
+                                <Box sx={{ color: benefit.color }}>{benefit.icon}</Box>
+                                <Typography variant="body2" fontWeight={600} sx={{ color: '#ffffff' }}>
                                   {benefit.text}
                                 </Typography>
                               </Box>
@@ -383,22 +410,22 @@ export default function BooksPage() {
                         sx={{
                           p: 3,
                           mb: 4,
-                          backgroundColor: alpha(muiTheme.palette.primary.main, 0.05),
-                          borderLeft: '4px solid',
-                          borderColor: 'primary.main',
+                          backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                          borderLeft: '4px solid #22c55e',
                           position: 'relative',
+                          borderRadius: 2,
                         }}
                       >
-                        <FormatQuote sx={{ 
+                        <FormatQuote sx={{
                           position: 'absolute',
                           top: -10,
                           left: 10,
                           fontSize: 40,
-                          color: 'primary.main',
-                          opacity: 0.3,
+                          color: '#22c55e',
+                          opacity: 0.5,
                         }} />
-                        <Typography variant="body1" fontStyle="italic" sx={{ pl: 4 }}>
-                          {i18n.language === 'es' 
+                        <Typography variant="body1" fontStyle="italic" sx={{ pl: 4, color: 'rgba(255, 255, 255, 0.9)' }}>
+                          {i18n.language === 'es'
                             ? '"El éxito en el trading no es casualidad, es el resultado de preparación, disciplina y aprendizaje constante."'
                             : '"Success in trading is not by chance, it&apos;s the result of preparation, discipline and constant learning."'
                           }
@@ -407,13 +434,13 @@ export default function BooksPage() {
 
                       {/* CTA Buttons */}
                       <Box sx={{ mt: 'auto' }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#ffffff' }}>
                           {i18n.language === 'es' ? 'Disponible en:' : 'Available in:'}
                         </Typography>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={4}>
-                            <Button 
-                              variant="contained" 
+                            <Button
+                              variant="contained"
                               fullWidth
                               size="large"
                               href={book.amazonLinks?.hardcover || '#'}
@@ -426,11 +453,11 @@ export default function BooksPage() {
                                 py: 1.5,
                                 borderRadius: 2,
                                 textTransform: 'none',
-                                boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                                boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)',
                                 '&:hover': {
-                                  background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+                                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                                   transform: 'translateY(-2px)',
-                                  boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+                                  boxShadow: '0 6px 20px rgba(22, 163, 74, 0.5)',
                                 },
                               }}
                             >
@@ -438,25 +465,25 @@ export default function BooksPage() {
                             </Button>
                           </Grid>
                           <Grid item xs={12} sm={4}>
-                            <Button 
-                              variant="outlined" 
+                            <Button
+                              variant="outlined"
                               fullWidth
                               size="large"
                               href={book.amazonLinks?.paperback || '#'}
                               target="_blank"
                               startIcon={<ShoppingCart />}
                               sx={{
-                                borderColor: 'primary.main',
-                                color: 'primary.main',
+                                borderColor: 'rgba(34, 197, 94, 0.5)',
+                                color: '#22c55e',
                                 fontWeight: 600,
                                 py: 1.5,
                                 borderRadius: 2,
                                 borderWidth: 2,
                                 textTransform: 'none',
-                                backgroundColor: alpha(muiTheme.palette.primary.main, 0.05),
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
                                 '&:hover': {
-                                  borderColor: 'primary.dark',
-                                  backgroundColor: alpha(muiTheme.palette.primary.main, 0.1),
+                                  borderColor: '#22c55e',
+                                  backgroundColor: 'rgba(34, 197, 94, 0.2)',
                                   transform: 'translateY(-2px)',
                                   borderWidth: 2,
                                 },
@@ -466,25 +493,25 @@ export default function BooksPage() {
                             </Button>
                           </Grid>
                           <Grid item xs={12} sm={4}>
-                            <Button 
-                              variant="outlined" 
+                            <Button
+                              variant="outlined"
                               fullWidth
                               size="large"
                               href={book.amazonLinks?.kindle || '#'}
                               target="_blank"
                               startIcon={<ShoppingCart />}
                               sx={{
-                                borderColor: 'primary.main',
-                                color: 'primary.main',
+                                borderColor: 'rgba(96, 165, 250, 0.5)',
+                                color: '#60a5fa',
                                 fontWeight: 600,
                                 py: 1.5,
                                 borderRadius: 2,
                                 borderWidth: 2,
                                 textTransform: 'none',
-                                backgroundColor: alpha(muiTheme.palette.primary.main, 0.05),
+                                backgroundColor: 'rgba(96, 165, 250, 0.1)',
                                 '&:hover': {
-                                  borderColor: 'primary.dark',
-                                  backgroundColor: alpha(muiTheme.palette.primary.main, 0.1),
+                                  borderColor: '#60a5fa',
+                                  backgroundColor: 'rgba(96, 165, 250, 0.2)',
                                   transform: 'translateY(-2px)',
                                   borderWidth: 2,
                                 },
@@ -504,17 +531,25 @@ export default function BooksPage() {
         </Box>
 
         {/* Recommended Books Section */}
-        <Box sx={{ py: 10, backgroundColor: isDarkMode ? alpha('#fff', 0.02) : alpha('#000', 0.02) }}>
+        <Box sx={{ py: 10, backgroundColor: '#161b22' }}>
           <Container maxWidth="lg">
             <Box sx={{ textAlign: 'center', mb: 6 }}>
               <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
-                <LocalOffer sx={{ fontSize: 36, color: 'primary.main' }} />
-                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                <LocalOffer sx={{ fontSize: 36, color: '#fbbf24' }} />
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 700,
+                    background: 'linear-gradient(135deg, #ffffff 0%, #fbbf24 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
                   {t('books.recommendedBooks')}
                 </Typography>
               </Stack>
-              <Typography variant="h6" color="text.secondary">
-                {i18n.language === 'es' 
+              <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                {i18n.language === 'es'
                   ? 'Lecturas esenciales seleccionadas por nuestros expertos'
                   : 'Essential readings selected by our experts'
                 }
@@ -522,24 +557,33 @@ export default function BooksPage() {
             </Box>
 
             <Grid container spacing={4}>
-              {books.filter(book => !book.ceoBook).map((book) => (
+              {books.filter(book => !book.ceoBook).map((book, index) => {
+                const cardColors = [
+                  { border: 'rgba(34, 197, 94, 0.3)', glow: 'rgba(34, 197, 94, 0.3)', hoverBorder: '#22c55e' },
+                  { border: 'rgba(96, 165, 250, 0.3)', glow: 'rgba(96, 165, 250, 0.3)', hoverBorder: '#60a5fa' },
+                  { border: 'rgba(167, 139, 250, 0.3)', glow: 'rgba(167, 139, 250, 0.3)', hoverBorder: '#a78bfa' },
+                  { border: 'rgba(251, 191, 36, 0.3)', glow: 'rgba(251, 191, 36, 0.3)', hoverBorder: '#fbbf24' },
+                  { border: 'rgba(244, 114, 182, 0.3)', glow: 'rgba(244, 114, 182, 0.3)', hoverBorder: '#f472b6' },
+                  { border: 'rgba(34, 211, 238, 0.3)', glow: 'rgba(34, 211, 238, 0.3)', hoverBorder: '#22d3ee' },
+                ];
+                const colorScheme = cardColors[index % cardColors.length];
+
+                return (
                 <Grid item xs={12} sm={6} md={4} key={book.id}>
-                  <Card 
-                    sx={{ 
+                  <Card
+                    sx={{
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      backgroundColor: isDarkMode ? alpha('#fff', 0.05) : 'background.paper',
+                      backgroundColor: '#0d1117',
                       backdropFilter: 'blur(10px)',
                       transition: 'all 0.3s',
-                      border: '1px solid',
-                      borderColor: 'divider',
+                      border: `1px solid ${colorScheme.border}`,
+                      borderRadius: 3,
                       '&:hover': {
                         transform: 'translateY(-8px)',
-                        boxShadow: isDarkMode 
-                          ? '0 12px 24px rgba(0, 0, 0, 0.4)'
-                          : '0 12px 24px rgba(0, 0, 0, 0.1)',
-                        borderColor: 'primary.main',
+                        boxShadow: `0 12px 24px ${colorScheme.glow}`,
+                        borderColor: colorScheme.hoverBorder,
                       },
                     }}
                   >
@@ -548,12 +592,12 @@ export default function BooksPage() {
                       <Box sx={{ position: 'relative', mb: 3 }}>
                         <CardMedia
                           component="img"
-                          sx={{ 
+                          sx={{
                             width: '100%',
                             height: '320px',
                             objectFit: 'contain',
-                            borderRadius: 1,
-                            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                            borderRadius: 2,
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             p: 2,
                           }}
                           image={book.image}
@@ -567,12 +611,17 @@ export default function BooksPage() {
                             t('books.categories.personalGrowth')
                           }
                           size="small"
-                          sx={{ 
+                          sx={{
                             position: 'absolute',
                             top: 10,
                             right: 10,
-                            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                            backgroundColor: 'rgba(13, 17, 23, 0.9)',
                             backdropFilter: 'blur(10px)',
+                            color: book.category === 'trading' ? '#22c55e' : book.category === 'finance' ? '#fbbf24' : '#a78bfa',
+                            border: `1px solid ${book.category === 'trading' ? 'rgba(34, 197, 94, 0.3)' : book.category === 'finance' ? 'rgba(251, 191, 36, 0.3)' : 'rgba(167, 139, 250, 0.3)'}`,
+                            '& .MuiChip-icon': {
+                              color: book.category === 'trading' ? '#22c55e' : book.category === 'finance' ? '#fbbf24' : '#a78bfa',
+                            },
                           }}
                         />
                       </Box>
@@ -580,43 +629,43 @@ export default function BooksPage() {
                     
                     <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', pt: 0 }}>
                       {/* Title & Author */}
-                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, minHeight: '64px', lineHeight: 1.3 }}>
+                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, minHeight: '64px', lineHeight: 1.3, color: '#ffffff' }}>
                         {i18n.language === 'es' ? book.title : (book.titleEn || book.title)}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255, 255, 255, 0.6)' }}>
                         {t('books.author')} {book.author}
                       </Typography>
-                      
+
                       {/* Rating */}
                       {book.rating ? (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                          <Rating value={book.rating} readOnly size="small" precision={0.5} />
-                          <Typography variant="caption" color="text.secondary">
+                          <Rating value={book.rating} readOnly size="small" precision={0.5} sx={{ '& .MuiRating-iconFilled': { color: '#fbbf24' } }} />
+                          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                             ({book.rating})
                           </Typography>
                         </Box>
                       ) : null}
 
-                      
+
                       {/* CTA */}
                       <Box sx={{ mt: 'auto' }}>
-                        <Button 
-                          variant="outlined" 
+                        <Button
+                          variant="outlined"
                           fullWidth
                           href={book.amazonLinks?.paperback || book.amazonLinks?.kindle || book.amazonLinks?.hardcover || '#'}
                           target="_blank"
                           endIcon={<ArrowForward />}
                           sx={{
-                            borderColor: 'divider',
-                            color: 'text.primary',
+                            borderColor: colorScheme.border,
+                            color: colorScheme.hoverBorder,
                             fontWeight: 600,
                             borderRadius: 2,
                             textTransform: 'none',
-                            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             '&:hover': {
-                              borderColor: 'primary.main',
-                              color: 'primary.main',
-                              backgroundColor: alpha(muiTheme.palette.primary.main, 0.08),
+                              borderColor: colorScheme.hoverBorder,
+                              color: colorScheme.hoverBorder,
+                              backgroundColor: `${colorScheme.glow.replace('0.3', '0.15')}`,
                               '& .MuiButton-endIcon': {
                                 transform: 'translateX(4px)',
                               },
@@ -632,10 +681,14 @@ export default function BooksPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-              ))}
+                );
+              })}
             </Grid>
           </Container>
         </Box>
+
+        {/* Footer Spacer */}
+        <Box sx={{ py: 6, backgroundColor: '#0d1117' }} />
       </Box>
     </>
   );

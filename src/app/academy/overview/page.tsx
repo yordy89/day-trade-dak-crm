@@ -70,57 +70,77 @@ const ModernBackground = ({ isDarkMode }: { isDarkMode: boolean }) => (
 );
 
 // Stats Card Component
-const StatsCard = ({ 
-  title, 
-  value, 
-  icon, 
+const StatsCard = ({
+  title,
+  value,
+  icon,
   color,
   subtitle,
   loading = false,
-}: { 
-  title: string; 
-  value: string | number; 
-  icon: React.ReactNode; 
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
   color: string;
   subtitle?: string;
   loading?: boolean;
 }) => {
   const theme = useMuiTheme();
-  
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Card 
-      sx={{ 
-        height: '100%', 
+    <Card
+      sx={{
+        height: '100%',
         position: 'relative',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: isDark ? alpha(color, 0.2) : alpha(color, 0.15),
+        borderRadius: 3,
+        overflow: 'hidden',
         transition: 'all 0.3s ease',
+        background: isDark
+          ? `linear-gradient(135deg, ${alpha(color, 0.08)} 0%, ${alpha('#000', 0.2)} 100%)`
+          : `linear-gradient(135deg, ${alpha(color, 0.04)} 0%, ${alpha('#fff', 0.8)} 100%)`,
         '&:hover': {
           transform: 'translateY(-4px)',
-          boxShadow: theme.shadows[8],
-          borderColor: alpha(color, 0.3),
-        }
+          boxShadow: `0 12px 24px ${alpha(color, isDark ? 0.25 : 0.15)}`,
+          borderColor: alpha(color, isDark ? 0.4 : 0.3),
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '120px',
+          height: '120px',
+          background: `radial-gradient(circle, ${alpha(color, isDark ? 0.15 : 0.08)} 0%, transparent 70%)`,
+          filter: 'blur(30px)',
+          pointerEvents: 'none',
+        },
       }}
     >
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+      <CardContent sx={{ p: { xs: 2.5, sm: 3 }, position: 'relative', zIndex: 1 }}>
         <Stack spacing={2}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box
               sx={{
-                width: 48,
-                height: 48,
-                borderRadius: 2,
+                width: 52,
+                height: 52,
+                borderRadius: 2.5,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: alpha(color, 0.1),
+                background: `linear-gradient(135deg, ${alpha(color, 0.2)} 0%, ${alpha(color, 0.1)} 100%)`,
+                border: '1px solid',
+                borderColor: alpha(color, 0.2),
                 color,
+                boxShadow: `0 4px 12px ${alpha(color, 0.2)}`,
               }}
             >
               {icon}
             </Box>
           </Box>
-          
+
           <Box>
             {loading ? (
               <>
@@ -129,14 +149,24 @@ const StatsCard = ({
               </>
             ) : (
               <>
-                <Typography variant="h3" fontWeight={800} color={color}>
+                <Typography
+                  variant="h3"
+                  fontWeight={800}
+                  sx={{
+                    background: `linear-gradient(135deg, ${color} 0%, ${alpha(color, 0.7)} 100%)`,
+                    backgroundClip: 'text',
+                    textFillColor: 'transparent',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
                   {value}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ mt: 0.5 }}>
                   {title}
                 </Typography>
                 {subtitle && (
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.8 }}>
                     {subtitle}
                   </Typography>
                 )}
@@ -150,15 +180,15 @@ const StatsCard = ({
 };
 
 // Content Access Card
-const ContentAccessCard = ({ 
-  title, 
+const ContentAccessCard = ({
+  title,
   description,
-  icon, 
+  icon,
   path,
   color,
   available,
   locked = false,
-}: { 
+}: {
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -170,79 +200,120 @@ const ContentAccessCard = ({
   const router = useRouter();
   const theme = useMuiTheme();
   const { t } = useTranslation('academy');
-  
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Card 
-      sx={{ 
+    <Card
+      sx={{
         height: '100%',
         cursor: available ? 'pointer' : 'not-allowed',
         position: 'relative',
         overflow: 'visible',
         border: '1px solid',
-        borderColor: 'divider',
-        opacity: available ? 1 : 0.7,
+        borderColor: available
+          ? isDark ? alpha(color, 0.2) : alpha(color, 0.15)
+          : 'divider',
+        borderRadius: 3,
+        opacity: available ? 1 : 0.6,
         transition: 'all 0.3s ease',
+        background: available
+          ? isDark
+            ? `linear-gradient(145deg, ${alpha(color, 0.06)} 0%, ${alpha('#000', 0.2)} 100%)`
+            : `linear-gradient(145deg, ${alpha(color, 0.03)} 0%, ${alpha('#fff', 0.9)} 100%)`
+          : undefined,
         '&:hover': available ? {
           transform: 'translateY(-8px)',
-          boxShadow: theme.shadows[12],
-          borderColor: alpha(color, 0.3),
+          boxShadow: `0 16px 32px ${alpha(color, isDark ? 0.25 : 0.15)}`,
+          borderColor: alpha(color, isDark ? 0.4 : 0.3),
+          background: isDark
+            ? `linear-gradient(145deg, ${alpha(color, 0.1)} 0%, ${alpha('#000', 0.2)} 100%)`
+            : `linear-gradient(145deg, ${alpha(color, 0.06)} 0%, ${alpha('#fff', 0.9)} 100%)`,
           '& .hover-arrow': {
-            transform: 'translateX(4px)',
-          }
+            transform: 'translateX(6px)',
+          },
+          '& .icon-box': {
+            boxShadow: `0 8px 20px ${alpha(color, 0.4)}`,
+            transform: 'scale(1.05)',
+          },
         } : {}
       }}
       onClick={() => available && router.push(path)}
     >
       {locked && (
         <Chip
-          icon={<Crown size={14} />}
+          icon={<Crown size={14} weight="fill" />}
           label={t('overview.premiumOnly')}
           size="small"
           sx={{
             position: 'absolute',
             top: -10,
             right: 16,
-            bgcolor: 'warning.main',
+            background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`,
             color: 'white',
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '0.7rem',
-            height: 24,
+            height: 26,
+            boxShadow: `0 4px 12px ${alpha(theme.palette.warning.main, 0.4)}`,
+            '& .MuiChip-icon': {
+              color: 'white',
+            },
           }}
         />
       )}
-      
+
       <CardContent sx={{ p: 3, height: '100%' }}>
         <Stack spacing={2} height="100%">
           <Box
+            className="icon-box"
             sx={{
-              width: 56,
-              height: 56,
-              borderRadius: 2,
+              width: 60,
+              height: 60,
+              borderRadius: 3,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: `linear-gradient(135deg, ${alpha(color, 0.15)} 0%, ${alpha(color, 0.05)} 100%)`,
+              background: available
+                ? `linear-gradient(135deg, ${alpha(color, 0.2)} 0%, ${alpha(color, 0.1)} 100%)`
+                : alpha(theme.palette.text.disabled, 0.1),
+              border: '1px solid',
+              borderColor: available ? alpha(color, 0.25) : 'transparent',
               color: available ? color : 'text.disabled',
               mb: 1,
+              boxShadow: available ? `0 4px 12px ${alpha(color, 0.2)}` : 'none',
+              transition: 'all 0.3s ease',
             }}
           >
             {icon}
           </Box>
-          
+
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>
               {title}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
               {description}
             </Typography>
           </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', color: available ? color : 'text.disabled', fontWeight: 600 }}>
-            <Typography variant="button" sx={{ mr: 1 }}>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: available ? color : 'text.disabled',
+              fontWeight: 700,
+            }}
+          >
+            <Typography variant="button" sx={{ mr: 1, fontWeight: 700 }}>
               {available ? t('overview.explore') : t('overview.blocked')}
             </Typography>
-            {available && <ArrowRight size={20} className="hover-arrow" style={{ transition: 'transform 0.2s' }} />}
+            {available && (
+              <ArrowRight
+                size={20}
+                weight="bold"
+                className="hover-arrow"
+                style={{ transition: 'transform 0.2s ease' }}
+              />
+            )}
           </Box>
         </Stack>
       </CardContent>
@@ -283,16 +354,31 @@ export default function AcademyOverviewPage(): React.JSX.Element {
     queryKey: ['upcoming-events'],
     queryFn: async () => {
       try {
-        // Use the regular events endpoint with filters for active and future events
+        // Use the regular events endpoint with filters for active events
         const response = await API.get('/events', {
           params: {
             isActive: true,
-            limit: 5,
-            // Only get events from today onwards
-            startDate: new Date().toISOString(),
+            limit: 10, // Fetch more to filter client-side
           }
         });
-        return response.data.data || response.data.events || [];
+        const allEvents = response.data.data || response.data.events || [];
+
+        // Filter out past events client-side to ensure only future events are shown
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Start of today
+
+        const futureEvents = allEvents.filter((event: any) => {
+          if (!event.date) return false;
+          const eventDate = new Date(event.date);
+          return eventDate >= now;
+        });
+
+        // Sort by date ascending (nearest first)
+        futureEvents.sort((a: any, b: any) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+
+        return futureEvents;
       } catch (error) {
         console.error('Failed to fetch upcoming events:', error);
         // Return empty array on error to prevent breaking the UI
@@ -301,6 +387,21 @@ export default function AcademyOverviewPage(): React.JSX.Element {
     },
   });
   
+  // Fetch user profile to get accurate createdAt and other data
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile-overview'],
+    queryFn: async () => {
+      try {
+        const response = await API.get('/user/profile');
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        return null;
+      }
+    },
+    enabled: Boolean(user?._id),
+  });
+
   // Fetch available videos count (as a proxy for content)
   const { data: videoStats } = useQuery({
     queryKey: ['video-stats'],
@@ -314,19 +415,22 @@ export default function AcademyOverviewPage(): React.JSX.Element {
       };
     },
   });
-  
-  // Calculate real stats
-  const memberDays = user?.createdAt 
-    ? Math.floor((new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
-    : 0;
+
+  // Calculate real stats - use userProfile from API which has accurate createdAt
+  const createdAtDate = userProfile?.createdAt || user?.createdAt;
+  const memberDays = createdAtDate
+    ? Math.max(1, Math.floor((new Date().getTime() - new Date(createdAtDate).getTime()) / (1000 * 60 * 60 * 24)))
+    : 1; // Show at least 1 day if user exists
     
-  const activeSubscriptions = user?.subscriptions?.filter((sub: any) => {
+  // Use userProfile from API for most accurate subscription data
+  const allSubscriptions = userProfile?.subscriptions || user?.subscriptions || [];
+  const activeSubscriptions = allSubscriptions.filter((sub: any) => {
     if (typeof sub === 'string') return true;
     if (sub && typeof sub === 'object' && 'expiresAt' in sub) {
       return !sub.expiresAt || new Date(sub.expiresAt) > new Date();
     }
     return false;
-  }) || [];
+  });
   
   // Check user permissions and access
   const isSuperAdmin = user?.role === 'super_admin';
@@ -570,7 +674,7 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               value={memberDays}
               icon={<Trophy size={24} weight="bold" />}
               color={theme.palette.warning.main}
-              subtitle={user?.createdAt ? t('overview.since', { date: new Date(user.createdAt).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { month: 'short', year: 'numeric' }) }) : t('overview.newMember')}
+              subtitle={createdAtDate ? t('overview.since', { date: new Date(createdAtDate).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { month: 'short', year: 'numeric' }) }) : t('overview.newMember')}
             />
           </Grid>
         </Grid>
@@ -599,7 +703,11 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               p: 4,
               height: '100%',
               border: '1px solid',
-              borderColor: 'divider',
+              borderColor: isDarkMode ? alpha(theme.palette.primary.main, 0.15) : alpha(theme.palette.primary.main, 0.1),
+              borderRadius: 3,
+              background: isDarkMode
+                ? `linear-gradient(145deg, ${alpha(theme.palette.primary.main, 0.04)} 0%, transparent 100%)`
+                : `linear-gradient(145deg, ${alpha(theme.palette.primary.main, 0.02)} 0%, transparent 100%)`,
             }}
           >
             <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
@@ -675,7 +783,11 @@ export default function AcademyOverviewPage(): React.JSX.Element {
               p: 4,
               height: '100%',
               border: '1px solid',
-              borderColor: 'divider',
+              borderColor: isDarkMode ? alpha(theme.palette.info.main, 0.15) : alpha(theme.palette.info.main, 0.1),
+              borderRadius: 3,
+              background: isDarkMode
+                ? `linear-gradient(145deg, ${alpha(theme.palette.info.main, 0.04)} 0%, transparent 100%)`
+                : `linear-gradient(145deg, ${alpha(theme.palette.info.main, 0.02)} 0%, transparent 100%)`,
             }}
           >
             <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
@@ -756,9 +868,33 @@ export default function AcademyOverviewPage(): React.JSX.Element {
           textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.primary.dark, 0.1)} 100%)`,
+          borderRadius: 4,
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.primary.dark, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
           border: '1px solid',
-          borderColor: alpha(theme.palette.primary.main, 0.2),
+          borderColor: alpha(theme.palette.primary.main, isDarkMode ? 0.25 : 0.2),
+          boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, isDarkMode ? 0.15 : 0.08)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: -50,
+            right: -50,
+            width: '200px',
+            height: '200px',
+            background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 70%)`,
+            filter: 'blur(40px)',
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: -50,
+            left: -50,
+            width: '150px',
+            height: '150px',
+            background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 70%)`,
+            filter: 'blur(30px)',
+          },
         }}
       >
         <Stack spacing={3} alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>

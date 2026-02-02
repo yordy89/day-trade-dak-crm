@@ -1,0 +1,159 @@
+{
+  "tradingJournal": {
+    "title": "Trading Journal",
+    "subtitle": "Track, analyze, and improve your trading performance",
+    "buttons": {
+      "analytics": "Analytics",
+      "addTrade": "Add Trade"
+    },
+    "stats": {
+      "totalPnl": "Total P&L",
+      "trades": "trades",
+      "winRate": "Win Rate",
+      "winsLosses": "{{wins}}W / {{losses}}L",
+      "profitFactor": "Profit Factor",
+      "riskRewardRatio": "Risk/Reward Ratio",
+      "expectancy": "Expectancy",
+      "perTradeAvg": "Per Trade Average"
+    },
+    "recentTrades": {
+      "title": "Recent Trades",
+      "viewAll": "View All Trades",
+      "shown": "({{count}} shown)"
+    },
+    "filter": {
+      "title": "Filter trades",
+      "allTrades": "All Trades",
+      "winnersOnly": "Winners Only",
+      "losersOnly": "Losers Only",
+      "noWinning": "No winning trades found",
+      "noLosing": "No losing trades found",
+      "showAll": "Show all trades"
+    },
+    "export": {
+      "title": "Export to CSV",
+      "noTrades": "No trades to export",
+      "success": "Exported {{count}} trades to CSV",
+      "headers": {
+        "date": "Date",
+        "symbol": "Symbol",
+        "market": "Market",
+        "direction": "Direction",
+        "entryPrice": "Entry Price",
+        "exitPrice": "Exit Price",
+        "positionSize": "Position Size",
+        "netPnl": "Net P&L",
+        "rMultiple": "R-Multiple",
+        "strategy": "Strategy"
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load trading journal data"
+    },
+    "tradesList": {
+      "title": "My Trades",
+      "subtitle": "Manage and analyze your complete trading history",
+      "market": "Market",
+      "result": "Result",
+      "entry": "Entry",
+      "exit": "Exit",
+      "size": "Size",
+      "timeFilter": "Time Period",
+      "allMarkets": "All Markets",
+      "allDirections": "All Directions",
+      "allResults": "All Results",
+      "winners": "Winners",
+      "losers": "Losers",
+      "searchPlaceholder": "Search by symbol...",
+      "noTrades": "No trades yet",
+      "noTradesMessage": "Start tracking your trades to see analytics and improve your performance",
+      "addFirstTrade": "Add Your First Trade"
+    },
+    "fields": {
+      "date": "Date",
+      "symbol": "Symbol",
+      "direction": "Direction",
+      "entryTime": "Entry Time",
+      "exitTime": "Exit Time",
+      "entryPrice": "Entry Price",
+      "exitPrice": "Exit Price",
+      "positionSize": "Position Size",
+      "stopLoss": "Stop Loss",
+      "takeProfit": "Take Profit",
+      "riskAmount": "Risk Amount",
+      "riskPercentage": "Risk Percentage",
+      "rMultiple": "R-Multiple",
+      "pnl": "P&L",
+      "netPnl": "Net P&L",
+      "commission": "Commission",
+      "strategy": "Strategy",
+      "setup": "Setup",
+      "confidence": "Confidence",
+      "notes": "Notes"
+    },
+    "detail": {
+      "title": "Trade Details",
+      "tradeInfo": "Trade Information",
+      "riskManagement": "Risk Management",
+      "preTradeAnalysis": "Pre-Trade Analysis",
+      "postTradeNotes": "Post-Trade Notes",
+      "exitAnalysis": "Exit Analysis",
+      "exitReason": "Exit Reason",
+      "lessonsLearned": "Lessons Learned",
+      "wouldRepeat": "Would Repeat?",
+      "emotionalState": "Emotional State",
+      "beforeTrade": "Before Trade",
+      "duringTrade": "During Trade",
+      "afterTrade": "After Trade",
+      "tags": "Tags",
+      "strikePrice": "Strike Price",
+      "expiration": "Expiration",
+      "contracts": "contracts"
+    },
+    "analytics": {
+      "title": "Trading Analytics",
+      "subtitle": "Performance metrics and insights from your trading history",
+      "totalPnl": "Total P&L",
+      "totalTrades": "Total Trades",
+      "winRate": "Win Rate",
+      "profitFactor": "Profit Factor",
+      "expectancy": "Expectancy",
+      "avgHoldingTime": "Avg Holding Time",
+      "performanceByOptionType": "Performance by Option Type",
+      "performanceByMarket": "Performance by Market",
+      "bestTrades": "Best Trades",
+      "worstTrades": "Worst Trades"
+    },
+    "timeFilters": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisQuarter": "This Quarter",
+      "thisYear": "This Year",
+      "allTime": "All Time"
+    },
+    "actions": {
+      "addTrade": "Add New Trade",
+      "editTrade": "Edit Trade",
+      "deleteTrade": "Delete Trade",
+      "viewDetails": "View Details",
+      "export": "Export",
+      "exportReport": "Export Report"
+    },
+    "markets": {
+      "stocks": "Stocks",
+      "options": "Options",
+      "futures": "Futures",
+      "forex": "Forex",
+      "crypto": "Crypto"
+    },
+    "directions": {
+      "long": "Long",
+      "short": "Short"
+    },
+    "optionTypes": {
+      "call": "CALL",
+      "put": "PUT"
+    }
+  }
+}

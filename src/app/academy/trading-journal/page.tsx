@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
   Card,
+  Grid,
   Button,
   Stack,
   Chip,
@@ -13,37 +13,32 @@ import {
   Menu,
   MenuItem,
   Paper,
-  TextField,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
+  Divider,
   CircularProgress,
   Alert,
   useTheme,
   alpha,
-  Avatar,
-  Grid,
+  Tooltip,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   Plus,
-  MagnifyingGlass,
-  Download,
-  DotsThreeVertical,
   TrendUp,
   TrendDown,
+  DotsThreeVertical,
+  Download,
+  Funnel,
+  Calendar,
+  ChartLine,
+  Notebook,
+  Warning,
+  Check,
+  X,
+  CaretDown,
+  FileCsv,
   Eye,
   Trash,
-  ChartLine,
-  CaretUp,
-  CaretDown,
   CheckCircle,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
@@ -51,121 +46,61 @@ import { paths } from '@/paths';
 import { tradingJournalService } from '@/services/trading-journal.service';
 import {
   Trade,
+  TradeStatistics,
   TimeFilter,
   MarketType,
-  TradeDirection,
-  TradeResult,
-  TradeStatistics,
 } from '@/types/trading-journal';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/utils/format';
-import { useModuleAccess } from '@/hooks/use-module-access';
-import { ModuleType } from '@/types/module-permission';
-import { TradingJournalAccessDenied } from '@/components/trading-journal/access-denied';
+import toast from 'react-hot-toast';
 import { CloseTradeModal } from '@/components/trading-journal/close-trade-modal';
 
-type TradeStatus = 'all' | 'open' | 'pending_review' | 'reviewed';
-
-interface Filters {
-  search: string;
-  market: MarketType | 'all';
-  direction: TradeDirection | 'all';
-  timeFilter: TimeFilter;
-  isWinner: 'all' | 'winner' | 'loser';
-  status: TradeStatus;
-}
+type ResultFilter = 'all' | 'winners' | 'losers';
 
 export default function TradingJournalPage() {
-  const { t } = useTranslation('academy');
   const theme = useTheme();
   const router = useRouter();
-
-  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
+  const { t } = useTranslation('academy');
   const [loading, setLoading] = useState(true);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [statistics, setStatistics] = useState<TradeStatistics | null>(null);
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>(TimeFilter.MONTH);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
-  const [totalCount, setTotalCount] = useState(0);
-  const [sortBy, setSortBy] = useState<'tradeDate' | 'netPnl' | 'symbol'>('tradeDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // Filter menu state
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
+  const [resultFilter, setResultFilter] = useState<ResultFilter>('all');
+  const filterMenuOpen = Boolean(filterAnchorEl);
+
+  // Action menu state
+  const [actionAnchorEl, setActionAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+  const actionMenuOpen = Boolean(actionAnchorEl);
+
+  // Close trade modal state
   const [closeModalOpen, setCloseModalOpen] = useState(false);
   const [tradeToClose, setTradeToClose] = useState<Trade | null>(null);
-  const [filters, setFilters] = useState<Filters>({
-    search: '',
-    market: 'all',
-    direction: 'all',
-    timeFilter: TimeFilter.MONTH,
-    isWinner: 'all',
-    status: 'all',
-  });
-  const [exporting, setExporting] = useState(false);
 
-  // Check module access AFTER all useState hooks
-  const { hasAccess, loading: accessLoading } = useModuleAccess(ModuleType.TRADING_JOURNAL);
-
-  // useEffect MUST be before early returns
+  // Fetch data
   useEffect(() => {
-    if (hasAccess && !accessLoading) {
-      loadData();
-    }
-  }, [page, rowsPerPage, filters, sortBy, sortOrder, hasAccess, accessLoading]);
-
-  // Early returns for access control - AFTER all hooks
-  if (accessLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (!hasAccess) {
-    return <TradingJournalAccessDenied />;
-  }
+    loadData();
+  }, [timeFilter]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Build status filter params
-      const statusParams: { openOnly?: boolean; reviewedOnly?: boolean } = {};
-      if (filters.status === 'open') {
-        statusParams.openOnly = true;
-      } else if (filters.status === 'reviewed') {
-        statusParams.reviewedOnly = true;
-      } else if (filters.status === 'pending_review') {
-        statusParams.openOnly = false;
-        statusParams.reviewedOnly = false;
-      }
-
       const [tradesResponse, statsData] = await Promise.all([
-        tradingJournalService.getTrades({
-          timeFilter: filters.timeFilter,
-          limit: rowsPerPage,
-          page: page + 1,
-          symbol: filters.search || undefined,
-          market: filters.market !== 'all' ? filters.market : undefined,
-          direction: filters.direction !== 'all' ? filters.direction : undefined,
-          result: filters.isWinner !== 'all'
-            ? filters.isWinner === 'winner' ? TradeResult.WINNERS : TradeResult.LOSERS
-            : undefined,
-          ...statusParams,
-          sortBy,
-          sortOrder,
-        }),
-        tradingJournalService.getStatistics({ timeFilter: filters.timeFilter }),
+        tradingJournalService.getTrades({ timeFilter, limit: 10 }),
+        tradingJournalService.getStatistics({ timeFilter }),
       ]);
 
       setTrades(tradesResponse.trades);
-      setTotalCount(tradesResponse.total);
       setStatistics(statsData);
     } catch (err) {
-      console.error('Failed to load trades:', err);
-      setError(t('tradingJournal.tradesList.loadFailed'));
+      console.error('Failed to load trading journal data:', err);
+      setError(t('tradingJournal.errors.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -179,14 +114,51 @@ export default function TradingJournalPage() {
     router.push(paths.academy.tradingJournal.analytics);
   };
 
+  const getMarketChip = (market: MarketType) => {
+    const colors = {
+      [MarketType.STOCKS]: 'primary',
+      [MarketType.OPTIONS]: 'secondary',
+      [MarketType.FUTURES]: 'warning',
+      [MarketType.FOREX]: 'info',
+      [MarketType.CRYPTO]: 'success',
+    };
+    return <Chip label={market} size="small" color={colors[market] as any} />;
+  };
+
+  // Filter handlers
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
+    setFilterAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setFilterAnchorEl(null);
+  };
+
+  const handleResultFilterChange = (filter: ResultFilter) => {
+    setResultFilter(filter);
+    handleFilterClose();
+  };
+
+  // Action menu handlers
+  const handleActionMenuOpen = (event: React.MouseEvent<HTMLElement>, trade: Trade) => {
+    event.stopPropagation();
+    setActionAnchorEl(event.currentTarget);
+    setSelectedTrade(trade);
+  };
+
+  const handleActionMenuClose = () => {
+    setActionAnchorEl(null);
+    setSelectedTrade(null);
+  };
+
   const handleViewTrade = (tradeId: string) => {
-    router.push(`/academy/trading-journal/${tradeId}`);
+    router.push(`${paths.academy.tradingJournal.trades}/${tradeId}`);
   };
 
   const handleCloseTrade = (trade: Trade) => {
     setTradeToClose(trade);
     setCloseModalOpen(true);
-    handleMenuClose();
+    handleActionMenuClose();
   };
 
   const handleCloseSuccess = () => {
@@ -200,82 +172,75 @@ export default function TradingJournalPage() {
 
     try {
       await tradingJournalService.deleteTrade(tradeId);
+      toast.success(t('tradingJournal.tradesList.deleteSuccess'));
       loadData();
     } catch (err) {
       console.error('Failed to delete trade:', err);
-      alert(t('tradingJournal.tradesList.deleteFailed'));
+      toast.error(t('tradingJournal.tradesList.deleteFailed'));
     }
+    handleActionMenuClose();
   };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, trade: Trade) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedTrade(trade);
-  };
+  // Get filtered trades
+  const filteredTrades = trades.filter(trade => {
+    if (resultFilter === 'all') return true;
+    if (resultFilter === 'winners') return trade.netPnl >= 0;
+    if (resultFilter === 'losers') return trade.netPnl < 0;
+    return true;
+  });
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedTrade(null);
-  };
-
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleSort = (field: 'tradeDate' | 'netPnl' | 'symbol') => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('desc');
+  // Export to CSV
+  const handleExportCSV = () => {
+    if (trades.length === 0) {
+      toast.error(t('tradingJournal.export.noTrades'));
+      return;
     }
+
+    const headers = [
+      t('tradingJournal.export.headers.date'),
+      t('tradingJournal.export.headers.symbol'),
+      t('tradingJournal.export.headers.market'),
+      t('tradingJournal.export.headers.direction'),
+      t('tradingJournal.export.headers.entryPrice'),
+      t('tradingJournal.export.headers.exitPrice'),
+      t('tradingJournal.export.headers.positionSize'),
+      t('tradingJournal.export.headers.netPnl'),
+      t('tradingJournal.export.headers.rMultiple'),
+      t('tradingJournal.export.headers.strategy'),
+    ];
+    const csvData = filteredTrades.map(trade => [
+      new Date(trade.tradeDate).toLocaleDateString(),
+      trade.symbol,
+      trade.market,
+      trade.direction,
+      trade.entryPrice,
+      trade.exitPrice || '',
+      trade.positionSize,
+      trade.netPnl,
+      trade.rMultiple?.toFixed(2) || '',
+      trade.strategy || '',
+    ]);
+
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `trading-journal-${timeFilter}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+
+    toast.success(t('tradingJournal.export.success', { count: filteredTrades.length }));
   };
 
-  const handleExport = async () => {
-    try {
-      setExporting(true);
-      const blob = await tradingJournalService.exportTrades({
-        timeFilter: filters.timeFilter,
-        symbol: filters.search || undefined,
-        market: filters.market !== 'all' ? filters.market : undefined,
-        direction: filters.direction !== 'all' ? filters.direction : undefined,
-        result: filters.isWinner !== 'all'
-          ? filters.isWinner === 'winner' ? TradeResult.WINNERS : TradeResult.LOSERS
-          : undefined,
-      });
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `trades_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Failed to export trades:', err);
-      alert(t('tradingJournal.tradesList.exportFailed'));
-    } finally {
-      setExporting(false);
-    }
+  // Helper to get performance color
+  const getPerformanceColor = (value: number) => {
+    return value >= 0 ? theme.palette.success.main : theme.palette.error.main;
   };
 
-  const getMarketColor = (market: MarketType) => {
-    const colors = {
-      [MarketType.STOCKS]: theme.palette.primary.main,
-      [MarketType.OPTIONS]: theme.palette.secondary.main,
-      [MarketType.FUTURES]: theme.palette.warning.main,
-      [MarketType.FOREX]: theme.palette.info.main,
-      [MarketType.CRYPTO]: theme.palette.success.main,
-    };
-    return colors[market];
-  };
-
-  if (loading && trades.length === 0) {
+  if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
         <CircularProgress />
@@ -283,16 +248,24 @@ export default function TradingJournalPage() {
     );
   }
 
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
+    );
+  }
+
   return (
-    <Box sx={{ p: 3 }}>
+    <Box>
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
           <Typography variant="h4" fontWeight={600} mb={1}>
-            {t('tradingJournal.tradesList.title')}
+            {t('tradingJournal.title')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            {t('tradingJournal.tradesList.subtitle')}
+            {t('tradingJournal.subtitle')}
           </Typography>
         </Box>
         <Stack direction="row" spacing={2}>
@@ -301,44 +274,96 @@ export default function TradingJournalPage() {
             startIcon={<ChartLine />}
             onClick={handleViewAnalytics}
           >
-            {t('tradingJournal.analytics.title')}
+            {t('tradingJournal.buttons.analytics')}
           </Button>
           <Button
             variant="contained"
             startIcon={<Plus />}
             onClick={handleAddTrade}
           >
-            {t('tradingJournal.addTrade')}
+            {t('tradingJournal.buttons.addTrade')}
           </Button>
         </Stack>
       </Stack>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} mb={3}>
+      <Grid container spacing={3} mb={4}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 3 }}>
-            <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary">
-                {t('tradingJournal.stats.totalPnl')}
-              </Typography>
-              <Typography
-                variant="h5"
-                fontWeight={600}
-                color={(statistics?.totalPnl || 0) >= 0 ? 'success.main' : 'error.main'}
+          {(() => {
+            const pnlValue = statistics?.totalPnl || 0;
+            const isPositive = pnlValue >= 0;
+            const performanceColor = isPositive ? theme.palette.success.main : theme.palette.error.main;
+            return (
+              <Card
+                sx={{
+                  p: 3,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: theme.palette.mode === 'dark'
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(performanceColor, 0.12)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(performanceColor, 0.08)} 100%)`,
+                  border: `1px solid ${alpha(performanceColor, 0.3)}`,
+                  boxShadow: `0 4px 20px ${alpha(performanceColor, 0.15)}`,
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: performanceColor,
+                  },
+                }}
               >
-                {formatCurrency(statistics?.totalPnl || 0)}
-              </Typography>
-              <Chip
-                label={t('tradingJournal.stats.tradesCount', { count: statistics?.totalTrades || 0 })}
-                size="small"
-                variant="outlined"
-              />
-            </Stack>
-          </Card>
+                <Stack spacing={1}>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('tradingJournal.stats.totalPnl')}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    fontWeight={600}
+                    color={isPositive ? 'success.main' : 'error.main'}
+                  >
+                    {formatCurrency(pnlValue)}
+                  </Typography>
+                  <Chip
+                    label={`${statistics?.totalTrades || 0} ${t('tradingJournal.stats.trades')}`}
+                    size="small"
+                    sx={{
+                      bgcolor: alpha(performanceColor, 0.15),
+                      color: performanceColor,
+                      border: 'none',
+                      fontWeight: 500,
+                    }}
+                  />
+                </Stack>
+              </Card>
+            );
+          })()}
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 3 }}>
+          <Card
+            sx={{
+              p: 3,
+              position: 'relative',
+              overflow: 'hidden',
+              background: theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.1)}`,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+            }}
+          >
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
                 {t('tradingJournal.stats.winRate')}
@@ -347,14 +372,34 @@ export default function TradingJournalPage() {
                 {statistics?.winRate?.toFixed(1) || 0}%
               </Typography>
               <Typography variant="caption">
-                {statistics?.winners || 0}W / {statistics?.losers || 0}L
+                {t('tradingJournal.stats.winsLosses', { wins: statistics?.winners || 0, losses: statistics?.losers || 0 })}
               </Typography>
             </Stack>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 3 }}>
+          <Card
+            sx={{
+              p: 3,
+              position: 'relative',
+              overflow: 'hidden',
+              background: theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.1)}`,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+            }}
+          >
             <Stack spacing={1}>
               <Typography variant="caption" color="text.secondary">
                 {t('tradingJournal.stats.profitFactor')}
@@ -362,373 +407,583 @@ export default function TradingJournalPage() {
               <Typography variant="h5" fontWeight={600}>
                 {statistics?.profitFactor?.toFixed(2) || 0}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t('tradingJournal.stats.riskReward')}
+              <Typography variant="caption">
+                {t('tradingJournal.stats.riskRewardRatio')}
               </Typography>
             </Stack>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 3 }}>
-            <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary">
-                {t('tradingJournal.stats.expectancy')}
-              </Typography>
-              <Typography
-                variant="h5"
-                fontWeight={600}
-                color={(statistics?.expectancy || 0) >= 0 ? 'success.main' : 'error.main'}
+          {(() => {
+            const expectancyValue = statistics?.expectancy || 0;
+            const isPositive = expectancyValue >= 0;
+            const performanceColor = isPositive ? theme.palette.success.main : theme.palette.error.main;
+            return (
+              <Card
+                sx={{
+                  p: 3,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: theme.palette.mode === 'dark'
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(performanceColor, 0.12)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(performanceColor, 0.08)} 100%)`,
+                  border: `1px solid ${alpha(performanceColor, 0.3)}`,
+                  boxShadow: `0 4px 20px ${alpha(performanceColor, 0.15)}`,
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: performanceColor,
+                  },
+                }}
               >
-                {formatCurrency(statistics?.expectancy || 0)}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t('tradingJournal.stats.perTradeAvg')}
-              </Typography>
-            </Stack>
-          </Card>
+                <Stack spacing={1}>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('tradingJournal.stats.expectancy')}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    fontWeight={600}
+                    color={isPositive ? 'success.main' : 'error.main'}
+                  >
+                    {formatCurrency(expectancyValue)}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t('tradingJournal.stats.perTradeAvg')}
+                  </Typography>
+                </Stack>
+              </Card>
+            );
+          })()}
         </Grid>
       </Grid>
 
-      {/* Filters Bar */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-          <TextField
-            placeholder={t('tradingJournal.tradesList.searchPlaceholder')}
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <MagnifyingGlass />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 200 }}
-          />
-
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>{t('tradingJournal.tradesList.market')}</InputLabel>
-            <Select
-              value={filters.market}
-              onChange={(e) => setFilters({ ...filters, market: e.target.value as any })}
-              label={t('tradingJournal.tradesList.market')}
+      {/* Time Filter Buttons */}
+      <Paper
+        sx={{
+          mb: 3,
+          p: 1.5,
+          position: 'relative',
+          overflow: 'hidden',
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.06)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+          boxShadow: `0 2px 12px ${alpha(theme.palette.primary.main, 0.06)}`,
+        }}
+      >
+        <Stack direction="row" spacing={1} sx={{ overflowX: 'auto' }}>
+          {[
+            { label: t('tradingJournal.timeFilters.today'), value: TimeFilter.TODAY },
+            { label: t('tradingJournal.timeFilters.thisWeek'), value: TimeFilter.WEEK },
+            { label: t('tradingJournal.timeFilters.thisMonth'), value: TimeFilter.MONTH },
+            { label: t('tradingJournal.timeFilters.thisQuarter'), value: TimeFilter.QUARTER },
+            { label: t('tradingJournal.timeFilters.thisYear'), value: TimeFilter.YEAR },
+            { label: t('tradingJournal.timeFilters.allTime'), value: TimeFilter.ALL },
+          ].map((filter, index) => (
+            <Button
+              key={filter.value}
+              variant={timeFilter === filter.value ? 'contained' : 'outlined'}
+              size="small"
+              onClick={() => {
+                setTimeFilter(filter.value);
+              }}
+              sx={{
+                minWidth: 100,
+                whiteSpace: 'nowrap'
+              }}
             >
-              <MenuItem value="all">{t('tradingJournal.tradesList.allMarkets')}</MenuItem>
-              <MenuItem value={MarketType.STOCKS}>{t('tradingJournal.markets.stocks')}</MenuItem>
-              <MenuItem value={MarketType.OPTIONS}>{t('tradingJournal.markets.options')}</MenuItem>
-              <MenuItem value={MarketType.FUTURES}>{t('tradingJournal.markets.futures')}</MenuItem>
-              <MenuItem value={MarketType.FOREX}>{t('tradingJournal.markets.forex')}</MenuItem>
-              <MenuItem value={MarketType.CRYPTO}>{t('tradingJournal.markets.crypto')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 140 }}>
-            <InputLabel>{t('tradingJournal.tradesList.direction')}</InputLabel>
-            <Select
-              value={filters.direction}
-              onChange={(e) => setFilters({ ...filters, direction: e.target.value as any })}
-              label={t('tradingJournal.tradesList.direction')}
-            >
-              <MenuItem value="all">{t('tradingJournal.tradesList.allDirections')}</MenuItem>
-              <MenuItem value={TradeDirection.LONG}>{t('tradingJournal.directions.longCall')}</MenuItem>
-              <MenuItem value={TradeDirection.SHORT}>{t('tradingJournal.directions.shortPut')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>{t('tradingJournal.tradesList.result')}</InputLabel>
-            <Select
-              value={filters.isWinner}
-              onChange={(e) => setFilters({ ...filters, isWinner: e.target.value as any })}
-              label={t('tradingJournal.tradesList.result')}
-            >
-              <MenuItem value="all">{t('tradingJournal.tradesList.allResults')}</MenuItem>
-              <MenuItem value="winner">{t('tradingJournal.tradesList.winners')}</MenuItem>
-              <MenuItem value="loser">{t('tradingJournal.tradesList.losers')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>{t('tradingJournal.tradesList.status')}</InputLabel>
-            <Select
-              value={filters.status}
-              onChange={(e) => setFilters({ ...filters, status: e.target.value as TradeStatus })}
-              label={t('tradingJournal.tradesList.status')}
-            >
-              <MenuItem value="all">{t('tradingJournal.status.allStatus')}</MenuItem>
-              <MenuItem value="open">{t('tradingJournal.status.open')}</MenuItem>
-              <MenuItem value="pending_review">{t('tradingJournal.status.pendingReview')}</MenuItem>
-              <MenuItem value="reviewed">{t('tradingJournal.status.reviewed')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 140 }}>
-            <InputLabel>{t('tradingJournal.tradesList.timePeriod')}</InputLabel>
-            <Select
-              value={filters.timeFilter}
-              onChange={(e) => setFilters({ ...filters, timeFilter: e.target.value as TimeFilter })}
-              label={t('tradingJournal.tradesList.timePeriod')}
-            >
-              <MenuItem value={TimeFilter.TODAY}>{t('tradingJournal.tradesList.today')}</MenuItem>
-              <MenuItem value={TimeFilter.WEEK}>{t('tradingJournal.tradesList.thisWeek')}</MenuItem>
-              <MenuItem value={TimeFilter.MONTH}>{t('tradingJournal.tradesList.thisMonth')}</MenuItem>
-              <MenuItem value={TimeFilter.QUARTER}>{t('tradingJournal.tradesList.quarter')}</MenuItem>
-              <MenuItem value={TimeFilter.YEAR}>{t('tradingJournal.tradesList.thisYear')}</MenuItem>
-              <MenuItem value={TimeFilter.ALL}>{t('tradingJournal.tradesList.allTime')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="outlined"
-            startIcon={exporting ? <CircularProgress size={16} /> : <Download />}
-            onClick={handleExport}
-            disabled={exporting}
-            sx={{ ml: 'auto' }}
-          >
-            {exporting ? t('tradingJournal.tradesList.exporting') : t('tradingJournal.tradesList.export')}
-          </Button>
+              {filter.label}
+            </Button>
+          ))}
         </Stack>
       </Paper>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      {/* Trades Table */}
-      <Card>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Button
-                    size="small"
-                    onClick={() => handleSort('tradeDate')}
-                    endIcon={
-                      sortBy === 'tradeDate' ? (
-                        sortOrder === 'asc' ? <CaretUp /> : <CaretDown />
-                      ) : null
-                    }
-                  >
-                    {t('tradingJournal.tradesList.date')}
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    size="small"
-                    onClick={() => handleSort('symbol')}
-                    endIcon={
-                      sortBy === 'symbol' ? (
-                        sortOrder === 'asc' ? <CaretUp /> : <CaretDown />
-                      ) : null
-                    }
-                  >
-                    {t('tradingJournal.tradesList.symbol')}
-                  </Button>
-                </TableCell>
-                <TableCell>{t('tradingJournal.tradesList.market')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.direction')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.entry')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.exit')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.size')}</TableCell>
-                <TableCell>
-                  <Button
-                    size="small"
-                    onClick={() => handleSort('netPnl')}
-                    endIcon={
-                      sortBy === 'netPnl' ? (
-                        sortOrder === 'asc' ? <CaretUp /> : <CaretDown />
-                      ) : null
-                    }
-                  >
-                    {t('tradingJournal.tradesList.pnl')}
-                  </Button>
-                </TableCell>
-                <TableCell>{t('tradingJournal.tradesList.rMultiple')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.status')}</TableCell>
-                <TableCell>{t('tradingJournal.tradesList.setup')}</TableCell>
-                <TableCell align="right">{t('tradingJournal.tradesList.actions')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {trades.map((trade) => (
-                <TableRow
-                  key={trade._id}
-                  hover
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => handleViewTrade(trade._id)}
+      {/* Recent Trades List */}
+      <Card
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.06)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+          boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+          },
+        }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Typography variant="h6" fontWeight={600}>
+                {t('tradingJournal.recentTrades.title')}
+              </Typography>
+              {resultFilter !== 'all' && (
+                <Chip
+                  label={resultFilter === 'winners' ? t('tradingJournal.filter.winnersOnly') : t('tradingJournal.filter.losersOnly')}
+                  size="small"
+                  color={resultFilter === 'winners' ? 'success' : 'error'}
+                  onDelete={() => setResultFilter('all')}
+                />
+              )}
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <Tooltip title={t('tradingJournal.filter.title')}>
+                <IconButton
+                  size="small"
+                  onClick={handleFilterClick}
+                  sx={{
+                    color: resultFilter !== 'all' ? (resultFilter === 'winners' ? 'success.main' : 'error.main') : 'primary.main',
+                    bgcolor: resultFilter !== 'all'
+                      ? alpha(resultFilter === 'winners' ? theme.palette.success.main : theme.palette.error.main, 0.1)
+                      : alpha(theme.palette.primary.main, 0.1),
+                    '&:hover': {
+                      bgcolor: resultFilter !== 'all'
+                        ? alpha(resultFilter === 'winners' ? theme.palette.success.main : theme.palette.error.main, 0.2)
+                        : alpha(theme.palette.primary.main, 0.2),
+                    },
+                  }}
                 >
-                  <TableCell>
-                    {new Date(trade.tradeDate).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          bgcolor: trade.isWinner
-                            ? alpha(theme.palette.success.main, 0.1)
-                            : alpha(theme.palette.error.main, 0.1),
-                        }}
-                      >
-                        {trade.isWinner ? (
-                          <TrendUp size={18} color={theme.palette.success.main} />
-                        ) : (
-                          <TrendDown size={18} color={theme.palette.error.main} />
-                        )}
-                      </Avatar>
-                      <Typography fontWeight={600}>{trade.symbol}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={trade.market}
-                      size="small"
-                      sx={{
-                        bgcolor: alpha(getMarketColor(trade.market), 0.1),
-                        color: getMarketColor(trade.market),
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={
-                        trade.market === MarketType.OPTIONS
-                          ? (trade.optionType?.toUpperCase() || 'OPTION')
-                          : trade.direction
-                      }
-                      size="small"
-                      variant="outlined"
-                      color={
-                        trade.market === MarketType.OPTIONS
-                          ? (trade.optionType === 'call' ? 'success' : 'error')
-                          : (trade.direction === TradeDirection.LONG ? 'success' : 'error')
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>{formatCurrency(trade.entryPrice)}</TableCell>
-                  <TableCell>
-                    {trade.exitPrice ? formatCurrency(trade.exitPrice) : '-'}
-                  </TableCell>
-                  <TableCell>{trade.positionSize}</TableCell>
-                  <TableCell>
-                    {trade.isOpen ? (
-                      <Chip label={t('tradingJournal.status.open')} size="small" color="info" variant="outlined" />
-                    ) : (
-                      <Typography
-                        fontWeight={600}
-                        color={(trade.netPnl || 0) >= 0 ? 'success.main' : 'error.main'}
-                      >
-                        {formatCurrency(trade.netPnl || 0)}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {trade.isOpen ? (
-                      <Typography variant="body2" color="text.secondary">
-                        -
-                      </Typography>
-                    ) : (
-                      <Typography
-                        color={(trade.rMultiple || 0) >= 0 ? 'success.main' : 'error.main'}
-                      >
-                        {trade.rMultiple?.toFixed(2) || '0.00'}R
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {trade.isOpen ? (
-                      <Chip
-                        label={t('tradingJournal.status.open')}
-                        size="small"
-                        color="info"
-                        variant="outlined"
-                      />
-                    ) : trade.isReviewed ? (
-                      <Chip
-                        label={t('tradingJournal.status.reviewed')}
-                        size="small"
-                        color="success"
-                        variant="filled"
-                        icon={<CheckCircle size={14} />}
-                      />
-                    ) : (
-                      <Chip
-                        label={t('tradingJournal.status.pendingReview')}
-                        size="small"
-                        color="warning"
-                        variant="outlined"
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell>{trade.setup}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMenuOpen(e, trade);
-                      }}
-                    >
-                      <DotsThreeVertical />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  <Funnel />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={t('tradingJournal.export.title')}>
+                <IconButton
+                  size="small"
+                  onClick={handleExportCSV}
+                  sx={{
+                    color: 'primary.main',
+                    bgcolor: alpha(theme.palette.primary.main, 0.1),
+                    '&:hover': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.2),
+                    },
+                  }}
+                >
+                  <Download />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Stack>
 
-        <TablePagination
-          component="div"
-          count={totalCount}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[10, 25, 50, 100]}
-        />
+          {/* Filter Menu */}
+          <Menu
+            anchorEl={filterAnchorEl}
+            open={filterMenuOpen}
+            onClose={handleFilterClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem
+              onClick={() => handleResultFilterChange('all')}
+              selected={resultFilter === 'all'}
+            >
+              <ListItemIcon>
+                {resultFilter === 'all' && <Check size={18} />}
+              </ListItemIcon>
+              <ListItemText>{t('tradingJournal.filter.allTrades')}</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleResultFilterChange('winners')}
+              selected={resultFilter === 'winners'}
+              sx={{ color: 'success.main' }}
+            >
+              <ListItemIcon>
+                {resultFilter === 'winners' ? <Check size={18} color={theme.palette.success.main} /> : <TrendUp size={18} color={theme.palette.success.main} />}
+              </ListItemIcon>
+              <ListItemText>{t('tradingJournal.filter.winnersOnly')}</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleResultFilterChange('losers')}
+              selected={resultFilter === 'losers'}
+              sx={{ color: 'error.main' }}
+            >
+              <ListItemIcon>
+                {resultFilter === 'losers' ? <Check size={18} color={theme.palette.error.main} /> : <TrendDown size={18} color={theme.palette.error.main} />}
+              </ListItemIcon>
+              <ListItemText>{t('tradingJournal.filter.losersOnly')}</ListItemText>
+            </MenuItem>
+          </Menu>
+
+          {trades.length === 0 ? (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <Notebook size={48} color={theme.palette.text.disabled} />
+              <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                {t('tradingJournal.tradesList.noTrades')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                {t('tradingJournal.tradesList.noTradesMessage')}
+              </Typography>
+              <Button variant="contained" startIcon={<Plus />} onClick={handleAddTrade}>
+                {t('tradingJournal.tradesList.addFirstTrade')}
+              </Button>
+            </Box>
+          ) : (
+            <Stack spacing={2}>
+              {filteredTrades.map((trade) => {
+                const isOpen = trade.isOpen;
+                const isWinner = !isOpen && (trade.netPnl || 0) >= 0;
+                const performanceColor = isOpen
+                  ? theme.palette.info.main
+                  : (isWinner ? theme.palette.success.main : theme.palette.error.main);
+                return (
+                  <Paper
+                    key={trade._id}
+                    sx={{
+                      p: 2.5,
+                      background: theme.palette.mode === 'dark'
+                        ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(performanceColor, 0.1)} 100%)`
+                        : `linear-gradient(135deg, ${alpha('#ffffff', 0.95)} 0%, ${alpha(performanceColor, 0.06)} 100%)`,
+                      border: `1px solid ${alpha(performanceColor, 0.25)}`,
+                      borderLeft: `4px solid ${performanceColor}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        bgcolor: alpha(performanceColor, 0.1),
+                        border: `1px solid ${alpha(performanceColor, 0.4)}`,
+                        borderLeft: `4px solid ${performanceColor}`,
+                        transform: 'translateX(4px)',
+                      },
+                    }}
+                    onClick={() => router.push(`${paths.academy.tradingJournal.trades}/${trade._id}`)}
+                  >
+                    {/* Top Row: Symbol, chips, and actions */}
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Box
+                          sx={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 1,
+                            bgcolor: alpha(performanceColor, 0.15),
+                            border: `1px solid ${alpha(performanceColor, 0.3)}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {isOpen ? (
+                            <ChartLine size={22} color={performanceColor} />
+                          ) : isWinner ? (
+                            <TrendUp size={22} color={performanceColor} />
+                          ) : (
+                            <TrendDown size={22} color={performanceColor} />
+                          )}
+                        </Box>
+                        <Box>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Typography variant="h6" fontWeight={700}>
+                              {trade.symbol}
+                            </Typography>
+                            {getMarketChip(trade.market)}
+                            <Chip
+                              label={trade.direction}
+                              size="small"
+                              variant="outlined"
+                              color={trade.direction === 'long' ? 'success' : 'error'}
+                            />
+                            {isOpen ? (
+                              <Chip
+                                label={t('tradingJournal.status.open')}
+                                size="small"
+                                color="info"
+                                variant="filled"
+                              />
+                            ) : trade.isReviewed ? (
+                              <Chip
+                                label={t('tradingJournal.status.reviewed')}
+                                size="small"
+                                color="success"
+                                variant="outlined"
+                                icon={<CheckCircle size={14} />}
+                              />
+                            ) : (
+                              <Chip
+                                label={t('tradingJournal.status.pendingReview')}
+                                size="small"
+                                color="warning"
+                                variant="outlined"
+                              />
+                            )}
+                          </Stack>
+                          <Typography variant="body2" color="text.secondary" mt={0.5}>
+                            {new Date(trade.tradeDate).toLocaleDateString()} • {trade.strategy || trade.setup || '-'}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        {isOpen && (
+                          <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<CheckCircle size={16} />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCloseTrade(trade);
+                            }}
+                            sx={{
+                              bgcolor: theme.palette.primary.main,
+                              '&:hover': {
+                                bgcolor: theme.palette.primary.dark,
+                              },
+                            }}
+                          >
+                            {t('tradingJournal.tradesList.closePosition')}
+                          </Button>
+                        )}
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleActionMenuOpen(e, trade)}
+                          sx={{
+                            color: 'text.secondary',
+                            '&:hover': {
+                              bgcolor: alpha(performanceColor, 0.1),
+                              color: performanceColor,
+                            },
+                          }}
+                        >
+                          <DotsThreeVertical size={20} />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
+
+                    {/* Bottom Row: Trade details grid */}
+                    <Grid container spacing={2}>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('tradingJournal.tradesList.entry')}
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600}>
+                          {formatCurrency(trade.entryPrice)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('tradingJournal.tradesList.exit')}
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600}>
+                          {trade.exitPrice ? formatCurrency(trade.exitPrice) : '-'}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('tradingJournal.tradesList.size')}
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600}>
+                          {trade.positionSize}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          P&L
+                        </Typography>
+                        {isOpen ? (
+                          <Typography variant="body2" fontWeight={600} color="info.main">
+                            -
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            fontWeight={700}
+                            color={isWinner ? 'success.main' : 'error.main'}
+                          >
+                            {formatCurrency(trade.netPnl || 0)}
+                          </Typography>
+                        )}
+                      </Grid>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          R-Multiple
+                        </Typography>
+                        {isOpen ? (
+                          <Typography variant="body2" fontWeight={600} color="info.main">
+                            -
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            color={(trade.rMultiple || 0) >= 0 ? 'success.main' : 'error.main'}
+                          >
+                            {trade.rMultiple?.toFixed(2) || '0.00'}R
+                          </Typography>
+                        )}
+                      </Grid>
+                      <Grid item xs={6} sm={2}>
+                        <Typography variant="caption" color="text.secondary">
+                          Setup
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600} noWrap>
+                          {trade.setup || '-'}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                );
+              })}
+            </Stack>
+          )}
+
+          {filteredTrades.length > 0 && (
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <Button variant="text" onClick={() => router.push(paths.academy.tradingJournal.trades)}>
+                {t('tradingJournal.recentTrades.viewAll')} {resultFilter !== 'all' && t('tradingJournal.recentTrades.shown', { count: filteredTrades.length })}
+              </Button>
+            </Box>
+          )}
+
+          {trades.length > 0 && filteredTrades.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <Typography variant="body1" color="text.secondary">
+                {resultFilter === 'winners' ? t('tradingJournal.filter.noWinning') : t('tradingJournal.filter.noLosing')}
+              </Typography>
+              <Button
+                variant="text"
+                onClick={() => setResultFilter('all')}
+                sx={{ mt: 1 }}
+              >
+                {t('tradingJournal.filter.showAll')}
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Card>
 
       {/* Action Menu */}
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+        anchorEl={actionAnchorEl}
+        open={actionMenuOpen}
+        onClose={handleActionMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        PaperProps={{
+          elevation: 12,
+          sx: {
+            mt: 1,
+            minWidth: 180,
+            borderRadius: 3,
+            border: `1px solid ${alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.25 : 0.15)}`,
+            background: theme.palette.mode === 'dark'
+              ? `linear-gradient(180deg, ${alpha('#1a1a1a', 0.98)} 0%, ${alpha('#0f0f0f', 0.99)} 100%)`
+              : `linear-gradient(180deg, #ffffff 0%, ${alpha('#f8fafc', 0.98)} 100%)`,
+            overflow: 'hidden',
+            boxShadow: theme.palette.mode === 'dark'
+              ? `0 12px 40px ${alpha('#000', 0.5)}, 0 0 0 1px ${alpha(theme.palette.primary.main, 0.1)}`
+              : `0 12px 40px ${alpha('#000', 0.12)}`,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+            },
+          },
+        }}
       >
         <MenuItem
           onClick={() => {
             if (selectedTrade) handleViewTrade(selectedTrade._id);
-            handleMenuClose();
+            handleActionMenuClose();
+          }}
+          sx={{
+            py: 1.5,
+            px: 2,
+            mx: 1,
+            my: 0.5,
+            borderRadius: 2,
+            transition: 'all 0.2s ease',
+            '&:first-of-type': { mt: 1 },
+            '&:hover': {
+              bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.08),
+            },
           }}
         >
-          <Eye size={18} />
-          <Box ml={1}>{t('tradingJournal.tradesList.viewDetails')}</Box>
+          <ListItemIcon sx={{ minWidth: 36 }}>
+            <Eye size={18} color={theme.palette.primary.main} />
+          </ListItemIcon>
+          <ListItemText
+            primary={t('tradingJournal.tradesList.viewDetails')}
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
         </MenuItem>
         {selectedTrade?.isOpen && (
           <MenuItem
             onClick={() => {
               if (selectedTrade) handleCloseTrade(selectedTrade);
             }}
-            sx={{ color: 'primary.main' }}
+            sx={{
+              py: 1.5,
+              px: 2,
+              mx: 1,
+              my: 0.5,
+              borderRadius: 2,
+              transition: 'all 0.2s ease',
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              '&:hover': {
+                bgcolor: alpha(theme.palette.primary.main, 0.15),
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+              },
+            }}
           >
-            <CheckCircle size={18} />
-            <Box ml={1}>{t('tradingJournal.tradesList.closePosition')}</Box>
+            <ListItemIcon sx={{ minWidth: 36 }}>
+              <CheckCircle size={18} color={theme.palette.primary.main} weight="fill" />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('tradingJournal.tradesList.closePosition')}
+              primaryTypographyProps={{ fontWeight: 600, color: 'primary.main' }}
+            />
           </MenuItem>
         )}
         <MenuItem
           onClick={() => {
             if (selectedTrade) handleDeleteTrade(selectedTrade._id);
-            handleMenuClose();
           }}
-          sx={{ color: 'error.main' }}
+          sx={{
+            py: 1.5,
+            px: 2,
+            mx: 1,
+            my: 0.5,
+            borderRadius: 2,
+            transition: 'all 0.2s ease',
+            '&:last-of-type': { mb: 1 },
+            '&:hover': {
+              bgcolor: alpha(theme.palette.error.main, 0.1),
+            },
+          }}
         >
-          <Trash size={18} />
-          <Box ml={1}>{t('tradingJournal.tradesList.delete')}</Box>
+          <ListItemIcon sx={{ minWidth: 36 }}>
+            <Trash size={18} color={theme.palette.error.main} />
+          </ListItemIcon>
+          <ListItemText
+            primary={t('tradingJournal.tradesList.delete')}
+            primaryTypographyProps={{ fontWeight: 500, color: 'error.main' }}
+          />
         </MenuItem>
       </Menu>
 

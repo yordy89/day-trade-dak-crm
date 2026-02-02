@@ -8,6 +8,7 @@ import {
   Select,
   MenuItem,
   useTheme,
+  alpha,
 } from '@mui/material';
 
 interface CustomInputProps {
@@ -131,6 +132,76 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               '& .MuiSelect-icon': {
                 color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                 right: 12,
+              },
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  mt: 1,
+                  borderRadius: 2,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                  boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.15)}`,
+                  background: isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                  backdropFilter: 'blur(10px)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                  },
+                  '& .MuiMenuItem-root': {
+                    py: 1.5,
+                    px: 2,
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 1.5,
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                      color: theme.palette.primary.main,
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.18),
+                      color: theme.palette.primary.main,
+                      fontWeight: 600,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.25),
+                      },
+                    },
+                  },
+                  '& .MuiList-root': {
+                    py: 1,
+                  },
+                  // Custom scrollbar
+                  '&::-webkit-scrollbar': {
+                    width: '6px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: alpha(theme.palette.primary.main, 0.3),
+                    borderRadius: '3px',
+                  },
+                  '&::-webkit-scrollbar-thumb:hover': {
+                    background: alpha(theme.palette.primary.main, 0.5),
+                  },
+                },
+              },
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
               },
             }}
           >

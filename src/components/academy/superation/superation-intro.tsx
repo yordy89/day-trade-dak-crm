@@ -194,58 +194,141 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
       <Typography variant="h4" fontWeight={700} mb={4} textAlign="center">
         {t('peaceWithMoney.whatYouTransform')}
       </Typography>
-      
+
       <Grid container spacing={3} mb={6}>
-        {benefits.map((benefit) => (
-          <Grid item xs={12} sm={6} md={3} key={benefit.title}>
-            <Card 
-              sx={{ 
-                height: '100%',
-                border: '1px solid',
-                borderColor: 'divider',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  borderColor: 'primary.main',
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-            >
-              <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                <Box 
-                  sx={{ 
-                    mb: 2, 
-                    color: 'primary.main',
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {benefit.icon}
-                </Box>
-                <Typography variant="h6" fontWeight={600} mb={1}>
-                  {benefit.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {benefit.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        {benefits.map((benefit, index) => {
+          const colors = [
+            theme.palette.primary.main,
+            theme.palette.info.main,
+            theme.palette.error.main,
+            theme.palette.success.main,
+          ];
+          const color = colors[index % colors.length];
+
+          return (
+            <Grid item xs={12} sm={6} md={3} key={benefit.title}>
+              <Card
+                sx={{
+                  height: '100%',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(color, 0.08)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(color, 0.05)} 100%)`,
+                  border: `1px solid ${alpha(color, 0.2)}`,
+                  boxShadow: `0 4px 20px ${alpha(color, 0.1)}`,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: `0 12px 30px ${alpha(color, 0.2)}`,
+                    border: `1px solid ${alpha(color, 0.4)}`,
+                  },
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: `linear-gradient(90deg, ${color}, ${alpha(color, 0.5)})`,
+                  },
+                }}
+              >
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Box
+                    sx={{
+                      mb: 2,
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        borderRadius: 3,
+                        background: `linear-gradient(135deg, ${alpha(color, 0.2)} 0%, ${alpha(color, 0.1)} 100%)`,
+                        border: `1px solid ${alpha(color, 0.3)}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: color,
+                      }}
+                    >
+                      {benefit.icon}
+                    </Box>
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1}>
+                    {benefit.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {benefit.description}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
 
       {/* Target Audience Section */}
       <Grid container spacing={4} mb={6}>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 4, height: '100%', bgcolor: alpha(theme.palette.success.main, 0.05) }}>
-            <Typography variant="h6" fontWeight={700} mb={2} color="success.main">
-              <Target size={24} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-              {t('peaceWithMoney.forYouIf')}
-            </Typography>
-            <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
+          <Paper
+            sx={{
+              p: 4,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.success.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.success.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
+              borderRadius: 3,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: `linear-gradient(90deg, ${theme.palette.success.main}, ${theme.palette.success.light})`,
+              },
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={2} mb={3}>
+              <Box
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.2)} 0%, ${alpha(theme.palette.success.main, 0.1)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.success.main, 0.3)}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Target size={24} weight="duotone" color={theme.palette.success.main} />
+              </Box>
+              <Typography variant="h6" fontWeight={700} color="success.main">
+                {t('peaceWithMoney.forYouIf')}
+              </Typography>
+            </Stack>
+            <List sx={{ '& .MuiListItem-root': { py: 1 } }}>
               {targetAudience.map((item) => (
-                <ListItem key={item} disableGutters>
-                  <ListItemIcon sx={{ minWidth: 32 }}>
+                <ListItem
+                  key={item}
+                  disableGutters
+                  sx={{
+                    px: 2,
+                    borderRadius: 2,
+                    mb: 1,
+                    bgcolor: alpha(theme.palette.success.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.success.main} />
                   </ListItemIcon>
                   <ListItemText primary={item} />
@@ -254,17 +337,63 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
             </List>
           </Paper>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 4, height: '100%', bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
-            <Typography variant="h6" fontWeight={700} mb={2} color="primary.main">
-              <Lightning size={24} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-              {t('peaceWithMoney.whatYouReceive')}
-            </Typography>
-            <List sx={{ '& .MuiListItem-root': { py: 0.5 } }}>
+          <Paper
+            sx={{
+              p: 4,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              borderRadius: 3,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={2} mb={3}>
+              <Box
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Lightning size={24} weight="duotone" color={theme.palette.primary.main} />
+              </Box>
+              <Typography variant="h6" fontWeight={700} color="primary.main">
+                {t('peaceWithMoney.whatYouReceive')}
+              </Typography>
+            </Stack>
+            <List sx={{ '& .MuiListItem-root': { py: 1 } }}>
               {whatYouGet.map((item) => (
-                <ListItem key={item} disableGutters>
-                  <ListItemIcon sx={{ minWidth: 32 }}>
+                <ListItem
+                  key={item}
+                  disableGutters
+                  sx={{
+                    px: 2,
+                    borderRadius: 2,
+                    mb: 1,
+                    bgcolor: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
                     <CheckCircle size={20} weight="fill" color={theme.palette.primary.main} />
                   </ListItemIcon>
                   <ListItemText primary={item} />
@@ -276,18 +405,65 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
       </Grid>
 
       {/* What&apos;s Included Section */}
-      <Paper sx={{ p: 4, mb: 6, border: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="h5" fontWeight={700} mb={3}>
-          <Book size={28} weight="duotone" style={{ verticalAlign: 'middle', marginRight: 8 }} />
-          {t('peaceWithMoney.courseIncludes')}
-        </Typography>
-        
+      <Paper
+        sx={{
+          p: 4,
+          mb: 6,
+          position: 'relative',
+          overflow: 'hidden',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.warning.main, 0.06)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.warning.main, 0.04)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
+          borderRadius: 3,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.light})`,
+          },
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={2} mb={3}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: 2,
+              background: `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.2)} 0%, ${alpha(theme.palette.warning.main, 0.1)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Book size={24} weight="duotone" color={theme.palette.warning.main} />
+          </Box>
+          <Typography variant="h5" fontWeight={700}>
+            {t('peaceWithMoney.courseIncludes')}
+          </Typography>
+        </Stack>
+
         <Grid container spacing={2}>
           {includes.map((item) => (
             <Grid item xs={12} md={6} key={item.text}>
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 1 }}>
-                <Box sx={{ color: 'primary.main' }}>{item.icon}</Box>
-                <Typography>{item.text}</Typography>
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                sx={{
+                  py: 1.5,
+                  px: 2,
+                  borderRadius: 2,
+                  bgcolor: alpha(theme.palette.warning.main, 0.05),
+                  border: `1px solid ${alpha(theme.palette.warning.main, 0.1)}`,
+                }}
+              >
+                <Box sx={{ color: theme.palette.warning.main }}>{item.icon}</Box>
+                <Typography fontWeight={500}>{item.text}</Typography>
               </Stack>
             </Grid>
           ))}
@@ -297,27 +473,99 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
       {/* What it is / What it isn&apos;t */}
       <Grid container spacing={3} mb={6}>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 4, height: '100%', border: '1px solid', borderColor: 'error.main', bgcolor: alpha(theme.palette.error.main, 0.02) }}>
-            <Typography variant="h6" fontWeight={700} mb={2} color="error.main">
+          <Paper
+            sx={{
+              p: 4,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.error.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.error.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`,
+              borderRadius: 3,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.light})`,
+              },
+            }}
+          >
+            <Typography variant="h6" fontWeight={700} mb={3} color="error.main">
               ❌ {t('peaceWithMoney.thisIsNot')}
             </Typography>
-            <Stack spacing={1}>
-              <Typography>• {t('peaceWithMoney.notList.technicalCourse')}</Typography>
-              <Typography>• {t('peaceWithMoney.notList.quickProfit')}</Typography>
-              <Typography>• {t('peaceWithMoney.notList.spiritualPath')}</Typography>
+            <Stack spacing={2}>
+              {[
+                t('peaceWithMoney.notList.technicalCourse'),
+                t('peaceWithMoney.notList.quickProfit'),
+                t('peaceWithMoney.notList.spiritualPath'),
+              ].map((item, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    py: 1.5,
+                    px: 2,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.error.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.error.main, 0.1)}`,
+                  }}
+                >
+                  <Typography>• {item}</Typography>
+                </Box>
+              ))}
             </Stack>
           </Paper>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 4, height: '100%', border: '1px solid', borderColor: 'success.main', bgcolor: alpha(theme.palette.success.main, 0.02) }}>
-            <Typography variant="h6" fontWeight={700} mb={2} color="success.main">
+          <Paper
+            sx={{
+              p: 4,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.success.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.success.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
+              borderRadius: 3,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: `linear-gradient(90deg, ${theme.palette.success.main}, ${theme.palette.success.light})`,
+              },
+            }}
+          >
+            <Typography variant="h6" fontWeight={700} mb={3} color="success.main">
               ✅ {t('peaceWithMoney.thisIs')}
             </Typography>
-            <Stack spacing={1}>
-              <Typography>• {t('peaceWithMoney.isList.doorToRelationship')}</Typography>
-              <Typography>• {t('peaceWithMoney.isList.innerWork')}</Typography>
-              <Typography>• {t('peaceWithMoney.isList.baseForTrading')}</Typography>
+            <Stack spacing={2}>
+              {[
+                t('peaceWithMoney.isList.doorToRelationship'),
+                t('peaceWithMoney.isList.innerWork'),
+                t('peaceWithMoney.isList.baseForTrading'),
+              ].map((item, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    py: 1.5,
+                    px: 2,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.success.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
+                  }}
+                >
+                  <Typography>• {item}</Typography>
+                </Box>
+              ))}
             </Stack>
           </Paper>
         </Grid>
@@ -326,29 +574,95 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
       {/* Why are you struggling? */}
       <Paper
         sx={{
-          p: 4,
+          p: 5,
           mb: 6,
           textAlign: 'center',
-          background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.05)} 0%, transparent 100%)`,
-          border: '1px solid',
-          borderColor: alpha(theme.palette.secondary.main, 0.2),
+          position: 'relative',
+          overflow: 'hidden',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.secondary.main, 0.08)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.2)}`,
+          borderRadius: 3,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.light})`,
+          },
         }}
       >
-        <Brain size={48} weight="duotone" color={theme.palette.secondary.main} />
-        <Typography variant="h5" fontWeight={700} my={2}>
+        <Box
+          sx={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.2)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
+            border: `2px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: 'auto',
+            mb: 3,
+          }}
+        >
+          <Brain size={40} weight="duotone" color={theme.palette.secondary.main} />
+        </Box>
+        <Typography variant="h5" fontWeight={700} mb={2}>
           {t('peaceWithMoney.whyStruggles')}
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
           {t('peaceWithMoney.strugglesAnswer')}
         </Typography>
       </Paper>
 
       {/* Instructor Section */}
-      <Paper sx={{ p: 4, mb: 6, textAlign: 'center', border: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="h6" fontWeight={700} mb={2}>
+      <Paper
+        sx={{
+          p: 4,
+          mb: 6,
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.info.main, 0.06)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.info.main, 0.04)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`,
+          borderRadius: 3,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.info.main}, ${theme.palette.info.light})`,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            width: 64,
+            height: 64,
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.2)} 0%, ${alpha(theme.palette.info.main, 0.1)} 100%)`,
+            border: `2px solid ${alpha(theme.palette.info.main, 0.3)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: 'auto',
+            mb: 2,
+          }}
+        >
+          <Certificate size={32} weight="duotone" color={theme.palette.info.main} />
+        </Box>
+        <Typography variant="h6" fontWeight={700} mb={2} color="info.main">
           {t('peaceWithMoney.yourInstructor')}
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" sx={{ maxWidth: 700, mx: 'auto' }}>
           {t('peaceWithMoney.instructorBio')}
         </Typography>
       </Paper>
@@ -358,52 +672,119 @@ export default function SuperacionIntro({ onStart, ctaText }: SuperacionIntroPro
         sx={{
           p: 4,
           mb: 6,
-          background: `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.1)} 0%, ${alpha(theme.palette.warning.light, 0.05)} 100%)`,
-          border: '1px solid',
-          borderColor: alpha(theme.palette.warning.main, 0.3),
+          position: 'relative',
+          overflow: 'hidden',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha('#1a1a2e', 0.95)} 0%, ${alpha(theme.palette.warning.main, 0.15)} 100%)`
+            : `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.1)} 0%, ${alpha(theme.palette.warning.light, 0.05)} 100%)`,
+          border: `2px solid ${alpha(theme.palette.warning.main, 0.4)}`,
+          borderRadius: 3,
+          boxShadow: `0 8px 32px ${alpha(theme.palette.warning.main, 0.2)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.light})`,
+          },
         }}
       >
         <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-          <Sparkle size={32} weight="fill" color={theme.palette.warning.main} />
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: 2,
+              background: `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.3)} 0%, ${alpha(theme.palette.warning.main, 0.1)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.warning.main, 0.4)}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Sparkle size={28} weight="fill" color={theme.palette.warning.main} />
+          </Box>
           <Typography variant="h5" fontWeight={700}>
             🎁 {t('peaceWithMoney.exclusiveBonus')}
           </Typography>
         </Stack>
-        <Typography variant="body1">
+        <Typography variant="body1" sx={{ pl: 9 }}>
           {t('peaceWithMoney.bonusDescription')}
         </Typography>
       </Paper>
 
       {/* CTA Section */}
-      <Box sx={{ textAlign: 'center' }}>
+      <Paper
+        sx={{
+          p: 6,
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`,
+          border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+          borderRadius: 4,
+          boxShadow: `0 8px 40px ${alpha(theme.palette.primary.main, 0.15)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '5px',
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+            border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: 'auto',
+            mb: 3,
+          }}
+        >
+          <Heart size={40} weight="duotone" color={theme.palette.primary.main} />
+        </Box>
         <Typography variant="h4" fontWeight={700} mb={2}>
           {t('peaceWithMoney.readyToTransform')}
         </Typography>
-        <Typography variant="h6" color="text.secondary" mb={4}>
+        <Typography variant="h6" color="text.secondary" mb={4} sx={{ maxWidth: 500, mx: 'auto' }}>
           {t('peaceWithMoney.startJourney')}
         </Typography>
-        <Button 
-          variant="contained" 
-          size="large" 
+        <Button
+          variant="contained"
+          size="large"
           onClick={onStart}
-          startIcon={<Heart size={24} weight="bold" />}
+          startIcon={<Sparkle size={24} weight="bold" />}
           sx={{
             py: 2.5,
-            px: 5,
+            px: 6,
             fontSize: '1.2rem',
             fontWeight: 600,
+            borderRadius: 3,
             background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-            boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+            boxShadow: '0 8px 24px rgba(22, 163, 74, 0.4)',
+            transition: 'all 0.3s ease',
             '&:hover': {
               background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
-              boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
-              transform: 'translateY(-2px)',
+              boxShadow: '0 12px 32px rgba(22, 163, 74, 0.5)',
+              transform: 'translateY(-3px)',
             },
           }}
         >
           {ctaText}
         </Button>
-      </Box>
+      </Paper>
     </Box>
   );
 }

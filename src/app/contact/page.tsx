@@ -122,9 +122,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
             justifyContent: 'center',
             px: 1.5,
             pt: multiline ? 2 : 0,
-            color: isFocused 
-              ? muiTheme.palette.primary.main 
-              : 'rgba(0, 0, 0, 0.6)',
+            color: isFocused
+              ? '#22c55e'
+              : isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)',
             transition: 'color 0.3s',
           }}
         >
@@ -296,9 +296,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             px: 1.5,
-            color: isFocused 
-              ? muiTheme.palette.primary.main 
-              : 'rgba(0, 0, 0, 0.6)',
+            color: isFocused
+              ? '#22c55e'
+              : isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)',
             transition: 'color 0.3s',
           }}
         >
@@ -603,8 +603,15 @@ export default function ContactPage() {
   return (
     <>
       <MainNavbar />
-      <Box 
-        sx={{ pt: 18, pb: 10, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}
+      <Box
+        sx={{
+          pt: 18,
+          pb: 10,
+          minHeight: '100vh',
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundColor: '#0d1117',
+        }}
       >
         {/* Animated Trading Background */}
         <Box
@@ -650,16 +657,17 @@ export default function ContactPage() {
                   sx={{
                     padding: '8px 16px',
                     borderRadius: '8px',
-                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: '#161b22',
                     border: `1px solid ${borderColor}`,
                     fontSize: '12px',
                     fontWeight: 600,
                     minWidth: '120px',
+                    boxShadow: `0 4px 12px ${borderColor}40`,
                   }}
                 >
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography sx={{ fontSize: '10px', fontWeight: 700, color: 'text.primary' }}>
+                      <Typography sx={{ fontSize: '10px', fontWeight: 700, color: '#ffffff' }}>
                         {stock.symbol}
                       </Typography>
                       <Typography sx={{ fontSize: '10px', color: textColor }}>
@@ -667,7 +675,7 @@ export default function ContactPage() {
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography sx={{ fontSize: '14px', fontWeight: 600, color: 'text.primary' }}>
+                      <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
                         ${stock.price.toFixed(2)}
                       </Typography>
                       <Typography sx={{ fontSize: '10px', color: textColor }}>
@@ -704,16 +712,17 @@ export default function ContactPage() {
                 sx={{
                   padding: '8px 16px',
                   borderRadius: '8px',
-                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                  backgroundColor: '#161b22',
                   border: `1px solid ${i % 3 === 0 ? '#16a34a' : i % 3 === 1 ? '#eab308' : '#ef4444'}`,
                   fontSize: '12px',
                   fontWeight: 600,
                   minWidth: '120px',
+                  boxShadow: `0 4px 12px ${i % 3 === 0 ? 'rgba(22, 163, 74, 0.3)' : i % 3 === 1 ? 'rgba(234, 179, 8, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
                 }}
               >
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '10px', fontWeight: 700, color: 'text.primary' }}>
+                    <Typography sx={{ fontSize: '10px', fontWeight: 700, color: '#ffffff' }}>
                       {['SPY', 'QQQ', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'META', 'GOOGL'][i]}
                     </Typography>
                     <Typography sx={{ fontSize: '10px', color: '#16a34a' }}>
@@ -721,7 +730,7 @@ export default function ContactPage() {
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: 'text.primary' }}>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
                       Loading...
                     </Typography>
                     <Typography sx={{ fontSize: '10px', color: '#16a34a' }}>
@@ -734,10 +743,22 @@ export default function ContactPage() {
           ))}
         </Box>
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ mb: 2 }}>
+          <Typography
+            variant="h2"
+            component="h1"
+            gutterBottom
+            align="center"
+            sx={{
+              mb: 2,
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #ffffff 0%, #22c55e 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {t('contact.title')}
           </Typography>
-          <Typography variant="h5" align="center" color="text.secondary" sx={{ mb: 6 }}>
+          <Typography variant="h5" align="center" sx={{ mb: 6, color: 'rgba(255, 255, 255, 0.7)' }}>
             {t('contact.subtitle')}
           </Typography>
 
@@ -778,53 +799,105 @@ export default function ContactPage() {
               ))}
             </Box>
             <Grid container spacing={3} sx={{ position: 'relative' }}>
-              {contactInfo.map((info) => (
-                <Grid item xs={12} sm={6} md={3} key={info.titleKey}>
-                <Card sx={{ 
-                  height: '100%', 
-                  textAlign: 'center',
-                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'background.paper',
-                  backdropFilter: 'blur(10px)',
-                }}>
-                  <CardContent>
-                    <Box sx={{ color: 'primary.main', mb: 2 }}>
-                      {info.icon}
-                    </Box>
-                    <Typography variant="h6" gutterBottom>
-                      {t(info.titleKey)}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                      {info.detailsKey ? t(info.detailsKey) : info.details}
-                    </Typography>
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      {...(info.href ? { component: 'a', href: info.href } : {})}
+              {contactInfo.map((info, index) => {
+                const cardColors = [
+                  { bg: 'rgba(34, 197, 94, 0.1)', border: 'rgba(34, 197, 94, 0.3)', icon: '#22c55e', hoverBorder: '#22c55e' },
+                  { bg: 'rgba(96, 165, 250, 0.1)', border: 'rgba(96, 165, 250, 0.3)', icon: '#60a5fa', hoverBorder: '#60a5fa' },
+                  { bg: 'rgba(251, 191, 36, 0.1)', border: 'rgba(251, 191, 36, 0.3)', icon: '#fbbf24', hoverBorder: '#fbbf24' },
+                  { bg: 'rgba(167, 139, 250, 0.1)', border: 'rgba(167, 139, 250, 0.3)', icon: '#a78bfa', hoverBorder: '#a78bfa' },
+                ];
+                const colorScheme = cardColors[index % cardColors.length];
+
+                return (
+                  <Grid item xs={12} sm={6} md={3} key={info.titleKey}>
+                    <Card
+                      sx={{
+                        height: '100%',
+                        textAlign: 'center',
+                        backgroundColor: '#161b22',
+                        backdropFilter: 'blur(10px)',
+                        border: `1px solid ${colorScheme.border}`,
+                        borderRadius: 3,
+                        transition: 'all 0.3s',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          borderColor: colorScheme.hoverBorder,
+                          boxShadow: `0 8px 24px ${colorScheme.border}`,
+                        },
+                      }}
                     >
-                      {t(info.actionKey)}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                      <CardContent sx={{ p: 3 }}>
+                        <Box
+                          sx={{
+                            color: colorScheme.icon,
+                            mb: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            backgroundColor: colorScheme.bg,
+                            display: 'inline-flex',
+                          }}
+                        >
+                          {info.icon}
+                        </Box>
+                        <Typography variant="h6" gutterBottom sx={{ color: '#ffffff', fontWeight: 600 }}>
+                          {t(info.titleKey)}
+                        </Typography>
+                        <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255, 255, 255, 0.6)' }}>
+                          {info.detailsKey ? t(info.detailsKey) : info.details}
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          {...(info.href ? { component: 'a', href: info.href } : {})}
+                          sx={{
+                            borderColor: colorScheme.border,
+                            color: colorScheme.icon,
+                            fontWeight: 600,
+                            '&:hover': {
+                              borderColor: colorScheme.hoverBorder,
+                              backgroundColor: colorScheme.bg,
+                            },
+                          }}
+                        >
+                          {t(info.actionKey)}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
             </Grid>
           </Box>
 
           {/* Contact Form */}
           <Grid container spacing={4}>
             <Grid item xs={12} md={8}>
-              <Card sx={{
-                backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'background.paper',
-                backdropFilter: 'blur(10px)',
-                position: 'relative',
-                overflow: 'hidden',
-              }}>
+              <Card
+                sx={{
+                  backgroundColor: '#161b22',
+                  backdropFilter: 'blur(10px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: 3,
+                  boxShadow: '0 8px 32px rgba(34, 197, 94, 0.1)',
+                }}
+              >
                 <MarketChartPattern isDarkMode={isDarkMode} />
                 <CardContent sx={{ p: 4, position: 'relative' }}>
-                  <Typography variant="h4" gutterBottom>
+                  <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 700,
+                      background: 'linear-gradient(135deg, #ffffff 0%, #22c55e 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
                     {t('contact.form.title')}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                  <Typography variant="body1" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.7)' }}>
                     {t('contact.form.subtitle')}
                   </Typography>
 
@@ -919,15 +992,16 @@ export default function ContactPage() {
                             background: isSubmitting
                               ? undefined
                               : 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                            boxShadow: isSubmitting ? 0 : 4,
+                            boxShadow: isSubmitting ? 0 : '0 4px 14px rgba(22, 163, 74, 0.4)',
                             transition: 'all 0.3s',
                             '&:hover': {
-                              background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
-                              boxShadow: 6,
-                              transform: 'translateY(-1px)',
+                              background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                              boxShadow: '0 6px 20px rgba(22, 163, 74, 0.5)',
+                              transform: 'translateY(-2px)',
                             },
                             '&:disabled': {
-                              backgroundColor: alpha(muiTheme.palette.primary.main, 0.5),
+                              backgroundColor: 'rgba(34, 197, 94, 0.3)',
+                              color: 'rgba(255, 255, 255, 0.5)',
                             },
                           }}
                         >
@@ -952,12 +1026,18 @@ export default function ContactPage() {
 
             {/* FAQ Section */}
             <Grid item xs={12} md={4}>
-              <Card sx={{
-                backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'background.paper',
-                backdropFilter: 'blur(10px)',
-                position: 'relative',
-                overflow: 'hidden',
-              }}>
+              <Card
+                sx={{
+                  backgroundColor: '#161b22',
+                  backdropFilter: 'blur(10px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(96, 165, 250, 0.3)',
+                  borderRadius: 3,
+                  boxShadow: '0 8px 32px rgba(96, 165, 250, 0.1)',
+                  height: '100%',
+                }}
+              >
                 <SignalWaves isDarkMode={isDarkMode} />
                 {/* Candlestick Chart Pattern */}
                 <Box
@@ -965,7 +1045,7 @@ export default function ContactPage() {
                     position: 'absolute',
                     top: '20px',
                     right: '20px',
-                    opacity: isDarkMode ? 0.1 : 0.08,
+                    opacity: 0.15,
                     pointerEvents: 'none',
                   }}
                 >
@@ -976,7 +1056,7 @@ export default function ContactPage() {
                       const y = 75 - height / 2 + (Math.random() - 0.5) * 30;
                       const wickHeight = height + Math.random() * 20;
                       const isGreen = Math.random() > 0.5;
-                      
+
                       return (
                         <g key={i}>
                           <line
@@ -999,43 +1079,86 @@ export default function ContactPage() {
                     })}
                   </svg>
                 </Box>
-                <CardContent sx={{ position: 'relative' }}>
-                  <Typography variant="h5" gutterBottom>
+                <CardContent sx={{ position: 'relative', p: 3 }}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 700,
+                      background: 'linear-gradient(135deg, #ffffff 0%, #60a5fa 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
                     {t('contact.faq.title')}
                   </Typography>
-                  
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+
+                  <Box
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.2)',
+                    }}
+                  >
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#22c55e' }}>
                       {t('contact.faq.q1')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                       {t('contact.faq.a1')}
                     </Typography>
                   </Box>
 
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  <Box
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                      border: '1px solid rgba(96, 165, 250, 0.2)',
+                    }}
+                  >
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#60a5fa' }}>
                       {t('contact.faq.q2')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                       {t('contact.faq.a2')}
                     </Typography>
                   </Box>
 
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  <Box
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(167, 139, 250, 0.1)',
+                      border: '1px solid rgba(167, 139, 250, 0.2)',
+                    }}
+                  >
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#a78bfa' }}>
                       {t('contact.faq.q3')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                       {t('contact.faq.a3')}
                     </Typography>
                   </Box>
 
-                  <Button 
-                    variant="outlined" 
+                  <Button
+                    variant="outlined"
                     fullWidth
                     component="a"
                     href="/faq"
+                    sx={{
+                      borderColor: 'rgba(96, 165, 250, 0.5)',
+                      color: '#60a5fa',
+                      fontWeight: 600,
+                      py: 1.2,
+                      '&:hover': {
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                      },
+                    }}
                   >
                     {t('contact.faq.viewAll')}
                   </Button>
@@ -1044,6 +1167,9 @@ export default function ContactPage() {
             </Grid>
           </Grid>
         </Container>
+
+        {/* Footer Spacer */}
+        <Box sx={{ py: 6, backgroundColor: '#0d1117' }} />
       </Box>
       <ProfessionalFooter />
       

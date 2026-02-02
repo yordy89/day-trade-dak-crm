@@ -377,13 +377,10 @@ export default function CommunityEventPage() {
             pt: { xs: 14, sm: 16, md: 18 },
             pb: { xs: 6, sm: 8, md: 12 },
             overflow: 'hidden',
-            backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
-            backgroundSize: { xs: 'contain', sm: 'cover' },
-            backgroundPosition: { xs: 'center center', sm: 'center' },
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: '#0a0a0a',
+            backgroundColor: '#0d1117',
             minHeight: { xs: '80vh', sm: 'auto' },
             mt: { xs: 0, sm: 0, md: 0 },
+            // Background image with very reduced opacity
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -391,12 +388,33 @@ export default function CommunityEventPage() {
               left: 0,
               right: 0,
               bottom: 0,
-              background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+              backgroundImage: 'url(/assets/images/comunity-event-backgorund.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: 0.08,
               zIndex: 0,
+            },
+            // Dark gradient overlay with subtle color accents
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `linear-gradient(180deg,
+                rgba(13, 17, 23, 0.3) 0%,
+                rgba(22, 163, 74, 0.08) 30%,
+                rgba(153, 27, 27, 0.08) 50%,
+                rgba(22, 163, 74, 0.05) 70%,
+                rgba(13, 17, 23, 0.5) 90%,
+                rgba(13, 17, 23, 1) 100%)`,
+              zIndex: 1,
             },
           }}
         >
-          <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
             <Grid container spacing={4} alignItems="center">
               <Grid item xs={12} md={8}>
                 <Stack spacing={3}>
@@ -624,30 +642,64 @@ export default function CommunityEventPage() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Paper
-                  elevation={10}
+                  elevation={0}
                   sx={{
                     p: 4,
                     textAlign: 'center',
-                    backgroundColor: alpha(theme.palette.background.paper, 0.95),
-                    color: theme.palette.text.primary,
+                    background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(13, 17, 23, 0.95) 50%, rgba(153, 27, 27, 0.15) 100%)',
+                    border: '1px solid rgba(22, 163, 74, 0.3)',
+                    borderRadius: 3,
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
                   }}
                 >
-                  <EmojiEvents sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
-                  <Typography variant="h5" fontWeight={700} gutterBottom>
+                  <Box
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mx: 'auto',
+                      mb: 3,
+                      boxShadow: '0 4px 20px rgba(22, 163, 74, 0.4)',
+                    }}
+                  >
+                    <EmojiEvents sx={{ fontSize: 50, color: 'white' }} />
+                  </Box>
+                  <Typography variant="h5" fontWeight={700} gutterBottom sx={{ color: 'white' }}>
                     CUPO LIMITADO
                   </Typography>
-                  <Typography variant="h2" fontWeight={800} color="primary">
+                  <Typography
+                    variant="h2"
+                    fontWeight={800}
+                    sx={{
+                      background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 0 40px rgba(22, 163, 74, 0.3)',
+                    }}
+                  >
                     {isLoadingPrice ? '...' : formatPrice(pricing?.basePrice || 599.99)}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+                  <Typography variant="body1" sx={{ mt: 2, color: 'rgba(255, 255, 255, 0.7)' }}>
                     Solo para traders comprometidos
                   </Typography>
-                  <Divider sx={{ my: 3 }} />
-                  <Alert severity="success">
-                    <Typography variant="body2" fontWeight={600}>
+                  <Divider sx={{ my: 3, borderColor: 'rgba(22, 163, 74, 0.3)' }} />
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.2) 0%, rgba(22, 163, 74, 0.1) 100%)',
+                      border: '1px solid rgba(22, 163, 74, 0.3)',
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight={600} sx={{ color: '#22c55e' }}>
                       &quot;Aquí no ven teoría... aquí ven cómo se hace dinero en vivo y con disciplina.&quot;
                     </Typography>
-                  </Alert>
+                  </Box>
                 </Paper>
               </Grid>
             </Grid>
@@ -679,69 +731,129 @@ export default function CommunityEventPage() {
         )}
 
         {/* Daily Schedule */}
-        <Box sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.5), py: 8 }}>
+        <Box sx={{ backgroundColor: '#0d1117', py: 8 }}>
           <Container maxWidth="lg">
-            <Typography 
-              variant="h3" 
-              textAlign="center" 
-              fontWeight={700} 
-              mb={6}
-              sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' } }}
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={700}
+              mb={2}
+              sx={{
+                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
+                background: 'linear-gradient(135deg, #ffffff 0%, #16a34a 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
             >
               Programa Completo de 3 Días
+            </Typography>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              sx={{
+                mb: 6,
+                color: 'rgba(255, 255, 255, 0.7)',
+                maxWidth: 600,
+                mx: 'auto',
+              }}
+            >
+              Una inmersión intensiva en trading profesional y construcción de patrimonio
             </Typography>
             <Grid container spacing={4}>
               {daySchedule.map((day) => (
                 <Grid item xs={12} key={day.day}>
-                  <Accordion 
+                  <Accordion
                     defaultExpanded={day.day.includes('DÍA 1')}
                     sx={{
-                      backgroundColor: alpha(day.color, 0.05),
-                      borderLeft: `4px solid ${day.color}`,
+                      backgroundColor: '#161b22',
+                      borderRadius: '16px !important',
+                      border: `1px solid ${alpha(day.color, 0.3)}`,
+                      boxShadow: `0 4px 20px ${alpha(day.color, 0.15)}`,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        boxShadow: `0 8px 30px ${alpha(day.color, 0.25)}`,
+                        border: `1px solid ${alpha(day.color, 0.5)}`,
+                      },
                       '&:before': { display: 'none' },
+                      '&.Mui-expanded': {
+                        margin: '0 !important',
+                      },
                     }}
                   >
-                    <AccordionSummary expandIcon={<ExpandMore />}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMore sx={{ color: day.color }} />}
+                      sx={{
+                        borderBottom: `1px solid ${alpha(day.color, 0.2)}`,
+                        '&.Mui-expanded': {
+                          minHeight: 'auto',
+                        },
+                      }}
+                    >
                       <Stack direction="row" spacing={2} alignItems="center" width="100%">
-                        <Avatar sx={{ backgroundColor: day.color, width: { xs: 40, sm: 50 }, height: { xs: 40, sm: 50 } }}>
+                        <Avatar
+                          sx={{
+                            background: `linear-gradient(135deg, ${day.color} 0%, ${alpha(day.color, 0.7)} 100%)`,
+                            width: { xs: 45, sm: 56 },
+                            height: { xs: 45, sm: 56 },
+                            boxShadow: `0 4px 14px ${alpha(day.color, 0.4)}`,
+                          }}
+                        >
                           {day.icon}
                         </Avatar>
                         <Box flex={1}>
-                          <Typography variant="h5" fontWeight={700} color={day.color} sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
+                          <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' }, color: day.color }}>
                             {day.day}
                           </Typography>
-                          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+                          <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, color: 'rgba(255, 255, 255, 0.7)' }}>
                             {day.title}
                           </Typography>
                         </Box>
                       </Stack>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails sx={{ p: 3 }}>
                       <Grid container spacing={3}>
                         {/* Morning Session */}
                         <Grid item xs={12} md={6}>
-                          <Paper sx={{ p: 3, height: '100%' }}>
+                          <Paper
+                            elevation={0}
+                            sx={{
+                              p: 3,
+                              height: '100%',
+                              backgroundColor: '#0d1117',
+                              border: `1px solid ${alpha(day.color, 0.2)}`,
+                              borderRadius: 3,
+                              transition: 'all 0.3s ease',
+                              '&:hover': {
+                                border: `1px solid ${alpha(day.color, 0.4)}`,
+                                boxShadow: `0 4px 20px ${alpha(day.color, 0.15)}`,
+                              },
+                            }}
+                          >
                             <Stack spacing={2}>
                               <Box>
-                                <Typography variant="h6" fontWeight={700} gutterBottom>
+                                <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: 'white' }}>
                                   {day.morning.title}
                                 </Typography>
-                                <Chip 
-                                  icon={<AccessTime />} 
-                                  label={day.morning.time} 
-                                  size="small" 
-                                  color="primary"
+                                <Chip
+                                  icon={<AccessTime sx={{ color: 'white !important' }} />}
+                                  label={day.morning.time}
+                                  size="small"
+                                  sx={{
+                                    background: `linear-gradient(135deg, ${day.color} 0%, ${alpha(day.color, 0.7)} 100%)`,
+                                    color: 'white',
+                                    fontWeight: 600,
+                                  }}
                                 />
                               </Box>
                               <List dense>
                                 {day.morning.activities.map((activity, idx) => (
-                                  <ListItem key={idx}>
+                                  <ListItem key={idx} sx={{ py: 0.5 }}>
                                     <ListItemIcon sx={{ minWidth: 36 }}>
                                       <CheckCircle sx={{ color: day.color, fontSize: 20 }} />
                                     </ListItemIcon>
-                                    <ListItemText 
+                                    <ListItemText
                                       primary={activity}
-                                      primaryTypographyProps={{ variant: 'body2' }}
+                                      primaryTypographyProps={{ variant: 'body2', sx: { color: 'rgba(255, 255, 255, 0.85)' } }}
                                     />
                                   </ListItem>
                                 ))}
@@ -749,44 +861,70 @@ export default function CommunityEventPage() {
                             </Stack>
                           </Paper>
                         </Grid>
-                        
+
                         {/* Afternoon Session */}
                         <Grid item xs={12} md={6}>
-                          <Paper sx={{ p: 3, height: '100%' }}>
+                          <Paper
+                            elevation={0}
+                            sx={{
+                              p: 3,
+                              height: '100%',
+                              backgroundColor: '#0d1117',
+                              border: `1px solid ${alpha(day.color, 0.2)}`,
+                              borderRadius: 3,
+                              transition: 'all 0.3s ease',
+                              '&:hover': {
+                                border: `1px solid ${alpha(day.color, 0.4)}`,
+                                boxShadow: `0 4px 20px ${alpha(day.color, 0.15)}`,
+                              },
+                            }}
+                          >
                             <Stack spacing={2}>
                               <Box>
-                                <Typography variant="h6" fontWeight={700} gutterBottom>
+                                <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: 'white' }}>
                                   {day.afternoon.title}
                                 </Typography>
-                                <Chip 
-                                  icon={<AccessTime />} 
-                                  label={day.afternoon.time} 
-                                  size="small" 
-                                  color="secondary"
+                                <Chip
+                                  icon={<AccessTime sx={{ color: 'white !important' }} />}
+                                  label={day.afternoon.time}
+                                  size="small"
+                                  sx={{
+                                    background: `linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)`,
+                                    color: 'white',
+                                    fontWeight: 600,
+                                  }}
                                 />
                               </Box>
                               <Stack spacing={2}>
-                                  {day.afternoon.modules.map((module, idx) => (
-                                    <Box key={idx}>
-                                      <Typography variant="subtitle2" fontWeight={600} color={day.color} gutterBottom>
-                                        {module.name}
-                                      </Typography>
-                                      <List dense>
-                                        {module.content.map((item, itemIdx) => (
-                                          <ListItem key={itemIdx}>
-                                            <ListItemIcon sx={{ minWidth: 36 }}>
-                                              <CheckCircle sx={{ color: day.color, fontSize: 20 }} />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                              primary={item}
-                                              primaryTypographyProps={{ variant: 'body2' }}
-                                            />
-                                          </ListItem>
-                                        ))}
-                                      </List>
-                                    </Box>
-                                  ))}
-                                </Stack>
+                                {day.afternoon.modules.map((module, idx) => (
+                                  <Box
+                                    key={idx}
+                                    sx={{
+                                      p: 2,
+                                      borderRadius: 2,
+                                      backgroundColor: alpha(day.color, 0.05),
+                                      border: `1px solid ${alpha(day.color, 0.15)}`,
+                                    }}
+                                  >
+                                    <Typography variant="subtitle2" fontWeight={600} sx={{ color: day.color, mb: 1 }}>
+                                      {module.name}
+                                    </Typography>
+                                    <List dense sx={{ py: 0 }}>
+                                      {module.content.map((item, itemIdx) => (
+                                        <ListItem key={itemIdx} sx={{ py: 0.25 }}>
+                                          <ListItemIcon sx={{ minWidth: 30 }}>
+                                            <CheckCircle sx={{ color: day.color, fontSize: 16 }} />
+                                          </ListItemIcon>
+                                          <ListItemText
+                                            primary={item}
+                                            primaryTypographyProps={{ variant: 'body2', sx: { color: 'rgba(255, 255, 255, 0.8)' } }}
+                                          />
+                                        </ListItem>
+                                      ))}
+                                    </List>
+                                  </Box>
+                                ))}
+                              </Stack>
                             </Stack>
                           </Paper>
                         </Grid>
@@ -800,177 +938,377 @@ export default function CommunityEventPage() {
         </Box>
 
         {/* Key Highlights */}
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-            Lo Que Aprenderás
-          </Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'primary.main' }}>
-                    <Visibility sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Operación en Vivo
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Observa cómo el mentor opera en tiempo real con pantalla proyectada,
-                    explicando su análisis, decisión de entrada, ejecución y manejo emocional.
-                    Incluye revisión del calendario económico y gestión del trade en vivo.
-                  </Typography>
-                </Stack>
-              </Card>
-            </Grid>
+        <Box sx={{ backgroundColor: '#161b22', py: 8 }}>
+          <Container maxWidth="lg">
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={700}
+              mb={2}
+              sx={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Lo Que Aprenderás
+            </Typography>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              sx={{ mb: 6, color: 'rgba(255, 255, 255, 0.7)', maxWidth: 600, mx: 'auto' }}
+            >
+              Habilidades y conocimientos que transformarán tu trading
+            </Typography>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    backgroundColor: '#0d1117',
+                    border: '1px solid rgba(22, 163, 74, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(22, 163, 74, 0.2)',
+                      border: '1px solid rgba(22, 163, 74, 0.4)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                        boxShadow: '0 4px 20px rgba(22, 163, 74, 0.4)',
+                      }}
+                    >
+                      <Visibility sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={600} textAlign="center" sx={{ color: 'white' }}>
+                      Operación en Vivo
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Observa cómo el mentor opera en tiempo real con pantalla proyectada,
+                      explicando su análisis, decisión de entrada, ejecución y manejo emocional.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'secondary.main' }}>
-                    <AttachMoney sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Metodología de 3 Cuentas
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Aprende a estructurar tu capital en tres cuentas (semilla, crecimiento y largo plazo)
-                    para transformar las ganancias del trading en patrimonio real y duradero.
-                  </Typography>
-                </Stack>
-              </Card>
-            </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    backgroundColor: '#0d1117',
+                    border: '1px solid rgba(139, 92, 246, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(139, 92, 246, 0.2)',
+                      border: '1px solid rgba(139, 92, 246, 0.4)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                        boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+                      }}
+                    >
+                      <AttachMoney sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={600} textAlign="center" sx={{ color: 'white' }}>
+                      Metodología de 3 Cuentas
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Aprende a estructurar tu capital en tres cuentas (semilla, crecimiento y largo plazo)
+                      para transformar las ganancias del trading en patrimonio real y duradero.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'success.main' }}>
-                    <TrendingUp sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Inversión Inteligente
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Desde inversión en S&P-500 hasta estrategias con ETFs y Dollar Cost Averaging (DCA).
-                    Aprende a combinar inversión a corto y largo plazo según tus ingresos.
-                  </Typography>
-                </Stack>
-              </Card>
-            </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    backgroundColor: '#0d1117',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(59, 130, 246, 0.2)',
+                      border: '1px solid rgba(59, 130, 246, 0.4)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)',
+                      }}
+                    >
+                      <TrendingUp sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={600} textAlign="center" sx={{ color: 'white' }}>
+                      Inversión Inteligente
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Desde inversión en S&P-500 hasta estrategias con ETFs y Dollar Cost Averaging (DCA).
+                      Aprende a combinar inversión a corto y largo plazo según tus ingresos.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'warning.main' }}>
-                    <SelfImprovement sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Psicotrading
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Domina tu mente y crea tu libertad financiera. Técnicas para controlar impulsos
-                    y operar desde el enfoque, no desde el miedo o la ansiedad.
-                  </Typography>
-                </Stack>
-              </Card>
-            </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    backgroundColor: '#0d1117',
+                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(245, 158, 11, 0.2)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)',
+                      }}
+                    >
+                      <SelfImprovement sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={600} textAlign="center" sx={{ color: 'white' }}>
+                      Psicotrading
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Domina tu mente y crea tu libertad financiera. Técnicas para controlar impulsos
+                      y operar desde el enfoque, no desde el miedo o la ansiedad.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'info.main' }}>
-                    <BarChart sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center">
-                    Estrategia Personalizada
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Aprende a combinar flexibilidad vs. automatización, corto vs. largo plazo,
-                    con recomendaciones específicas según tu nivel de ingresos y objetivos.
-                  </Typography>
-                </Stack>
-              </Card>
-            </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    backgroundColor: '#0d1117',
+                    border: '1px solid rgba(6, 182, 212, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(6, 182, 212, 0.2)',
+                      border: '1px solid rgba(6, 182, 212, 0.4)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                        boxShadow: '0 4px 20px rgba(6, 182, 212, 0.4)',
+                      }}
+                    >
+                      <BarChart sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={600} textAlign="center" sx={{ color: 'white' }}>
+                      Estrategia Personalizada
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Aprende a combinar flexibilidad vs. automatización, corto vs. largo plazo,
+                      con recomendaciones específicas según tu nivel de ingresos y objetivos.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3, backgroundColor: alpha(theme.palette.primary.main, 0.05), border: `2px solid ${theme.palette.primary.main}` }}>
-                <Stack spacing={3} alignItems="center">
-                  <Avatar sx={{ width: 80, height: 80, backgroundColor: 'primary.main' }}>
-                    <EmojiEvents sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h5" fontWeight={600} textAlign="center" color="primary">
-                    🎁 Bono Especial
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Acceso a un programa de ejercicios grabados durante 3 meses
-                    para transformar tu mentalidad como inversionista.
-                  </Typography>
-                </Stack>
-              </Card>
+              <Grid item xs={12} md={4}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, #0d1117 50%, rgba(22, 163, 74, 0.15) 100%)',
+                    border: '2px solid rgba(22, 163, 74, 0.5)',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 40px rgba(22, 163, 74, 0.3)',
+                      border: '2px solid rgba(22, 163, 74, 0.7)',
+                    },
+                  }}
+                >
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                        boxShadow: '0 4px 20px rgba(22, 163, 74, 0.5)',
+                      }}
+                    >
+                      <EmojiEvents sx={{ fontSize: 40 }} />
+                    </Avatar>
+                    <Typography
+                      variant="h5"
+                      fontWeight={600}
+                      textAlign="center"
+                      sx={{
+                        background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}
+                    >
+                      Bono Especial
+                    </Typography>
+                    <Typography variant="body1" textAlign="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Acceso a un programa de ejercicios grabados durante 3 meses
+                      para transformar tu mentalidad como inversionista.
+                    </Typography>
+                  </Stack>
+                </Card>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
+          </Container>
+        </Box>
 
         {/* Why This Event */}
-        <Box sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.05), py: 8 }}>
+        <Box sx={{ backgroundColor: '#0d1117', py: 8 }}>
           <Container maxWidth="lg">
-            <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={700}
+              mb={2}
+              sx={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #f59e0b 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               Esta Mentoría es Para Ti Si:
+            </Typography>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              sx={{ mb: 6, color: 'rgba(255, 255, 255, 0.7)', maxWidth: 600, mx: 'auto' }}
+            >
+              Identifícate con los traders que buscan resultados reales
             </Typography>
             <Grid container spacing={4} justifyContent="center">
               <Grid item xs={12} md={8}>
                 <Stack spacing={3}>
-                  <Paper sx={{ p: 3 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
-                      <Typography variant="h6">
-                        Eres estudiante de la academia y quieres profundizar tu formación
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                  <Paper sx={{ p: 3 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
-                      <Typography variant="h6">
-                        Quieres presenciar operaciones reales y aprender en vivo
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                  <Paper sx={{ p: 3 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
-                      <Typography variant="h6">
-                        Buscas estructurar tu capital de forma disciplinada
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                  <Paper sx={{ p: 3 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
-                      <Typography variant="h6">
-                        Deseas desarrollar una mentalidad de inversión a largo plazo
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                  <Paper sx={{ p: 3 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
-                      <Typography variant="h6">
-                        Quieres aprender a transformar ganancias de trading en patrimonio real
-                      </Typography>
-                    </Stack>
-                  </Paper>
+                  {[
+                    'Eres estudiante de la academia y quieres profundizar tu formación',
+                    'Quieres presenciar operaciones reales y aprender en vivo',
+                    'Buscas estructurar tu capital de forma disciplinada',
+                    'Deseas desarrollar una mentalidad de inversión a largo plazo',
+                    'Quieres aprender a transformar ganancias de trading en patrimonio real',
+                  ].map((text, index) => (
+                    <Paper
+                      key={index}
+                      elevation={0}
+                      sx={{
+                        p: 3,
+                        backgroundColor: '#161b22',
+                        border: '1px solid rgba(22, 163, 74, 0.2)',
+                        borderRadius: 3,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateX(8px)',
+                          border: '1px solid rgba(22, 163, 74, 0.5)',
+                          boxShadow: '0 4px 20px rgba(22, 163, 74, 0.15)',
+                        },
+                      }}
+                    >
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+                          }}
+                        >
+                          <CheckCircle sx={{ color: 'white', fontSize: 24 }} />
+                        </Box>
+                        <Typography variant="h6" sx={{ color: 'white' }}>
+                          {text}
+                        </Typography>
+                      </Stack>
+                    </Paper>
+                  ))}
                 </Stack>
               </Grid>
             </Grid>
 
             <Box textAlign="center" sx={{ mt: 6 }}>
-              <Alert severity="info" sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
-                <Typography variant="body1" fontWeight={600}>
+              <Paper
+                elevation={0}
+                sx={{
+                  maxWidth: 800,
+                  mx: 'auto',
+                  mb: 4,
+                  p: 3,
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(13, 17, 23, 0.95) 50%, rgba(59, 130, 246, 0.15) 100%)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: 3,
+                }}
+              >
+                <Typography variant="body1" fontWeight={600} sx={{ color: 'white' }}>
                   ¿Dónde colocas tu dinero? $10,000 en el banco pueden crecer a $10,500 en 5 años.
                   Los mismos $10,000 invertidos en activos como el ETF Vanguard Growth (VOOG) podrían convertirse en más de $30,000.
                 </Typography>
-              </Alert>
-              <Typography variant="h5" fontWeight={600} color="primary">
+              </Paper>
+              <Typography
+                variant="h5"
+                fontWeight={600}
+                sx={{
+                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
                 &quot;La verdadera diferencia está entre dejar tu dinero en el banco y ponerlo a trabajar en activos.&quot;
               </Typography>
             </Box>
@@ -978,189 +1316,309 @@ export default function CommunityEventPage() {
         </Box>
 
         {/* Location */}
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-            Ubicación del Evento
-          </Typography>
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                <Paper
-                  elevation={3}
-                  sx={{
-                    p: 3,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  }}
-                >
-                  <Stack spacing={2} textAlign="center">
-                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
-                      <LocationOn sx={{ fontSize: 40, color: 'primary.main' }} />
-                      <Typography variant="h4" fontWeight={700}>
-                        Tampa, Florida
+        <Box sx={{ backgroundColor: '#161b22', py: 8 }}>
+          <Container maxWidth="lg">
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={700}
+              mb={2}
+              sx={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #ec4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Ubicación del Evento
+            </Typography>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              sx={{ mb: 6, color: 'rgba(255, 255, 255, 0.7)', maxWidth: 600, mx: 'auto' }}
+            >
+              Un lugar premium para una experiencia de aprendizaje única
+            </Typography>
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={6}>
+                <Stack spacing={3}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 4,
+                      background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, #0d1117 50%, rgba(22, 163, 74, 0.15) 100%)',
+                      border: '1px solid rgba(236, 72, 153, 0.3)',
+                      borderRadius: 3,
+                    }}
+                  >
+                    <Stack spacing={2} textAlign="center">
+                      <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                        <Box
+                          sx={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 14px rgba(236, 72, 153, 0.4)',
+                          }}
+                        >
+                          <LocationOn sx={{ fontSize: 28, color: 'white' }} />
+                        </Box>
+                        <Typography variant="h4" fontWeight={700} sx={{ color: 'white' }}>
+                          Tampa, Florida
+                        </Typography>
+                      </Stack>
+                      <Typography
+                        variant="h5"
+                        fontWeight={600}
+                        sx={{
+                          background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                        }}
+                      >
+                        Hilton Garden Inn Tampa Ybor Historic District
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        1700 E 9th Ave, Tampa, FL 33605
+                      </Typography>
+                      <Divider sx={{ my: 2, borderColor: 'rgba(236, 72, 153, 0.3)' }} />
+                      <Typography
+                        variant="h5"
+                        fontWeight={600}
+                        sx={{
+                          background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                        }}
+                      >
+                        {getDateRangeDisplay()}
                       </Typography>
                     </Stack>
-                    <Typography variant="h5" fontWeight={600} color="primary">
-                      Hilton Garden Inn Tampa Ybor Historic District
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      1700 E 9th Ave, Tampa, FL 33605
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <Typography variant="h5" fontWeight={600} color="primary">
-                      {getDateRangeDisplay()}
-                    </Typography>
-                  </Stack>
-                </Paper>
-                <GoogleMap 
-                  location={{ lat: 27.9594, lng: -82.4423 }} // 1700 E 9th Ave, Tampa, FL 33605
-                  zoom={15}
-                  height={300}
-                />
-              </Stack>
+                  </Paper>
+                  <Box
+                    sx={{
+                      borderRadius: 3,
+                      overflow: 'hidden',
+                      border: '1px solid rgba(236, 72, 153, 0.3)',
+                    }}
+                  >
+                    <GoogleMap
+                      location={{ lat: 27.9594, lng: -82.4423 }}
+                      zoom={15}
+                      height={300}
+                    />
+                  </Box>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={3}>
+                  <Typography
+                    variant="h5"
+                    fontWeight={600}
+                    sx={{
+                      background: 'linear-gradient(135deg, #ffffff 0%, #16a34a 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    ¿Qué Incluye tu Inversión?
+                  </Typography>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      backgroundColor: '#0d1117',
+                      border: '1px solid rgba(22, 163, 74, 0.2)',
+                      borderRadius: 3,
+                      p: 2,
+                    }}
+                  >
+                    <List>
+                      {[
+                        { icon: <Visibility />, primary: 'Operación en vivo cada mañana', secondary: '3 sesiones de trading real con el mentor explicando cada decisión', color: '#16a34a' },
+                        { icon: <School />, primary: '7 módulos de inversión completos', secondary: 'Metodología de 3 Cuentas, S&P-500, ETFs, DCA y estrategias a corto/largo plazo', color: '#3b82f6' },
+                        { icon: <Psychology />, primary: 'Módulo Especial de Psicotrading', secondary: 'Domina tu mente y opera desde el enfoque, no desde el miedo', color: '#f59e0b' },
+                        { icon: <EmojiEvents />, primary: 'Bono: Programa de 3 meses', secondary: 'Acceso a ejercicios grabados para transformar tu mentalidad', color: '#8b5cf6' },
+                        { icon: <Groups />, primary: 'Networking exclusivo', secondary: 'Conexión con traders e inversionistas serios y el mentor', color: '#06b6d4' },
+                        { icon: <CameraAlt />, primary: 'Certificado y foto oficial', secondary: 'Reconocimiento de tu participación en el evento', color: '#ec4899' },
+                      ].map((item, index) => (
+                        <ListItem
+                          key={index}
+                          sx={{
+                            py: 1.5,
+                            borderBottom: index < 5 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                          }}
+                        >
+                          <ListItemIcon>
+                            <Box
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: '10px',
+                                background: `linear-gradient(135deg, ${item.color} 0%, ${alpha(item.color, 0.7)} 100%)`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: `0 4px 14px ${alpha(item.color, 0.3)}`,
+                              }}
+                            >
+                              {React.cloneElement(item.icon, { sx: { color: 'white', fontSize: 22 } })}
+                            </Box>
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={item.primary}
+                            secondary={item.secondary}
+                            primaryTypographyProps={{ fontWeight: 600, sx: { color: 'white' } }}
+                            secondaryTypographyProps={{ sx: { color: 'rgba(255, 255, 255, 0.6)' } }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Paper>
+                </Stack>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                <Typography variant="h5" fontWeight={600}>
-                  ¿Qué Incluye tu Inversión?
-                </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemIcon><Visibility sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="Operación en vivo cada mañana"
-                      secondary="3 sesiones de trading real con el mentor explicando cada decisión"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><School sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="7 módulos de inversión completos"
-                      secondary="Metodología de 3 Cuentas, S&P-500, ETFs, DCA y estrategias a corto/largo plazo"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><Psychology sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="Módulo Especial de Psicotrading"
-                      secondary="Domina tu mente y opera desde el enfoque, no desde el miedo"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><EmojiEvents sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="Bono: Programa de 3 meses"
-                      secondary="Acceso a ejercicios grabados para transformar tu mentalidad"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><Groups sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="Networking exclusivo"
-                      secondary="Conexión con traders e inversionistas serios y el mentor"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon><CameraAlt sx={{ color: 'primary.main' }} /></ListItemIcon>
-                    <ListItemText
-                      primary="Certificado y foto oficial"
-                      secondary="Reconocimiento de tu participación en el evento"
-                    />
-                  </ListItem>
-                </List>
-              </Stack>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+        </Box>
 
         {/* CTA Section */}
         <Box
           sx={{
-            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.9)} 0%, ${alpha(theme.palette.secondary.main, 0.9)} 100%)`,
+            position: 'relative',
+            background: 'linear-gradient(180deg, #0d1117 0%, #161b22 50%, #0d1117 100%)',
             color: 'white',
-            py: 8,
+            py: 10,
             textAlign: 'center',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'radial-gradient(ellipse at center, rgba(22, 163, 74, 0.15) 0%, transparent 70%)',
+              zIndex: 0,
+            },
           }}
         >
-          <Container maxWidth="md">
-            <Celebration sx={{ fontSize: 80, mb: 3 }} />
-            <Typography variant="h3" fontWeight={700} gutterBottom>
+          <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mx: 'auto',
+                mb: 4,
+                boxShadow: '0 8px 40px rgba(22, 163, 74, 0.4)',
+              }}
+            >
+              <Celebration sx={{ fontSize: 60, color: 'white' }} />
+            </Box>
+            <Typography
+              variant="h3"
+              fontWeight={700}
+              gutterBottom
+              sx={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #22c55e 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               Reserva tu lugar hoy mismo
             </Typography>
-            <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
+            <Typography variant="h5" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.8)' }}>
               y prepárate para vivir la experiencia que cambiará tu forma de operar para siempre
             </Typography>
-            
+
             <Box>
-              <Alert 
-                severity="success" 
-                sx={{ 
-                  mb: 3, 
-                  backgroundColor: alpha('#fff', 0.95),
-                  color: 'success.dark',
+              <Paper
+                elevation={0}
+                sx={{
+                  mb: 4,
+                  p: 3,
                   maxWidth: 600,
                   mx: 'auto',
-                  border: '2px solid',
-                  borderColor: 'success.main',
-                  '& .MuiAlert-icon': {
-                    color: 'success.main',
-                  },
+                  background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.2) 0%, rgba(13, 17, 23, 0.95) 50%, rgba(22, 163, 74, 0.2) 100%)',
+                  border: '2px solid rgba(22, 163, 74, 0.4)',
+                  borderRadius: 3,
                 }}
               >
-                <Typography variant="body1" fontWeight={600}>
+                <Typography variant="body1" fontWeight={700} sx={{ color: '#22c55e' }}>
                   CUPO LIMITADO – SOLO PARA TRADERS COMPROMETIDOS
                 </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
+                <Typography variant="body2" sx={{ mt: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
                   Esta mentoría es una inversión en tu futuro como trader profesional
                 </Typography>
-              </Alert>
-              
-              {/* Remove capacity indicator from this section per request */}
-              
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+              </Paper>
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
                 <Button
                   variant="contained"
                   size="large"
                   onClick={handlePurchase}
                   disabled={!isRegistrationEnabled}
                   sx={{
-                    backgroundColor: isRegistrationEnabled ? 'white' : 'grey.400',
-                    color: isRegistrationEnabled ? 'primary.main' : 'grey.600',
+                    background: isRegistrationEnabled
+                      ? 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)'
+                      : 'linear-gradient(135deg, #4b5563 0%, #374151 100%)',
+                    color: 'white',
                     fontSize: '1.2rem',
                     py: 2,
                     px: 6,
                     fontWeight: 700,
+                    borderRadius: 2,
+                    boxShadow: isRegistrationEnabled
+                      ? '0 4px 20px rgba(22, 163, 74, 0.4)'
+                      : 'none',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      backgroundColor: isRegistrationEnabled ? 'grey.100' : 'grey.400',
+                      background: isRegistrationEnabled
+                        ? 'linear-gradient(135deg, #15803d 0%, #14532d 100%)'
+                        : 'linear-gradient(135deg, #4b5563 0%, #374151 100%)',
+                      transform: isRegistrationEnabled ? 'translateY(-2px)' : 'none',
+                      boxShadow: isRegistrationEnabled
+                        ? '0 6px 30px rgba(22, 163, 74, 0.5)'
+                        : 'none',
                     },
                     '&.Mui-disabled': {
-                      backgroundColor: 'grey.400',
-                      color: 'grey.600',
+                      background: 'linear-gradient(135deg, #4b5563 0%, #374151 100%)',
+                      color: 'rgba(255, 255, 255, 0.5)',
                     },
                   }}
                 >
-                  {isRegistrationEnabled 
+                  {isRegistrationEnabled
                     ? 'ASEGURAR MI LUGAR AHORA'
-                    : !isManuallyEnabled 
+                    : !isManuallyEnabled
                       ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
                       : !isCapacityAvailable
                         ? 'LA MENTORÍA YA ALCANZÓ EL TOTAL DE REGISTROS'
                         : 'REGISTRO NO DISPONIBLE'}
                 </Button>
-                
+
                 <Button
                   variant="outlined"
                   size="large"
                   onClick={() => router.push('/community-event/manage-registration')}
                   sx={{
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    color: 'white',
+                    borderColor: 'rgba(22, 163, 74, 0.5)',
+                    color: '#22c55e',
                     fontSize: '1.2rem',
                     py: 2,
                     px: 4,
                     fontWeight: 700,
+                    borderRadius: 2,
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      borderColor: 'rgba(255, 255, 255, 0.6)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      borderColor: 'rgba(22, 163, 74, 0.8)',
+                      backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                      transform: 'translateY(-2px)',
                     },
                   }}
                 >
@@ -1168,16 +1626,28 @@ export default function CommunityEventPage() {
                 </Button>
               </Stack>
             </Box>
-            
-            <Typography variant="body1" sx={{ mt: 4, opacity: 0.8 }}>
-              &quot;Muchos pierden por entrar mal, pero otros pierden por reforzar sin sentido.&quot;<br/>
+
+            <Typography
+              variant="body1"
+              sx={{
+                mt: 5,
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontStyle: 'italic',
+                maxWidth: 600,
+                mx: 'auto',
+              }}
+            >
+              &quot;Muchos pierden por entrar mal, pero otros pierden por reforzar sin sentido.&quot;<br />
               &quot;Este módulo te entrena para entrar solo donde hay probabilidad real, no emoción.&quot;
             </Typography>
           </Container>
         </Box>
 
       </main>
-      
+
+      {/* Footer Spacer */}
+      <Box sx={{ height: { xs: 40, md: 60 }, backgroundColor: '#0d1117' }} />
+
       {/* Professional Footer */}
       <ProfessionalFooter />
       

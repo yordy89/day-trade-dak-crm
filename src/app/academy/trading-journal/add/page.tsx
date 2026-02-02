@@ -453,13 +453,34 @@ export default function AddTradePage() {
             <Grid item xs={12} lg={8}>
               <Stack spacing={3}>
                 {/* Basic Trade Information */}
-                <Card sx={{ p: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                    },
+                  }}
+                >
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
                       width: 44,
                       height: 44,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -563,18 +584,39 @@ export default function AddTradePage() {
 
                 {/* Options Specific Fields */}
                 {formData.market === MarketType.OPTIONS && (
-                  <Card sx={{ p: 3, border: '1px solid', borderColor: alpha(theme.palette.warning.main, 0.2) }}>
+                  <Card
+                    sx={{
+                      p: 3,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      background: isDarkMode
+                        ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                        : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                      boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                      },
+                    }}
+                  >
                     <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                       <Box sx={{
                         width: 44,
                         height: 44,
                         borderRadius: 2,
-                        bgcolor: alpha(theme.palette.warning.main, 0.1),
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <ChartBar size={24} color={theme.palette.warning.main} />
+                        <ChartBar size={24} color={theme.palette.primary.main} />
                       </Box>
                       <Typography variant="h6" fontWeight={600}>
                         {t('tradingJournal.optionsDetails')}
@@ -677,18 +719,39 @@ export default function AddTradePage() {
 
                 {/* Position & Pricing (for non-options) */}
                 {formData.market !== MarketType.OPTIONS && (
-                  <Card sx={{ p: 3 }}>
+                  <Card
+                    sx={{
+                      p: 3,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      background: isDarkMode
+                        ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                        : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                      boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                      },
+                    }}
+                  >
                     <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                       <Box sx={{
                         width: 44,
                         height: 44,
                         borderRadius: 2,
-                        bgcolor: alpha(theme.palette.success.main, 0.1),
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <CurrencyDollar size={24} color={theme.palette.success.main} />
+                        <CurrencyDollar size={24} color={theme.palette.primary.main} />
                       </Box>
                       <Typography variant="h6" fontWeight={600}>
                         {t('tradingJournal.positionPricing')}
@@ -733,13 +796,34 @@ export default function AddTradePage() {
                 )}
 
                 {/* Risk Management */}
-                <Card sx={{ p: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                    },
+                  }}
+                >
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
                       width: 44,
                       height: 44,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.error.main, 0.1),
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.error.main, 0.2)} 0%, ${alpha(theme.palette.error.main, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -817,13 +901,34 @@ export default function AddTradePage() {
             <Grid item xs={12} lg={4}>
               <Stack spacing={3}>
                 {/* Trade Setup */}
-                <Card sx={{ p: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                    },
+                  }}
+                >
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
                       width: 40,
                       height: 40,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.secondary.main, 0.1),
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.2)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -869,13 +974,34 @@ export default function AddTradePage() {
                 </Card>
 
                 {/* Emotional State */}
-                <Card sx={{ p: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                    },
+                  }}
+                >
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
                       width: 40,
                       height: 40,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.info.main, 0.1),
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.2)} 0%, ${alpha(theme.palette.info.main, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.info.main, 0.3)}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -896,13 +1022,34 @@ export default function AddTradePage() {
                 </Card>
 
                 {/* Tags */}
-                <Card sx={{ p: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                    },
+                  }}
+                >
                   <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                     <Box sx={{
                       width: 40,
                       height: 40,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'

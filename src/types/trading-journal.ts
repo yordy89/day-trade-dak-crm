@@ -316,6 +316,13 @@ export interface Analytics extends TradeStatistics {
     pnl: number;
     winRate: number;
   }>;
+  // Performance by symbol (TSLA, MSFT, AAPL, etc.)
+  performanceBySymbol?: Array<{
+    symbol: string;
+    trades: number;
+    pnl: number;
+    winRate: number;
+  }>;
   // Performance by option type (CALL/PUT)
   optionTypeStats?: Array<{
     _id: string; // 'call' or 'put'

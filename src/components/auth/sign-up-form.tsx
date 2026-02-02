@@ -89,51 +89,55 @@ interface CustomInputProps {
   endAdornment?: React.ReactNode;
 }
 
-const CustomInput = React.memo<CustomInputProps>(({ 
-  icon, 
-  label, 
-  isDarkMode, 
+const CustomInput = React.memo<CustomInputProps>(({
+  icon,
+  label,
+  isDarkMode,
   muiTheme,
   error,
   helperText,
   endAdornment,
-  ...props 
+  ...props
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);
-  
+
   return (
     <FormControl fullWidth error={error}>
-      <Typography 
-        variant="body2" 
-        sx={{ 
-          mb: 1, 
-          fontWeight: 500,
+      <Typography
+        variant="body2"
+        sx={{
+          mb: 1,
+          fontWeight: 600,
           color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        {label} {props.required ? <span style={{ color: muiTheme.palette.error.main }}>*</span> : null}
+        {label} {props.required ? <span style={{ color: '#f87171' }}>*</span> : null}
       </Typography>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'transparent',
+          backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
           borderRadius: 2,
           border: '1px solid',
-          borderColor: error 
-            ? muiTheme.palette.error.main 
-            : isFocused 
-              ? muiTheme.palette.primary.main 
-              : isDarkMode 
-                ? 'rgba(255, 255, 255, 0.2)'
+          borderColor: error
+            ? '#f87171'
+            : isFocused
+              ? '#22c55e'
+              : isDarkMode
+                ? 'rgba(255, 255, 255, 0.15)'
                 : 'rgba(0, 0, 0, 0.2)',
+          boxShadow: isFocused && !error ? '0 0 0 3px rgba(34, 197, 94, 0.15)' : 'none',
           transition: 'all 0.3s',
           '&:hover': {
-            borderColor: error 
-              ? muiTheme.palette.error.main 
-              : isDarkMode 
-                ? 'rgba(255, 255, 255, 0.3)'
-                : 'rgba(0, 0, 0, 0.3)',
+            borderColor: error
+              ? '#f87171'
+              : isFocused
+                ? '#22c55e'
+                : isDarkMode
+                  ? 'rgba(255, 255, 255, 0.25)'
+                  : 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
           },
         }}
       >
@@ -143,11 +147,11 @@ const CustomInput = React.memo<CustomInputProps>(({
             alignItems: 'center',
             justifyContent: 'center',
             px: 1.5,
-            color: isFocused 
-              ? muiTheme.palette.primary.main 
+            color: isFocused
+              ? '#22c55e'
               : isDarkMode
-                ? 'rgba(255, 255, 255, 0.7)'
-                : 'rgba(0, 0, 0, 0.6)',
+                ? 'rgba(255, 255, 255, 0.5)'
+                : 'rgba(0, 0, 0, 0.5)',
             transition: 'color 0.3s',
           }}
         >
@@ -166,23 +170,31 @@ const CustomInput = React.memo<CustomInputProps>(({
             pr: 2,
             fontSize: '16px',
             fontWeight: 400,
-            color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+            color: isDarkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
             '& input': {
               padding: '0 0 0 8px',
-              color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+              color: isDarkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
               backgroundColor: 'transparent',
               '&::placeholder': {
-                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
                 opacity: 1,
+              },
+              '&:-webkit-autofill': {
+                WebkitBoxShadow: isDarkMode
+                  ? '0 0 0 1000px rgba(255, 255, 255, 0.05) inset !important'
+                  : '0 0 0 1000px rgba(0, 0, 0, 0.02) inset !important',
+                WebkitTextFillColor: isDarkMode ? 'rgba(255, 255, 255, 0.95) !important' : 'rgba(0, 0, 0, 0.87) !important',
               },
             },
           }}
         />
-        {endAdornment ? <Box sx={{ pr: 1 }}>
+        {endAdornment ? (
+          <Box sx={{ pr: 1 }}>
             {endAdornment}
-          </Box> : null}
+          </Box>
+        ) : null}
       </Box>
-      {helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
+      {helperText ? <FormHelperText sx={{ color: '#f87171' }}>{helperText}</FormHelperText> : null}
     </FormControl>
   );
 });
@@ -249,15 +261,36 @@ export function SignUpForm(): React.JSX.Element {
   return (
     <Stack spacing={4}>
       <Stack spacing={2} alignItems="center">
-        <Box sx={{ display: 'flex', gap: 1, color: 'primary.main', mb: 2 }}>
-          <TrendingUp sx={{ fontSize: 32 }} />
-          <ShowChart sx={{ fontSize: 32 }} />
-          <CandlestickChart sx={{ fontSize: 32 }} />
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1.5,
+            mb: 2,
+            p: 1.5,
+            borderRadius: 2,
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+          }}
+        >
+          <TrendingUp sx={{ fontSize: 28, color: '#22c55e' }} />
+          <ShowChart sx={{ fontSize: 28, color: '#60a5fa' }} />
+          <CandlestickChart sx={{ fontSize: 28, color: '#fbbf24' }} />
         </Box>
-        <Typography variant="h3" fontWeight={800} textAlign="center">
+        <Typography
+          variant="h3"
+          fontWeight={800}
+          textAlign="center"
+          sx={{
+            background: isDarkMode
+              ? 'linear-gradient(135deg, #ffffff 0%, #22c55e 100%)'
+              : 'linear-gradient(135deg, #1a1a1a 0%, #16a34a 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
           {t('auth.signUp.title')}
         </Typography>
-        <Typography color="text.secondary" variant="body1" textAlign="center">
+        <Typography sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)' }} variant="body1" textAlign="center">
           {t('auth.signUp.subtitle')}
         </Typography>
       </Stack>
@@ -356,22 +389,25 @@ export function SignUpForm(): React.JSX.Element {
                       {...field}
                       checked={field.value}
                       sx={{
-                        color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
                         '&.Mui-checked': {
-                          color: 'primary.main',
+                          color: '#22c55e',
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(34, 197, 94, 0.1)',
                         },
                       }}
                     />
                   }
                   label={
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)' }}>
                       {t('auth.signUp.termsPrefix')}{' '}
                       <Link
                         component={RouterLink}
                         href={`${paths.terms.terms}#terms`}
                         underline="hover"
                         variant="body2"
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#22c55e', fontWeight: 600, '&:hover': { color: '#16a34a' } }}
                       >
                         {t('auth.signUp.termsOfService')}
                       </Link>
@@ -381,14 +417,14 @@ export function SignUpForm(): React.JSX.Element {
                         href={`${paths.terms.terms}#privacy`}
                         underline="hover"
                         variant="body2"
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#22c55e', fontWeight: 600, '&:hover': { color: '#16a34a' } }}
                       >
                         {t('auth.signUp.privacyPolicy')}
                       </Link>
                     </Typography>
                   }
                 />
-                {errors.terms ? <FormHelperText error>{errors.terms.message}</FormHelperText> : null}
+                {errors.terms ? <FormHelperText sx={{ color: '#f87171' }}>{errors.terms.message}</FormHelperText> : null}
               </Box>
             )}
           />
@@ -404,15 +440,18 @@ export function SignUpForm(): React.JSX.Element {
                       {...field}
                       checked={field.value}
                       sx={{
-                        color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
                         '&.Mui-checked': {
-                          color: 'primary.main',
+                          color: '#22c55e',
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(34, 197, 94, 0.1)',
                         },
                       }}
                     />
                   }
                   label={
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)' }}>
                       {t('auth.signUp.mediaTermsPrefix')}{' '}
                       <Link
                         component={RouterLink}
@@ -420,7 +459,7 @@ export function SignUpForm(): React.JSX.Element {
                         target="_blank"
                         underline="hover"
                         variant="body2"
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#22c55e', fontWeight: 600, '&:hover': { color: '#16a34a' } }}
                       >
                         {t('auth.signUp.mediaTerms')}
                       </Link>
@@ -428,7 +467,7 @@ export function SignUpForm(): React.JSX.Element {
                     </Typography>
                   }
                 />
-                {errors.mediaTerms ? <FormHelperText error>{errors.mediaTerms.message}</FormHelperText> : null}
+                {errors.mediaTerms ? <FormHelperText sx={{ color: '#f87171' }}>{errors.mediaTerms.message}</FormHelperText> : null}
               </Box>
             )}
           />
@@ -444,15 +483,18 @@ export function SignUpForm(): React.JSX.Element {
                       {...field}
                       checked={field.value}
                       sx={{
-                        color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                        color: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
                         '&.Mui-checked': {
-                          color: 'primary.main',
+                          color: '#22c55e',
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(34, 197, 94, 0.1)',
                         },
                       }}
                     />
                   }
                   label={
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)' }}>
                       {t('auth.signUp.communityGuidelinesPrefix')}{' '}
                       <Link
                         component={RouterLink}
@@ -460,7 +502,7 @@ export function SignUpForm(): React.JSX.Element {
                         target="_blank"
                         underline="hover"
                         variant="body2"
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#22c55e', fontWeight: 600, '&:hover': { color: '#16a34a' } }}
                       >
                         {t('auth.signUp.communityGuidelines')}
                       </Link>
@@ -468,13 +510,13 @@ export function SignUpForm(): React.JSX.Element {
                     </Typography>
                   }
                 />
-                {errors.communityGuidelines ? <FormHelperText error>{errors.communityGuidelines.message}</FormHelperText> : null}
+                {errors.communityGuidelines ? <FormHelperText sx={{ color: '#f87171' }}>{errors.communityGuidelines.message}</FormHelperText> : null}
               </Box>
             )}
           />
 
           {errors.root ? <Alert severity="error">{errors.root.message}</Alert> : null}
-          
+
           <Button
             disabled={isPending || !recaptchaLoaded}
             type="submit"
@@ -487,15 +529,20 @@ export function SignUpForm(): React.JSX.Element {
               fontWeight: 600,
               textTransform: 'none',
               borderRadius: 2,
-              background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+              background: (isPending || !recaptchaLoaded) ? undefined : 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+              boxShadow: (isPending || !recaptchaLoaded) ? 'none' : '0 4px 14px rgba(34, 197, 94, 0.4)',
+              transition: 'all 0.3s',
               '&:hover': {
-                background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
-                boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
-                transform: 'translateY(-1px)',
+                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                boxShadow: '0 6px 20px rgba(34, 197, 94, 0.5)',
+                transform: 'translateY(-2px)',
+              },
+              '&:active': {
+                transform: 'translateY(0)',
               },
               '&:disabled': {
-                backgroundColor: alpha(muiTheme.palette.primary.main, 0.5),
+                background: 'rgba(34, 197, 94, 0.3)',
+                color: 'rgba(255, 255, 255, 0.5)',
               },
             }}
           >
@@ -503,19 +550,26 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
 
           <Divider sx={{ my: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)' }}>
               {t('auth.signUp.or')}
             </Typography>
           </Divider>
 
-          <Typography variant="body2" textAlign="center" color="text.secondary">
+          <Typography variant="body2" textAlign="center" sx={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)' }}>
             {t('auth.signUp.hasAccount')}{' '}
-            <Link 
-              component={RouterLink} 
-              href={paths.auth.signIn} 
-              underline="hover" 
+            <Link
+              component={RouterLink}
+              href={paths.auth.signIn}
+              underline="hover"
               variant="subtitle2"
-              sx={{ color: 'primary.main', fontWeight: 600 }}
+              sx={{
+                color: '#22c55e',
+                fontWeight: 600,
+                transition: 'color 0.2s',
+                '&:hover': {
+                  color: '#16a34a',
+                },
+              }}
             >
               {t('auth.signUp.signInLink')}
             </Link>

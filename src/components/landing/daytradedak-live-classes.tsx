@@ -94,11 +94,31 @@ export function DayTradeDakLiveClasses() {
     <Box
       sx={{
         py: 10,
-        backgroundColor: muiTheme.palette.background.default,
         position: 'relative',
+        overflow: 'hidden',
+        background: isDarkMode
+          ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 30%, ${alpha('#161b22', 1)} 70%, #0d1117 100%)`
+          : `linear-gradient(180deg, #ffffff 0%, #f8fafc 30%, #f8fafc 70%, #ffffff 100%)`,
       }}
     >
-      <Container maxWidth="lg">
+      {/* Decorative accent */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: isDarkMode
+            ? `radial-gradient(ellipse at 30% 40%, ${alpha('#ef4444', 0.08)} 0%, transparent 50%),
+               radial-gradient(ellipse at 70% 60%, ${alpha('#f59e0b', 0.06)} 0%, transparent 50%)`
+            : `radial-gradient(ellipse at 30% 40%, ${alpha('#ef4444', 0.05)} 0%, transparent 50%),
+               radial-gradient(ellipse at 70% 60%, ${alpha('#f59e0b', 0.04)} 0%, transparent 50%)`,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Section Header */}
         <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Chip

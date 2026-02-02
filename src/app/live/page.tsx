@@ -547,12 +547,17 @@ export default function LivePage() {
         <Button
           fullWidth={!isPrimary}
           variant="contained"
-          color="primary"
           size={isPrimary ? "large" : "medium"}
           startIcon={<VideoCamera size={isPrimary ? 24 : 20} weight="fill" />}
           onClick={() => handleStartMeeting(session)}
           sx={{
             fontWeight: 600,
+            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+            boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+              boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+            },
           }}
         >
           Start Meeting
@@ -568,7 +573,6 @@ export default function LivePage() {
             <Button
               fullWidth={!isPrimary}
               variant="contained"
-              color="primary"
               size={isPrimary ? "large" : "medium"}
               startIcon={<SignIn size={isPrimary ? 24 : 20} />}
               onClick={() => {
@@ -581,11 +585,17 @@ export default function LivePage() {
                 }
               }}
               sx={{
+                fontWeight: 600,
+                background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
                 animation: 'pulse 2s infinite',
                 '@keyframes pulse': {
-                  '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}` },
-                  '70%': { boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}` },
-                  '100%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}` },
+                  '0%': { boxShadow: '0 0 0 0 rgba(22, 163, 74, 0.7)' },
+                  '70%': { boxShadow: '0 0 0 10px rgba(22, 163, 74, 0)' },
+                  '100%': { boxShadow: '0 0 0 0 rgba(22, 163, 74, 0)' },
+                },
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                 },
               }}
             >
@@ -593,23 +603,28 @@ export default function LivePage() {
             </Button>
           );
         }
-        
+
         // For authorized users
         return (
           <Button
             fullWidth={!isPrimary}
             variant="contained"
-            color="error"
             size={isPrimary ? "large" : "medium"}
             startIcon={<VideoCamera size={isPrimary ? 24 : 20} weight="fill" />}
             onClick={() => handleJoinSession(session)}
             sx={{
               fontWeight: 600,
+              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
               animation: 'pulse 2s infinite',
               '@keyframes pulse': {
-                '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0.7)}` },
-                '70%': { boxShadow: `0 0 0 10px ${alpha(theme.palette.error.main, 0)}` },
-                '100%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0)}` },
+                '0%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
+                '70%': { boxShadow: '0 0 0 10px rgba(239, 68, 68, 0)' },
+                '100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' },
+              },
+              '&:hover': {
+                background: 'linear-gradient(135deg, #f87171 0%, #ef4444 100%)',
+                boxShadow: '0 6px 20px rgba(239, 68, 68, 0.5)',
               },
             }}
           >
@@ -620,9 +635,15 @@ export default function LivePage() {
         return (
           <Chip
             label="Starting Soon..."
-            color="warning"
             icon={<Clock size={16} />}
             size={isPrimary ? "medium" : "small"}
+            sx={{
+              backgroundColor: 'rgba(245, 158, 11, 0.15)',
+              color: '#fbbf24',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              fontWeight: 600,
+              '& .MuiChip-icon': { color: '#fbbf24' },
+            }}
           />
         );
       case 'upcoming':
@@ -633,6 +654,14 @@ export default function LivePage() {
             size={isPrimary ? "large" : "medium"}
             startIcon={<Clock size={isPrimary ? 20 : 16} />}
             disabled
+            sx={{
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              color: 'rgba(255, 255, 255, 0.4)',
+              '&.Mui-disabled': {
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'rgba(255, 255, 255, 0.3)',
+              },
+            }}
           >
             {timeUntilStart ? `Starts in ${timeUntilStart}` : 'Starting Soon'}
           </Button>
@@ -644,6 +673,14 @@ export default function LivePage() {
             variant="outlined"
             size={isPrimary ? "large" : "medium"}
             disabled
+            sx={{
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              color: 'rgba(255, 255, 255, 0.4)',
+              '&.Mui-disabled': {
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'rgba(255, 255, 255, 0.3)',
+              },
+            }}
           >
             Session Ended
           </Button>
@@ -659,61 +696,102 @@ export default function LivePage() {
     const hostName = typeof session.host === 'string' ? 'Host' : `${session.host.firstName} ${session.host.lastName}`;
     const isHost = user?._id === hostId;
     const isSelected = selectedMeeting?._id === session._id;
-    
+
     return (
-      <Card 
-        key={session._id} 
+      <Card
+        key={session._id}
+        elevation={0}
         onClick={() => setSelectedMeeting(session)}
-        sx={{ 
+        sx={{
           cursor: 'pointer',
-          transition: 'all 0.2s',
-          border: isSelected ? `2px solid ${theme.palette.primary.main}` : '1px solid',
-          borderColor: isSelected ? 'primary.main' : 'divider',
+          transition: 'all 0.3s ease',
+          backgroundColor: '#161b22',
+          border: isSelected ? '2px solid #16a34a' : '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: 3,
           ...(isSelected && {
-            boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.1)}`,
+            boxShadow: '0 4px 20px rgba(22, 163, 74, 0.2)',
           }),
+          '&:hover': {
+            borderColor: isSelected ? '#16a34a' : 'rgba(255, 255, 255, 0.2)',
+            transform: 'translateY(-2px)',
+          },
         }}
       >
-        <CardContent sx={{ p: 2 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1}>
+        <CardContent sx={{ p: 2.5 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1.5}>
             <Box flex={1}>
               <Stack direction="row" alignItems="center" gap={1} mb={0.5}>
                 {status === 'live' && (
                   <Box
                     sx={{
-                      width: 8,
-                      height: 8,
+                      width: 10,
+                      height: 10,
                       borderRadius: '50%',
-                      bgcolor: 'error.main',
+                      bgcolor: '#ef4444',
+                      boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)',
                       animation: 'pulse 2s infinite',
                     }}
                   />
                 )}
-                <Typography variant="subtitle1" fontWeight={600} noWrap>
+                <Typography variant="subtitle1" fontWeight={600} noWrap sx={{ color: 'white' }}>
                   {session.title}
                 </Typography>
               </Stack>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                 Host: {hostName}
               </Typography>
             </Box>
-            {isHost && <Chip label="Host" size="small" color="primary" icon={<Crown size={14} />} />}
+            {isHost && (
+              <Chip
+                label="Host"
+                size="small"
+                icon={<Crown size={14} />}
+                sx={{
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                  color: '#fbbf24',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  '& .MuiChip-icon': { color: '#fbbf24' },
+                }}
+              />
+            )}
           </Stack>
-          
+
           <Stack direction="row" gap={1} mb={2} flexWrap="wrap">
-            <Chip 
-              size="small" 
-              icon={<Calendar size={14} />} 
+            <Chip
+              size="small"
+              icon={<Calendar size={14} />}
               label={new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              sx={{
+                backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                color: '#60a5fa',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                '& .MuiChip-icon': { color: '#60a5fa' },
+              }}
             />
-            <Chip 
-              size="small" 
-              icon={<Clock size={14} />} 
+            <Chip
+              size="small"
+              icon={<Clock size={14} />}
               label={`${session.duration} min`}
+              sx={{
+                backgroundColor: 'rgba(139, 92, 246, 0.15)',
+                color: '#a78bfa',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                '& .MuiChip-icon': { color: '#a78bfa' },
+              }}
             />
-            {session.isRecurring && <Chip size="small" label="Recurring" variant="outlined" />}
+            {session.isRecurring && (
+              <Chip
+                size="small"
+                label="Recurring"
+                sx={{
+                  backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                  color: '#22c55e',
+                  border: '1px solid rgba(22, 163, 74, 0.3)',
+                }}
+              />
+            )}
           </Stack>
-          
+
           {renderMeetingButton(session)}
         </CardContent>
       </Card>
@@ -773,48 +851,75 @@ export default function LivePage() {
   const currentMeeting = selectedMeeting;
 
   return (
-    <>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#0d1117' }}>
       <MainNavbar />
-      <Container 
-        maxWidth="xl" 
-        sx={{ 
-          mt: { xs: 12, md: 14 }, 
+      <Container
+        maxWidth="xl"
+        sx={{
+          mt: { xs: 12, md: 14 },
           mb: 4,
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
         {/* Page Header */}
-        <Stack 
-          direction="row" 
-          alignItems="center" 
-          justifyContent="space-between" 
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
           mb={4}
           flexWrap="wrap"
           gap={2}
         >
           <Box>
-            <Typography variant="h4" fontWeight={700} gutterBottom>
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              gutterBottom
+              sx={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #16a34a 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               Live Trading Sessions
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Join live trading sessions with expert traders
             </Typography>
           </Box>
-          
+
           <Stack direction="row" alignItems="center" gap={2}>
             <Chip
               icon={isConnected ? <CheckCircle size={16} weight="fill" /> : <Warning size={16} />}
               label={isConnected ? 'Connected' : 'Connecting...'}
-              color={isConnected ? 'success' : 'warning'}
-              variant="outlined"
               size="small"
+              sx={{
+                backgroundColor: isConnected ? 'rgba(22, 163, 74, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                color: isConnected ? '#22c55e' : '#f59e0b',
+                border: `1px solid ${isConnected ? 'rgba(22, 163, 74, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                '& .MuiChip-icon': {
+                  color: isConnected ? '#22c55e' : '#f59e0b',
+                },
+              }}
             />
           </Stack>
         </Stack>
 
         {/* Error Alert */}
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          <Alert
+            severity="error"
+            onClose={() => setError(null)}
+            sx={{
+              mb: 3,
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: 2,
+              '& .MuiAlert-icon': { color: '#ef4444' },
+              '& .MuiAlertTitle-root': { color: '#f87171' },
+              '& .MuiAlert-message': { color: 'rgba(255, 255, 255, 0.8)' },
+            }}
+          >
             <AlertTitle>Error</AlertTitle>
             {error}
           </Alert>
@@ -822,7 +927,18 @@ export default function LivePage() {
 
         {/* Token Expired Alert */}
         {tokenExpired && (
-          <Alert severity="warning" sx={{ mb: 3 }}>
+          <Alert
+            severity="warning"
+            sx={{
+              mb: 3,
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              borderRadius: 2,
+              '& .MuiAlert-icon': { color: '#f59e0b' },
+              '& .MuiAlertTitle-root': { color: '#fbbf24' },
+              '& .MuiAlert-message': { color: 'rgba(255, 255, 255, 0.8)' },
+            }}
+          >
             <AlertTitle>Session Expired</AlertTitle>
             Your session has expired. Please refresh the page or sign in again to see your subscription benefits.
           </Alert>
@@ -832,23 +948,60 @@ export default function LivePage() {
         {loading ? (
           <Grid container spacing={3}>
             <Grid item xs={12} md={8}>
-              <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+              <Skeleton
+                variant="rectangular"
+                height={400}
+                sx={{
+                  borderRadius: 3,
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                }}
+              />
             </Grid>
             <Grid item xs={12} md={4}>
               <Stack gap={2}>
-                <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2 }} />
-                <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2 }} />
+                <Skeleton
+                  variant="rectangular"
+                  height={100}
+                  sx={{ borderRadius: 3, bgcolor: 'rgba(255, 255, 255, 0.05)' }}
+                />
+                <Skeleton
+                  variant="rectangular"
+                  height={200}
+                  sx={{ borderRadius: 3, bgcolor: 'rgba(255, 255, 255, 0.05)' }}
+                />
               </Stack>
             </Grid>
           </Grid>
         ) : allMeetings.length === 0 ? (
           // No meetings available
-          <Card sx={{ p: 6, textAlign: 'center' }}>
-            <VideoCamera size={64} weight="thin" style={{ marginBottom: 16, opacity: 0.5 }} />
-            <Typography variant="h6" gutterBottom>
+          <Card
+            elevation={0}
+            sx={{
+              p: 6,
+              textAlign: 'center',
+              backgroundColor: '#161b22',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 3,
+            }}
+          >
+            <Box
+              sx={{
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 24px',
+              }}
+            >
+              <VideoCamera size={48} weight="thin" color="#16a34a" />
+            </Box>
+            <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
               No Live Sessions Available
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
               Check back later for upcoming trading sessions
             </Typography>
           </Card>
@@ -859,12 +1012,27 @@ export default function LivePage() {
               <>
                 {/* Main Content - Selected Meeting */}
                 <Grid item xs={12} md={8}>
-                  <Card sx={{ height: '100%', minHeight: 500 }}>
+                  <Card
+                    elevation={0}
+                    sx={{
+                      height: '100%',
+                      minHeight: 500,
+                      backgroundColor: '#161b22',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: 3,
+                    }}
+                  >
                     <CardContent sx={{ height: '100%', p: 0 }}>
                       {currentMeeting ? (
                         <Stack height="100%">
                           {/* Meeting Header */}
-                          <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+                          <Box
+                            sx={{
+                              p: 3,
+                              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                              background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, transparent 100%)',
+                            }}
+                          >
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                               <Stack direction="row" spacing={2} alignItems="center">
                                 {currentMeeting.status === 'live' && (
@@ -873,21 +1041,22 @@ export default function LivePage() {
                                       width: 12,
                                       height: 12,
                                       borderRadius: '50%',
-                                      bgcolor: 'error.main',
+                                      bgcolor: '#ef4444',
+                                      boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)',
                                       animation: 'pulse 2s infinite',
                                     }}
                                   />
                                 )}
-                                <Typography variant="h5" fontWeight={600}>
+                                <Typography variant="h5" fontWeight={600} sx={{ color: 'white' }}>
                                   {currentMeeting.title}
                                 </Typography>
                               </Stack>
-                              
+
                               {/* Action Button */}
                               {renderMeetingButton(currentMeeting, true)}
                             </Stack>
-                            
-                            {currentMeeting.description ? <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+
+                            {currentMeeting.description ? <Typography variant="body2" sx={{ mt: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
                                 {currentMeeting.description}
                               </Typography> : null}
                           </Box>
@@ -896,75 +1065,96 @@ export default function LivePage() {
                           <Box sx={{ p: 3, flex: 1 }}>
                             <Grid container spacing={3}>
                               <Grid item xs={12} sm={6}>
-                                <Stack spacing={2}>
+                                <Stack spacing={3}>
                                   <Box>
-                                    <Typography variant="overline" color="text.secondary" gutterBottom>
-                                      Host
+                                    <Typography variant="overline" sx={{ color: 'rgba(255, 255, 255, 0.5)', letterSpacing: 1 }} gutterBottom>
+                                      HOST
                                     </Typography>
-                                    <Stack direction="row" spacing={1} alignItems="center">
-                                      <Avatar sx={{ width: 32, height: 32 }}>
+                                    <Stack direction="row" spacing={1.5} alignItems="center">
+                                      <Avatar
+                                        sx={{
+                                          width: 40,
+                                          height: 40,
+                                          background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                                          boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+                                        }}
+                                      >
                                         {typeof currentMeeting.host === 'string' ? 'H' : currentMeeting.host.firstName.charAt(0)}
                                       </Avatar>
-                                      <Typography variant="body1">
+                                      <Typography variant="body1" sx={{ color: 'white', fontWeight: 500 }}>
                                         {typeof currentMeeting.host === 'string' ? 'Host' : `${currentMeeting.host.firstName} ${currentMeeting.host.lastName}`}
                                       </Typography>
                                     </Stack>
                                   </Box>
-                                  
+
                                   <Box>
-                                    <Typography variant="overline" color="text.secondary" gutterBottom>
-                                      Schedule
+                                    <Typography variant="overline" sx={{ color: 'rgba(255, 255, 255, 0.5)', letterSpacing: 1 }} gutterBottom>
+                                      SCHEDULE
                                     </Typography>
-                                    <Stack spacing={0.5}>
-                                      <Typography variant="body2">
-                                        <Calendar size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                    <Stack spacing={1}>
+                                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                                        <Calendar size={16} style={{ marginRight: 8, verticalAlign: 'middle', color: '#16a34a' }} />
                                         {new Date(currentMeeting.scheduledAt).toLocaleDateString()}
                                       </Typography>
-                                      <Typography variant="body2">
-                                        <Clock size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                                        <Clock size={16} style={{ marginRight: 8, verticalAlign: 'middle', color: '#3b82f6' }} />
                                         {new Date(currentMeeting.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                       </Typography>
-                                      <Typography variant="body2">
-                                        <Timer size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                                        <Timer size={16} style={{ marginRight: 8, verticalAlign: 'middle', color: '#8b5cf6' }} />
                                         {currentMeeting.duration} minutes
                                       </Typography>
                                     </Stack>
                                   </Box>
                                 </Stack>
                               </Grid>
-                              
+
                               <Grid item xs={12} sm={6}>
-                                <Stack spacing={2}>
+                                <Stack spacing={3}>
                                   <Box>
-                                    <Typography variant="overline" color="text.secondary" gutterBottom>
-                                      Meeting Type
+                                    <Typography variant="overline" sx={{ color: 'rgba(255, 255, 255, 0.5)', letterSpacing: 1 }} gutterBottom>
+                                      MEETING TYPE
                                     </Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                      <Chip 
-                                        size="small" 
-                                        label={currentMeeting.meetingType.replace(/_/g, ' ').toUpperCase()} 
-                                        color={currentMeeting.meetingType === 'daily_live' ? 'primary' : 'default'}
+                                      <Chip
+                                        size="small"
+                                        label={currentMeeting.meetingType.replace(/_/g, ' ').toUpperCase()}
+                                        sx={{
+                                          backgroundColor: currentMeeting.meetingType === 'daily_live' ? 'rgba(22, 163, 74, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                                          color: currentMeeting.meetingType === 'daily_live' ? '#22c55e' : 'rgba(255, 255, 255, 0.8)',
+                                          border: `1px solid ${currentMeeting.meetingType === 'daily_live' ? 'rgba(22, 163, 74, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`,
+                                          fontWeight: 600,
+                                        }}
                                       />
                                       {currentMeeting.meetingType === 'daily_live' && (
                                         <Tooltip title="Daily live trading sessions">
-                                          <Star size={16} weight="fill" color={theme.palette.warning.main} />
+                                          <Star size={18} weight="fill" color="#f59e0b" />
                                         </Tooltip>
                                       )}
                                     </Stack>
                                   </Box>
-                                  
+
                                   <Box>
-                                    <Typography variant="overline" color="text.secondary" gutterBottom>
-                                      Participants
+                                    <Typography variant="overline" sx={{ color: 'rgba(255, 255, 255, 0.5)', letterSpacing: 1 }} gutterBottom>
+                                      PARTICIPANTS
                                     </Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                      <Users size={20} />
-                                      <Typography variant="body2">
+                                      <Users size={20} color="#06b6d4" />
+                                      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                                         {currentMeeting.attendees?.length || 0} / {currentMeeting.maxParticipants}
                                       </Typography>
                                       {currentMeeting.attendees && currentMeeting.attendees.length > 0 ? <AvatarGroup max={3} sx={{ ml: 1 }}>
                                           {currentMeeting.attendees.map((attendee: any, idx: number) => (
-                                            <Avatar key={idx} sx={{ width: 24, height: 24 }}>
+                                            <Avatar
+                                              key={idx}
+                                              sx={{
+                                                width: 28,
+                                                height: 28,
+                                                fontSize: '0.75rem',
+                                                backgroundColor: '#0d1117',
+                                                border: '2px solid #161b22',
+                                              }}
+                                            >
                                               {attendee.firstName?.charAt(0) || '?'}
                                             </Avatar>
                                           ))}
@@ -977,37 +1167,87 @@ export default function LivePage() {
                           </Box>
                           
                           {/* Meeting Features */}
-                          <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider' }}>
-                            <Typography variant="overline" color="text.secondary" gutterBottom>
-                              Meeting Features
+                          <Box sx={{ p: 3, borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                            <Typography variant="overline" sx={{ color: 'rgba(255, 255, 255, 0.5)', letterSpacing: 1 }} gutterBottom>
+                              MEETING FEATURES
                             </Typography>
-                            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
-                              {currentMeeting.enableScreenShare ? <Chip icon={<Desktop size={14} />} label="Screen Share" size="small" /> : null}
-                              {currentMeeting.enableRecording ? <Chip icon={<Television size={14} />} label="Recording" size="small" /> : null}
-                              {currentMeeting.enableChat ? <Chip icon={<Envelope size={14} />} label="Chat" size="small" /> : null}
-                              {currentMeeting.whiteboardEnabled ? <Chip icon={<CheckCircle size={14} />} label="Whiteboard" size="small" /> : null}
+                            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1.5 }}>
+                              {currentMeeting.enableScreenShare ? (
+                                <Chip
+                                  icon={<Desktop size={14} />}
+                                  label="Screen Share"
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                                    color: '#60a5fa',
+                                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                                    '& .MuiChip-icon': { color: '#60a5fa' },
+                                  }}
+                                />
+                              ) : null}
+                              {currentMeeting.enableRecording ? (
+                                <Chip
+                                  icon={<Television size={14} />}
+                                  label="Recording"
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                    color: '#f87171',
+                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                    '& .MuiChip-icon': { color: '#f87171' },
+                                  }}
+                                />
+                              ) : null}
+                              {currentMeeting.enableChat ? (
+                                <Chip
+                                  icon={<Envelope size={14} />}
+                                  label="Chat"
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+                                    color: '#a78bfa',
+                                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                                    '& .MuiChip-icon': { color: '#a78bfa' },
+                                  }}
+                                />
+                              ) : null}
+                              {currentMeeting.whiteboardEnabled ? (
+                                <Chip
+                                  icon={<CheckCircle size={14} />}
+                                  label="Whiteboard"
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                                    color: '#fbbf24',
+                                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                                    '& .MuiChip-icon': { color: '#fbbf24' },
+                                  }}
+                                />
+                              ) : null}
                             </Stack>
                           </Box>
                           {/* Countdown or Status */}
-                          {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart ? <Box 
-                              sx={{ 
-                                p: 2, 
-                                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                                borderRadius: 1,
-                                textAlign: 'center'
+                          {getSessionStatus(currentMeeting) === 'upcoming' && timeUntilStart ? (
+                            <Box
+                              sx={{
+                                p: 2,
+                                background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(22, 163, 74, 0.05) 100%)',
+                                borderTop: '1px solid rgba(22, 163, 74, 0.2)',
+                                textAlign: 'center',
                               }}
                             >
-                              <Typography variant="body2" color="primary" fontWeight={600}>
+                              <Typography variant="body2" sx={{ color: '#22c55e', fontWeight: 600 }}>
                                 Starting in {timeUntilStart}
                               </Typography>
-                            </Box> : null}
+                            </Box>
+                          ) : null}
                         </Stack>
                       ) : (
-                        <Box 
-                          display="flex" 
+                        <Box
+                          display="flex"
                           flexDirection="column"
-                          alignItems="center" 
-                          justifyContent="center" 
+                          alignItems="center"
+                          justifyContent="center"
                           height="100%"
                           gap={3}
                         >
@@ -1016,15 +1256,16 @@ export default function LivePage() {
                               width: 120,
                               height: 120,
                               borderRadius: '50%',
-                              bgcolor: alpha(theme.palette.primary.main, 0.1),
+                              background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(22, 163, 74, 0.05) 100%)',
+                              border: '1px solid rgba(22, 163, 74, 0.2)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                             }}
                           >
-                            <VideoCamera size={64} weight="thin" color={theme.palette.primary.main} />
+                            <VideoCamera size={64} weight="thin" color="#16a34a" />
                           </Box>
-                          <Typography variant="h6" color="text.secondary">
+                          <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                             Select a meeting to view details
                           </Typography>
                         </Box>
@@ -1038,32 +1279,49 @@ export default function LivePage() {
                   <Stack spacing={2}>
                     {/* Access Status Card */}
                     {!loading && (
-                      <Card>
-                        <CardContent>
+                      <Card
+                        elevation={0}
+                        sx={{
+                          backgroundColor: '#161b22',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: 3,
+                        }}
+                      >
+                        <CardContent sx={{ p: 2.5 }}>
                           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-                            <Typography variant="subtitle1" fontWeight={600}>
+                            <Typography variant="subtitle1" fontWeight={600} sx={{ color: 'white' }}>
                               Your Access
                             </Typography>
                             {hasAccess ? (
-                              <Chip 
-                                icon={<CheckCircle size={16} weight="fill" />} 
-                                label="Active" 
-                                color="success" 
-                                size="small" 
+                              <Chip
+                                icon={<CheckCircle size={16} weight="fill" />}
+                                label="Active"
+                                size="small"
+                                sx={{
+                                  backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                                  color: '#22c55e',
+                                  border: '1px solid rgba(22, 163, 74, 0.3)',
+                                  '& .MuiChip-icon': { color: '#22c55e' },
+                                }}
                               />
                             ) : (
-                              <Chip 
-                                icon={<Lock size={16} />} 
-                                label="Limited" 
-                                color="warning" 
-                                size="small" 
+                              <Chip
+                                icon={<Lock size={16} />}
+                                label="Limited"
+                                size="small"
+                                sx={{
+                                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                                  color: '#f59e0b',
+                                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                                  '& .MuiChip-icon': { color: '#f59e0b' },
+                                }}
                               />
                             )}
                           </Stack>
-                          
+
                           {!hasAccess && (
-                            <Stack spacing={1}>
-                              <Typography variant="body2" color="text.secondary">
+                            <Stack spacing={1.5}>
+                              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                                 Upgrade your subscription to join live trading sessions
                               </Typography>
                               <Button
@@ -1071,29 +1329,46 @@ export default function LivePage() {
                                 fullWidth
                                 startIcon={<Crown size={20} />}
                                 onClick={() => router.push('/academy/subscription/plans?view=monthly')}
-                                sx={{ mt: 1 }}
+                                sx={{
+                                  mt: 1,
+                                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+                                  '&:hover': {
+                                    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                                    boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+                                  },
+                                }}
                               >
                                 View Subscriptions
                               </Button>
                             </Stack>
                           )}
-                          
+
                           {hasAccess && liveMeetingsData?.user && (
-                            <Stack spacing={0.5}>
+                            <Stack spacing={1}>
                               {liveMeetingsData.user.hasLiveSubscription && (
-                                <Typography variant="caption" color="success.main">
-                                  ✓ Live Subscription Active
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <CheckCircle size={14} weight="fill" color="#22c55e" />
+                                  <Typography variant="caption" sx={{ color: '#22c55e' }}>
+                                    Live Subscription Active
+                                  </Typography>
+                                </Box>
                               )}
                               {liveMeetingsData.user.hasLiveWeeklyModuleAccess && (
-                                <Typography variant="caption" color="success.main">
-                                  ✓ Live Weekly Module Access
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <CheckCircle size={14} weight="fill" color="#22c55e" />
+                                  <Typography variant="caption" sx={{ color: '#22c55e' }}>
+                                    Live Weekly Module Access
+                                  </Typography>
+                                </Box>
                               )}
                               {liveMeetingsData.user.allowLiveMeetingAccess && (
-                                <Typography variant="caption" color="success.main">
-                                  ✓ Special Access Granted
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <CheckCircle size={14} weight="fill" color="#22c55e" />
+                                  <Typography variant="caption" sx={{ color: '#22c55e' }}>
+                                    Special Access Granted
+                                  </Typography>
+                                </Box>
                               )}
                             </Stack>
                           )}
@@ -1102,13 +1377,27 @@ export default function LivePage() {
                     )}
 
                     {/* Meeting List */}
-                    <Card>
-                      <CardHeader 
-                        title="Available Sessions" 
-                        titleTypographyProps={{ variant: 'h6' }}
-                        sx={{ pb: 1 }}
+                    <Card
+                      elevation={0}
+                      sx={{
+                        backgroundColor: '#161b22',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: 3,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <CardHeader
+                        title="Available Sessions"
+                        titleTypographyProps={{
+                          variant: 'h6',
+                          sx: { color: 'white', fontWeight: 600 },
+                        }}
+                        sx={{
+                          pb: 1,
+                          background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.08) 0%, transparent 100%)',
+                        }}
                       />
-                      <Divider />
+                      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
                       <CardContent sx={{ p: 0 }}>
                         <Stack>
                           {allMeetings.map((session) => {
@@ -1117,31 +1406,27 @@ export default function LivePage() {
                             const hostName = typeof session.host === 'string' ? 'Host' : `${session.host.firstName} ${session.host.lastName}`;
                             const isHost = user?._id === hostId;
                             const isSelected = selectedMeeting?._id === session._id;
-                            
+
                             return (
-                              <Paper
+                              <Box
                                 key={session._id}
                                 onClick={() => setSelectedMeeting(session)}
                                 sx={{
                                   p: 2,
                                   cursor: 'pointer',
-                                  borderRadius: 0,
-                                  borderBottom: 1,
-                                  borderColor: 'divider',
-                                  transition: 'all 0.2s',
-                                  ...(isSelected && {
-                                    bgcolor: alpha(theme.palette.primary.main, 0.08),
-                                    borderLeft: `4px solid ${theme.palette.primary.main}`,
-                                  }),
+                                  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                                  backgroundColor: isSelected ? 'rgba(22, 163, 74, 0.1)' : 'transparent',
+                                  borderLeft: isSelected ? '3px solid #16a34a' : '3px solid transparent',
+                                  transition: 'all 0.2s ease',
                                   '&:hover': {
-                                    bgcolor: 'action.hover',
+                                    backgroundColor: isSelected ? 'rgba(22, 163, 74, 0.15)' : 'rgba(255, 255, 255, 0.03)',
                                   },
                                   '&:last-child': {
                                     borderBottom: 0,
                                   },
                                 }}
                               >
-                                <Stack spacing={1}>
+                                <Stack spacing={1.5}>
                                   <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Stack direction="row" alignItems="center" spacing={1}>
                                       {status === 'live' && (
@@ -1150,41 +1435,47 @@ export default function LivePage() {
                                             width: 8,
                                             height: 8,
                                             borderRadius: '50%',
-                                            bgcolor: 'error.main',
+                                            bgcolor: '#ef4444',
+                                            boxShadow: '0 0 8px rgba(239, 68, 68, 0.5)',
                                             animation: 'pulse 2s infinite',
                                           }}
                                         />
                                       )}
-                                      <Typography variant="subtitle2" fontWeight={600}>
+                                      <Typography variant="subtitle2" fontWeight={600} sx={{ color: 'white' }}>
                                         {session.title}
                                       </Typography>
                                     </Stack>
                                     {isHost && (
-                                      <Chip 
-                                        label="Host" 
-                                        size="small" 
-                                        color="primary" 
-                                        sx={{ height: 20 }}
+                                      <Chip
+                                        label="Host"
+                                        size="small"
                                         icon={<Crown size={12} />}
+                                        sx={{
+                                          height: 22,
+                                          backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                                          color: '#fbbf24',
+                                          border: '1px solid rgba(245, 158, 11, 0.3)',
+                                          '& .MuiChip-icon': { color: '#fbbf24' },
+                                        }}
                                       />
                                     )}
                                   </Stack>
-                                  
+
                                   <Stack direction="row" alignItems="center" spacing={2}>
-                                    <Typography variant="caption" color="text.secondary">
-                                      <Clock size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                    <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                                      <Clock size={12} style={{ marginRight: 4, verticalAlign: 'middle', color: '#3b82f6' }} />
                                       {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </Typography>
-                                    <Typography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                                       Host: {hostName}
                                     </Typography>
                                   </Stack>
-                                  
-                                  <Box sx={{ mt: 1 }}>
+
+                                  <Box sx={{ mt: 0.5 }}>
                                     {renderMeetingButton(session)}
                                   </Box>
                                 </Stack>
-                              </Paper>
+                              </Box>
                             );
                           })}
                         </Stack>
@@ -1199,15 +1490,33 @@ export default function LivePage() {
                 <Stack spacing={2}>
                   {/* Access Status for Mobile */}
                   {!loading && !hasAccess && (
-                    <Alert severity="info" action={
-                      <Button color="inherit" size="small" onClick={() => router.push('/academy/subscription/plans?view=monthly')}>
-                        Upgrade
-                      </Button>
-                    }>
+                    <Alert
+                      severity="info"
+                      action={
+                        <Button
+                          size="small"
+                          onClick={() => router.push('/academy/subscription/plans?view=monthly')}
+                          sx={{
+                            color: '#60a5fa',
+                            fontWeight: 600,
+                            '&:hover': { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+                          }}
+                        >
+                          Upgrade
+                        </Button>
+                      }
+                      sx={{
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        border: '1px solid rgba(59, 130, 246, 0.3)',
+                        borderRadius: 2,
+                        '& .MuiAlert-icon': { color: '#3b82f6' },
+                        '& .MuiAlert-message': { color: 'rgba(255, 255, 255, 0.8)' },
+                      }}
+                    >
                       Upgrade to join live trading sessions
                     </Alert>
                   )}
-                  
+
                   {/* Mobile Meeting Cards */}
                   {allMeetings.map(renderMobileSessionCard)}
                 </Stack>
@@ -1216,6 +1525,6 @@ export default function LivePage() {
           </Grid>
         )}
       </Container>
-    </>
+    </Box>
   );
 }

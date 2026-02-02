@@ -8,6 +8,7 @@ import {
   Autocomplete,
   InputBase,
   Chip,
+  alpha,
 } from '@mui/material';
 
 interface CustomAutocompleteProps {
@@ -131,7 +132,10 @@ export const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
               <Box sx={{ display: 'flex', flexWrap: 'wrap', flex: 1, px: 1 }}>
                 {params.InputProps.startAdornment}
                 <InputBase
-                  {...(({ color, size, ...rest }) => rest)(params.inputProps)}
+                  {...(() => {
+                    const { color, ...rest } = params.inputProps as any;
+                    return rest;
+                  })()}
                   placeholder={value?.length === 0 ? placeholder : ''}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
@@ -142,10 +146,9 @@ export const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
                     px: 1,
                     fontSize: '16px',
                     fontWeight: 400,
-                    color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
                     '& input': {
                       padding: '0',
-                      color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+                      color: `${isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)'} !important`,
                       backgroundColor: 'transparent',
                       '&::placeholder': {
                         color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
@@ -157,7 +160,10 @@ export const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
               </Box>
             ) : (
               <InputBase
-                {...(({ color, size, ...rest }) => rest)(params.inputProps)}
+                {...(() => {
+                  const { color, ...rest } = params.inputProps as any;
+                  return rest;
+                })()}
                 placeholder={placeholder}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
@@ -168,10 +174,9 @@ export const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
                   pl: icon ? 1 : 2,
                   fontSize: '16px',
                   fontWeight: 400,
-                  color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
                   '& input': {
                     padding: '0',
-                    color: isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+                    color: `${isDarkMode ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)'} !important`,
                     backgroundColor: 'transparent',
                     '&::placeholder': {
                       color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
@@ -190,6 +195,77 @@ export const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
           },
           '& .MuiAutocomplete-clearIndicator': {
             color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+          },
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+              boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.15)}`,
+              background: isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+              backdropFilter: 'blur(10px)',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '2px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+              '& .MuiAutocomplete-listbox': {
+                py: 1,
+                '& .MuiAutocomplete-option': {
+                  py: 1.5,
+                  px: 2,
+                  mx: 1,
+                  my: 0.5,
+                  borderRadius: 1.5,
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                    color: theme.palette.primary.main,
+                  },
+                  '&[aria-selected="true"]': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.18),
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.25),
+                    },
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                  },
+                },
+              },
+              '& .MuiAutocomplete-noOptions': {
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                py: 2,
+                textAlign: 'center',
+              },
+              // Custom scrollbar
+              '&::-webkit-scrollbar': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: alpha(theme.palette.primary.main, 0.3),
+                borderRadius: '3px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: alpha(theme.palette.primary.main, 0.5),
+              },
+            },
           },
         }}
       />

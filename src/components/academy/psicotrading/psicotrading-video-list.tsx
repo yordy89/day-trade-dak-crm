@@ -116,19 +116,71 @@ export default function PsicoTradingVideoList() {
 
   if (isLoading) {
     return (
-      <Box>
-        {[1, 2, 3].map((i) => (
-          <Card key={i} sx={{ mb: 2 }}>
-            <CardContent>
-              <Skeleton variant="rectangular" height={80} />
-              <Box sx={{ mt: 2 }}>
-                <Skeleton width="60%" />
-                <Skeleton width="40%" />
+      <Card
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+          boxShadow: `0 6px 28px ${alpha(theme.palette.primary.main, 0.12)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+          },
+        }}
+      >
+        <CardContent sx={{ p: 0 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Box
+              key={i}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                py: 2.5,
+                px: 3,
+                borderBottom: i < 5 ? `1px solid ${alpha(theme.palette.primary.main, 0.12)}` : 'none',
+              }}
+            >
+              <Skeleton
+                variant="circular"
+                width={44}
+                height={44}
+                sx={{
+                  bgcolor: alpha(theme.palette.primary.main, 0.15),
+                  flexShrink: 0,
+                }}
+              />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton
+                  width="70%"
+                  height={24}
+                  sx={{ bgcolor: alpha(theme.palette.primary.main, 0.12), mb: 1 }}
+                />
+                <Stack direction="row" spacing={2}>
+                  <Skeleton
+                    width={80}
+                    height={16}
+                    sx={{ bgcolor: alpha(theme.palette.primary.main, 0.08) }}
+                  />
+                  <Skeleton
+                    width={120}
+                    height={16}
+                    sx={{ bgcolor: alpha(theme.palette.primary.main, 0.08) }}
+                  />
+                </Stack>
               </Box>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
+            </Box>
+          ))}
+        </CardContent>
+      </Card>
     );
   }
 
@@ -168,7 +220,26 @@ export default function PsicoTradingVideoList() {
   return (
     <Box>
       {/* Video List */}
-      <Card>
+      <Card
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+          boxShadow: `0 6px 28px ${alpha(theme.palette.primary.main, 0.12)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+          },
+        }}
+      >
         <CardContent sx={{ p: 0 }}>
           <List sx={{ p: 0 }}>
             {videosWithProgress.map((video, index) => (
@@ -178,7 +249,7 @@ export default function PsicoTradingVideoList() {
                 sx={{
                   borderBottom:
                     index < videosWithProgress.length - 1
-                      ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                      ? `1px solid ${alpha(theme.palette.primary.main, 0.12)}`
                       : 'none',
                 }}
               >
@@ -188,31 +259,41 @@ export default function PsicoTradingVideoList() {
                   sx={{
                     py: 2.5,
                     px: 3,
+                    transition: 'all 0.2s ease',
                     '&:hover': {
-                      bgcolor: alpha(theme.palette.action.hover, 0.05),
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      '& .video-play-icon': {
+                        boxShadow: `0 4px 16px ${alpha(theme.palette.primary.main, 0.3)}`,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.4)}`,
+                      },
                     },
                     '&.Mui-selected': {
-                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                      bgcolor: alpha(theme.palette.primary.main, 0.12),
+                      borderLeft: `4px solid ${theme.palette.primary.main}`,
                       '&:hover': {
-                        bgcolor: alpha(theme.palette.primary.main, 0.12),
+                        bgcolor: alpha(theme.palette.primary.main, 0.16),
                       },
                     },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 48 }}>
+                  <ListItemIcon sx={{ minWidth: 56 }}>
                     <Box
+                      className="video-play-icon"
                       sx={{
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.25)} 0%, ${alpha(theme.palette.primary.main, 0.12)} 100%)`,
+                        border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                         color: 'primary.main',
+                        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
+                        transition: 'all 0.2s ease',
                       }}
                     >
-                      <PlayCircle size={24} />
+                      <PlayCircle size={26} weight="fill" />
                     </Box>
                   </ListItemIcon>
                   

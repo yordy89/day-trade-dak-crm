@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useClientAuth } from '@/hooks/use-client-auth';
 import { useAuthStore } from '@/store/auth-store';
 import {
@@ -28,6 +29,7 @@ import {
   Snackbar,
   Alert,
   useMediaQuery,
+  alpha,
 } from '@mui/material';
 import {
   Camera,
@@ -81,9 +83,31 @@ export function AccountPageClient(): React.JSX.Element {
   const setUser = useAuthStore.getState().setUser;
   const queryClient = useQueryClient();
   const { t } = useTranslation('academy');
+  const searchParams = useSearchParams();
   const [mounted, setMounted] = React.useState(false);
-  
-  const [tabValue, setTabValue] = React.useState(0);
+
+  // Map URL tab param to tab index
+  const getInitialTabFromUrl = (): number => {
+    const tabParam = searchParams.get('tab');
+    switch (tabParam) {
+      case 'subscriptions':
+        return 1;
+      case 'security':
+      case 'privacy':
+        return 2;
+      case 'notifications':
+        return 3;
+      default:
+        return 0;
+    }
+  };
+
+  const [tabValue, setTabValue] = React.useState(getInitialTabFromUrl());
+
+  // Update tab when URL param changes
+  React.useEffect(() => {
+    setTabValue(getInitialTabFromUrl());
+  }, [searchParams]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -329,33 +353,86 @@ export function AccountPageClient(): React.JSX.Element {
             height: 200,
             background: isPremium
               ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.secondary.main} 100%)`
-              : `linear-gradient(135deg, ${theme.palette.grey[800]} 0%, ${theme.palette.grey[600]} 100%)`,
+              : `linear-gradient(135deg, ${theme.palette.grey[800]} 0%, ${theme.palette.grey[700]} 50%, ${theme.palette.primary.dark} 100%)`,
             position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
           }}
         >
-          {/* Floating elements for premium users */}
-          {isPremium ? <>
-              <Crown 
-                size={80} 
-                weight="duotone" 
-                style={{
-                  position: 'absolute',
-                  top: 20,
-                  right: 40,
-                  opacity: 0.1,
-                }}
-              />
-              <Trophy 
-                size={60} 
-                weight="duotone" 
-                style={{
-                  position: 'absolute',
-                  bottom: 20,
-                  left: 40,
-                  opacity: 0.1,
-                }}
-              />
-            </> : null}
+          {/* Background pattern */}
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: `radial-gradient(circle at 20% 50%, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 50%),
+                               radial-gradient(circle at 80% 50%, ${alpha(theme.palette.secondary.main, 0.1)} 0%, transparent 50%)`,
+            }}
+          />
+
+          {/* DayTradeDak Branding */}
+          <Stack
+            alignItems="center"
+            spacing={1}
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+              textAlign: 'center',
+              px: 2,
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 800,
+                background: `linear-gradient(135deg, ${theme.palette.common.white} 0%, ${alpha(theme.palette.common.white, 0.8)} 100%)`,
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 2px 20px rgba(0,0,0,0.3)',
+                letterSpacing: '-0.5px',
+              }}
+            >
+              DayTradeDak Academy
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: alpha(theme.palette.common.white, 0.8),
+                fontWeight: 500,
+                maxWidth: 400,
+              }}
+            >
+              {isPremium
+                ? 'Tu viaje hacia el éxito financiero continúa'
+                : 'Aprende a operar en los mercados con confianza'}
+            </Typography>
+          </Stack>
+
+          {/* Floating elements */}
+          <Crown
+            size={80}
+            weight="duotone"
+            style={{
+              position: 'absolute',
+              top: 20,
+              right: 40,
+              opacity: isPremium ? 0.15 : 0.05,
+              color: theme.palette.common.white,
+            }}
+          />
+          <Trophy
+            size={60}
+            weight="duotone"
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              left: 40,
+              opacity: isPremium ? 0.15 : 0.05,
+              color: theme.palette.common.white,
+            }}
+          />
         </Box>
 
         {/* Profile Info */}
@@ -452,11 +529,27 @@ export function AccountPageClient(): React.JSX.Element {
               </Stack>
 
               {/* Quick Stats */}
-              <Stack direction="row" spacing={4} mt={3}>
-                <Box>
-                  <Typography variant="h5" fontWeight={700} color="primary.main">
-                    {(() => {
-                      const allSubs = user?.subscriptions || [];
+              <Stack direction="row" spacing={2} mt={3} flexWrap="wrap" gap={2}>
+                {[
+                  {
+                    value: (() => {
+                      // Use userData from API which has createdAt field
+                      const createdAt = userData?.createdAt || user?.createdAt;
+                      if (!createdAt) return 1; // At least 1 day if registered
+                      const memberSince = new Date(createdAt);
+                      const now = new Date();
+                      const diffTime = Math.abs(now.getTime() - memberSince.getTime());
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      // Return at least 1 if user exists (they've been member at least today)
+                      return Math.max(1, diffDays);
+                    })(),
+                    label: t('overview.daysAsMember'),
+                    color: theme.palette.info.main,
+                    icon: <CalendarBlank size={20} weight="bold" />,
+                  },
+                  {
+                    value: (() => {
+                      const allSubs = userData?.subscriptions || user?.subscriptions || [];
                       return allSubs.filter((sub: any) => {
                         if (typeof sub === 'string') return true;
                         if (sub && typeof sub === 'object' && 'plan' in sub) {
@@ -464,28 +557,69 @@ export function AccountPageClient(): React.JSX.Element {
                         }
                         return false;
                       }).length;
-                    })()}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('subscriptions.currentPlan')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h5" fontWeight={700}>
-                    0
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('overview.coursesCompleted')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h5" fontWeight={700}>
-                    0
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('overview.achievements', { count: 0 })}
-                  </Typography>
-                </Box>
+                    })(),
+                    label: t('overview.activeSubscriptions'),
+                    color: theme.palette.primary.main,
+                    icon: <CreditCard size={20} weight="bold" />,
+                  },
+                  {
+                    value: isPremium ? 'Premium' : 'Free',
+                    label: t('overview.subscriptionStatus'),
+                    color: isPremium ? theme.palette.warning.main : theme.palette.grey[500],
+                    isText: true,
+                    icon: isPremium ? <Crown size={20} weight="bold" /> : <User size={20} weight="bold" />,
+                  },
+                ].map((stat, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      px: 3,
+                      py: 2,
+                      borderRadius: 3,
+                      background: _isDarkMode
+                        ? `linear-gradient(135deg, ${alpha(stat.color, 0.2)} 0%, ${alpha(stat.color, 0.08)} 100%)`
+                        : `linear-gradient(135deg, ${alpha(stat.color, 0.15)} 0%, ${alpha(stat.color, 0.05)} 100%)`,
+                      border: `1px solid ${alpha(stat.color, 0.25)}`,
+                      minWidth: 140,
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 8px 20px ${alpha(stat.color, 0.2)}`,
+                      },
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: `linear-gradient(90deg, ${stat.color}, ${alpha(stat.color, 0.5)})`,
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                        mb: 0.5,
+                        color: stat.color,
+                      }}
+                    >
+                      {stat.icon}
+                      <Typography variant="h5" fontWeight={700} color={stat.color}>
+                        {stat.value}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                      {stat.label}
+                    </Typography>
+                  </Box>
+                ))}
               </Stack>
             </Box>
           </Stack>
@@ -494,53 +628,62 @@ export function AccountPageClient(): React.JSX.Element {
 
       {/* Tabs */}
       {mounted && (
-        <Paper sx={{ mb: 3, borderRadius: 2 }}>
+        <Paper
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            overflow: 'hidden',
+            background: _isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`
+              : theme.palette.background.paper,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+          }}
+        >
           {isMobile ? (
-            /* Mobile Tabs - Using simple buttons to avoid Tabs component issues */
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Stack 
-                direction="row" 
-                spacing={0}
-                sx={{ 
+            /* Mobile Tabs */
+            <Box sx={{ p: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
                   overflowX: 'auto',
                   overflowY: 'hidden',
-                  '&::-webkit-scrollbar': { 
-                    height: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    bgcolor: 'transparent',
-                  },
+                  '&::-webkit-scrollbar': { height: '4px' },
+                  '&::-webkit-scrollbar-track': { bgcolor: 'transparent' },
                   '&::-webkit-scrollbar-thumb': {
-                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                    bgcolor: alpha(theme.palette.primary.main, 0.2),
                     borderRadius: '2px',
                   },
                 }}
               >
                 {[
-                  { icon: <User size={18} />, label: t('academy:account.info') },
-                  { icon: <CreditCard size={18} />, label: t('academy:navigation.subscriptions') },
-                  { icon: <Shield size={18} />, label: 'Privacidad' },
-                  { icon: <LockKey size={18} />, label: 'Seguridad' },
-                  { icon: <Bell size={18} />, label: t('academy:settings.notifications.short') },
+                  { icon: <User size={18} weight="duotone" />, label: t('academy:account.info'), color: theme.palette.primary.main },
+                  { icon: <CreditCard size={18} weight="duotone" />, label: t('academy:navigation.subscriptions'), color: theme.palette.warning.main },
+                  { icon: <Shield size={18} weight="duotone" />, label: 'Privacidad', color: theme.palette.secondary.main },
+                  { icon: <LockKey size={18} weight="duotone" />, label: 'Seguridad', color: theme.palette.info.main },
+                  { icon: <Bell size={18} weight="duotone" />, label: t('academy:settings.notifications.short'), color: theme.palette.error.main },
                 ].map((tab, index) => (
                   <Button
                     key={index}
                     onClick={() => setTabValue(index)}
                     sx={{
-                      minHeight: 56,
+                      minHeight: 48,
                       px: 2,
                       minWidth: 'auto',
                       flexShrink: 0,
-                      borderRadius: 0,
-                      borderBottom: '3px solid',
-                      borderBottomColor: tabValue === index ? 'primary.main' : 'transparent',
-                      color: tabValue === index ? 'primary.main' : 'text.secondary',
+                      borderRadius: 2,
+                      color: tabValue === index ? 'white' : 'text.secondary',
                       fontWeight: tabValue === index ? 600 : 500,
                       textTransform: 'none',
                       whiteSpace: 'nowrap',
-                      fontSize: '0.875rem',
+                      fontSize: '0.8rem',
+                      background: tabValue === index
+                        ? `linear-gradient(135deg, ${tab.color} 0%, ${alpha(tab.color, 0.8)} 100%)`
+                        : 'transparent',
+                      boxShadow: tabValue === index ? `0 4px 12px ${alpha(tab.color, 0.3)}` : 'none',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        bgcolor: 'action.hover',
+                        bgcolor: tabValue === index ? undefined : alpha(tab.color, 0.1),
                       },
                       '& .MuiButton-startIcon': {
                         marginRight: 0.5,
@@ -555,74 +698,107 @@ export function AccountPageClient(): React.JSX.Element {
               </Stack>
             </Box>
           ) : (
-          /* Desktop Tabs using Buttons */
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Stack 
-              direction="row" 
-              spacing={0}
-              sx={{ 
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                '&::-webkit-scrollbar': { 
-                  height: '4px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  bgcolor: 'transparent',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-                  borderRadius: '2px',
-                  '&:hover': {
-                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
+            /* Desktop Tabs */
+            <Box sx={{ p: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  '&::-webkit-scrollbar': { height: '4px' },
+                  '&::-webkit-scrollbar-track': { bgcolor: 'transparent' },
+                  '&::-webkit-scrollbar-thumb': {
+                    bgcolor: alpha(theme.palette.primary.main, 0.2),
+                    borderRadius: '2px',
                   },
-                },
-              }}
-            >
-              {[
-                { icon: <User size={20} />, label: t('academy:account.personalInfo') },
-                { icon: <CreditCard size={20} />, label: t('academy:navigation.subscriptions') },
-                { icon: <Shield size={20} />, label: 'Privacidad & Datos' },
-                { icon: <LockKey size={20} />, label: 'Seguridad' },
-                { icon: <Bell size={20} />, label: t('academy:settings.notifications.title') },
-              ].map((tab, index) => (
-                <Button
-                  key={tab.label}
-                  onClick={() => setTabValue(index)}
-                  sx={{
-                    minHeight: 64,
-                    px: 3,
-                    minWidth: 'auto',
-                    flexShrink: 0,
-                    borderRadius: 0,
-                    borderBottom: '3px solid',
-                    borderBottomColor: tabValue === index ? 'primary.main' : 'transparent',
-                    color: tabValue === index ? 'primary.main' : 'text.secondary',
-                    fontWeight: tabValue === index ? 600 : 500,
-                    textTransform: 'none',
-                    whiteSpace: 'nowrap',
-                    '&:hover': {
-                      bgcolor: 'action.hover',
-                    },
-                  }}
-                  startIcon={tab.icon}
-                >
-                  {tab.label}
-                </Button>
-              ))}
-            </Stack>
-          </Box>
+                }}
+              >
+                {[
+                  { icon: <User size={20} weight="duotone" />, label: t('academy:account.personalInfo'), color: theme.palette.primary.main },
+                  { icon: <CreditCard size={20} weight="duotone" />, label: t('academy:navigation.subscriptions'), color: theme.palette.warning.main },
+                  { icon: <Shield size={20} weight="duotone" />, label: 'Privacidad & Datos', color: theme.palette.secondary.main },
+                  { icon: <LockKey size={20} weight="duotone" />, label: 'Seguridad', color: theme.palette.info.main },
+                  { icon: <Bell size={20} weight="duotone" />, label: t('academy:settings.notifications.title'), color: theme.palette.error.main },
+                ].map((tab, index) => (
+                  <Button
+                    key={tab.label}
+                    onClick={() => setTabValue(index)}
+                    sx={{
+                      minHeight: 56,
+                      px: 3,
+                      minWidth: 'auto',
+                      flexShrink: 0,
+                      borderRadius: 2,
+                      color: tabValue === index ? 'white' : 'text.secondary',
+                      fontWeight: tabValue === index ? 600 : 500,
+                      textTransform: 'none',
+                      whiteSpace: 'nowrap',
+                      background: tabValue === index
+                        ? `linear-gradient(135deg, ${tab.color} 0%, ${alpha(tab.color, 0.8)} 100%)`
+                        : 'transparent',
+                      boxShadow: tabValue === index ? `0 4px 14px ${alpha(tab.color, 0.35)}` : 'none',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        bgcolor: tabValue === index ? undefined : alpha(tab.color, 0.1),
+                        transform: tabValue === index ? 'none' : 'translateY(-2px)',
+                      },
+                    }}
+                    startIcon={tab.icon}
+                  >
+                    {tab.label}
+                  </Button>
+                ))}
+              </Stack>
+            </Box>
           )}
         </Paper>
       )}
 
       {/* Tab Panels */}
       <TabPanel value={tabValue} index={0}>
-        <Card>
+        <Card
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+            position: 'relative',
+            background: _isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+              : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+            boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.1)}`,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.main, 0.5)})`,
+            },
+          }}
+        >
           <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-              <Typography variant="h6" fontWeight={600}>
-                {t('account.personalInfo')}
-              </Typography>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.main, 0.7)} 100%)`,
+                    boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`,
+                  }}
+                >
+                  <User size={24} weight="bold" color="white" />
+                </Box>
+                <Typography variant="h6" fontWeight={600}>
+                  {t('account.personalInfo')}
+                </Typography>
+              </Stack>
               <Button
                 variant={isEditing ? "contained" : "outlined"}
                 startIcon={isEditing ? <CheckCircle size={20} /> : <PencilSimple size={20} />}
@@ -879,9 +1055,25 @@ export function AccountPageClient(): React.JSX.Element {
         <Grid container spacing={3}>
           {/* Active Subscriptions */}
           <Grid item xs={12}>
-            <Typography variant="h6" fontWeight={600} mb={2}>
-              {t('subscriptions.currentPlan')}
-            </Typography>
+            <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${alpha(theme.palette.warning.main, 0.7)} 100%)`,
+                  boxShadow: `0 4px 12px ${alpha(theme.palette.warning.main, 0.3)}`,
+                }}
+              >
+                <CreditCard size={24} weight="bold" color="white" />
+              </Box>
+              <Typography variant="h6" fontWeight={600}>
+                {t('subscriptions.currentPlan')}
+              </Typography>
+            </Stack>
             {(() => {
               // Get all active subscriptions (both from activeSubscriptions and regular subscriptions)
               const allSubscriptions = user?.subscriptions || [];
@@ -920,10 +1112,20 @@ export function AccountPageClient(): React.JSX.Element {
                     <Grid item xs={12} lg={6} key={plan}>
                       <Card
                         sx={{
+                          borderRadius: 3,
                           border: '2px solid',
                           borderColor: isCancelled ? 'warning.main' : 'success.main',
                           position: 'relative',
                           overflow: 'visible',
+                          background: _isDarkMode
+                            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(isCancelled ? theme.palette.warning.main : theme.palette.success.main, 0.1)} 100%)`
+                            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(isCancelled ? theme.palette.warning.main : theme.palette.success.main, 0.08)} 100%)`,
+                          boxShadow: `0 4px 20px ${alpha(isCancelled ? theme.palette.warning.main : theme.palette.success.main, 0.15)}`,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                            boxShadow: `0 8px 30px ${alpha(isCancelled ? theme.palette.warning.main : theme.palette.success.main, 0.2)}`,
+                          },
                         }}
                       >
                         <Box
@@ -931,20 +1133,36 @@ export function AccountPageClient(): React.JSX.Element {
                             position: 'absolute',
                             top: -12,
                             right: 20,
-                            bgcolor: isCancelled ? 'warning.main' : 'success.main',
+                            background: isCancelled
+                              ? `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`
+                              : `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`,
                             color: 'white',
                             px: 2,
                             py: 0.5,
                             borderRadius: 2,
                             fontSize: '0.75rem',
                             fontWeight: 600,
+                            boxShadow: `0 4px 12px ${alpha(isCancelled ? theme.palette.warning.main : theme.palette.success.main, 0.4)}`,
                           }}
                         >
                           {isCancelled ? t('account.cancelled') : t('account.active')}
                         </Box>
                         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                            <Crown size={32} weight="duotone" color={theme.palette.warning.main} />
+                            <Box
+                              sx={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: 2,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${alpha(theme.palette.warning.main, 0.7)} 100%)`,
+                                boxShadow: `0 4px 12px ${alpha(theme.palette.warning.main, 0.3)}`,
+                              }}
+                            >
+                              <Crown size={28} weight="bold" color="white" />
+                            </Box>
                             <Box>
                               <Typography variant="h6" fontWeight={600}>
                                 {mapMembershipName(plan as SubscriptionPlan)}
@@ -1055,9 +1273,46 @@ export function AccountPageClient(): React.JSX.Element {
                   })}
               </Grid>
             ) : (
-              <Card sx={{ textAlign: 'center', p: 6 }}>
-                <Shield size={64} weight="duotone" color={theme.palette.grey[400]} />
-                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+              <Card
+                sx={{
+                  textAlign: 'center',
+                  p: 6,
+                  borderRadius: 3,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: _isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.warning.main, 0.08)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.warning.main, 0.05)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.warning.main, 0.15)}`,
+                  boxShadow: `0 4px 20px ${alpha(theme.palette.warning.main, 0.1)}`,
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: `linear-gradient(90deg, ${theme.palette.warning.main}, ${alpha(theme.palette.warning.main, 0.5)})`,
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.15)} 0%, ${alpha(theme.palette.warning.main, 0.05)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <Shield size={40} weight="duotone" color={theme.palette.warning.main} />
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1 }}>
                   {t('account.noActiveSubscriptions')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1067,6 +1322,14 @@ export function AccountPageClient(): React.JSX.Element {
                   variant="contained"
                   size="large"
                   href="/academy/subscription/plans"
+                  sx={{
+                    background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`,
+                    boxShadow: `0 4px 14px ${alpha(theme.palette.warning.main, 0.4)}`,
+                    '&:hover': {
+                      background: `linear-gradient(135deg, ${theme.palette.warning.dark} 0%, ${theme.palette.warning.main} 100%)`,
+                      boxShadow: `0 6px 20px ${alpha(theme.palette.warning.main, 0.5)}`,
+                    },
+                  }}
                 >
                   {t('account.viewAvailablePlans')}
                 </Button>
@@ -1091,9 +1354,25 @@ export function AccountPageClient(): React.JSX.Element {
 
             return expiredSubscriptions.length > 0 ? (
               <Grid item xs={12}>
-                <Typography variant="h6" fontWeight={600} mb={2}>
-                  {t('account.subscriptionHistory')}
-                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center" mb={3} mt={2}>
+                  <Box
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.grey[500], 0.2)} 0%, ${alpha(theme.palette.grey[500], 0.1)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
+                    }}
+                  >
+                    <Clock size={20} weight="duotone" color={theme.palette.grey[500]} />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600}>
+                    {t('account.subscriptionHistory')}
+                  </Typography>
+                </Stack>
                 <Stack spacing={2}>
                   {expiredSubscriptions.map((subscription: any) => {
                     if (!subscription) return null; // Handle null/undefined subscription
@@ -1101,11 +1380,38 @@ export function AccountPageClient(): React.JSX.Element {
                     const expiredDate = typeof subscription === 'object' ? subscription?.expiresAt : null;
 
                     return (
-                      <Card key={`expired-${plan}`} sx={{ opacity: 0.7 }}>
+                      <Card
+                        key={`expired-${plan}`}
+                        sx={{
+                          opacity: 0.8,
+                          borderRadius: 2,
+                          background: _isDarkMode
+                            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.6)} 0%, ${alpha(theme.palette.grey[800], 0.4)} 100%)`
+                            : `linear-gradient(135deg, ${alpha('#ffffff', 0.8)} 0%, ${alpha(theme.palette.grey[100], 0.6)} 100%)`,
+                          border: `1px solid ${alpha(theme.palette.grey[500], 0.15)}`,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            opacity: 1,
+                          },
+                        }}
+                      >
                         <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Stack direction="row" spacing={2} alignItems="center">
-                              <Clock size={24} weight="duotone" color={theme.palette.grey[500]} />
+                              <Box
+                                sx={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 1.5,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  background: `linear-gradient(135deg, ${alpha(theme.palette.grey[500], 0.15)} 0%, ${alpha(theme.palette.grey[500], 0.05)} 100%)`,
+                                  border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
+                                }}
+                              >
+                                <Clock size={20} weight="duotone" color={theme.palette.grey[500]} />
+                              </Box>
                               <Box>
                                 <Typography fontWeight={500}>
                                   {mapMembershipName(plan as SubscriptionPlan)}
@@ -1120,6 +1426,10 @@ export function AccountPageClient(): React.JSX.Element {
                               size="small"
                               variant="outlined"
                               color="default"
+                              sx={{
+                                borderColor: alpha(theme.palette.grey[500], 0.3),
+                                color: theme.palette.grey[500],
+                              }}
                             />
                           </Stack>
                         </CardContent>
@@ -1138,11 +1448,47 @@ export function AccountPageClient(): React.JSX.Element {
       </TabPanel>
 
       <TabPanel value={tabValue} index={3}>
-        <Card>
+        <Card
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+            position: 'relative',
+            background: _isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.info.main, 0.08)} 100%)`
+              : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.info.main, 0.05)} 100%)`,
+            border: `1px solid ${alpha(theme.palette.info.main, 0.15)}`,
+            boxShadow: `0 4px 20px ${alpha(theme.palette.info.main, 0.1)}`,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${theme.palette.info.main}, ${alpha(theme.palette.info.main, 0.5)})`,
+            },
+          }}
+        >
           <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
-            <Typography variant="h6" fontWeight={600} mb={3}>
-              {t('account.changePassword')}
-            </Typography>
+            <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${theme.palette.info.main} 0%, ${alpha(theme.palette.info.main, 0.7)} 100%)`,
+                  boxShadow: `0 4px 12px ${alpha(theme.palette.info.main, 0.3)}`,
+                }}
+              >
+                <LockKey size={24} weight="bold" color="white" />
+              </Box>
+              <Typography variant="h6" fontWeight={600}>
+                {t('account.changePassword')}
+              </Typography>
+            </Stack>
             <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid item xs={12}>
                 <TextField
@@ -1319,13 +1665,49 @@ export function AccountPageClient(): React.JSX.Element {
       </TabPanel>
 
       <TabPanel value={tabValue} index={4}>
-        <Card>
+        <Card
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+            position: 'relative',
+            background: _isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.error.main, 0.08)} 100%)`
+              : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.error.main, 0.05)} 100%)`,
+            border: `1px solid ${alpha(theme.palette.error.main, 0.15)}`,
+            boxShadow: `0 4px 20px ${alpha(theme.palette.error.main, 0.1)}`,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${theme.palette.error.main}, ${alpha(theme.palette.error.main, 0.5)})`,
+            },
+          }}
+        >
           <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
-            <Typography variant="h6" fontWeight={600} mb={3}>
-              Preferencias de Notificaciones
-            </Typography>
+            <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${alpha(theme.palette.error.main, 0.7)} 100%)`,
+                  boxShadow: `0 4px 12px ${alpha(theme.palette.error.main, 0.3)}`,
+                }}
+              >
+                <Bell size={24} weight="bold" color="white" />
+              </Box>
+              <Typography variant="h6" fontWeight={600}>
+                {t('account.notificationPreferences')}
+              </Typography>
+            </Stack>
             <Typography variant="body2" color="text.secondary">
-              Próximamente podrás configurar tus preferencias de notificaciones.
+              {t('account.notificationsComingSoon')}
             </Typography>
           </CardContent>
         </Card>

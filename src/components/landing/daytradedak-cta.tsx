@@ -10,6 +10,7 @@ import {
   Stack,
   Grid,
   Card,
+  alpha,
 } from '@mui/material';
 import {
   RocketLaunch,
@@ -32,19 +33,27 @@ export function DayTradeDakCTA() {
   return (
     <Box
       sx={{
-        py: 10,
-        backgroundColor: muiTheme.palette.background.default,
+        pt: 10,
+        pb: 0,
         position: 'relative',
         overflow: 'hidden',
+        background: isDarkMode
+          ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 40%, ${alpha('#161b22', 1)} 100%)`
+          : `linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f8fafc 100%)`,
       }}
     >
-      {/* Background Pattern */}
+      {/* Decorative accent */}
       <Box
         sx={{
           position: 'absolute',
-          inset: 0,
-          opacity: isDarkMode ? 0.05 : 0.03,
-          backgroundImage: 'radial-gradient(circle at 50% 50%, #16a34a 0%, transparent 50%)',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: isDarkMode
+            ? `radial-gradient(ellipse at 50% 50%, ${alpha('#16a34a', 0.1)} 0%, transparent 50%)`
+            : `radial-gradient(ellipse at 50% 50%, ${alpha('#16a34a', 0.06)} 0%, transparent 50%)`,
+          pointerEvents: 'none',
         }}
       />
 

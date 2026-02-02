@@ -98,11 +98,25 @@ export function SideNav(): React.JSX.Element {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+        bgcolor: isDarkMode ? '#0f0f0f' : '#fafafa',
         borderRight: '1px solid',
-        borderColor: 'divider',
+        borderColor: isDarkMode ? alpha(theme.palette.primary.main, 0.15) : alpha(theme.palette.primary.main, 0.1),
         position: 'relative',
         overflow: 'hidden',
+        // Subtle green gradient overlay
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '200px',
+          background: isDarkMode
+            ? `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, transparent 100%)`
+            : `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.04)} 0%, transparent 100%)`,
+          pointerEvents: 'none',
+          zIndex: 0,
+        },
       }}
     >
       {/* Stock Ticker Background Effect */}
@@ -274,29 +288,46 @@ export function SideNav(): React.JSX.Element {
       </Box>
 
       {/* Logo Section */}
-      <Box 
-        sx={{ 
-          p: 3, 
+      <Box
+        sx={{
+          p: 3,
           borderBottom: '1px solid',
-          borderColor: 'divider',
+          borderColor: isDarkMode ? alpha(theme.palette.primary.main, 0.15) : alpha(theme.palette.primary.main, 0.1),
           bgcolor: 'transparent',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Box 
-            component={RouterLink} 
-            href={paths.home} 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              textDecoration: 'none',
+        {/* Close button for mobile - positioned absolute */}
+        {isMobile && (
+          <IconButton
+            onClick={handleDrawerToggle}
+            sx={{
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
             }}
           >
-            <Typography 
-              variant="h5" 
-              sx={{ 
+            <CloseIcon size={20} />
+          </IconButton>
+        )}
+
+        {/* Centered Logo */}
+        <Stack alignItems="center" spacing={1}>
+          <Box
+            component={RouterLink}
+            href={paths.home}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
                 fontWeight: 700,
                 color: isDarkMode ? '#ffffff' : '#000000',
                 letterSpacing: '0.02em',
@@ -305,9 +336,9 @@ export function SideNav(): React.JSX.Element {
             >
               DAY TRADE
             </Typography>
-            <Typography 
-              variant="h5" 
-              sx={{ 
+            <Typography
+              variant="h5"
+              sx={{
                 fontWeight: 800,
                 color: theme.palette.primary.main,
                 letterSpacing: '0.02em',
@@ -318,33 +349,19 @@ export function SideNav(): React.JSX.Element {
               DAK
             </Typography>
           </Box>
-          {/* Close button for mobile */}
-          {isMobile && (
-            <IconButton
-              onClick={handleDrawerToggle}
-              sx={{
-                color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
-              }}
-            >
-              <CloseIcon size={20} />
-            </IconButton>
-          )}
+          <Typography
+            variant="caption"
+            sx={{
+              color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+              letterSpacing: '0.1em',
+              fontWeight: 500,
+              textTransform: 'uppercase',
+              fontSize: '0.65rem',
+            }}
+          >
+            {t('navigation.tradingAcademy')}
+          </Typography>
         </Stack>
-        <Typography 
-          variant="caption" 
-          align="center" 
-          display="block"
-          sx={{ 
-            color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
-            letterSpacing: '0.08em',
-            fontWeight: 500,
-            textTransform: 'uppercase',
-            fontSize: '0.7rem',
-            mt: 1,
-          }}
-        >
-          {t('navigation.tradingAcademy')}
-        </Typography>
       </Box>
 
       {/* Navigation Items */}
@@ -383,10 +400,10 @@ export function SideNav(): React.JSX.Element {
       </Box>
 
       {/* Premium Upgrade Section */}
-      <Box sx={{ 
-        p: 2, 
-        borderTop: '1px solid', 
-        borderColor: 'divider', 
+      <Box sx={{
+        p: 2,
+        borderTop: '1px solid',
+        borderColor: isDarkMode ? alpha(theme.palette.primary.main, 0.15) : alpha(theme.palette.primary.main, 0.1),
         bgcolor: 'transparent',
         position: 'relative',
         zIndex: 1,
@@ -394,22 +411,48 @@ export function SideNav(): React.JSX.Element {
         <Paper
           elevation={0}
           sx={{
-            p: 2,
+            p: 2.5,
+            borderRadius: 3,
             background: isDarkMode
-              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
-              : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha('#000', 0.3)} 100%)`
+              : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
             border: '1px solid',
-            borderColor: alpha(theme.palette.primary.main, 0.2),
+            borderColor: alpha(theme.palette.primary.main, isDarkMode ? 0.25 : 0.2),
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100px',
+              height: '100px',
+              background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.2)} 0%, transparent 70%)`,
+              filter: 'blur(20px)',
+            },
           }}
         >
-          <Stack spacing={1.5}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Crown size={20} color={theme.palette.primary.main} weight="fill" />
-              <Typography variant="subtitle2" fontWeight={600} color={isDarkMode ? '#ffffff' : '#000000'}>
+          <Stack spacing={2} sx={{ position: 'relative', zIndex: 1 }}>
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                  boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
+                }}
+              >
+                <Crown size={20} color="#ffffff" weight="fill" />
+              </Box>
+              <Typography variant="subtitle2" fontWeight={700} color={isDarkMode ? '#ffffff' : '#000000'}>
                 {t('navigation.becomePremium')}
               </Typography>
             </Stack>
-            <Typography variant="caption" color={isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'}>
+            <Typography variant="caption" color={isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'} sx={{ lineHeight: 1.5 }}>
               {t('navigation.unlockFeatures')}
             </Typography>
             <Button
@@ -418,16 +461,22 @@ export function SideNav(): React.JSX.Element {
               variant="contained"
               size="small"
               fullWidth
-              startIcon={<Lightning size={16} />}
+              startIcon={<Lightning size={18} weight="fill" />}
               onClick={() => isMobile && setMobileOpen(false)}
               sx={{
                 textTransform: 'none',
-                fontWeight: 600,
-                bgcolor: theme.palette.primary.main,
+                fontWeight: 700,
+                py: 1.25,
+                borderRadius: 2,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                 color: '#ffffff',
+                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
                 '&:hover': {
-                  bgcolor: theme.palette.primary.dark,
+                  background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                  boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.5)}`,
+                  transform: 'translateY(-1px)',
                 },
+                transition: 'all 0.2s ease',
               }}
             >
               {t('navigation.viewPlans')}
@@ -461,7 +510,9 @@ export function SideNav(): React.JSX.Element {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: 280,
-            bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
+            bgcolor: isDarkMode ? '#0f0f0f' : '#fafafa',
+            borderRight: '1px solid',
+            borderColor: isDarkMode ? alpha(theme.palette.primary.main, 0.15) : alpha(theme.palette.primary.main, 0.1),
           },
         }}
       >
@@ -480,8 +531,10 @@ export function SideNav(): React.JSX.Element {
         top: 0,
         left: 0,
         zIndex: 1200,
-        bgcolor: isDarkMode ? '#1a1a1a' : '#ffffff',
-        boxShadow: theme.shadows[4],
+        bgcolor: isDarkMode ? '#0f0f0f' : '#fafafa',
+        boxShadow: isDarkMode
+          ? `4px 0 24px ${alpha('#000', 0.3)}, 0 0 1px ${alpha(theme.palette.primary.main, 0.2)}`
+          : `4px 0 24px ${alpha('#000', 0.05)}`,
       }}
     >
       {sidebarContent}
@@ -588,18 +641,36 @@ function NavItem({
       onClick={handleClick}
       disabled={disabled}
       sx={{
-        borderRadius: 1,
+        borderRadius: 2,
         mb: 0.5,
+        py: 1.25,
         color: isDarkMode ? '#ffffff' : '#000000',
-        bgcolor: active 
-          ? alpha(theme.palette.primary.main, isDarkMode ? 0.2 : 0.1)
+        bgcolor: active
+          ? isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.dark, 0.15)} 100%)`
+            : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.primary.light, 0.08)} 100%)`
           : 'transparent',
+        background: active
+          ? isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.dark, 0.15)} 100%)`
+            : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.primary.light, 0.08)} 100%)`
+          : 'transparent',
+        border: active ? '1px solid' : '1px solid transparent',
+        borderColor: active
+          ? alpha(theme.palette.primary.main, isDarkMode ? 0.3 : 0.2)
+          : 'transparent',
+        boxShadow: active
+          ? `0 2px 8px ${alpha(theme.palette.primary.main, isDarkMode ? 0.2 : 0.1)}`
+          : 'none',
+        transition: 'all 0.2s ease-in-out',
         '&:hover': {
           bgcolor: active
             ? alpha(theme.palette.primary.main, isDarkMode ? 0.25 : 0.15)
-            : isDarkMode 
-              ? 'rgba(255,255,255,0.08)' 
-              : 'rgba(0,0,0,0.04)',
+            : isDarkMode
+              ? alpha(theme.palette.primary.main, 0.08)
+              : alpha(theme.palette.primary.main, 0.05),
+          borderColor: alpha(theme.palette.primary.main, isDarkMode ? 0.2 : 0.15),
+          transform: 'translateX(4px)',
         },
         '&.Mui-disabled': {
           opacity: 0.5,
@@ -612,10 +683,11 @@ function NavItem({
             left: 0,
             top: '50%',
             transform: 'translateY(-50%)',
-            width: 3,
-            height: '60%',
-            borderRadius: '0 3px 3px 0',
-            bgcolor: theme.palette.primary.main,
+            width: 4,
+            height: '70%',
+            borderRadius: '0 4px 4px 0',
+            background: `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+            boxShadow: `0 0 8px ${alpha(theme.palette.primary.main, 0.5)}`,
           },
         }),
       }}

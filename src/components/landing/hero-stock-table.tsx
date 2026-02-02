@@ -127,97 +127,196 @@ export function HeroStockTable() {
   }
 
   return (
-    <Box>
-      {/* Minimal Header */}
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-          <Typography
-            variant="h5"
+    <Box
+      sx={{
+        position: 'relative',
+        borderRadius: 4,
+        overflow: 'hidden',
+        background: `linear-gradient(145deg, ${alpha('#0d1a14', 0.98)} 0%, ${alpha('#0a0f0c', 0.99)} 50%, ${alpha('#0d1117', 0.98)} 100%)`,
+        border: '1px solid',
+        borderColor: alpha('#16a34a', 0.25),
+        boxShadow: `0 20px 60px ${alpha('#000000', 0.5)}, 0 0 60px ${alpha('#16a34a', 0.1)}, inset 0 1px 0 ${alpha('#16a34a', 0.1)}`,
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          background: 'linear-gradient(90deg, #16a34a, #22c55e, #4ade80, #22c55e, #16a34a)',
+        },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `radial-gradient(ellipse at top right, ${alpha('#16a34a', 0.08)} 0%, transparent 50%),
+                       radial-gradient(ellipse at bottom left, ${alpha('#16a34a', 0.05)} 0%, transparent 50%)`,
+          pointerEvents: 'none',
+        },
+      }}
+    >
+      {/* Premium Header */}
+      <Box
+        sx={{
+          p: 3,
+          borderBottom: '1px solid',
+          borderColor: alpha('#ffffff', 0.05),
+          background: `linear-gradient(135deg, ${alpha('#16a34a', 0.05)} 0%, transparent 100%)`,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: `linear-gradient(135deg, ${alpha('#16a34a', 0.2)} 0%, ${alpha('#16a34a', 0.1)} 100%)`,
+                border: '1px solid',
+                borderColor: alpha('#16a34a', 0.3),
+                boxShadow: `0 4px 12px ${alpha('#16a34a', 0.2)}`,
+              }}
+            >
+              <TrendingUp sx={{ color: '#16a34a', fontSize: 24 }} />
+            </Box>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {t('market.marketsToday')}
+            </Typography>
+          </Box>
+          <Box
             sx={{
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 2,
+              py: 0.75,
+              borderRadius: 2,
+              background: alpha(marketStatus.color, 0.1),
+              border: '1px solid',
+              borderColor: alpha(marketStatus.color, 0.3),
             }}
           >
-            {t('market.marketsToday')}
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <CircleOutlined
+            <Box
               sx={{
-                fontSize: 8,
-                color: marketStatus.color,
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: marketStatus.color,
                 animation: marketStatus.status === 'market.open' ? 'pulse 2s infinite' : 'none',
+                boxShadow: `0 0 8px ${marketStatus.color}`,
               }}
             />
             <Typography
               variant="caption"
               sx={{
                 color: marketStatus.color,
-                fontWeight: 600,
+                fontWeight: 700,
                 letterSpacing: 0.5,
+                textTransform: 'uppercase',
+                fontSize: '0.7rem',
               }}
             >
               {t(marketStatus.status)}
             </Typography>
           </Box>
         </Box>
-        <Typography variant="body2" color="text.secondary">
-          {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        <Typography
+          variant="body2"
+          sx={{
+            color: alpha('#ffffff', 0.5),
+            pl: 7,
+            fontWeight: 500,
+          }}
+        >
+          {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
           })}
         </Typography>
       </Box>
 
       {/* Stock List */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {stocks?.map((stock) => {
+      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        {stocks?.map((stock, index) => {
           const isPositive = stock.change >= 0;
           const isExpanded = expandedStock === stock.symbol;
-          
+          const accentColor = isPositive ? '#16a34a' : '#ef4444';
+
           return (
             <Paper
               key={stock.symbol}
               elevation={0}
               sx={{
-                backgroundColor: alpha('#ffffff', 0.03),
+                background: isExpanded
+                  ? `linear-gradient(135deg, ${alpha(accentColor, 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                  : `linear-gradient(135deg, ${alpha(accentColor, 0.03)} 0%, ${alpha('#0d1117', 0.9)} 100%)`,
                 backdropFilter: 'blur(10px)',
                 border: '1px solid',
-                borderColor: alpha('#ffffff', 0.05),
-                borderRadius: 3,
+                borderColor: isExpanded
+                  ? alpha(accentColor, 0.4)
+                  : alpha(accentColor, 0.15),
+                borderRadius: 2.5,
                 overflow: 'hidden',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
+                position: 'relative',
                 '&:hover': {
-                  backgroundColor: alpha('#ffffff', 0.05),
-                  borderColor: alpha(isPositive ? '#16a34a' : '#ef4444', 0.3),
-                  transform: 'translateY(-2px)',
+                  background: `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`,
+                  borderColor: alpha(accentColor, 0.4),
+                  transform: 'translateX(4px)',
+                  boxShadow: `0 4px 24px ${alpha(accentColor, 0.2)}`,
+                },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: isExpanded ? '4px' : '2px',
+                  background: `linear-gradient(180deg, ${accentColor} 0%, ${alpha(accentColor, 0.5)} 100%)`,
+                  opacity: isExpanded ? 1 : 0.5,
                 },
               }}
               onClick={() => setExpandedStock(isExpanded ? null : stock.symbol)}
             >
               {/* Main Content */}
-              <Box sx={{ p: 2.5 }}>
+              <Box sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   {/* Left: Symbol & Name */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
                     <Avatar
                       sx={{
-                        width: 48,
-                        height: 48,
-                        backgroundColor: alpha(isPositive ? '#16a34a' : '#ef4444', 0.1),
+                        width: 44,
+                        height: 44,
+                        backgroundColor: alpha(isPositive ? '#16a34a' : '#ef4444', 0.15),
                         border: '2px solid',
-                        borderColor: alpha(isPositive ? '#16a34a' : '#ef4444', 0.2),
+                        borderColor: alpha(isPositive ? '#16a34a' : '#ef4444', 0.3),
+                        boxShadow: `0 4px 12px ${alpha(isPositive ? '#16a34a' : '#ef4444', 0.2)}`,
+                        transition: 'all 0.3s ease',
                       }}
                     >
                       <Typography
                         sx={{
-                          fontSize: '14px',
-                          fontWeight: 700,
+                          fontSize: '13px',
+                          fontWeight: 800,
                           color: isPositive ? '#16a34a' : '#ef4444',
+                          letterSpacing: '-0.5px',
                         }}
                       >
                         {stock.symbol.substring(0, 2)}
@@ -225,49 +324,88 @@ export function HeroStockTable() {
                     </Avatar>
                     <Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="h6" fontWeight={700}>
+                        <Typography variant="subtitle1" fontWeight={700} sx={{ letterSpacing: '0.5px' }}>
                           {stock.symbol}
                         </Typography>
                         <Tooltip title="View Details">
-                          <IconButton size="small" sx={{ opacity: 0.5 }}>
-                            <InfoOutlined fontSize="small" />
+                          <IconButton size="small" sx={{ opacity: 0.4, '&:hover': { opacity: 1 } }}>
+                            <InfoOutlined sx={{ fontSize: 16 }} />
                           </IconButton>
                         </Tooltip>
                       </Box>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="caption" sx={{ color: alpha('#ffffff', 0.5) }}>
                         {stock.name}
                       </Typography>
                     </Box>
                   </Box>
 
-                  {/* Center: Mini Chart Placeholder */}
-                  <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                    <svg width="120" height="40">
-                      <polyline
-                        fill="none"
-                        stroke={isPositive ? '#16a34a' : '#ef4444'}
-                        strokeWidth="2"
-                        points={`0,${isPositive ? 35 : 5} 20,25 40,${isPositive ? 20 : 30} 60,15 80,${isPositive ? 10 : 25} 100,${isPositive ? 5 : 35} 120,${isPositive ? 8 : 38}`}
-                      />
-                    </svg>
+                  {/* Center: Mini Chart */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: { xs: 'none', sm: 'flex' },
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      px: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        width: 100,
+                        height: 36,
+                      }}
+                    >
+                      <svg width="100" height="36" viewBox="0 0 100 36">
+                        <defs>
+                          <linearGradient id={`gradient-${stock.symbol}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor={isPositive ? '#16a34a' : '#ef4444'} stopOpacity="0.3" />
+                            <stop offset="100%" stopColor={isPositive ? '#16a34a' : '#ef4444'} stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d={`M0,${isPositive ? 30 : 6} Q20,20 40,${isPositive ? 16 : 24} T80,${isPositive ? 8 : 28} L100,${isPositive ? 6 : 30} L100,36 L0,36 Z`}
+                          fill={`url(#gradient-${stock.symbol})`}
+                        />
+                        <polyline
+                          fill="none"
+                          stroke={isPositive ? '#16a34a' : '#ef4444'}
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          points={`0,${isPositive ? 30 : 6} 20,22 40,${isPositive ? 16 : 24} 60,14 80,${isPositive ? 8 : 28} 100,${isPositive ? 6 : 30}`}
+                        />
+                      </svg>
+                    </Box>
                   </Box>
 
                   {/* Right: Price & Change */}
-                  <Box sx={{ textAlign: 'right', flex: 0.8 }}>
-                    <Typography variant="h6" fontWeight={700}>
+                  <Box sx={{ textAlign: 'right', minWidth: 120 }}>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#ffffff' }}>
                       {formatCurrency(stock.price)}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: 1,
+                        background: alpha(isPositive ? '#16a34a' : '#ef4444', 0.1),
+                      }}
+                    >
                       {isPositive ? (
-                        <TrendingUp sx={{ fontSize: 14, color: '#16a34a' }} />
+                        <TrendingUp sx={{ fontSize: 12, color: '#16a34a' }} />
                       ) : (
-                        <TrendingDown sx={{ fontSize: 14, color: '#ef4444' }} />
+                        <TrendingDown sx={{ fontSize: 12, color: '#ef4444' }} />
                       )}
                       <Typography
-                        variant="body2"
+                        variant="caption"
                         sx={{
                           color: isPositive ? '#16a34a' : '#ef4444',
-                          fontWeight: 600,
+                          fontWeight: 700,
+                          fontSize: '0.7rem',
                         }}
                       >
                         {formatCurrency(Math.abs(stock.change))} ({isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%)
@@ -276,9 +414,20 @@ export function HeroStockTable() {
                   </Box>
 
                   {/* Expand Icon */}
-                  <Box sx={{ ml: 2 }}>
-                    <IconButton size="small">
-                      {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                  <Box sx={{ ml: 1 }}>
+                    <IconButton
+                      size="small"
+                      sx={{
+                        color: alpha('#ffffff', 0.5),
+                        transition: 'all 0.3s ease',
+                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        '&:hover': {
+                          color: '#ffffff',
+                          background: alpha('#ffffff', 0.1),
+                        },
+                      }}
+                    >
+                      <KeyboardArrowDown />
                     </IconButton>
                   </Box>
                 </Box>
@@ -289,72 +438,76 @@ export function HeroStockTable() {
                 <Box
                   sx={{
                     borderTop: '1px solid',
-                    borderColor: alpha('#ffffff', 0.05),
-                    p: 2.5,
-                    backgroundColor: alpha('#000000', 0.2),
+                    borderColor: alpha(accentColor, 0.2),
+                    p: 2,
+                    background: `linear-gradient(180deg, ${alpha(accentColor, 0.08)} 0%, ${alpha('#0a0e14', 0.95)} 100%)`,
                     display: isExpanded ? 'block' : 'none',
                   }}
                 >
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        Open
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {formatCurrency(stock.open || 0)}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        Previous Close
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {formatCurrency(stock.previousClose || 0)}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        Day Range
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {formatCurrency(stock.low || 0)} - {formatCurrency(stock.high || 0)}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        Volume
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {formatVolume(stock.volume)}
-                      </Typography>
-                    </Box>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5 }}>
+                    {[
+                      { label: 'Open', value: formatCurrency(stock.open || 0) },
+                      { label: 'Previous Close', value: formatCurrency(stock.previousClose || 0) },
+                      { label: 'Day Range', value: `${formatCurrency(stock.low || 0)} - ${formatCurrency(stock.high || 0)}` },
+                      { label: 'Volume', value: formatVolume(stock.volume) },
+                    ].map((item) => (
+                      <Box
+                        key={item.label}
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 2,
+                          background: `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, ${alpha(accentColor, 0.03)} 100%)`,
+                          border: '1px solid',
+                          borderColor: alpha(accentColor, 0.2),
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            background: `linear-gradient(135deg, ${alpha(accentColor, 0.15)} 0%, ${alpha(accentColor, 0.05)} 100%)`,
+                            borderColor: alpha(accentColor, 0.3),
+                          },
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{ color: alpha(accentColor, 0.8), fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}
+                        >
+                          {item.label}
+                        </Typography>
+                        <Typography variant="body2" fontWeight={700} sx={{ color: '#ffffff', mt: 0.5 }}>
+                          {item.value}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Box>
 
                   {/* Day Range Visual */}
-                  <Box sx={{ mt: 3 }}>
-                    <Typography variant="caption" color="text.secondary" gutterBottom>
-                      Today's Range
+                  <Box sx={{ mt: 2.5 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: alpha(accentColor, 0.8), fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}
+                    >
+                      Today&apos;s Range
                     </Typography>
-                    <Box sx={{ position: 'relative', mt: 1 }}>
+                    <Box sx={{ position: 'relative', mt: 1.5 }}>
                       <Box
                         sx={{
                           height: 6,
-                          backgroundColor: alpha('#ffffff', 0.1),
+                          background: `linear-gradient(90deg, ${alpha('#ef4444', 0.4)}, ${alpha('#fbbf24', 0.3)}, ${alpha('#16a34a', 0.4)})`,
                           borderRadius: 3,
+                          boxShadow: `inset 0 1px 3px ${alpha('#000000', 0.3)}`,
                         }}
                       />
                       <Box
                         sx={{
                           position: 'absolute',
-                          top: 0,
-                          left: `${((stock.price - (stock.low || 0)) / ((stock.high || 1) - (stock.low || 0))) * 100}%`,
-                          transform: 'translateX(-50%)',
-                          width: 12,
-                          height: 12,
-                          backgroundColor: isPositive ? '#16a34a' : '#ef4444',
+                          top: '50%',
+                          left: `${Math.min(Math.max(((stock.price - (stock.low || 0)) / ((stock.high || 1) - (stock.low || 0))) * 100, 5), 95)}%`,
+                          transform: 'translate(-50%, -50%)',
+                          width: 16,
+                          height: 16,
+                          backgroundColor: accentColor,
                           borderRadius: '50%',
-                          border: '3px solid #0a0e17',
-                          mt: '-3px',
+                          border: '3px solid #0d1117',
+                          boxShadow: `0 0 12px ${accentColor}, 0 2px 8px ${alpha('#000000', 0.5)}`,
                         }}
                       />
                     </Box>
@@ -367,8 +520,22 @@ export function HeroStockTable() {
       </Box>
 
       {/* Footer */}
-      <Box sx={{ mt: 4, textAlign: 'center' }}>
-        <Typography variant="caption" color="text.secondary">
+      <Box
+        sx={{
+          p: 2,
+          borderTop: '1px solid',
+          borderColor: alpha('#ffffff', 0.05),
+          background: alpha('#000000', 0.2),
+          textAlign: 'center',
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{
+            color: alpha('#ffffff', 0.35),
+            fontSize: '0.65rem',
+          }}
+        >
           {t('market.dataProvidedBy')} • {t('market.refreshesEvery')}
         </Typography>
       </Box>

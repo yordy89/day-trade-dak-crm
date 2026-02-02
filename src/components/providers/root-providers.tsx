@@ -8,6 +8,7 @@ import { CustomThemeProvider } from '@/components/theme/theme-provider';
 import { I18nProvider } from '@/components/providers/i18n-provider';
 import { Toaster } from 'react-hot-toast';
 import { CookieConsentBanner } from '@/components/common/CookieConsentBanner';
+import { ChatWidgetWrapper } from '@/components/chatbot';
 
 interface RootProvidersProps {
   children: React.ReactNode;
@@ -41,6 +42,7 @@ export function RootProviders({ children }: RootProvidersProps): React.JSX.Eleme
               }}
             />
             <CookieConsentBanner />
+            <ChatWidgetWrapper region="us" />
           </CustomThemeProvider>
         </LocalizationProvider>
       </I18nProvider>

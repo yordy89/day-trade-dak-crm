@@ -68,15 +68,13 @@ interface PricingPlan {
   features: PlanFeature[];
   duration?: string;
   tag?: string;
-  disabled?: boolean;
-  disabledMessage?: string;
 }
 
 const getLivePlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.LiveWeeklyManual,
     name: t('subscriptions.plans.liveWeekly.name'),
-    price: 53.99,
+    price: 49.99,
     period: t('subscriptions.perWeek'),
     billingCycle: 'weekly',
     description: t('subscriptions.plans.liveWeekly.description'),
@@ -95,7 +93,7 @@ const getLivePlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.LiveWeeklyRecurring,
     name: t('subscriptions.plans.liveWeeklyAuto.name'),
-    price: 53.99,
+    price: 49.99,
     originalPrice: undefined,
     period: t('subscriptions.perWeek'),
     billingCycle: 'weekly',
@@ -117,11 +115,11 @@ const getLivePlans = (t: any): PricingPlan[] => [
   },
 ];
 
-const getMonthlyPlans = (t: any, tCommon: any): PricingPlan[] => [
+const getMonthlyPlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.MasterClases,
     name: t('subscriptions.plans.masterClasses.name'),
-    price: 199.99,
+    price: 179.99,
     period: t('subscriptions.perMonth'),
     billingCycle: 'monthly',
     description: t('subscriptions.plans.masterClasses.description'),
@@ -141,14 +139,12 @@ const getMonthlyPlans = (t: any, tCommon: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.LiveRecorded,
     name: t('subscriptions.plans.liveRecorded.name'),
-    price: 52.99,
+    price: 47.99,
     period: t('subscriptions.perMonth'),
     billingCycle: 'monthly',
     description: t('subscriptions.plans.liveRecorded.description'),
     icon: <VideoCamera size={32} />,
     color: '#3b82f6',
-    disabled: true,
-    disabledMessage: tCommon('subscriptionPlans.plans.liveRecorded.limitReached'),
     features: [
       { text: t('subscriptions.planFeatures.accessAllRecorded'), included: true },
       { text: t('subscriptions.planFeatures.newDailyContent'), included: true },
@@ -162,7 +158,7 @@ const getMonthlyPlans = (t: any, tCommon: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.PSICOTRADING,
     name: t('subscriptions.plans.psicoTrading.name'),
-    price: 29.99,
+    price: 27.99,
     period: t('subscriptions.perMonth'),
     billingCycle: 'monthly',
     description: t('subscriptions.plans.psicoTrading.description'),
@@ -203,7 +199,7 @@ const getFixedPlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.CLASSES,
     name: t('subscriptions.plans.classes.name'),
-    price: 500.00,
+    price: 450.00,
     period: t('subscriptions.oneTimePayment'),
     billingCycle: 'one_time',
     description: t('subscriptions.plans.classes.description'),
@@ -224,7 +220,7 @@ const getFixedPlans = (t: any): PricingPlan[] => [
   {
     id: SubscriptionPlan.PeaceWithMoney,
     name: t('subscriptions.plans.peaceWithMoney.name'),
-    price: 199.99,
+    price: 179.99,
     period: t('subscriptions.oneTimePayment'),
     billingCycle: 'one_time',
     description: t('subscriptions.plans.peaceWithMoney.description'),
@@ -249,18 +245,16 @@ export default function PlansPage() {
   const _isDarkMode = theme.palette.mode === 'dark';
   const { user, authToken } = useClientAuth();
   const { t } = useTranslation('academy');
-  const { t: tCommon } = useTranslation('common');
   const [selectedView, setSelectedView] = useState<'all' | 'live' | 'monthly' | 'fixed'>('all');
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [_billingPeriod, _setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-  const [hasMasterClassesPurchasePermission, setHasMasterClassesPurchasePermission] = useState(false);
   
   // Get translated plans
   const LIVE_PLANS = getLivePlans(t);
-  const MONTHLY_PLANS = getMonthlyPlans(t, tCommon);
+  const MONTHLY_PLANS = getMonthlyPlans(t);
   const FIXED_PLANS = getFixedPlans(t);
   
   // Get the highlighted plan from URL params
@@ -296,36 +290,9 @@ export default function PlansPage() {
 
   // Check if user has live access through subscriptions OR admin permissions
   const hasLiveAccess = Boolean(
-    hasLiveSubscription ||
+    hasLiveSubscription || 
     (user?.allowLiveMeetingAccess === true)
   );
-
-  // Check if user can purchase Master Classes (has Live access OR Master Classes Purchase permission)
-  const canPurchaseMasterClasses = hasLiveAccess || hasMasterClassesPurchasePermission;
-
-  // Fetch Master Classes eligibility
-  useEffect(() => {
-    const checkMasterClassesEligibility = async () => {
-      if (!user || !authToken) return;
-
-      try {
-        const response = await API.get('/payments/check-eligibility/MasterClases', {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        // If eligible is true, user can purchase (has permission)
-        if (response.data.eligible) {
-          setHasMasterClassesPurchasePermission(true);
-        }
-      } catch (err) {
-        // If error, default to false (will show the "Requiere Membresía Live" badge)
-        console.error('Error checking Master Classes eligibility:', err);
-      }
-    };
-
-    void checkMasterClassesEligibility();
-  }, [user, authToken]);
 
   // Fetch dynamic prices
   useEffect(() => {
@@ -432,7 +399,7 @@ export default function PlansPage() {
     
     // Apply manual discounts for specific cases
     if ((plan.id as string) === (SubscriptionPlan.MasterClases as string) && hasLiveSubscription) {
-      return 22.99; // Special community price
+      return 19.99; // Special community price
     }
     
     if ((plan.id as string) === (SubscriptionPlan.LiveRecorded as string) && hasLiveSubscription) {
@@ -468,10 +435,10 @@ export default function PlansPage() {
     ].includes(plan.id);
     const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
     
-    // Check if Master Classes needs Live subscription or access or Master Classes Purchase permission
+    // Check if Master Classes needs Live subscription or access
     const isMasterClasses = plan.id === SubscriptionPlan.MasterClases;
-    const needsLiveSubscription = isMasterClasses && !canPurchaseMasterClasses;
-
+    const needsLiveSubscription = isMasterClasses && !hasLiveAccess;
+    
     // Debug logging for Master Classes
     if (isMasterClasses) {
       console.log('Master Classes Debug (page.tsx):', {
@@ -480,8 +447,6 @@ export default function PlansPage() {
         allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
         allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
         hasLiveAccess,
-        hasMasterClassesPurchasePermission,
-        canPurchaseMasterClasses,
         needsLiveSubscription,
         userSubscriptions: user?.subscriptions
       });
@@ -559,32 +524,48 @@ export default function PlansPage() {
           sx={{
             height: '100%',
             borderRadius: 3,
-            border: '2px solid',
-            borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : (isHighlighted ? plan.color : plan.popular ? plan.color : 'divider'),
+            border: '1px solid',
+            borderColor: (needsPermission || needsLiveSubscription) ? 'grey.600' : alpha(plan.color, 0.3),
             position: 'relative',
+            overflow: 'hidden',
             transition: 'all 0.3s ease',
-            backgroundColor: theme.palette.background.paper,
+            background: _isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(plan.color, 0.08)} 100%)`
+              : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(plan.color, 0.05)} 100%)`,
             opacity: (needsPermission || needsLiveSubscription) ? 0.7 : (isCurrentPlan ? 0.8 : 1),
-            boxShadow: isHighlighted && !needsPermission && !needsLiveSubscription ? `0 0 20px ${alpha(plan.color, 0.3)}` : 'none',
+            boxShadow: isHighlighted && !needsPermission && !needsLiveSubscription
+              ? `0 8px 32px ${alpha(plan.color, 0.3)}`
+              : `0 4px 20px ${alpha(plan.color, 0.1)}`,
             animation: isHighlighted && !needsPermission && !needsLiveSubscription ? 'pulse 2s ease-in-out infinite' : 'none',
             '@keyframes pulse': {
               '0%': {
                 transform: 'scale(1)',
-                boxShadow: `0 0 20px ${alpha(plan.color, 0.3)}`,
+                boxShadow: `0 8px 32px ${alpha(plan.color, 0.3)}`,
               },
               '50%': {
                 transform: 'scale(1.02)',
-                boxShadow: `0 0 30px ${alpha(plan.color, 0.5)}`,
+                boxShadow: `0 12px 40px ${alpha(plan.color, 0.5)}`,
               },
               '100%': {
                 transform: 'scale(1)',
-                boxShadow: `0 0 20px ${alpha(plan.color, 0.3)}`,
+                boxShadow: `0 8px 32px ${alpha(plan.color, 0.3)}`,
               },
             },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: (needsPermission || needsLiveSubscription)
+                ? 'grey'
+                : `linear-gradient(90deg, ${plan.color}, ${alpha(plan.color, 0.5)})`,
+            },
             '&:hover': {
-              transform: isCurrentPlan ? 'none' : 'translateY(-4px)',
+              transform: isCurrentPlan ? 'none' : 'translateY(-6px)',
               borderColor: plan.color,
-              boxShadow: isCurrentPlan ? theme.shadows[2] : `0 12px 24px ${alpha(plan.color, 0.2)}`,
+              boxShadow: isCurrentPlan ? theme.shadows[2] : `0 16px 40px ${alpha(plan.color, 0.25)}`,
             },
           }}
         >
@@ -592,8 +573,21 @@ export default function PlansPage() {
           <Stack spacing={{ xs: 2, sm: 3 }}>
             {/* Header */}
             <Stack spacing={2} alignItems="center" textAlign="center">
-              <Box sx={{ color: plan.color, mb: 2 }}>
-                {cloneElement(plan.icon as React.ReactElement, { size: 48 })}
+              <Box
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 3,
+                  background: `linear-gradient(135deg, ${alpha(plan.color, 0.2)} 0%, ${alpha(plan.color, 0.1)} 100%)`,
+                  border: `1px solid ${alpha(plan.color, 0.3)}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: plan.color,
+                  mb: 1,
+                }}
+              >
+                {cloneElement(plan.icon as React.ReactElement, { size: 36, weight: 'duotone' })}
               </Box>
               <Typography variant="h5" fontWeight={700}>
                 {plan.name}
@@ -644,10 +638,20 @@ export default function PlansPage() {
             {/* Features */}
             <List dense sx={{ py: 0 }}>
               {plan.features.map((feature, _index) => (
-                <ListItem key={feature.text} sx={{ px: 0 }}>
+                <ListItem
+                  key={feature.text}
+                  sx={{
+                    px: 1.5,
+                    py: 1,
+                    mb: 0.5,
+                    borderRadius: 2,
+                    bgcolor: feature.included ? alpha(plan.color, 0.05) : 'transparent',
+                    border: `1px solid ${feature.included ? alpha(plan.color, 0.1) : 'transparent'}`,
+                  }}
+                >
                   <ListItemIcon sx={{ minWidth: 32 }}>
                     <Check
-                      size={20}
+                      size={18}
                       weight="bold"
                       color={feature.included ? theme.palette.success.main : theme.palette.text.disabled}
                     />
@@ -674,6 +678,7 @@ export default function PlansPage() {
                       '& .MuiListItemText-primary': {
                         color: feature.included ? 'text.primary' : 'text.disabled',
                         textDecoration: feature.included ? 'none' : 'line-through',
+                        fontSize: '0.875rem',
                       },
                     }}
                   />
@@ -682,25 +687,10 @@ export default function PlansPage() {
             </List>
 
             {/* CTA Button or Access Message */}
-            {plan.disabled ? (
-              <Alert
-                severity="warning"
-                icon={<Info size={20} />}
-                sx={{
-                  borderRadius: 2,
-                  '& .MuiAlert-message': {
-                    width: '100%',
-                  },
-                }}
-              >
-                <Typography variant="body2" fontWeight={500}>
-                  {plan.disabledMessage}
-                </Typography>
-              </Alert>
-            ) : isLiveRecordedWithAccess ? (
+            {isLiveRecordedWithAccess ? (
               <Stack spacing={1}>
-                <Alert
-                  severity="success"
+                <Alert 
+                  severity="success" 
                   icon={<Check size={20} />}
                   sx={{ 
                     borderRadius: 2,
@@ -738,21 +728,38 @@ export default function PlansPage() {
             ) : (
               <Button
                 fullWidth
-                variant={(needsPermission || needsLiveSubscription || plan.disabled) ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
+                variant={(needsPermission || needsLiveSubscription) ? 'outlined' : (plan.popular || isFree ? 'contained' : 'outlined')}
                 onClick={() => handleSubscribe(plan.id)}
-                disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission || needsLiveSubscription || plan.disabled}
+                disabled={isCurrentPlan || loadingPlan === plan.id || needsPermission || needsLiveSubscription}
                 sx={{
-                  borderColor: (needsPermission || needsLiveSubscription || plan.disabled) ? 'grey.400' : plan.color,
-                  color: (needsPermission || needsLiveSubscription || plan.disabled) ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
-                  backgroundColor: (needsPermission || needsLiveSubscription || plan.disabled) ? 'transparent' : (plan.popular || isFree ? plan.color : 'transparent'),
+                  borderColor: (needsPermission || needsLiveSubscription) ? 'grey.600' : plan.color,
+                  borderRadius: 2,
+                  color: (needsPermission || needsLiveSubscription) ? 'text.disabled' : (plan.popular || isFree ? 'white' : plan.color),
+                  background: (needsPermission || needsLiveSubscription)
+                    ? 'transparent'
+                    : (plan.popular || isFree
+                      ? `linear-gradient(135deg, ${plan.color} 0%, ${alpha(plan.color, 0.8)} 100%)`
+                      : 'transparent'),
                   py: 1.5,
                   fontWeight: 600,
+                  boxShadow: (plan.popular || isFree) && !(needsPermission || needsLiveSubscription)
+                    ? `0 4px 14px ${alpha(plan.color, 0.3)}`
+                    : 'none',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : plan.color,
-                    backgroundColor: (needsPermission || needsLiveSubscription) ? 'transparent' : (plan.popular || isFree ? plan.color : alpha(plan.color, 0.08)),
+                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.600' : plan.color,
+                    background: (needsPermission || needsLiveSubscription)
+                      ? 'transparent'
+                      : (plan.popular || isFree
+                        ? `linear-gradient(135deg, ${alpha(plan.color, 0.9)} 0%, ${alpha(plan.color, 0.7)} 100%)`
+                        : alpha(plan.color, 0.1)),
+                    boxShadow: (plan.popular || isFree) && !(needsPermission || needsLiveSubscription)
+                      ? `0 6px 20px ${alpha(plan.color, 0.4)}`
+                      : 'none',
+                    transform: !(needsPermission || needsLiveSubscription) ? 'translateY(-2px)' : 'none',
                   },
                   '&.Mui-disabled': {
-                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.400' : undefined,
+                    borderColor: (needsPermission || needsLiveSubscription) ? 'grey.600' : undefined,
                     color: (needsPermission || needsLiveSubscription) ? 'text.disabled' : undefined,
                   },
                 }}
@@ -837,26 +844,34 @@ export default function PlansPage() {
             exclusive
             onChange={(e, value) => value && setSelectedView(value)}
             sx={{
-              backgroundColor: theme.palette.action.hover,
-              borderRadius: 2,
-              p: 0.5,
+              background: _isDarkMode
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.6)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`
+                : alpha(theme.palette.action.hover, 0.5),
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              borderRadius: 3,
+              p: 0.75,
               minWidth: 'fit-content',
+              backdropFilter: 'blur(10px)',
               '& .MuiToggleButton-root': {
                 px: { xs: 1.5, sm: 2, md: 3 },
                 py: { xs: 1, sm: 1.5 },
-                borderRadius: 1.5,
+                borderRadius: 2,
                 border: 'none',
                 textTransform: 'none',
                 fontWeight: 600,
                 fontSize: { xs: '0.8rem', sm: '0.875rem' },
                 color: theme.palette.text.secondary,
+                transition: 'all 0.3s ease',
                 '&.Mui-selected': {
-                  backgroundColor: theme.palette.background.paper,
-                  color: theme.palette.text.primary,
-                  boxShadow: theme.shadows[2],
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.main, 0.8)} 100%)`,
+                  color: 'white',
+                  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                  '&:hover': {
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.main, 0.9)} 100%)`,
+                  },
                 },
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.background.paper, 0.5),
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
                 },
               },
             }}
@@ -933,42 +948,90 @@ export default function PlansPage() {
             <Typography variant="body2">
               <strong>¡Beneficios de tu suscripción Live activa!</strong>
               <br />
-              • Master Clases: Precio especial de $22.99 (normalmente $199.99)
+              • Master Clases: Precio especial de $19.99 (normalmente $179.99)
               <br />
               • Live Grabados: Acceso GRATIS incluido
             </Typography>
           </Alert> : null}
 
         {/* Trust Indicators */}
-        <Box sx={{ mt: { xs: 6, sm: 8, md: 10 }, textAlign: 'center' }}>
+        <Box sx={{ mt: { xs: 6, sm: 8, md: 10 } }}>
           <Grid container spacing={{ xs: 3, sm: 4 }}>
-            <Grid item xs={12} md={4}>
-              <Certificate size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
-              <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-                {t('subscriptions.trustedByTraders')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('subscriptions.trustedByTradersDesc')}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Calendar size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
-              <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-                {t('subscriptions.flexibleAccess')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('subscriptions.flexibleAccessDesc')}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Lightning size={48} color={theme.palette.primary.main} style={{ marginBottom: 16 }} />
-              <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-                {t('subscriptions.cancelAnytime')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('subscriptions.noContracts')}
-              </Typography>
-            </Grid>
+            {[
+              {
+                icon: <Certificate size={28} weight="duotone" />,
+                title: t('subscriptions.trustedByTraders'),
+                desc: t('subscriptions.trustedByTradersDesc'),
+                color: theme.palette.primary.main,
+              },
+              {
+                icon: <Calendar size={28} weight="duotone" />,
+                title: t('subscriptions.flexibleAccess'),
+                desc: t('subscriptions.flexibleAccessDesc'),
+                color: theme.palette.info.main,
+              },
+              {
+                icon: <Lightning size={28} weight="duotone" />,
+                title: t('subscriptions.cancelAnytime'),
+                desc: t('subscriptions.noContracts'),
+                color: theme.palette.warning.main,
+              },
+            ].map((item, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card
+                  sx={{
+                    p: 4,
+                    textAlign: 'center',
+                    height: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: _isDarkMode
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(item.color, 0.08)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(item.color, 0.05)} 100%)`,
+                    border: `1px solid ${alpha(item.color, 0.2)}`,
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      background: `linear-gradient(90deg, ${item.color}, ${alpha(item.color, 0.5)})`,
+                    },
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: `0 12px 24px ${alpha(item.color, 0.15)}`,
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: '50%',
+                      background: `linear-gradient(135deg, ${alpha(item.color, 0.2)} 0%, ${alpha(item.color, 0.1)} 100%)`,
+                      border: `1px solid ${alpha(item.color, 0.3)}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: item.color,
+                      mx: 'auto',
+                      mb: 3,
+                    }}
+                  >
+                    {item.icon}
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                    {item.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {item.desc}
+                  </Typography>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Box>
 

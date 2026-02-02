@@ -453,9 +453,16 @@ export default function MasterCoursePage() {
         </Alert>
       ) : null}
       
-      <Box sx={{ pt: { xs: 12, md: 14 }, minHeight: '100vh', position: 'relative' }}> {/* Adjusted padding for TopBar + Navbar */}
+      <Box
+        sx={{
+          pt: { xs: 12, md: 14 },
+          minHeight: '100vh',
+          position: 'relative',
+          background: isDarkMode ? '#0d1117' : '#ffffff',
+        }}
+      > {/* Adjusted padding for TopBar + Navbar */}
         <BullBearBackground isDarkMode={isDarkMode} />
-        
+
         {/* Hero Section */}
         <Box
         sx={{
@@ -464,7 +471,7 @@ export default function MasterCoursePage() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           color: 'white',
-          py: { xs: 8, md: 12 },
+          py: { xs: 10, md: 14 },
           position: 'relative',
           overflow: 'hidden',
           zIndex: 1,
@@ -475,8 +482,21 @@ export default function MasterCoursePage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.92)} 0%, ${alpha('#16a34a', 0.85)} 30%, ${alpha('#991b1b', 0.85)} 70%, ${alpha('#0a0a0a', 0.92)} 100%)`,
+            background: `linear-gradient(135deg, ${alpha('#0a0a0a', 0.95)} 0%, ${alpha('#16a34a', 0.75)} 25%, ${alpha('#0d1117', 0.85)} 50%, ${alpha('#991b1b', 0.75)} 75%, ${alpha('#0a0a0a', 0.95)} 100%)`,
             zIndex: 0,
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '150px',
+            background: isDarkMode
+              ? 'linear-gradient(to bottom, transparent 0%, #0d1117 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, #ffffff 100%)',
+            zIndex: 1,
+            pointerEvents: 'none',
           },
         }}
       >
@@ -499,36 +519,57 @@ export default function MasterCoursePage() {
                 <Typography variant="body1" sx={{ opacity: 0.8, mt: 2 }}>
                   {t('hero.description')}
                 </Typography>
-                <Stack direction="row" spacing={4} sx={{ my: 2 }}>
-                  <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                      3
-                    </Typography>
-                    <Typography variant="body2">{t('hero.stats.intensiveDays')}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                      100%
-                    </Typography>
-                    <Typography variant="body2">{t('hero.stats.realPractice')}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                      {t('hero.stats.live')}
-                    </Typography>
-                    <Typography variant="body2">{t('hero.stats.tradingSessions')}</Typography>
-                  </Box>
+                <Stack direction="row" spacing={3} sx={{ my: 3 }}>
+                  {[
+                    { value: '3', label: t('hero.stats.intensiveDays'), color: '#16a34a' },
+                    { value: '100%', label: t('hero.stats.realPractice'), color: '#3b82f6' },
+                    { value: t('hero.stats.live'), label: t('hero.stats.tradingSessions'), color: '#f59e0b' },
+                  ].map((stat, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        textAlign: 'center',
+                        p: 2,
+                        borderRadius: 2,
+                        background: alpha('#ffffff', 0.1),
+                        backdropFilter: 'blur(10px)',
+                        border: `1px solid ${alpha('#ffffff', 0.2)}`,
+                        minWidth: 100,
+                      }}
+                    >
+                      <Typography
+                        variant="h3"
+                        fontWeight={800}
+                        sx={{
+                          background: `linear-gradient(135deg, ${stat.color} 0%, ${alpha(stat.color, 0.7)} 100%)`,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                        }}
+                      >
+                        {stat.value}
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>{stat.label}</Typography>
+                    </Box>
+                  ))}
                 </Stack>
-                <Stack direction="row" spacing={2}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <Button
                     variant="contained"
                     size="large"
                     onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                     sx={{
-                      backgroundColor: 'white',
-                      color: 'primary.main',
+                      background: 'linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)',
+                      color: '#16a34a',
+                      fontWeight: 700,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      boxShadow: '0 8px 24px rgba(255, 255, 255, 0.2)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        backgroundColor: 'grey.100',
+                        background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 12px 32px rgba(255, 255, 255, 0.3)',
                       },
                     }}
                   >
@@ -544,11 +585,20 @@ export default function MasterCoursePage() {
                     startIcon={<PlayCircle />}
                     onClick={() => document.getElementById('program-details')?.scrollIntoView({ behavior: 'smooth' })}
                     sx={{
-                      borderColor: 'white',
+                      borderColor: alpha('#ffffff', 0.5),
+                      borderWidth: 2,
                       color: 'white',
+                      fontWeight: 600,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      backdropFilter: 'blur(10px)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        borderColor: 'white',
-                        backgroundColor: alpha('#fff', 0.1),
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        backgroundColor: alpha('#fff', 0.15),
+                        transform: 'translateY(-2px)',
                       },
                     }}
                   >
@@ -606,10 +656,38 @@ export default function MasterCoursePage() {
       </Box>
 
       {/* Timeline Section */}
-      <Box sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.8), py: 8 }}>
+      <Box
+        sx={{
+          py: 10,
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
         <Container maxWidth="lg">
-          <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {t('yourJourney.title')}
+          </Typography>
+          <Typography
+            variant="h6"
+            textAlign="center"
+            color="text.secondary"
+            mb={6}
+          >
+            Your path to professional trading
           </Typography>
           <Box sx={{ position: 'relative', mb: 8 }}>
             {/* Timeline line */}
@@ -624,7 +702,7 @@ export default function MasterCoursePage() {
                 zIndex: 0,
               }}
             />
-            
+
             {/* Timeline items */}
             <Grid container justifyContent="space-between" position="relative">
               {phaseDetails.map((phase, index) => ({
@@ -638,20 +716,27 @@ export default function MasterCoursePage() {
                   <Box sx={{ textAlign: 'center', position: 'relative' }}>
                     <Box
                       sx={{
-                        width: 100,
-                        height: 100,
+                        width: 120,
+                        height: 120,
                         borderRadius: '50%',
-                        backgroundColor: 'background.paper',
-                        border: `4px solid ${item.color}`,
+                        background: isDarkMode
+                          ? `linear-gradient(145deg, ${alpha(item.color, 0.2)} 0%, ${alpha(item.color, 0.05)} 100%)`
+                          : `linear-gradient(145deg, ${alpha(item.color, 0.15)} 0%, ${alpha(item.color, 0.03)} 100%)`,
+                        border: `3px solid ${item.color}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mx: 'auto',
-                        mb: 2,
+                        mb: 3,
                         fontSize: '3rem',
-                        boxShadow: 3,
+                        boxShadow: `0 12px 40px ${alpha(item.color, 0.25)}`,
                         position: 'relative',
                         zIndex: 1,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'scale(1.1)',
+                          boxShadow: `0 16px 50px ${alpha(item.color, 0.35)}`,
+                        },
                       }}
                     >
                       {item.icon}
@@ -659,13 +744,15 @@ export default function MasterCoursePage() {
                     <Chip
                       label={item.phase}
                       sx={{
-                        backgroundColor: item.color,
+                        background: `linear-gradient(135deg, ${item.color} 0%, ${alpha(item.color, 0.8)} 100%)`,
                         color: 'white',
                         fontWeight: 700,
-                        mb: 1,
+                        mb: 1.5,
+                        px: 2,
+                        boxShadow: `0 4px 12px ${alpha(item.color, 0.3)}`,
                       }}
                     />
-                    <Typography variant="h6" fontWeight={600} gutterBottom>
+                    <Typography variant="h6" fontWeight={700} gutterBottom>
                       {item.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -700,89 +787,172 @@ export default function MasterCoursePage() {
       </Box>
 
       {/* Course Features */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-          {t('targetAudience.title')}
-        </Typography>
-        <Grid container spacing={4}>
-          {[
-            {
-              icon: <TrendingUp />,
-              title: t('targetAudience.beginners.title'),
-              description: t('targetAudience.beginners.description'),
-            },
-            {
-              icon: <School />,
-              title: t('targetAudience.experiencedTraders.title'),
-              description: t('targetAudience.experiencedTraders.description'),
-            },
-            {
-              icon: <Group />,
-              title: t('targetAudience.investors.title'),
-              description: t('targetAudience.investors.description'),
-            },
-            {
-              icon: <CardMembership />,
-              title: t('targetAudience.entrepreneurs.title'),
-              description: t('targetAudience.entrepreneurs.description'),
-            },
-          ].map((feature, _index) => (
-            <Grid item xs={12} sm={6} md={3} key={feature.title}>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  textAlign: 'center',
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <Avatar
+      <Box
+        sx={{
+          py: 10,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('targetAudience.title')}
+          </Typography>
+          <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
+            Designed for different levels and goals
+          </Typography>
+          <Grid container spacing={3}>
+            {[
+              {
+                icon: <TrendingUp />,
+                title: t('targetAudience.beginners.title'),
+                description: t('targetAudience.beginners.description'),
+                color: '#16a34a',
+              },
+              {
+                icon: <School />,
+                title: t('targetAudience.experiencedTraders.title'),
+                description: t('targetAudience.experiencedTraders.description'),
+                color: '#3b82f6',
+              },
+              {
+                icon: <Group />,
+                title: t('targetAudience.investors.title'),
+                description: t('targetAudience.investors.description'),
+                color: '#8b5cf6',
+              },
+              {
+                icon: <CardMembership />,
+                title: t('targetAudience.entrepreneurs.title'),
+                description: t('targetAudience.entrepreneurs.description'),
+                color: '#f59e0b',
+              },
+            ].map((feature, _index) => (
+              <Grid item xs={12} sm={6} md={3} key={feature.title}>
+                <Paper
+                  elevation={0}
                   sx={{
-                    width: 60,
-                    height: 60,
-                    backgroundColor: 'primary.main',
-                    mx: 'auto',
-                    mb: 2,
+                    p: 4,
+                    height: '100%',
+                    textAlign: 'center',
+                    background: isDarkMode
+                      ? `linear-gradient(145deg, ${alpha(feature.color, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                      : `linear-gradient(145deg, ${alpha(feature.color, 0.08)} 0%, #ffffff 100%)`,
+                    border: '1px solid',
+                    borderColor: alpha(feature.color, 0.2),
+                    borderRadius: 3,
+                    transition: 'all 0.4s ease',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: `linear-gradient(90deg, transparent, ${feature.color}, transparent)`,
+                    },
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      borderColor: feature.color,
+                      boxShadow: `0 20px 40px ${alpha(feature.color, 0.2)}`,
+                    },
                   }}
                 >
-                  {feature.icon}
-                </Avatar>
-                <Typography variant="h6" gutterBottom fontWeight={600}>
-                  {feature.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {feature.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+                  <Box
+                    sx={{
+                      width: 70,
+                      height: 70,
+                      borderRadius: '18px',
+                      background: `linear-gradient(135deg, ${feature.color} 0%, ${alpha(feature.color, 0.7)} 100%)`,
+                      mx: 'auto',
+                      mb: 3,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: `0 8px 24px ${alpha(feature.color, 0.35)}`,
+                      color: 'white',
+                    }}
+                  >
+                    {feature.icon}
+                  </Box>
+                  <Typography variant="h6" gutterBottom fontWeight={700}>
+                    {feature.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+                    {feature.description}
+                  </Typography>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
       {/* Detailed Phase Breakdown */}
-      <Box id="program-details" sx={{ py: 10, position: 'relative' }}>
+      <Box
+        id="program-details"
+        sx={{
+          py: 10,
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
         <Container maxWidth="xl">
-          <Typography variant="h2" textAlign="center" fontWeight={800} mb={8}>
+          <Typography
+            variant="h2"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {t('programComplete.title')}
           </Typography>
-          
+          <Typography variant="h6" textAlign="center" color="text.secondary" mb={8}>
+            From beginner to consistent trader in 3 phases
+          </Typography>
+
           {/* Phase 1 */}
           <Box sx={{ mb: 10 }}>
             <Paper
               elevation={0}
               sx={{
-                background: `linear-gradient(135deg, ${alpha('#16a34a', 0.05)} 0%, ${alpha('#16a34a', 0.02)} 100%)`,
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha('#16a34a', 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#16a34a', 0.06)} 0%, #ffffff 100%)`,
                 border: '2px solid',
-                borderColor: '#16a34a',
+                borderColor: alpha('#16a34a', 0.4),
                 borderRadius: 4,
                 p: { xs: 4, md: 6 },
                 position: 'relative',
                 overflow: 'hidden',
+                transition: 'all 0.4s ease',
+                '&:hover': {
+                  borderColor: '#16a34a',
+                  boxShadow: `0 20px 60px ${alpha('#16a34a', 0.15)}`,
+                },
               }}
             >
               <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.1 }}>
@@ -885,13 +1055,20 @@ export default function MasterCoursePage() {
             <Paper
               elevation={0}
               sx={{
-                background: `linear-gradient(135deg, ${alpha('#3b82f6', 0.05)} 0%, ${alpha('#3b82f6', 0.02)} 100%)`,
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha('#3b82f6', 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#3b82f6', 0.06)} 0%, #ffffff 100%)`,
                 border: '2px solid',
-                borderColor: '#3b82f6',
+                borderColor: alpha('#3b82f6', 0.4),
                 borderRadius: 4,
                 p: { xs: 4, md: 6 },
                 position: 'relative',
                 overflow: 'hidden',
+                transition: 'all 0.4s ease',
+                '&:hover': {
+                  borderColor: '#3b82f6',
+                  boxShadow: `0 20px 60px ${alpha('#3b82f6', 0.15)}`,
+                },
               }}
             >
               <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.1 }}>
@@ -982,13 +1159,20 @@ export default function MasterCoursePage() {
             <Paper
               elevation={0}
               sx={{
-                background: `linear-gradient(135deg, ${alpha('#f59e0b', 0.05)} 0%, ${alpha('#f59e0b', 0.02)} 100%)`,
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha('#f59e0b', 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#f59e0b', 0.06)} 0%, #ffffff 100%)`,
                 border: '2px solid',
-                borderColor: '#f59e0b',
+                borderColor: alpha('#f59e0b', 0.4),
                 borderRadius: 4,
                 p: { xs: 4, md: 6 },
                 position: 'relative',
                 overflow: 'hidden',
+                transition: 'all 0.4s ease',
+                '&:hover': {
+                  borderColor: '#f59e0b',
+                  boxShadow: `0 20px 60px ${alpha('#f59e0b', 0.15)}`,
+                },
               }}
             >
               <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.1 }}>
@@ -1036,13 +1220,20 @@ export default function MasterCoursePage() {
             <Paper
               elevation={0}
               sx={{
-                background: `linear-gradient(135deg, ${alpha('#9333ea', 0.08)} 0%, ${alpha('#9333ea', 0.03)} 100%)`,
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha('#9333ea', 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#9333ea', 0.08)} 0%, #ffffff 100%)`,
                 border: '2px solid',
-                borderColor: '#9333ea',
+                borderColor: alpha('#9333ea', 0.4),
                 borderRadius: 4,
                 p: { xs: 4, md: 6 },
                 position: 'relative',
                 overflow: 'hidden',
+                transition: 'all 0.4s ease',
+                '&:hover': {
+                  borderColor: '#9333ea',
+                  boxShadow: `0 20px 60px ${alpha('#9333ea', 0.15)}`,
+                },
               }}
             >
               <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.1 }}>
@@ -1094,109 +1285,214 @@ export default function MasterCoursePage() {
 
           {/* Why This Course Works */}
           <Box sx={{ mt: 10 }}>
-            <Typography variant="h3" textAlign="center" fontWeight={700} mb={2}>
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={800}
+              mb={2}
+              sx={{
+                background: isDarkMode
+                  ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                  : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               {t('whyItWorks.title')}
             </Typography>
             <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
               {t('whyItWorks.subtitle')}
             </Typography>
-            
+
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
-                <Card 
-                  sx={{ 
+                <Paper
+                  elevation={0}
+                  sx={{
                     height: '100%',
-                    backgroundColor: alpha(theme.palette.error.main, 0.05),
-                    borderLeft: `4px solid ${theme.palette.error.main}`,
+                    p: 4,
+                    background: isDarkMode
+                      ? `linear-gradient(145deg, ${alpha('#ef4444', 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                      : `linear-gradient(145deg, ${alpha('#ef4444', 0.06)} 0%, #ffffff 100%)`,
+                    border: '1px solid',
+                    borderColor: alpha('#ef4444', 0.3),
+                    borderRadius: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'all 0.4s ease',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '4px',
+                      height: '100%',
+                      background: 'linear-gradient(180deg, #ef4444, #dc2626)',
+                    },
+                    '&:hover': {
+                      borderColor: '#ef4444',
+                      boxShadow: `0 20px 40px ${alpha('#ef4444', 0.15)}`,
+                    },
                   }}
                 >
-                  <CardContent>
-                    <Typography variant="h5" fontWeight={700} color="error.dark" gutterBottom>
-                      {t('whyItWorks.whatWeDont.title')} ❌
-                    </Typography>
-                    <List>
-                      {(t('whyItWorks.whatWeDont.items', { returnObjects: true }) as string[]).map((item, _idx) => (
-                        <ListItem key={item}>
-                          <ListItemIcon>
-                            <Warning sx={{ color: 'error.main' }} />
-                          </ListItemIcon>
-                          <ListItemText primary={item} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </CardContent>
-                </Card>
+                  <Typography variant="h5" fontWeight={700} color="#ef4444" gutterBottom>
+                    {t('whyItWorks.whatWeDont.title')} ❌
+                  </Typography>
+                  <List dense>
+                    {(t('whyItWorks.whatWeDont.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                      <ListItem key={item} sx={{ py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <Warning sx={{ color: '#ef4444' }} />
+                        </ListItemIcon>
+                        <ListItemText primary={item} primaryTypographyProps={{ fontWeight: 500 }} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
-                <Card 
-                  sx={{ 
+                <Paper
+                  elevation={0}
+                  sx={{
                     height: '100%',
-                    backgroundColor: alpha(theme.palette.success.main, 0.05),
-                    borderLeft: `4px solid ${theme.palette.success.main}`,
+                    p: 4,
+                    background: isDarkMode
+                      ? `linear-gradient(145deg, ${alpha('#16a34a', 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                      : `linear-gradient(145deg, ${alpha('#16a34a', 0.06)} 0%, #ffffff 100%)`,
+                    border: '1px solid',
+                    borderColor: alpha('#16a34a', 0.3),
+                    borderRadius: 3,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'all 0.4s ease',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '4px',
+                      height: '100%',
+                      background: 'linear-gradient(180deg, #16a34a, #15803d)',
+                    },
+                    '&:hover': {
+                      borderColor: '#16a34a',
+                      boxShadow: `0 20px 40px ${alpha('#16a34a', 0.15)}`,
+                    },
                   }}
                 >
-                  <CardContent>
-                    <Typography variant="h5" fontWeight={700} color="success.dark" gutterBottom>
-                      {t('whyItWorks.whatWeDo.title')} ✓
-                    </Typography>
-                    <List>
-                      {(t('whyItWorks.whatWeDo.items', { returnObjects: true }) as string[]).map((item, _idx) => (
-                        <ListItem key={item}>
-                          <ListItemIcon>
-                            <CheckCircle sx={{ color: 'success.main' }} />
-                          </ListItemIcon>
-                          <ListItemText primary={item} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </CardContent>
-                </Card>
+                  <Typography variant="h5" fontWeight={700} color="#16a34a" gutterBottom>
+                    {t('whyItWorks.whatWeDo.title')} ✓
+                  </Typography>
+                  <List dense>
+                    {(t('whyItWorks.whatWeDo.items', { returnObjects: true }) as string[]).map((item, _idx) => (
+                      <ListItem key={item} sx={{ py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <CheckCircle sx={{ color: '#16a34a' }} />
+                        </ListItemIcon>
+                        <ListItemText primary={item} primaryTypographyProps={{ fontWeight: 500 }} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
               </Grid>
             </Grid>
 
             {/* Success Formula */}
             <Box sx={{ mt: 6, textAlign: 'center' }}>
-              <Paper 
-                sx={{ 
-                  p: 4,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  border: `2px solid ${theme.palette.primary.main}`,
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 3, md: 5 },
+                  background: isDarkMode
+                    ? `linear-gradient(145deg, ${alpha('#16a34a', 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                    : `linear-gradient(145deg, ${alpha('#16a34a', 0.05)} 0%, #ffffff 100%)`,
+                  border: '2px solid',
+                  borderColor: alpha('#16a34a', 0.3),
+                  borderRadius: 4,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: 'linear-gradient(90deg, #16a34a, #22c55e, #16a34a)',
+                  },
                 }}
               >
-                <Typography variant="h4" fontWeight={700} color="primary.dark" gutterBottom>
+                <Typography
+                  variant="h4"
+                  fontWeight={800}
+                  gutterBottom
+                  sx={{
+                    background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
                   {t('successFormula.title')}
                 </Typography>
-                <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
+                <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mt: 3 }}>
                   <Grid item>
-                    <Chip label={t('successFormula.technicalKnowledge')} color="primary" sx={{ fontSize: '1rem', py: 2.5 }} />
+                    <Chip
+                      label={t('successFormula.technicalKnowledge')}
+                      sx={{
+                        fontSize: '1rem',
+                        py: 2.5,
+                        fontWeight: 600,
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+                        color: 'white',
+                      }}
+                    />
                   </Grid>
                   <Grid item>
-                    <Typography variant="h4">+</Typography>
+                    <Typography variant="h4" fontWeight={700} color="text.secondary">+</Typography>
                   </Grid>
                   <Grid item>
-                    <Chip label={t('successFormula.emotionalControl')} color="secondary" sx={{ fontSize: '1rem', py: 2.5 }} />
+                    <Chip
+                      label={t('successFormula.emotionalControl')}
+                      sx={{
+                        fontSize: '1rem',
+                        py: 2.5,
+                        fontWeight: 600,
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                        color: 'white',
+                      }}
+                    />
                   </Grid>
                   <Grid item>
-                    <Typography variant="h4">+</Typography>
+                    <Typography variant="h4" fontWeight={700} color="text.secondary">+</Typography>
                   </Grid>
                   <Grid item>
-                    <Chip label={t('successFormula.supervisedPractice')} color="success" sx={{ fontSize: '1rem', py: 2.5 }} />
+                    <Chip
+                      label={t('successFormula.supervisedPractice')}
+                      sx={{
+                        fontSize: '1rem',
+                        py: 2.5,
+                        fontWeight: 600,
+                        background: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
+                        color: 'white',
+                      }}
+                    />
                   </Grid>
                   <Grid item>
-                    <Typography variant="h4">=</Typography>
+                    <Typography variant="h4" fontWeight={700} color="text.secondary">=</Typography>
                   </Grid>
                   <Grid item>
-                    <Chip 
-                      label={t('successFormula.consistentTrader')} 
-                      sx={{ 
-                        fontSize: '1.1rem', 
+                    <Chip
+                      label={t('successFormula.consistentTrader')}
+                      sx={{
+                        fontSize: '1.1rem',
                         py: 3,
                         px: 3,
                         fontWeight: 700,
-                        backgroundColor: '#16a34a',
+                        background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
                         color: 'white',
-                      }} 
+                        boxShadow: `0 4px 20px ${alpha('#16a34a', 0.4)}`,
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -1206,179 +1502,384 @@ export default function MasterCoursePage() {
 
           {/* What&apos;s Included */}
           <Box sx={{ mt: 10 }}>
-            <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
+            <Typography
+              variant="h3"
+              textAlign="center"
+              fontWeight={800}
+              mb={2}
+              sx={{
+                background: isDarkMode
+                  ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                  : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               {t('whatIncludes.title')}
             </Typography>
+            <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
+              Everything you need to become a professional trader
+            </Typography>
             <Grid container spacing={4}>
-              <Grid item xs={12} md={3}>
-                <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
-                  <PlayCircle sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-                  <Typography variant="h5" fontWeight={600} mb={2}>
-                    {t('whatIncludes.onlineModules.number')} {t('whatIncludes.onlineModules.title')}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('whatIncludes.onlineModules.description')}
-                  </Typography>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
-                  <Groups sx={{ fontSize: 60, color: 'secondary.main', mb: 2 }} />
-                  <Typography variant="h5" fontWeight={600} mb={2}>
-                    {t('whatIncludes.groupMentoring.number')} {t('whatIncludes.groupMentoring.title')}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('whatIncludes.groupMentoring.description')}
-                  </Typography>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
-                  <LocationOn sx={{ fontSize: 60, color: 'success.main', mb: 2 }} />
-                  <Typography variant="h5" fontWeight={600} mb={2}>
-                    {t('whatIncludes.inPersonDays.number')} {t('whatIncludes.inPersonDays.title')}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('whatIncludes.inPersonDays.description')}
-                  </Typography>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
-                  <LiveTv sx={{ fontSize: 60, color: 'warning.main', mb: 2 }} />
-                  <Typography variant="h5" fontWeight={600} mb={2}>
-                    {t('whatIncludes.practiceMonths.number')} {t('whatIncludes.practiceMonths.title')}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('whatIncludes.practiceMonths.description')}
-                  </Typography>
-                </Card>
-              </Grid>
+              {[
+                {
+                  icon: <PlayCircle sx={{ fontSize: 40 }} />,
+                  number: t('whatIncludes.onlineModules.number'),
+                  title: t('whatIncludes.onlineModules.title'),
+                  description: t('whatIncludes.onlineModules.description'),
+                  color: '#3b82f6',
+                },
+                {
+                  icon: <Groups sx={{ fontSize: 40 }} />,
+                  number: t('whatIncludes.groupMentoring.number'),
+                  title: t('whatIncludes.groupMentoring.title'),
+                  description: t('whatIncludes.groupMentoring.description'),
+                  color: '#8b5cf6',
+                },
+                {
+                  icon: <LocationOn sx={{ fontSize: 40 }} />,
+                  number: t('whatIncludes.inPersonDays.number'),
+                  title: t('whatIncludes.inPersonDays.title'),
+                  description: t('whatIncludes.inPersonDays.description'),
+                  color: '#16a34a',
+                },
+                {
+                  icon: <LiveTv sx={{ fontSize: 40 }} />,
+                  number: t('whatIncludes.practiceMonths.number'),
+                  title: t('whatIncludes.practiceMonths.title'),
+                  description: t('whatIncludes.practiceMonths.description'),
+                  color: '#f59e0b',
+                },
+              ].map((item, idx) => (
+                <Grid item xs={12} sm={6} md={3} key={idx}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      height: '100%',
+                      textAlign: 'center',
+                      p: 4,
+                      background: isDarkMode
+                        ? `linear-gradient(145deg, ${alpha(item.color, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                        : `linear-gradient(145deg, ${alpha(item.color, 0.08)} 0%, #ffffff 100%)`,
+                      border: '1px solid',
+                      borderColor: alpha(item.color, 0.2),
+                      borderRadius: 3,
+                      transition: 'all 0.4s ease',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        background: `linear-gradient(90deg, transparent, ${item.color}, transparent)`,
+                      },
+                      '&:hover': {
+                        transform: 'translateY(-8px)',
+                        borderColor: item.color,
+                        boxShadow: `0 20px 40px ${alpha(item.color, 0.2)}`,
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${item.color} 0%, ${alpha(item.color, 0.7)} 100%)`,
+                        mx: 'auto',
+                        mb: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: `0 8px 24px ${alpha(item.color, 0.35)}`,
+                        color: 'white',
+                      }}
+                    >
+                      {item.icon}
+                    </Box>
+                    <Typography
+                      variant="h3"
+                      fontWeight={800}
+                      sx={{
+                        background: `linear-gradient(135deg, ${item.color} 0%, ${alpha(item.color, 0.7)} 100%)`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        mb: 1,
+                      }}
+                    >
+                      {item.number}
+                    </Typography>
+                    <Typography variant="h6" fontWeight={700} gutterBottom>
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+                      {item.description}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              ))}
             </Grid>
           </Box>
         </Container>
       </Box>
 
       {/* Key Highlights */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-          {t('whatMakesUnique.title')}
-        </Typography>
-        <Grid container spacing={4}>
-          {highlights.map((highlight, _index) => (
-            <Grid item xs={12} sm={6} md={3} key={highlight.title}>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  textAlign: 'center',
-                  border: '2px solid',
-                  borderColor: 'divider',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    transform: 'translateY(-4px)',
-                    transition: 'all 0.3s ease',
-                  },
-                }}
-              >
-                <Avatar
-                  sx={{
-                    width: 60,
-                    height: 60,
-                    backgroundColor: 'primary.main',
-                    mx: 'auto',
-                    mb: 2,
-                  }}
-                >
-                  {highlight.icon}
-                </Avatar>
-                <Typography variant="h6" gutterBottom fontWeight={600}>
-                  {highlight.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {highlight.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-
-      {/* Module Details Section */}
-      <Box sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.05), py: 8 }}>
+      <Box
+        sx={{
+          py: 10,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
         <Container maxWidth="lg">
-          <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-            {t('sessionContent.title')}
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('whatMakesUnique.title')}
+          </Typography>
+          <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
+            What makes us different from other courses
           </Typography>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Typography variant="h5" color="primary" fontWeight={600} mb={2}>
-                  {t('sessionContent.day1.title')}
-                </Typography>
-                <List>
-                  {(t('sessionContent.day1.items', { returnObjects: true }) as string[]).map((item, _idx) => (
-                    <ListItem key={item}>
-                      <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
-                      <ListItemText primary={item} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Typography variant="h5" color="primary" fontWeight={600} mb={2}>
-                  {t('sessionContent.day2.title')}
-                </Typography>
-                <List>
-                  {(t('sessionContent.day2.items', { returnObjects: true }) as string[]).map((item, _idx) => (
-                    <ListItem key={item}>
-                      <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
-                      <ListItemText primary={item} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ height: '100%', p: 3 }}>
-                <Typography variant="h5" color="primary" fontWeight={600} mb={2}>
-                  {t('sessionContent.day3.title')}
-                </Typography>
-                <List>
-                  {(t('sessionContent.day3.items', { returnObjects: true }) as string[]).map((item, _idx) => (
-                    <ListItem key={item}>
-                      <ListItemIcon><CheckCircle color="success" /></ListItemIcon>
-                      <ListItemText primary={item} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-            </Grid>
+            {highlights.map((highlight, index) => {
+              const colors = ['#16a34a', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
+              const color = colors[index % colors.length];
+              return (
+                <Grid item xs={12} sm={6} md={3} key={highlight.title}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 4,
+                      height: '100%',
+                      textAlign: 'center',
+                      background: isDarkMode
+                        ? `linear-gradient(145deg, ${alpha(color, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                        : `linear-gradient(145deg, ${alpha(color, 0.08)} 0%, #ffffff 100%)`,
+                      border: '1px solid',
+                      borderColor: alpha(color, 0.2),
+                      borderRadius: 3,
+                      transition: 'all 0.4s ease',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+                      },
+                      '&:hover': {
+                        transform: 'translateY(-8px)',
+                        borderColor: color,
+                        boxShadow: `0 20px 40px ${alpha(color, 0.2)}`,
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 70,
+                        height: 70,
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${color} 0%, ${alpha(color, 0.7)} 100%)`,
+                        mx: 'auto',
+                        mb: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: `0 8px 24px ${alpha(color, 0.35)}`,
+                        color: 'white',
+                      }}
+                    >
+                      {highlight.icon}
+                    </Box>
+                    <Typography variant="h6" gutterBottom fontWeight={700}>
+                      {highlight.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+                      {highlight.description}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Module Details Section */}
+      <Box
+        sx={{
+          py: 10,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('sessionContent.title')}
+          </Typography>
+          <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
+            Detailed content for each in-person day
+          </Typography>
+          <Grid container spacing={4}>
+            {[
+              { title: t('sessionContent.day1.title'), items: t('sessionContent.day1.items', { returnObjects: true }) as string[], color: '#3b82f6' },
+              { title: t('sessionContent.day2.title'), items: t('sessionContent.day2.items', { returnObjects: true }) as string[], color: '#8b5cf6' },
+              { title: t('sessionContent.day3.title'), items: t('sessionContent.day3.items', { returnObjects: true }) as string[], color: '#16a34a' },
+            ].map((day, idx) => (
+              <Grid item xs={12} md={4} key={idx}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    height: '100%',
+                    p: 4,
+                    background: isDarkMode
+                      ? `linear-gradient(145deg, ${alpha(day.color, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                      : `linear-gradient(145deg, ${alpha(day.color, 0.08)} 0%, #ffffff 100%)`,
+                    border: '1px solid',
+                    borderColor: alpha(day.color, 0.3),
+                    borderRadius: 3,
+                    transition: 'all 0.4s ease',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      background: `linear-gradient(90deg, ${day.color}, ${alpha(day.color, 0.6)})`,
+                    },
+                    '&:hover': {
+                      borderColor: day.color,
+                      boxShadow: `0 20px 40px ${alpha(day.color, 0.15)}`,
+                    },
+                  }}
+                >
+                  <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+                    <Avatar
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        background: `linear-gradient(135deg, ${day.color} 0%, ${alpha(day.color, 0.7)} 100%)`,
+                        boxShadow: `0 4px 14px ${alpha(day.color, 0.4)}`,
+                      }}
+                    >
+                      <CalendarToday />
+                    </Avatar>
+                    <Typography variant="h5" fontWeight={700} sx={{ color: day.color }}>
+                      {day.title}
+                    </Typography>
+                  </Stack>
+                  <List dense>
+                    {day.items.map((item, _idx) => (
+                      <ListItem key={item} sx={{ py: 1 }}>
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <CheckCircle sx={{ color: '#16a34a' }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={item}
+                          primaryTypographyProps={{ fontWeight: 500 }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>
 
       {/* Important Notice */}
-      <Box sx={{ backgroundColor: alpha(theme.palette.warning.main, 0.1), py: 4 }}>
+      <Box
+        sx={{
+          py: 6,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#f59e0b', 0.05)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, ${alpha('#f59e0b', 0.05)} 50%, #ffffff 100%)`,
+        }}
+      >
         <Container maxWidth="lg">
-          <Alert 
-            severity="warning" 
-            icon={<Warning />}
-            sx={{ 
-              '& .MuiAlert-icon': { fontSize: 28 },
-              '& .MuiAlert-message': { fontSize: '1.1rem' }
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              background: isDarkMode
+                ? `linear-gradient(145deg, ${alpha('#f59e0b', 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                : `linear-gradient(145deg, ${alpha('#f59e0b', 0.08)} 0%, #ffffff 100%)`,
+              border: '2px solid',
+              borderColor: alpha('#f59e0b', 0.4),
+              borderRadius: 3,
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '4px',
+                height: '100%',
+                background: 'linear-gradient(180deg, #f59e0b, #fbbf24)',
+              },
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              {t('pricing.importantNotice.title')}
-            </Typography>
-            <Typography variant="body1">
-              {t('pricing.importantNotice.description')}
-            </Typography>
-          </Alert>
+            <Stack direction="row" spacing={3} alignItems="flex-start">
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  boxShadow: `0 4px 14px ${alpha('#f59e0b', 0.4)}`,
+                }}
+              >
+                <Warning sx={{ color: 'white', fontSize: 28 }} />
+              </Box>
+              <Box>
+                <Typography variant="h5" fontWeight={700} color="#f59e0b" gutterBottom>
+                  {t('pricing.importantNotice.title')}
+                </Typography>
+                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                  {t('pricing.importantNotice.description')}
+                </Typography>
+              </Box>
+            </Stack>
+          </Paper>
         </Container>
       </Box>
 
@@ -1386,12 +1887,38 @@ export default function MasterCoursePage() {
       <Box
         id="pricing"
         sx={{
-          backgroundColor: alpha(theme.palette.primary.main, 0.05),
-          py: 8,
+          py: 10,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#16a34a', 0.05)} 30%, ${alpha('#16a34a', 0.08)} 50%, ${alpha('#16a34a', 0.05)} 70%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, ${alpha('#16a34a', 0.03)} 30%, ${alpha('#16a34a', 0.06)} 50%, ${alpha('#16a34a', 0.03)} 70%, #ffffff 100%)`,
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '600px',
+            height: '600px',
+            background: `radial-gradient(circle, ${alpha('#16a34a', 0.1)} 0%, transparent 70%)`,
+            pointerEvents: 'none',
+          },
         }}
       >
-        <Container maxWidth="md">
-          <Typography variant="h3" textAlign="center" fontWeight={700} mb={2}>
+        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {t('pricing.pricingSection.title')}
           </Typography>
           <Typography
@@ -1476,11 +2003,42 @@ export default function MasterCoursePage() {
             </Alert>
           </Box>
 
-          <Card sx={{ mb: 4 }}>
-            <CardContent sx={{ p: 4 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              mb: 4,
+              background: isDarkMode
+                ? `linear-gradient(145deg, ${alpha('#16a34a', 0.1)} 0%, ${alpha('#0d1117', 0.98)} 100%)`
+                : `linear-gradient(145deg, ${alpha('#16a34a', 0.05)} 0%, #ffffff 100%)`,
+              border: '2px solid',
+              borderColor: alpha('#16a34a', 0.3),
+              borderRadius: 4,
+              overflow: 'hidden',
+              position: 'relative',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '5px',
+                background: 'linear-gradient(90deg, #16a34a, #22c55e, #16a34a)',
+              },
+            }}
+          >
+            <CardContent sx={{ p: { xs: 3, md: 5 } }}>
               <Stack spacing={4}>
                 <Box textAlign="center">
-                  <Typography variant="h2" fontWeight={800} color="primary.main">
+                  <Typography
+                    variant="h2"
+                    fontWeight={800}
+                    sx={{
+                      background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      fontSize: { xs: '2.5rem', md: '3.5rem' },
+                    }}
+                  >
                     {isLoadingPrice ? (
                       <CircularProgress size={24} />
                     ) : (
@@ -1667,9 +2225,20 @@ export default function MasterCoursePage() {
                 </Stack>
               </Stack>
             </CardContent>
-          </Card>
+          </Paper>
 
-          <Paper sx={{ p: 3, backgroundColor: alpha(theme.palette.warning.main, 0.1) }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              background: isDarkMode
+                ? `linear-gradient(145deg, ${alpha('#f59e0b', 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
+                : `linear-gradient(145deg, ${alpha('#f59e0b', 0.06)} 0%, #ffffff 100%)`,
+              border: '1px solid',
+              borderColor: alpha('#f59e0b', 0.3),
+              borderRadius: 3,
+            }}
+          >
             <Stack spacing={2}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Star color="warning" />
@@ -1694,21 +2263,108 @@ export default function MasterCoursePage() {
       </Box>
 
       {/* FAQ Section */}
-      <Container maxWidth="md" sx={{ py: 8 }}>
-        <Typography variant="h3" textAlign="center" fontWeight={700} mb={6}>
-          {t('faq.mainTitle')}
-        </Typography>
-        {(t('faq.questions', { returnObjects: true }) as {question: string, answer: string}[]).map((faq, _index) => (
-          <Accordion key={faq.question} sx={{ mb: 2 }}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography variant="h6">{faq.question}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>{faq.answer}</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </Container>
+      <Box
+        sx={{
+          py: 10,
+          background: isDarkMode
+            ? `linear-gradient(180deg, #0d1117 0%, ${alpha('#161b22', 1)} 50%, #0d1117 100%)`
+            : `linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)`,
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h3"
+            textAlign="center"
+            fontWeight={800}
+            mb={2}
+            sx={{
+              background: isDarkMode
+                ? 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%)'
+                : 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('faq.mainTitle')}
+          </Typography>
+          <Typography variant="h6" textAlign="center" color="text.secondary" mb={6}>
+            Answers to your most common questions
+          </Typography>
+          {(t('faq.questions', { returnObjects: true }) as {question: string, answer: string}[]).map((faq, index) => {
+            const colors = ['#16a34a', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
+            const color = colors[index % colors.length];
+            return (
+              <Accordion
+                key={faq.question}
+                sx={{
+                  mb: 2,
+                  background: isDarkMode
+                    ? `linear-gradient(145deg, ${alpha(color, 0.05)} 0%, ${alpha('#0d1117', 0.98)} 100%)`
+                    : `linear-gradient(145deg, ${alpha(color, 0.03)} 0%, #ffffff 100%)`,
+                  border: '1px solid',
+                  borderColor: alpha(color, 0.2),
+                  borderRadius: '12px !important',
+                  overflow: 'hidden',
+                  boxShadow: 'none',
+                  transition: 'all 0.3s ease',
+                  '&::before': {
+                    display: 'none',
+                  },
+                  '&:hover': {
+                    borderColor: alpha(color, 0.4),
+                    boxShadow: `0 8px 24px ${alpha(color, 0.1)}`,
+                  },
+                  '&.Mui-expanded': {
+                    borderColor: color,
+                    boxShadow: `0 12px 32px ${alpha(color, 0.15)}`,
+                    margin: '0 0 16px 0',
+                  },
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={
+                    <ExpandMore
+                      sx={{
+                        color: color,
+                        transition: 'transform 0.3s ease',
+                      }}
+                    />
+                  }
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    '& .MuiAccordionSummary-content': {
+                      my: 2,
+                    },
+                  }}
+                >
+                  <Typography variant="h6" fontWeight={600}>
+                    {faq.question}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{
+                    px: 3,
+                    pb: 3,
+                    pt: 0,
+                    borderTop: `1px solid ${alpha(color, 0.1)}`,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      lineHeight: 1.8,
+                      color: 'text.secondary',
+                      pt: 2,
+                    }}
+                  >
+                    {faq.answer}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
+        </Container>
+      </Box>
     </Box>
     <ProfessionalFooter />
     

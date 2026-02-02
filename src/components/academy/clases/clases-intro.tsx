@@ -75,13 +75,30 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
       {/* Hero Section */}
       <Box
         sx={{
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(
-            theme.palette.primary.main,
-            0.1
-          )} 100%)`,
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.default, 1)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 50%, ${alpha(theme.palette.background.default, 1)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#fafafa', 1)} 0%, ${alpha(theme.palette.primary.main, 0.06)} 50%, ${alpha('#fafafa', 1)} 100%)`,
           py: 8,
           position: 'relative',
           overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: `linear-gradient(90deg, transparent, ${alpha(theme.palette.primary.main, 0.3)}, transparent)`,
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: `linear-gradient(90deg, transparent, ${alpha(theme.palette.primary.main, 0.2)}, transparent)`,
+          },
         }}
       >
         <Container maxWidth="lg">
@@ -129,7 +146,14 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
 
                 {/* Course Stats */}
                 <Stack direction="row" spacing={3} sx={{ mt: 4 }}>
-                  <Box>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                    }}
+                  >
                     <Typography variant="h4" fontWeight={700} color="primary.main">
                       {totalLessons}
                     </Typography>
@@ -137,7 +161,14 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                       {t('classes.lessons')}
                     </Typography>
                   </Box>
-                  <Box>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                    }}
+                  >
                     <Typography variant="h4" fontWeight={700} color="primary.main">
                       15
                     </Typography>
@@ -145,7 +176,14 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                       {t('classes.daysAccess')}
                     </Typography>
                   </Box>
-                  <Box>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                    }}
+                  >
                     <Typography variant="h4" fontWeight={700} color="primary.main">
                       100%
                     </Typography>
@@ -170,8 +208,19 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                     height: 400,
                     borderRadius: 4,
                     overflow: 'hidden',
-                    boxShadow: theme.shadows[10],
-                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.95)} 0%, ${alpha(theme.palette.primary.dark, 0.95)} 100%)`,
+                    boxShadow: `0 12px 40px ${alpha(theme.palette.primary.main, 0.35)}`,
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                    border: `1px solid ${alpha('#ffffff', 0.1)}`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '100%',
+                      background: `radial-gradient(circle at 30% 20%, ${alpha('#ffffff', 0.1)} 0%, transparent 50%)`,
+                      pointerEvents: 'none',
+                    },
                   }}
                 >
                   <Box sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -234,12 +283,28 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                   height: '100%',
                   textAlign: 'center',
                   p: 3,
-                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: theme.palette.mode === 'dark'
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`
+                    : `linear-gradient(135deg, ${alpha('#ffffff', 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                  boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
                   '&:hover': {
-                    boxShadow: theme.shadows[4],
+                    boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.15)}`,
                     transform: 'translateY(-4px)',
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                   },
                   transition: 'all 0.3s ease',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.light, 0.5)})`,
+                  },
                 }}
               >
                 <Box
@@ -247,13 +312,15 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
                     mb: 2,
                     color: 'primary.main',
+                    boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
                   }}
                 >
                   {feature.icon}
@@ -271,7 +338,14 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
       </Container>
 
       {/* Curriculum Section */}
-      <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
+      <Box
+        sx={{
+          py: 8,
+          background: theme.palette.mode === 'dark'
+            ? `linear-gradient(180deg, ${alpha(theme.palette.background.default, 1)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 50%, ${alpha(theme.palette.background.default, 1)} 100%)`
+            : `linear-gradient(180deg, ${alpha('#fafafa', 1)} 0%, ${alpha(theme.palette.primary.main, 0.02)} 50%, ${alpha('#fafafa', 1)} 100%)`,
+        }}
+      >
         <Container maxWidth="lg">
           <Typography variant="h3" fontWeight={700} textAlign="center" gutterBottom>
             {t('classes.curriculum.title')}
@@ -284,13 +358,34 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
             {curriculum.map((module, index) => (
               <Grid item xs={12} md={6} key={module.title}>
                 <Paper
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
                   sx={{
                     p: 3,
-                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: theme.palette.mode === 'dark'
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`
+                      : `linear-gradient(135deg, ${alpha('#ffffff', 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.02)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+                    boxShadow: `0 2px 12px ${alpha(theme.palette.primary.main, 0.06)}`,
                     '&:hover': {
-                      boxShadow: theme.shadows[2],
+                      boxShadow: `0 6px 24px ${alpha(theme.palette.primary.main, 0.12)}`,
+                      transform: 'translateY(-2px)',
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
                     },
                     transition: 'all 0.3s ease',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: '3px',
+                      background: `linear-gradient(180deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.light, 0.4)})`,
+                    },
                   }}
                 >
                   <Stack direction="row" spacing={2} alignItems="center">
@@ -299,11 +394,13 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
                         width: 50,
                         height: 50,
                         borderRadius: 2,
-                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.primary.main, 0.06)} 100%)`,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'primary.main',
+                        boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.1)}`,
                       }}
                     >
                       {module.icon}
@@ -331,14 +428,35 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
           color: 'white',
           py: 8,
           textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '100%',
+            background: `radial-gradient(circle at 20% 50%, ${alpha('#ffffff', 0.1)} 0%, transparent 40%)`,
+            pointerEvents: 'none',
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: `linear-gradient(90deg, transparent, ${alpha('#ffffff', 0.3)}, transparent)`,
+          },
         }}
       >
-        <Container maxWidth="md">
+        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Typography variant="h3" fontWeight={700} gutterBottom>
             {hasAccess ? t('classes.continueYourLearning') : t('classes.startToday')}
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            {hasAccess 
+            {hasAccess
               ? t('classes.accessAllContent')
               : t('classes.getFullAccess')
             }
@@ -354,9 +472,13 @@ export default function ClasesIntro({ onStart, ctaText, hasAccess, daysRemaining
               fontWeight: 600,
               bgcolor: 'white',
               color: 'primary.main',
+              boxShadow: `0 4px 20px ${alpha('#000000', 0.2)}`,
               '&:hover': {
                 bgcolor: 'grey.100',
+                boxShadow: `0 6px 28px ${alpha('#000000', 0.3)}`,
+                transform: 'translateY(-2px)',
               },
+              transition: 'all 0.3s ease',
             }}
           >
             {ctaText}

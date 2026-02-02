@@ -107,23 +107,23 @@ const CustomInput: React.FC<CustomInputProps> = ({
         sx={{
           display: 'flex',
           alignItems: multiline ? 'flex-start' : 'center',
-          backgroundColor: isDarkMode 
-            ? 'rgba(255, 255, 255, 0.03)' 
+          backgroundColor: isDarkMode
+            ? 'rgba(22, 27, 34, 0.8)'
             : 'rgba(0, 0, 0, 0.04)',
           borderRadius: 2,
           transition: 'all 0.3s',
           overflow: 'hidden',
           position: 'relative',
-          border: error 
-            ? `1px solid ${muiTheme.palette.error.main}` 
-            : isFocused 
+          border: error
+            ? `1px solid ${muiTheme.palette.error.main}`
+            : isFocused
               ? '1px solid #16a34a'
               : isHovered
-                ? `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'}`
-                : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                ? `1px solid ${isDarkMode ? 'rgba(22, 163, 74, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`
+                : `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.1)'}`,
           '&:hover': {
-            backgroundColor: isDarkMode 
-              ? 'rgba(255, 255, 255, 0.05)' 
+            backgroundColor: isDarkMode
+              ? 'rgba(22, 27, 34, 0.95)'
               : 'rgba(0, 0, 0, 0.06)',
           },
         }}
@@ -616,11 +616,11 @@ export function EventRegistrationModal({
   };
 
   // Memoize style constants to prevent recalculation
-  const modalBackground = React.useMemo(() => isDarkMode ? '#1a1a1a' : '#ffffff', [isDarkMode]);
-  
-  // Always use green theme colors for consistency
-  const headerBackground = React.useMemo(() => 
-    `linear-gradient(135deg, ${alpha('#16a34a', 0.9)} 0%, ${alpha('#15803d', 0.9)} 100%)`,
+  const modalBackground = React.useMemo(() => isDarkMode ? '#0d1117' : '#ffffff', [isDarkMode]);
+
+  // Premium gradient for header with enhanced depth
+  const headerBackground = React.useMemo(() =>
+    `linear-gradient(135deg, #16a34a 0%, #15803d 50%, #0d5c2e 100%)`,
     []
   );
 
@@ -735,11 +735,21 @@ export function EventRegistrationModal({
           sx={{
             background: headerBackground,
             color: 'white',
-            p: 2,
+            p: 3,
             position: 'relative',
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             flexShrink: 0,
+            boxShadow: '0 4px 20px rgba(22, 163, 74, 0.3)',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+            },
           }}
         >
           <IconButton
@@ -784,8 +794,14 @@ export function EventRegistrationModal({
                   sx={{
                     backgroundColor: 'white',
                     color: '#16a34a',
-                    fontWeight: 600,
-                    fontSize: '1rem',
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    py: 2.5,
+                    px: 1,
+                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15)',
+                    '& .MuiChip-icon': {
+                      color: '#16a34a',
+                    },
                   }}
                   icon={<TrendingUp />}
                 />
@@ -845,17 +861,17 @@ export function EventRegistrationModal({
       )}
 
       {/* Form Content */}
-      <DialogContent sx={{ 
-        p: isMobile ? 2 : 1.25,
-        pt: isMobile ? 2 : 0.75,
-        pb: isMobile ? 10 : 0.5, // Add padding for fixed navigation buttons on mobile
+      <DialogContent sx={{
+        p: isMobile ? 2 : 3,
+        pt: isMobile ? 2 : 2,
+        pb: isMobile ? 10 : 2,
         backgroundColor: modalBackground,
         flex: '1 1 auto',
         overflow: 'auto',
         minHeight: 0,
-        maxHeight: isMobile 
+        maxHeight: isMobile
           ? 'calc(100vh - 200px)' // Account for header and stepper
-          : 'calc(100vh - 250px)',
+          : 'calc(100vh - 200px)',
         '&::-webkit-scrollbar': {
           width: '8px',
         },
@@ -1565,40 +1581,42 @@ export function EventRegistrationModal({
                       <Button
                         onClick={() => handleSubmit('card')}
                         disabled={isLoading}
-                        variant="outlined"
+                        variant="contained"
                         fullWidth
                         startIcon={<CreditCard />}
                         sx={{
-                          py: 2,
+                          py: 2.5,
                           borderRadius: 2,
-                          borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'card' && isLoading
-                            ? 'primary.main'
-                            : 'divider',
-                          backgroundColor: selectedPaymentMethod === 'card' && isLoading
-                            ? alpha(theme.palette.primary.main, 0.08)
-                            : 'transparent',
+                          background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                          color: 'white',
+                          boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            borderWidth: 2,
-                            borderColor: 'primary.main',
-                            backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                            background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
+                            boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+                            transform: 'translateY(-2px)',
+                          },
+                          '&:disabled': {
+                            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                            color: 'white',
+                            opacity: 0.7,
                           },
                         }}
                       >
                         <Stack alignItems="center" spacing={0.5}>
-                          <Typography variant="body1" fontWeight={600}>
+                          <Typography variant="body1" fontWeight={600} sx={{ color: 'white' }}>
                             {paymentMode === 'partial' ? tMasterCourse('paymentModal.payDepositButton') : tMasterCourse('paymentModal.payWithCard')}
                           </Typography>
-                          <Typography variant="h6" fontWeight={700} color="primary">
+                          <Typography variant="h6" fontWeight={700} sx={{ color: 'white' }}>
                             ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                           </Typography>
                           {paymentMode === 'partial' && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                               {tMasterCourse('paymentModal.balance')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'card' && (
-                            <CircularProgress size={20} />
+                            <CircularProgress size={20} sx={{ color: 'white' }} />
                           )}
                         </Stack>
                       </Button>
@@ -1607,43 +1625,45 @@ export function EventRegistrationModal({
                       <Button
                         onClick={() => handleSubmit('klarna')}
                         disabled={isLoading}
-                        variant="outlined"
+                        variant="contained"
                         fullWidth
                         startIcon={<Wallet />}
                         sx={{
-                          py: 2,
+                          py: 2.5,
                           borderRadius: 2,
-                          borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'klarna' && isLoading
-                            ? '#ec4899'
-                            : 'divider',
-                          backgroundColor: selectedPaymentMethod === 'klarna' && isLoading
-                            ? alpha('#ec4899', 0.08)
-                            : 'transparent',
+                          background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                          color: 'white',
+                          boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            borderWidth: 2,
-                            borderColor: '#ec4899',
-                            backgroundColor: alpha('#ec4899', 0.04),
+                            background: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)',
+                            boxShadow: '0 6px 20px rgba(236, 72, 153, 0.4)',
+                            transform: 'translateY(-2px)',
+                          },
+                          '&:disabled': {
+                            background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                            color: 'white',
+                            opacity: 0.7,
                           },
                         }}
                       >
                         <Stack alignItems="center" spacing={0.5}>
-                          <Typography variant="body1" fontWeight={600}>
+                          <Typography variant="body1" fontWeight={600} sx={{ color: 'white' }}>
                             {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDepositWith', { provider: 'Klarna' }) : tMasterCourse('paymentModal.financeWith', { provider: 'Klarna' })}
                           </Typography>
-                          <Typography variant="h6" fontWeight={700} sx={{ color: '#ec4899' }}>
+                          <Typography variant="h6" fontWeight={700} sx={{ color: 'white' }}>
                             ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + KLARNA_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                             {tMasterCourse('paymentModal.includes', { fee: (KLARNA_FEE_PERCENTAGE * 100).toFixed(2) })}
                           </Typography>
                           {paymentMode === 'partial' && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                               {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'klarna' && (
-                            <CircularProgress size={20} />
+                            <CircularProgress size={20} sx={{ color: 'white' }} />
                           )}
                         </Stack>
                       </Button>
@@ -1652,43 +1672,45 @@ export function EventRegistrationModal({
                       <Button
                         onClick={() => handleSubmit('afterpay')}
                         disabled={isLoading}
-                        variant="outlined"
+                        variant="contained"
                         fullWidth
                         startIcon={<CreditCard />}
                         sx={{
-                          py: 2,
+                          py: 2.5,
                           borderRadius: 2,
-                          borderWidth: 2,
-                          borderColor: selectedPaymentMethod === 'afterpay' && isLoading
-                            ? '#00d4aa'
-                            : 'divider',
-                          backgroundColor: selectedPaymentMethod === 'afterpay' && isLoading
-                            ? alpha('#00d4aa', 0.08)
-                            : 'transparent',
+                          background: 'linear-gradient(135deg, #00d4aa 0%, #00b894 100%)',
+                          color: 'white',
+                          boxShadow: '0 4px 14px rgba(0, 212, 170, 0.3)',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            borderWidth: 2,
-                            borderColor: '#00d4aa',
-                            backgroundColor: alpha('#00d4aa', 0.04),
+                            background: 'linear-gradient(135deg, #00b894 0%, #00a884 100%)',
+                            boxShadow: '0 6px 20px rgba(0, 212, 170, 0.4)',
+                            transform: 'translateY(-2px)',
+                          },
+                          '&:disabled': {
+                            background: 'linear-gradient(135deg, #00d4aa 0%, #00b894 100%)',
+                            color: 'white',
+                            opacity: 0.7,
                           },
                         }}
                       >
                         <Stack alignItems="center" spacing={0.5}>
-                          <Typography variant="body1" fontWeight={600}>
+                          <Typography variant="body1" fontWeight={600} sx={{ color: 'white' }}>
                             {paymentMode === 'partial' ? tMasterCourse('paymentModal.payDepositWith', { provider: 'Afterpay' }) : tMasterCourse('paymentModal.payWith', { provider: 'Afterpay' })}
                           </Typography>
-                          <Typography variant="h6" fontWeight={700} sx={{ color: '#00d4aa' }}>
+                          <Typography variant="h6" fontWeight={700} sx={{ color: 'white' }}>
                             ${((paymentMode === 'partial' ? depositAmount : totalPrice) * (1 + AFTERPAY_FEE_PERCENTAGE)).toFixed(2)} USD
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                             {tMasterCourse('paymentModal.interestFree')}
                           </Typography>
                           {paymentMode === 'partial' && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                               {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                             </Typography>
                           )}
                           {isLoading && selectedPaymentMethod === 'afterpay' && (
-                            <CircularProgress size={20} />
+                            <CircularProgress size={20} sx={{ color: 'white' }} />
                           )}
                         </Stack>
                       </Button>
@@ -1698,43 +1720,45 @@ export function EventRegistrationModal({
                         <Button
                           onClick={() => handleSubmit('local_financing', '4_biweekly')}
                           disabled={isLoading}
-                          variant="outlined"
+                          variant="contained"
                           fullWidth
                           startIcon={<Wallet />}
                           sx={{
-                            py: 2,
+                            py: 2.5,
                             borderRadius: 2,
-                            borderWidth: 2,
-                            borderColor: selectedPaymentMethod === 'local_financing' && isLoading
-                              ? '#8B5CF6'
-                              : 'divider',
-                            backgroundColor: selectedPaymentMethod === 'local_financing' && isLoading
-                              ? alpha('#8B5CF6', 0.08)
-                              : 'transparent',
+                            background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                            color: 'white',
+                            boxShadow: '0 4px 14px rgba(139, 92, 246, 0.3)',
+                            transition: 'all 0.3s ease',
                             '&:hover': {
-                              borderWidth: 2,
-                              borderColor: '#8B5CF6',
-                              backgroundColor: alpha('#8B5CF6', 0.04),
+                              background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+                              boxShadow: '0 6px 20px rgba(139, 92, 246, 0.4)',
+                              transform: 'translateY(-2px)',
+                            },
+                            '&:disabled': {
+                              background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                              color: 'white',
+                              opacity: 0.7,
                             },
                           }}
                         >
                           <Stack alignItems="center" spacing={0.5}>
-                            <Typography variant="body1" fontWeight={600}>
+                            <Typography variant="body1" fontWeight={600} sx={{ color: 'white' }}>
                               {paymentMode === 'partial' ? tMasterCourse('paymentModal.financeDeposit') : tMasterCourse('paymentModal.localFinancing')}
                             </Typography>
-                            <Typography variant="h6" fontWeight={700} sx={{ color: '#8B5CF6' }}>
+                            <Typography variant="h6" fontWeight={700} sx={{ color: 'white' }}>
                               ${(paymentMode === 'partial' ? depositAmount : totalPrice).toFixed(2)} USD
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                               4 pagos quincenales sin intereses
                             </Typography>
                             {paymentMode === 'partial' && (
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
                                 {tMasterCourse('paymentModal.balanceAfterDeposit')} ${(totalPrice - depositAmount).toFixed(2)}
                               </Typography>
                             )}
                             {isLoading && selectedPaymentMethod === 'local_financing' && (
-                              <CircularProgress size={20} />
+                              <CircularProgress size={20} sx={{ color: 'white' }} />
                             )}
                           </Stack>
                         </Button>
@@ -1797,22 +1821,21 @@ export function EventRegistrationModal({
             </Box>
           ) : (
             /* Desktop Version - Original Layout */
-            <Grid container spacing={0.75}>
+            <Grid container spacing={2}>
               {/* Info Box */}
             <Grid item xs={12}>
               <Paper
                 elevation={0}
                 sx={{
-                  p: 1,
-                  mt: 0.5,
-                  mb: 0.5,
-                  backgroundColor: isDarkMode 
+                  p: 2,
+                  mb: 1,
+                  backgroundColor: isDarkMode
                     ? alpha(event.type === 'master_course' ? '#16a34a' : '#3b82f6', 0.1)
                     : alpha(event.type === 'master_course' ? '#16a34a' : '#3b82f6', 0.05),
-                  border: `1px solid ${isDarkMode 
+                  border: `1px solid ${isDarkMode
                     ? alpha(event.type === 'master_course' ? '#16a34a' : '#3b82f6', 0.3)
                     : alpha(event.type === 'master_course' ? '#16a34a' : '#3b82f6', 0.2)}`,
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                 }}
               >
                 <Stack direction="row" spacing={1} alignItems="flex-start">
@@ -1852,13 +1875,14 @@ export function EventRegistrationModal({
 
             {/* Personal Information Section */}
             <Grid item xs={12}>
-              <Typography 
-                variant="h6" 
-                fontWeight={600} 
+              <Typography
+                variant="h6"
+                fontWeight={600}
                 gutterBottom
-                sx={{ 
+                sx={{
                   color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
-                  mb: 0.5
+                  mb: 1,
+                  mt: 1,
                 }}
               >
                 {t('events.registration.modal.personalInformation')}
@@ -2300,9 +2324,9 @@ export function EventRegistrationModal({
       {/* Action Buttons - Outside scrollable area */}
       {/* Hide these buttons completely on mobile */}
       {!isMobile && (
-        <Box sx={{ 
-          p: 1.5,
-          pt: 1, 
+        <Box sx={{
+          p: 3,
+          pt: 2.5,
           backgroundColor: modalBackground,
           borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
           borderBottomLeftRadius: 12,
@@ -2351,15 +2375,15 @@ export function EventRegistrationModal({
                 fullWidth
                 startIcon={isLoading && selectedPaymentMethod === 'card' ? <CircularProgress size={18} color="inherit" /> : <CreditCard />}
                 sx={{
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   textTransform: 'none',
-                  py: { xs: 1.5, sm: 1.25 },
-                  px: { xs: 2, sm: 2.5 },
+                  py: { xs: 1.5, sm: 1.5 },
+                  px: { xs: 2, sm: 3 },
                   fontSize: { xs: '0.9rem', sm: '0.95rem' },
                   fontWeight: 600,
-                  background: selectedPaymentMethod === 'card' && isLoading ? buttonBackground : 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s ease',
+                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                  transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -2367,11 +2391,12 @@ export function EventRegistrationModal({
                   minHeight: { xs: '56px', sm: 'auto' },
                   '&:hover': {
                     background: 'linear-gradient(135deg, #15803d 0%, #14532d 100%)',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                    transform: 'translateY(-1px)',
+                    boxShadow: '0 6px 20px rgba(22, 163, 74, 0.45)',
+                    transform: 'translateY(-2px)',
                   },
                   '&:disabled': {
-                    opacity: 0.6,
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    opacity: 0.7,
                   },
                 }}
               >
@@ -2448,15 +2473,15 @@ export function EventRegistrationModal({
                 fullWidth
                 startIcon={isLoading && selectedPaymentMethod === 'klarna' ? <CircularProgress size={18} color="inherit" /> : <TrendingUp />}
                 sx={{
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   textTransform: 'none',
-                  py: { xs: 1.5, sm: 1.25 },
-                  px: { xs: 2, sm: 2.5 },
+                  py: { xs: 1.5, sm: 1.5 },
+                  px: { xs: 2, sm: 3 },
                   fontSize: { xs: '0.9rem', sm: '0.95rem' },
                   fontWeight: 600,
-                  background: selectedPaymentMethod === 'klarna' && isLoading ? buttonBackground : 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s ease',
+                  background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                  boxShadow: '0 4px 14px rgba(236, 72, 153, 0.35)',
+                  transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -2464,11 +2489,12 @@ export function EventRegistrationModal({
                   minHeight: { xs: '72px', sm: 'auto' },
                   '&:hover': {
                     background: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                    transform: 'translateY(-1px)',
+                    boxShadow: '0 6px 20px rgba(236, 72, 153, 0.45)',
+                    transform: 'translateY(-2px)',
                   },
                   '&:disabled': {
-                    opacity: 0.6,
+                    background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                    opacity: 0.7,
                   },
                   '@media (max-width: 600px)': {
                     '& .MuiButton-startIcon': {
@@ -2507,27 +2533,28 @@ export function EventRegistrationModal({
                 fullWidth
                 startIcon={isLoading && selectedPaymentMethod === 'afterpay' ? <CircularProgress size={18} color="inherit" /> : <CreditCard />}
                 sx={{
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   textTransform: 'none',
-                  py: { xs: 1.5, sm: 1.25 },
-                  px: { xs: 2, sm: 2.5 },
+                  py: { xs: 1.5, sm: 1.5 },
+                  px: { xs: 2, sm: 3 },
                   fontSize: { xs: '0.9rem', sm: '0.95rem' },
                   fontWeight: 600,
-                  background: selectedPaymentMethod === 'afterpay' && isLoading ? buttonBackground : 'linear-gradient(135deg, #00D4AA 0%, #00C19F 100%)',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s ease',
+                  background: 'linear-gradient(135deg, #00D4AA 0%, #00B894 100%)',
+                  boxShadow: '0 4px 14px rgba(0, 212, 170, 0.35)',
+                  transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 0.5,
                   minHeight: { xs: '72px', sm: 'auto' },
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #00C19F 0%, #00B594 100%)',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                    transform: 'translateY(-1px)',
+                    background: 'linear-gradient(135deg, #00B894 0%, #00A884 100%)',
+                    boxShadow: '0 6px 20px rgba(0, 212, 170, 0.45)',
+                    transform: 'translateY(-2px)',
                   },
                   '&:disabled': {
-                    opacity: 0.6,
+                    background: 'linear-gradient(135deg, #00D4AA 0%, #00B894 100%)',
+                    opacity: 0.7,
                   },
                   '@media (max-width: 600px)': {
                     '& .MuiButton-startIcon': {
@@ -2568,15 +2595,15 @@ export function EventRegistrationModal({
                   fullWidth
                   startIcon={isLoading && selectedPaymentMethod === 'local_financing' ? <CircularProgress size={18} color="inherit" /> : <Wallet />}
                   sx={{
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     textTransform: 'none',
-                    py: { xs: 1.5, sm: 1.25 },
-                    px: { xs: 2, sm: 2.5 },
+                    py: { xs: 1.5, sm: 1.5 },
+                    px: { xs: 2, sm: 3 },
                     fontSize: { xs: '0.9rem', sm: '0.95rem' },
                     fontWeight: 600,
-                    background: selectedPaymentMethod === 'local_financing' && isLoading ? buttonBackground : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.2s ease',
+                    background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                    boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)',
+                    transition: 'all 0.3s ease',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -2584,11 +2611,12 @@ export function EventRegistrationModal({
                     minHeight: { xs: '72px', sm: 'auto' },
                     '&:hover': {
                       background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                      transform: 'translateY(-1px)',
+                      boxShadow: '0 6px 20px rgba(139, 92, 246, 0.45)',
+                      transform: 'translateY(-2px)',
                     },
                     '&:disabled': {
-                      opacity: 0.6,
+                      background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                      opacity: 0.7,
                     },
                     '@media (max-width: 600px)': {
                       '& .MuiButton-startIcon': {

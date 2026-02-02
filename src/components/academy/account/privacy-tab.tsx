@@ -125,10 +125,43 @@ export function PrivacyTab() {
   return (
     <Stack spacing={3}>
       {/* GDPR Rights Section */}
-      <Card>
+      <Card
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+          boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.1)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.main, 0.5)})`,
+          },
+        }}
+      >
         <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-            <Shield size={24} color={theme.palette.primary.main} />
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.main, 0.7)} 100%)`,
+                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`,
+              }}
+            >
+              <Shield size={24} color="white" />
+            </Box>
             <Typography variant="h6" fontWeight={600}>
               Tus Derechos bajo el RGPD
             </Typography>
@@ -176,10 +209,43 @@ export function PrivacyTab() {
       </Card>
 
       {/* Download Data Section */}
-      <Card>
+      <Card
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.info.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.info.main, 0.05)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.info.main, 0.15)}`,
+          boxShadow: `0 4px 20px ${alpha(theme.palette.info.main, 0.1)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.info.main}, ${alpha(theme.palette.info.main, 0.5)})`,
+          },
+        }}
+      >
         <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-            <Download size={24} color={theme.palette.info.main} />
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: `linear-gradient(135deg, ${theme.palette.info.main} 0%, ${alpha(theme.palette.info.main, 0.7)} 100%)`,
+                boxShadow: `0 4px 12px ${alpha(theme.palette.info.main, 0.3)}`,
+              }}
+            >
+              <Download size={24} color="white" />
+            </Box>
             <Typography variant="h6" fontWeight={600}>
               Descargar Mis Datos
             </Typography>
@@ -267,12 +333,41 @@ export function PrivacyTab() {
       {/* Delete Account Section */}
       <Card
         sx={{
-          border: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
+          borderRadius: 3,
+          overflow: 'hidden',
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.error.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.error.main, 0.05)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`,
+          boxShadow: `0 4px 20px ${alpha(theme.palette.error.main, 0.1)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.error.main}, ${alpha(theme.palette.error.main, 0.5)})`,
+          },
         }}
       >
         <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-            <Trash size={24} color={theme.palette.error.main} />
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${alpha(theme.palette.error.main, 0.7)} 100%)`,
+                boxShadow: `0 4px 12px ${alpha(theme.palette.error.main, 0.3)}`,
+              }}
+            >
+              <Trash size={24} color="white" />
+            </Box>
             <Typography variant="h6" fontWeight={600} color="error">
               Eliminar Mi Cuenta
             </Typography>
@@ -323,10 +418,43 @@ export function PrivacyTab() {
       </Card>
 
       {/* Privacy Contact Section */}
-      <Card>
+      <Card
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          position: 'relative',
+          background: isDarkMode
+            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.success.main, 0.08)} 100%)`
+            : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.success.main, 0.05)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.success.main, 0.15)}`,
+          boxShadow: `0 4px 20px ${alpha(theme.palette.success.main, 0.1)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${theme.palette.success.main}, ${alpha(theme.palette.success.main, 0.5)})`,
+          },
+        }}
+      >
         <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-            <Lock size={24} color={theme.palette.success.main} />
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${alpha(theme.palette.success.main, 0.7)} 100%)`,
+                boxShadow: `0 4px 12px ${alpha(theme.palette.success.main, 0.3)}`,
+              }}
+            >
+              <Lock size={24} color="white" />
+            </Box>
             <Typography variant="h6" fontWeight={600}>
               Contacto de Privacidad
             </Typography>

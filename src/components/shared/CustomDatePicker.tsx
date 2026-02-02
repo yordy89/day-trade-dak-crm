@@ -7,6 +7,7 @@ import {
   useTheme,
   InputBase,
   Popover,
+  alpha,
 } from '@mui/material';
 import { DatePicker, DateTimePicker, StaticDatePicker, StaticDateTimePicker } from '@mui/x-date-pickers';
 import { Calendar } from '@phosphor-icons/react';
@@ -172,13 +173,155 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         sx={{
           mt: 1,
           '& .MuiPaper-root': {
-            bgcolor: isDarkMode ? 'background.paper' : 'background.paper',
-            borderRadius: 2,
-            boxShadow: theme.shadows[8],
+            borderRadius: 3,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+            boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.15)}`,
+            background: isDarkMode
+              ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+              : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+            backdropFilter: 'blur(10px)',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+            },
           },
         }}
       >
-        <Box sx={{ p: 1 }}>
+        <Box
+          sx={{
+            p: 1,
+            // Calendar styling
+            '& .MuiPickersLayout-root': {
+              backgroundColor: 'transparent',
+            },
+            '& .MuiPickersCalendarHeader-root': {
+              pl: 2,
+              pr: 1,
+              '& .MuiPickersCalendarHeader-label': {
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+              },
+              '& .MuiIconButton-root': {
+                color: theme.palette.primary.main,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                },
+              },
+            },
+            '& .MuiDayCalendar-weekDayLabel': {
+              color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+              fontWeight: 600,
+              fontSize: '12px',
+            },
+            '& .MuiPickersDay-root': {
+              fontWeight: 500,
+              fontSize: '14px',
+              borderRadius: 2,
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              },
+              '&.Mui-selected': {
+                backgroundColor: theme.palette.primary.main,
+                color: '#fff',
+                fontWeight: 600,
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.dark,
+                },
+              },
+              '&.MuiPickersDay-today': {
+                border: `2px solid ${theme.palette.primary.main}`,
+                backgroundColor: 'transparent',
+                '&:not(.Mui-selected)': {
+                  color: theme.palette.primary.main,
+                },
+              },
+            },
+            // Time picker styling
+            '& .MuiMultiSectionDigitalClock-root': {
+              '& .MuiMultiSectionDigitalClockSection-root': {
+                '&::after': {
+                  display: 'none',
+                },
+              },
+              '& .MuiMenuItem-root': {
+                borderRadius: 1.5,
+                mx: 0.5,
+                my: 0.25,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                },
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main,
+                  color: '#fff',
+                  fontWeight: 600,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                  },
+                },
+              },
+            },
+            // Clock styling
+            '& .MuiClock-root': {
+              '& .MuiClockPointer-root': {
+                backgroundColor: theme.palette.primary.main,
+              },
+              '& .MuiClockPointer-thumb': {
+                backgroundColor: theme.palette.primary.main,
+                border: `4px solid ${theme.palette.primary.main}`,
+              },
+              '& .MuiClock-pin': {
+                backgroundColor: theme.palette.primary.main,
+              },
+              '& .MuiClockNumber-root': {
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main,
+                },
+              },
+            },
+            // Action bar styling
+            '& .MuiDialogActions-root': {
+              px: 2,
+              pb: 2,
+              '& .MuiButton-root': {
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: 'none',
+                '&.MuiButton-text': {
+                  color: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                  },
+                },
+              },
+            },
+            // Year/Month picker styling
+            '& .MuiYearCalendar-root, & .MuiMonthCalendar-root': {
+              '& .MuiPickersYear-yearButton, & .MuiPickersMonth-monthButton': {
+                borderRadius: 2,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                },
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main,
+                  color: '#fff',
+                  fontWeight: 600,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                  },
+                },
+              },
+            },
+          }}
+        >
           <StaticPicker
             displayStaticWrapperAs="desktop"
             value={value}

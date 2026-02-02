@@ -219,7 +219,9 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
         PaperProps={{
           sx: {
             borderRadius: 3,
+            overflow: 'hidden',
             bgcolor: isDarkMode ? 'background.paper' : 'background.paper',
+            boxShadow: `0 24px 48px ${alpha(theme.palette.primary.main, 0.15)}`,
           },
         }}
       >
@@ -227,33 +229,44 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
         <Box
           sx={{
             p: 3,
+            position: 'relative',
             background: isDarkMode
-              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.1)} 0%, ${alpha(theme.palette.background.paper, 0.5)} 100%)`
-              : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.05)} 0%, ${theme.palette.background.paper} 100%)`,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
+              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+              : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha('#ffffff', 0.98)} 100%)`,
+            borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+            },
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Stack direction="row" alignItems="center" spacing={2}>
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
+                  width: 52,
+                  height: 52,
                   borderRadius: 2,
-                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
                 }}
               >
-                <Target size={24} color={theme.palette.primary.main} />
+                <Target size={26} color={theme.palette.primary.main} weight="duotone" />
               </Box>
               <Box>
-                <Typography variant="h5" fontWeight={700}>
+                <Typography variant="h5" fontWeight={700} color="text.primary">
                   {t('tradingJournal.closeModal.title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                   {trade.symbol} • {trade.market.toUpperCase()}{getOptionLabel() ? ` • ${getOptionLabel()}` : ''}
                 </Typography>
               </Box>
@@ -261,51 +274,111 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
             <Button
               onClick={onClose}
               sx={{
-                minWidth: 40,
-                height: 40,
+                minWidth: 42,
+                height: 42,
                 p: 0,
                 borderRadius: 2,
-                border: '1px solid',
-                borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                bgcolor: alpha(theme.palette.error.main, 0.1),
+                border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`,
+                color: theme.palette.error.main,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: alpha(theme.palette.error.main, 0.2),
+                  border: `1px solid ${alpha(theme.palette.error.main, 0.4)}`,
+                  transform: 'scale(1.05)',
+                },
               }}
             >
-              <X size={20} />
+              <X size={20} weight="bold" />
             </Button>
           </Stack>
         </Box>
 
         {/* Content */}
-        <Box sx={{ p: 3 }}>
+        <Box
+          sx={{
+            p: 3,
+            background: isDarkMode
+              ? alpha(theme.palette.background.default, 0.5)
+              : alpha(theme.palette.grey[50], 0.5),
+            maxHeight: '65vh',
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: alpha(theme.palette.primary.main, 0.2),
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: alpha(theme.palette.primary.main, 0.3),
+            },
+          }}
+        >
           <Stack spacing={3}>
             {/* Entry Summary */}
-            <Alert
-              severity="info"
+            <Paper
+              elevation={0}
               sx={{
+                p: 2.5,
                 borderRadius: 2,
-                bgcolor: alpha(theme.palette.info.main, 0.05),
-                border: '1px solid',
-                borderColor: alpha(theme.palette.info.main, 0.2),
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.12)} 0%, ${alpha(theme.palette.info.main, 0.04)} 100%)`
+                  : `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.08)} 0%, ${alpha(theme.palette.info.main, 0.02)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.info.main, 0.25)}`,
+                borderLeft: `4px solid ${theme.palette.info.main}`,
               }}
             >
-              <Typography variant="body2">
-                <strong>Entry:</strong> {formatCurrency(trade.entryPrice)}{isOptions ? '/share' : ''} on{' '}
-                {new Date(trade.entryTime).toLocaleString()} • Position: {trade.positionSize}{' '}
-                {isOptions ? 'contracts' : 'shares'}
-                {isOptions && (
-                  <> • <strong>Total:</strong> {formatCurrency(getTotalInvestment())} ({trade.positionSize} × 100 × {formatCurrency(trade.entryPrice)})</>
-                )}
-              </Typography>
-            </Alert>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: alpha(theme.palette.info.main, 0.15),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Target size={18} color={theme.palette.info.main} weight="duotone" />
+                </Box>
+                <Typography variant="body2" color="text.primary" sx={{ lineHeight: 1.6 }}>
+                  <strong>Entry:</strong> {formatCurrency(trade.entryPrice)}{isOptions ? '/share' : ''} on{' '}
+                  {new Date(trade.entryTime).toLocaleString()} • Position: {trade.positionSize}{' '}
+                  {isOptions ? 'contracts' : 'shares'}
+                  {isOptions && (
+                    <> • <strong>Total:</strong> {formatCurrency(getTotalInvestment())} ({trade.positionSize} × 100 × {formatCurrency(trade.entryPrice)})</>
+                  )}
+                </Typography>
+              </Stack>
+            </Paper>
 
             {/* Exit Price & Time */}
             <Paper
               elevation={0}
               sx={{
                 p: 3,
-                border: '1px solid',
-                borderColor: 'divider',
                 borderRadius: 2,
-                bgcolor: isDarkMode ? alpha(theme.palette.background.paper, 0.5) : 'background.paper',
+                position: 'relative',
+                overflow: 'hidden',
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2} mb={3}>
@@ -314,13 +387,14 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                     width: 40,
                     height: 40,
                     borderRadius: 2,
-                    bgcolor: alpha(theme.palette.success.main, 0.1),
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <CurrencyDollar size={20} color={theme.palette.success.main} />
+                  <CurrencyDollar size={20} color={theme.palette.primary.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
                   {t('tradingJournal.closeModal.exitDetails')}
@@ -454,10 +528,23 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               elevation={0}
               sx={{
                 p: 3,
-                border: '1px solid',
-                borderColor: 'divider',
                 borderRadius: 2,
-                bgcolor: isDarkMode ? alpha(theme.palette.background.paper, 0.5) : 'background.paper',
+                position: 'relative',
+                overflow: 'hidden',
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2} mb={3}>
@@ -466,13 +553,14 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                     width: 40,
                     height: 40,
                     borderRadius: 2,
-                    bgcolor: alpha(theme.palette.warning.main, 0.1),
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Warning size={20} color={theme.palette.warning.main} />
+                  <Warning size={20} color={theme.palette.primary.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
                   {t('tradingJournal.closeModal.exitAnalysis')}
@@ -506,10 +594,23 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               elevation={0}
               sx={{
                 p: 3,
-                border: '1px solid',
-                borderColor: 'divider',
                 borderRadius: 2,
-                bgcolor: isDarkMode ? alpha(theme.palette.background.paper, 0.5) : 'background.paper',
+                position: 'relative',
+                overflow: 'hidden',
+                background: isDarkMode
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2} mb={3}>
@@ -518,13 +619,14 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
                     width: 40,
                     height: 40,
                     borderRadius: 2,
-                    bgcolor: alpha(theme.palette.info.main, 0.1),
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Heart size={20} color={theme.palette.info.main} />
+                  <Heart size={20} color={theme.palette.primary.main} />
                 </Box>
                 <Typography variant="h6" fontWeight={600}>
                   {t('tradingJournal.closeModal.selfReflection')}
@@ -601,9 +703,10 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
         <Box
           sx={{
             p: 3,
-            borderTop: '1px solid',
-            borderColor: 'divider',
-            bgcolor: isDarkMode ? alpha(theme.palette.background.paper, 0.5) : 'background.paper',
+            borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+            background: isDarkMode
+              ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`
+              : `linear-gradient(180deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.03)} 100%)`,
           }}
         >
           <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -613,18 +716,41 @@ export function CloseTradeModal({ open, trade, onClose, onSuccess }: CloseTradeM
               variant="outlined"
               size="large"
               sx={{
-                borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                px: 4,
+                borderRadius: 2,
+                borderColor: alpha(theme.palette.text.secondary, 0.3),
+                color: 'text.secondary',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  borderColor: alpha(theme.palette.text.secondary, 0.5),
+                  bgcolor: alpha(theme.palette.text.secondary, 0.05),
+                },
               }}
             >
               {t('tradingJournal.closeModal.cancel')}
             </Button>
             <Button
               variant="contained"
-              color="primary"
               size="large"
               onClick={handleSubmit}
               disabled={loading || (!exitPrice && !exitPremium) || wouldRepeat === null}
-              startIcon={loading ? <CircularProgress size={20} /> : <CheckCircle size={20} />}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <CheckCircle size={20} weight="bold" />}
+              sx={{
+                px: 4,
+                borderRadius: 2,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                  boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.5)}`,
+                  transform: 'translateY(-2px)',
+                },
+                '&:disabled': {
+                  background: alpha(theme.palette.text.secondary, 0.2),
+                  boxShadow: 'none',
+                },
+              }}
             >
               {loading ? t('tradingJournal.closeModal.closing') : t('tradingJournal.closeModal.closeTradeButton')}
             </Button>

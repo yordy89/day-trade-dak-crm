@@ -307,7 +307,28 @@ export default function TradeDetailPage() {
 
         {/* Trade Details */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, height: '100%' }}>
+          <Card
+            sx={{
+              p: 3,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+            }}
+          >
             <Typography variant="h6" fontWeight={600} mb={3}>
               {t('tradingJournal.tradeDetails')}
             </Typography>
@@ -386,7 +407,28 @@ export default function TradeDetailPage() {
 
         {/* Risk Management */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, height: '100%' }}>
+          <Card
+            sx={{
+              p: 3,
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+              background: theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              },
+            }}
+          >
             <Typography variant="h6" fontWeight={600} mb={3}>
               {t('tradingJournal.riskManagement')}
             </Typography>
@@ -466,7 +508,27 @@ export default function TradeDetailPage() {
         {/* Trade Analysis */}
         {trade.preTradeAnalysis && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Stack direction="row" spacing={2} alignItems="center" mb={2}>
                 <Brain size={24} color={theme.palette.primary.main} />
                 <Typography variant="h6" fontWeight={600}>
@@ -482,9 +544,29 @@ export default function TradeDetailPage() {
 
         {trade.postTradeNotes && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-                <ChartLine size={24} color={theme.palette.secondary.main} />
+                <ChartLine size={24} color={theme.palette.primary.main} />
                 <Typography variant="h6" fontWeight={600}>
                   {t('tradingJournal.detail.postTradeNotes')}
                 </Typography>
@@ -499,7 +581,27 @@ export default function TradeDetailPage() {
         {/* Exit Analysis */}
         {trade.exitReasonType && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Typography variant="h6" fontWeight={600} mb={2}>
                 {t('tradingJournal.detail.exitAnalysis')}
               </Typography>
@@ -554,9 +656,29 @@ export default function TradeDetailPage() {
         {/* Emotional States */}
         {(trade.emotionBefore || trade.emotionDuring || trade.emotionAfter || trade.exitEmotionState) && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Stack direction="row" spacing={2} alignItems="center" mb={3}>
-                <Heart size={24} color={theme.palette.info.main} />
+                <Heart size={24} color={theme.palette.primary.main} />
                 <Typography variant="h6" fontWeight={600}>
                   {t('tradingJournal.emotionalState')}
                 </Typography>
@@ -618,7 +740,27 @@ export default function TradeDetailPage() {
         {/* Tags */}
         {trade.tags && trade.tags.length > 0 && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Typography variant="h6" fontWeight={600} mb={2}>
                 {t('tradingJournal.detail.tags')}
               </Typography>
@@ -634,7 +776,27 @@ export default function TradeDetailPage() {
         {/* Mentor Feedback */}
         {feedback.length > 0 && (
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card
+              sx={{
+                p: 3,
+                position: 'relative',
+                overflow: 'hidden',
+                background: theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+                  : `linear-gradient(135deg, ${alpha('#ffffff', 0.98)} 0%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
               <Typography variant="h6" fontWeight={600} mb={3}>
                 {t('tradingJournal.detail.mentorFeedback')}
               </Typography>

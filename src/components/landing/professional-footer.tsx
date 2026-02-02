@@ -181,19 +181,14 @@ export function ProfessionalFooter() {
     <Box
       component="footer"
       sx={{
-        background: isDarkMode 
-          ? 'linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%)' 
-          : 'linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%)',
+        background: isDarkMode
+          ? 'linear-gradient(180deg, #161b22 0%, #0d1117 30%, #0a0a0a 100%)'
+          : 'linear-gradient(180deg, #f8fafc 0%, #f5f5f5 30%, #f0f0f0 100%)',
         color: isDarkMode ? 'white' : '#333333',
         pt: { xs: 6, md: 10 },
         pb: 4,
-        mt: { xs: 8, sm: 10, md: 12 },
-        borderTop: '3px solid',
-        borderImage: 'linear-gradient(90deg, transparent, #16a34a, transparent) 1',
+        mt: 0,
         position: 'relative',
-        boxShadow: isDarkMode 
-          ? '0 -10px 40px rgba(22, 163, 74, 0.05)' 
-          : '0 -10px 40px rgba(22, 163, 74, 0.03)',
       }}
     >
       <Container maxWidth="lg">
