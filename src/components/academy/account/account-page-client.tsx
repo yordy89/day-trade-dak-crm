@@ -303,15 +303,36 @@ export function AccountPageClient(): React.JSX.Element {
     });
   };
 
+  // Helper function to check if a subscription is active
+  // Checks both expiresAt AND currentPeriodEnd for recurring subscriptions
+  const isSubscriptionActive = (sub: any): boolean => {
+    if (typeof sub === 'string') return true;
+    if (sub && typeof sub === 'object' && 'plan' in sub) {
+      // Check if explicitly cancelled/expired by status
+      if (sub.status === 'expired' || sub.status === 'cancelled' || sub.status === 'canceled') {
+        return false;
+      }
+      // For recurring subscriptions, currentPeriodEnd is authoritative
+      // For non-recurring, expiresAt is authoritative
+      // Check both for backwards compatibility
+      const now = new Date();
+      const expiresAt = sub.expiresAt ? new Date(sub.expiresAt) : null;
+      const currentPeriodEnd = sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null;
+
+      // If both are set, use the later date (they should be in sync now)
+      // If neither is set, consider it active
+      if (!expiresAt && !currentPeriodEnd) return true;
+
+      // Use currentPeriodEnd for recurring, expiresAt for non-recurring
+      const effectiveExpiration = currentPeriodEnd || expiresAt;
+      return effectiveExpiration ? effectiveExpiration > now : true;
+    }
+    return false;
+  };
+
   const isPremium = (() => {
     const allSubs = user?.subscriptions || [];
-    return allSubs.some((sub: any) => {
-      if (typeof sub === 'string') return true;
-      if (sub && typeof sub === 'object' && 'plan' in sub) {
-        return !sub.expiresAt || new Date(sub.expiresAt) > new Date();
-      }
-      return false;
-    });
+    return allSubs.some(isSubscriptionActive);
   })();
 
   // Subscription price mapping based on API pricing service
@@ -550,13 +571,7 @@ export function AccountPageClient(): React.JSX.Element {
                   {
                     value: (() => {
                       const allSubs = userData?.subscriptions || user?.subscriptions || [];
-                      return allSubs.filter((sub: any) => {
-                        if (typeof sub === 'string') return true;
-                        if (sub && typeof sub === 'object' && 'plan' in sub) {
-                          return Boolean(!sub.expiresAt || new Date(sub.expiresAt) > new Date());
-                        }
-                        return false;
-                      }).length;
+                      return allSubs.filter(isSubscriptionActive).length;
                     })(),
                     label: t('overview.activeSubscriptions'),
                     color: theme.palette.primary.main,
@@ -1077,22 +1092,18 @@ export function AccountPageClient(): React.JSX.Element {
             {(() => {
               // Get all active subscriptions (both from activeSubscriptions and regular subscriptions)
               const allSubscriptions = user?.subscriptions || [];
-              const activeSubscriptions = allSubscriptions.filter((sub: any) => {
-                if (typeof sub === 'string') {
-                  return true; // String subscriptions are always active
-                } else if (sub && typeof sub === 'object' && 'plan' in sub) {
-                  // Object subscriptions are active if they don't have expiresAt or haven't expired
-                  return !sub.expiresAt || new Date(sub.expiresAt) > new Date();
-                }
-                return false;
-              });
+              const activeSubscriptions = allSubscriptions.filter(isSubscriptionActive);
 
               return activeSubscriptions.length > 0 ? (
                 <Grid container spacing={{ xs: 2, sm: 2 }}>
                   {activeSubscriptions.map((subscription: any) => {
                     if (!subscription) return null; // Handle null/undefined subscription
                     const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
-                    const expiresAt = typeof subscription === 'object' ? subscription?.expiresAt : null;
+                    // For recurring subscriptions, use currentPeriodEnd; for non-recurring, use expiresAt
+                    const currentPeriodEnd = typeof subscription === 'object' ? subscription?.currentPeriodEnd : null;
+                    const rawExpiresAt = typeof subscription === 'object' ? subscription?.expiresAt : null;
+                    // Use currentPeriodEnd as the authoritative date for display (they should be in sync)
+                    const expiresAt = currentPeriodEnd || rawExpiresAt;
 
                     // Check if this is a recurring plan type
                     const isRecurringPlanType = [
@@ -1345,9 +1356,16 @@ export function AccountPageClient(): React.JSX.Element {
             const expiredSubscriptions = allSubscriptions.filter((sub: any) => {
               if (typeof sub === 'string') {
                 return false; // String subscriptions don't expire
-              } else if (sub && typeof sub === 'object' && 'plan' in sub && 'expiresAt' in sub) {
-                // Object subscriptions are expired if they have an expiresAt date in the past
-                return sub.expiresAt && new Date(sub.expiresAt) <= new Date();
+              } else if (sub && typeof sub === 'object' && 'plan' in sub) {
+                // Check if explicitly expired by status
+                if (sub.status === 'expired') return true;
+                // Check both expiresAt and currentPeriodEnd
+                const now = new Date();
+                const expiresAt = sub.expiresAt ? new Date(sub.expiresAt) : null;
+                const currentPeriodEnd = sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null;
+                // Use currentPeriodEnd for recurring, expiresAt for non-recurring
+                const effectiveExpiration = currentPeriodEnd || expiresAt;
+                return effectiveExpiration ? effectiveExpiration <= now : false;
               }
               return false;
             });
@@ -1377,7 +1395,10 @@ export function AccountPageClient(): React.JSX.Element {
                   {expiredSubscriptions.map((subscription: any) => {
                     if (!subscription) return null; // Handle null/undefined subscription
                     const plan = typeof subscription === 'string' ? subscription : subscription?.plan;
-                    const expiredDate = typeof subscription === 'object' ? subscription?.expiresAt : null;
+                    // Use currentPeriodEnd or expiresAt for the expired date
+                    const currentPeriodEnd = typeof subscription === 'object' ? subscription?.currentPeriodEnd : null;
+                    const rawExpiresAt = typeof subscription === 'object' ? subscription?.expiresAt : null;
+                    const expiredDate = currentPeriodEnd || rawExpiresAt;
 
                     return (
                       <Card

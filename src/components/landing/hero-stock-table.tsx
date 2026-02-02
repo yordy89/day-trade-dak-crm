@@ -10,6 +10,7 @@ import {
   IconButton,
   Fade,
   alpha,
+  useTheme,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -39,6 +40,32 @@ interface StockData {
 export function HeroStockTable() {
   const [expandedStock, setExpandedStock] = useState<string | null>(null);
   const { t, i18n } = useTranslation('common');
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
+  // Theme-aware colors
+  const colors = {
+    background: {
+      primary: isDarkMode ? '#0d1a14' : '#ffffff',
+      secondary: isDarkMode ? '#0a0f0c' : '#f8fafc',
+      tertiary: isDarkMode ? '#0d1117' : '#f1f5f9',
+      card: isDarkMode ? '#0d1117' : '#ffffff',
+      cardHover: isDarkMode ? '#0d1117' : '#f8fafc',
+      footer: isDarkMode ? alpha('#000000', 0.2) : alpha('#000000', 0.03),
+      expanded: isDarkMode ? '#0a0e14' : '#f8fafc',
+    },
+    text: {
+      primary: isDarkMode ? '#ffffff' : '#0f172a',
+      secondary: isDarkMode ? alpha('#ffffff', 0.5) : alpha('#000000', 0.6),
+      muted: isDarkMode ? alpha('#ffffff', 0.35) : alpha('#000000', 0.5),
+    },
+    border: {
+      light: isDarkMode ? alpha('#ffffff', 0.05) : alpha('#000000', 0.08),
+      icon: isDarkMode ? alpha('#ffffff', 0.5) : alpha('#000000', 0.4),
+    },
+    loading: isDarkMode ? '#374151' : '#d1d5db',
+    rangeBorder: isDarkMode ? '#0d1117' : '#ffffff',
+  };
 
   const { data: stocks, isLoading } = useQuery<StockData[]>({
     queryKey: ['featured-stocks-v3'],
@@ -67,35 +94,35 @@ export function HeroStockTable() {
 
   const getMarketStatus = () => {
     const now = new Date();
-    
+
     // Convert to Eastern Time (ET)
     // Get UTC time and adjust for ET (UTC-5 for EST, UTC-4 for EDT)
     const utcHours = now.getUTCHours();
     const utcMinutes = now.getUTCMinutes();
     const utcDay = now.getUTCDay();
-    
+
     // Determine if we're in EDT (March-November) or EST (November-March)
     // For simplicity, we'll use a fixed offset. In production, consider using a library like date-fns-tz
     const isDST = () => {
       const month = now.getUTCMonth();
       return month >= 2 && month <= 10; // Approximate DST period (March-November)
     };
-    
+
     const etOffset = isDST() ? 4 : 5;
     let etHours = utcHours - etOffset;
     let etDay = utcDay;
-    
+
     // Adjust day if we crossed midnight
     if (etHours < 0) {
       etHours += 24;
       etDay = (etDay - 1 + 7) % 7;
     }
-    
+
     const etTime = etHours * 100 + utcMinutes;
-    
+
     // Market is closed on weekends
     if (etDay === 0 || etDay === 6) return { status: 'market.closed', color: '#ef4444' };
-    
+
     // Check market hours (all times in ET)
     if (etTime >= 930 && etTime < 1600) return { status: 'market.open', color: '#16a34a' };
     if (etTime >= 400 && etTime < 930) return { status: 'market.preMarket', color: '#fbbf24' };
@@ -116,7 +143,7 @@ export function HeroStockTable() {
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                backgroundColor: '#374151',
+                backgroundColor: colors.loading,
                 animation: `pulse 1.5s infinite ${i * 0.2}s`,
               }}
             />
@@ -132,10 +159,14 @@ export function HeroStockTable() {
         position: 'relative',
         borderRadius: 4,
         overflow: 'hidden',
-        background: `linear-gradient(145deg, ${alpha('#0d1a14', 0.98)} 0%, ${alpha('#0a0f0c', 0.99)} 50%, ${alpha('#0d1117', 0.98)} 100%)`,
+        background: isDarkMode
+          ? `linear-gradient(145deg, ${alpha(colors.background.primary, 0.98)} 0%, ${alpha(colors.background.secondary, 0.99)} 50%, ${alpha(colors.background.tertiary, 0.98)} 100%)`
+          : `linear-gradient(145deg, ${colors.background.primary} 0%, ${colors.background.secondary} 50%, ${colors.background.tertiary} 100%)`,
         border: '1px solid',
-        borderColor: alpha('#16a34a', 0.25),
-        boxShadow: `0 20px 60px ${alpha('#000000', 0.5)}, 0 0 60px ${alpha('#16a34a', 0.1)}, inset 0 1px 0 ${alpha('#16a34a', 0.1)}`,
+        borderColor: isDarkMode ? alpha('#16a34a', 0.25) : alpha('#16a34a', 0.3),
+        boxShadow: isDarkMode
+          ? `0 20px 60px ${alpha('#000000', 0.5)}, 0 0 60px ${alpha('#16a34a', 0.1)}, inset 0 1px 0 ${alpha('#16a34a', 0.1)}`
+          : `0 10px 40px ${alpha('#000000', 0.1)}, 0 0 20px ${alpha('#16a34a', 0.05)}`,
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -152,8 +183,11 @@ export function HeroStockTable() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: `radial-gradient(ellipse at top right, ${alpha('#16a34a', 0.08)} 0%, transparent 50%),
-                       radial-gradient(ellipse at bottom left, ${alpha('#16a34a', 0.05)} 0%, transparent 50%)`,
+          background: isDarkMode
+            ? `radial-gradient(ellipse at top right, ${alpha('#16a34a', 0.08)} 0%, transparent 50%),
+               radial-gradient(ellipse at bottom left, ${alpha('#16a34a', 0.05)} 0%, transparent 50%)`
+            : `radial-gradient(ellipse at top right, ${alpha('#16a34a', 0.05)} 0%, transparent 50%),
+               radial-gradient(ellipse at bottom left, ${alpha('#16a34a', 0.03)} 0%, transparent 50%)`,
           pointerEvents: 'none',
         },
       }}
@@ -163,7 +197,7 @@ export function HeroStockTable() {
         sx={{
           p: 3,
           borderBottom: '1px solid',
-          borderColor: alpha('#ffffff', 0.05),
+          borderColor: colors.border.light,
           background: `linear-gradient(135deg, ${alpha('#16a34a', 0.05)} 0%, transparent 100%)`,
         }}
       >
@@ -189,7 +223,9 @@ export function HeroStockTable() {
               variant="h5"
               sx={{
                 fontWeight: 800,
-                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
+                background: isDarkMode
+                  ? 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)'
+                  : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -237,7 +273,7 @@ export function HeroStockTable() {
         <Typography
           variant="body2"
           sx={{
-            color: alpha('#ffffff', 0.5),
+            color: colors.text.secondary,
             pl: 7,
             fontWeight: 500,
           }}
@@ -264,23 +300,31 @@ export function HeroStockTable() {
               elevation={0}
               sx={{
                 background: isExpanded
-                  ? `linear-gradient(135deg, ${alpha(accentColor, 0.08)} 0%, ${alpha('#0d1117', 0.95)} 100%)`
-                  : `linear-gradient(135deg, ${alpha(accentColor, 0.03)} 0%, ${alpha('#0d1117', 0.9)} 100%)`,
+                  ? isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(accentColor, 0.08)} 0%, ${alpha(colors.background.card, 0.95)} 100%)`
+                    : `linear-gradient(135deg, ${alpha(accentColor, 0.06)} 0%, ${colors.background.card} 100%)`
+                  : isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(accentColor, 0.03)} 0%, ${alpha(colors.background.card, 0.9)} 100%)`
+                    : `linear-gradient(135deg, ${alpha(accentColor, 0.02)} 0%, ${colors.background.card} 100%)`,
                 backdropFilter: 'blur(10px)',
                 border: '1px solid',
                 borderColor: isExpanded
                   ? alpha(accentColor, 0.4)
-                  : alpha(accentColor, 0.15),
+                  : isDarkMode ? alpha(accentColor, 0.15) : alpha(accentColor, 0.2),
                 borderRadius: 2.5,
                 overflow: 'hidden',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
                 position: 'relative',
                 '&:hover': {
-                  background: `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, ${alpha('#0d1117', 0.95)} 100%)`,
+                  background: isDarkMode
+                    ? `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, ${alpha(colors.background.cardHover, 0.95)} 100%)`
+                    : `linear-gradient(135deg, ${alpha(accentColor, 0.08)} 0%, ${colors.background.cardHover} 100%)`,
                   borderColor: alpha(accentColor, 0.4),
                   transform: 'translateX(4px)',
-                  boxShadow: `0 4px 24px ${alpha(accentColor, 0.2)}`,
+                  boxShadow: isDarkMode
+                    ? `0 4px 24px ${alpha(accentColor, 0.2)}`
+                    : `0 4px 20px ${alpha(accentColor, 0.15)}`,
                 },
                 '&::before': {
                   content: '""',
@@ -333,7 +377,7 @@ export function HeroStockTable() {
                           </IconButton>
                         </Tooltip>
                       </Box>
-                      <Typography variant="caption" sx={{ color: alpha('#ffffff', 0.5) }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {stock.name}
                       </Typography>
                     </Box>
@@ -381,7 +425,7 @@ export function HeroStockTable() {
 
                   {/* Right: Price & Change */}
                   <Box sx={{ textAlign: 'right', minWidth: 120 }}>
-                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#ffffff' }}>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: colors.text.primary }}>
                       {formatCurrency(stock.price)}
                     </Typography>
                     <Box
@@ -418,12 +462,12 @@ export function HeroStockTable() {
                     <IconButton
                       size="small"
                       sx={{
-                        color: alpha('#ffffff', 0.5),
+                        color: colors.border.icon,
                         transition: 'all 0.3s ease',
                         transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
                         '&:hover': {
-                          color: '#ffffff',
-                          background: alpha('#ffffff', 0.1),
+                          color: colors.text.primary,
+                          background: isDarkMode ? alpha('#ffffff', 0.1) : alpha('#000000', 0.05),
                         },
                       }}
                     >
@@ -440,7 +484,9 @@ export function HeroStockTable() {
                     borderTop: '1px solid',
                     borderColor: alpha(accentColor, 0.2),
                     p: 2,
-                    background: `linear-gradient(180deg, ${alpha(accentColor, 0.08)} 0%, ${alpha('#0a0e14', 0.95)} 100%)`,
+                    background: isDarkMode
+                      ? `linear-gradient(180deg, ${alpha(accentColor, 0.08)} 0%, ${alpha(colors.background.expanded, 0.95)} 100%)`
+                      : `linear-gradient(180deg, ${alpha(accentColor, 0.05)} 0%, ${colors.background.expanded} 100%)`,
                     display: isExpanded ? 'block' : 'none',
                   }}
                 >
@@ -472,7 +518,7 @@ export function HeroStockTable() {
                         >
                           {item.label}
                         </Typography>
-                        <Typography variant="body2" fontWeight={700} sx={{ color: '#ffffff', mt: 0.5 }}>
+                        <Typography variant="body2" fontWeight={700} sx={{ color: colors.text.primary, mt: 0.5 }}>
                           {item.value}
                         </Typography>
                       </Box>
@@ -506,7 +552,7 @@ export function HeroStockTable() {
                           height: 16,
                           backgroundColor: accentColor,
                           borderRadius: '50%',
-                          border: '3px solid #0d1117',
+                          border: `3px solid ${colors.rangeBorder}`,
                           boxShadow: `0 0 12px ${accentColor}, 0 2px 8px ${alpha('#000000', 0.5)}`,
                         }}
                       />
@@ -524,15 +570,15 @@ export function HeroStockTable() {
         sx={{
           p: 2,
           borderTop: '1px solid',
-          borderColor: alpha('#ffffff', 0.05),
-          background: alpha('#000000', 0.2),
+          borderColor: colors.border.light,
+          background: colors.background.footer,
           textAlign: 'center',
         }}
       >
         <Typography
           variant="caption"
           sx={{
-            color: alpha('#ffffff', 0.35),
+            color: colors.text.muted,
             fontSize: '0.65rem',
           }}
         >
