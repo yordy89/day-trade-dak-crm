@@ -251,6 +251,7 @@ export default function PlansPage() {
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [_billingPeriod, _setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [hasMasterClassesPurchasePermission, setHasMasterClassesPurchasePermission] = useState(false);
   
   // Get translated plans
   const LIVE_PLANS = getLivePlans(t);
@@ -290,9 +291,27 @@ export default function PlansPage() {
 
   // Check if user has live access through subscriptions OR admin permissions
   const hasLiveAccess = Boolean(
-    hasLiveSubscription || 
+    hasLiveSubscription ||
     (user?.allowLiveMeetingAccess === true)
   );
+
+  // Check if user has Master Classes purchase permission (module permission)
+  useEffect(() => {
+    const checkMasterClassesPermission = async () => {
+      if (!user || !authToken || hasLiveAccess) return;
+      try {
+        const response = await API.get('/payments/check-eligibility/MasterClases', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (response.data.eligible) {
+          setHasMasterClassesPurchasePermission(true);
+        }
+      } catch (err) {
+        // Not eligible, keep default false
+      }
+    };
+    checkMasterClassesPermission();
+  }, [user, authToken, hasLiveAccess]);
 
   // Fetch dynamic prices
   useEffect(() => {
@@ -436,21 +455,9 @@ export default function PlansPage() {
     const needsPermission = isLiveWeeklyPlan && !user?.allowLiveWeeklyAccess;
     
     // Check if Master Classes needs Live subscription or access
+    // User can buy Master Classes if they have: Live subscription, allowLiveMeetingAccess, OR masterClassesPurchase permission
     const isMasterClasses = plan.id === SubscriptionPlan.MasterClases;
-    const needsLiveSubscription = isMasterClasses && !hasLiveAccess;
-    
-    // Debug logging for Master Classes
-    if (isMasterClasses) {
-      console.log('Master Classes Debug (page.tsx):', {
-        planId: plan.id,
-        hasLiveSubscription,
-        allowLiveMeetingAccess: user?.allowLiveMeetingAccess,
-        allowLiveWeeklyAccess: user?.allowLiveWeeklyAccess,
-        hasLiveAccess,
-        needsLiveSubscription,
-        userSubscriptions: user?.subscriptions
-      });
-    }
+    const needsLiveSubscription = isMasterClasses && !hasLiveAccess && !hasMasterClassesPurchasePermission;
 
     return (
       <Box
